@@ -1,5 +1,17 @@
 # Notes for future development
 
+Assorted notes for development
+
+## Setup Notes
+
+  - `conda env create -f environment.yml`
+  - `conda activate simple-uam`
+
+## Tasks
+
+  - Update conda env:
+      - In repo root & conda env: `invoke update`
+
 ## Library Use
 
   - [platformdirs](https://pypi.org/project/platformdirs/) : For finding
@@ -7,8 +19,9 @@
   - [pdm](https://pdm.fming.dev/) : Python build and dep management tool like
     poetry or pipenv. (Except it doesn't choke when a package author forgets
     a metadata field)
-  - [invoke](https://docs.pyinvoke.org/en/stable/) : To act as a CLI interface
-    wrapper for setup and evaluation.
+  - [duty](https://pawamoy.github.io/duty/) : A task runner for cli
+  <!-- - [invoke](https://docs.pyinvoke.org/en/stable/) : To act as a CLI interface -->
+  <!--   wrapper for setup and evaluation. -->
   - [dynaconf](https://www.dynaconf.com/validation/) : for config management
     and parsing
   - [coloredlogs](https://pypi.org/project/coloredlogs/) : For pretty logs
@@ -26,6 +39,7 @@
     - util : Logging, CLI, Config, etc.. just random non-central utility code
     - setup : Setup scripts for worker, server, celery, windows, etc..
     - adm.model : Intermediate rep that maps tightly to the adm format
+  - dependency dir for submodules
 
 ## Other
 

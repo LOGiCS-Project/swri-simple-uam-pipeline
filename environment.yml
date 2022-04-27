@@ -1,0 +1,23 @@
+name: simple-uam
+
+channels:
+  - default
+  - conda-forge
+  # - CadQuery
+
+dependencies:
+  - python=3.9 # Some packages don't support 3.10
+  # Environment and Package Management
+  - setuptools
+  - pdm
+  - pre-commit
+  - pip
+  - pip:
+      - invoke
+      - copier
+      - markupsafe==2.0.1
+  # 3D Modeling and Cad
+  # - cadquery::CadQuery=master
+  # - cq-editor::CadQuery=master
+  # - occt::CadQuery
+  # - pythonocc-core
