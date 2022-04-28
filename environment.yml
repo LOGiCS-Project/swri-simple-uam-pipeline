@@ -7,7 +7,7 @@ channels:
 
 dependencies:
   - python=3.9 # Some packages don't support 3.10
-  # Environment and Package Management
+  ## Environment and Package Management ##
   - setuptools
   - pdm
   - pre-commit
@@ -16,7 +16,7 @@ dependencies:
       - invoke
       - copier
       - markupsafe==2.0.1
-  # 3D Modeling and Cad
+  ## 3D Modeling and Cad ##
   # - cadquery::CadQuery=master
   # - cq-editor::CadQuery=master
   # - occt::CadQuery

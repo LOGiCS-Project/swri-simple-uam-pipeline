@@ -10,13 +10,29 @@ Run `invoke setup` while in `<repo_root>/{{ subpackage_distribution_name}}`.
 
 ## Installation
 
-To use this package as a dependency in other subpackages:
+To use this package as a dependency in other subpackages run the following:
 
 ```bash
-pdm add -e ../{{ subpackage_distribution_name }}
+pdm add -e "file:///\${PROJECT_ROOT}/../{{ subpackage_distribution_name }}"
 ```
 
-Add the `-d` flag if you want it as a development-only dependency.
+Other relative dependencies need to be added in the same way, with a prefix
+of `file:///\${PROJECT_ROOT}/../` specifying the relative path to the repo
+root directory in a compatible way.
+
+From there you should be able to import modules as normal, e.g.:
+
+```python
+import {{ subpackage_import_name }}
+```
+
+## Usage
+
+Run the command defined in `{{ subpackage_import_name }}.cli:main` as follows:
+
+```bash
+pdm run {{ subpackage_command_line_name }} <args>
+```
 
 ## Subproject Organization
 
@@ -50,13 +66,22 @@ Add the `-d` flag if you want it as a development-only dependency.
        └── test_cli.py   # Minimal test of CLI functionality
 ```
 
-## Development Commands
+## Development Tasks
 
 ### Dependency Management
 
 See instructions on [the PDM website](https://pdm.fming.dev/usage/dependency/).
 
 PDM will work as expected for most operations.
+
+Adding relative imports requires using a modified path in `pdm add`, as follows:
+
+```bash
+pdm add -e "file:///\${PROJECT_ROOT}/../<path_from_repo_root>"
+```
+
+Where `<path_from_repo_root>` is the path from the repo root, to the folder
+containing the dependency's `pyproject.toml`, `setup.py`, or similar config.
 
 ### Running Tests
 
