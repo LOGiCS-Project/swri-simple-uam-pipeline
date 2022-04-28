@@ -10,15 +10,17 @@ Run `invoke setup` while in `<repo_root>/{{ subpackage_distribution_name}}`.
 
 ## Installation
 
-To use this package as a dependency in other subpackages run the following:
+To use this package as a dependency in other subpackages add the following line
+to the dependencies field of `pyproject.toml`:
 
-```bash
-pdm add -e "file:///\${PROJECT_ROOT}/../{{ subpackage_distribution_name }}"
+```toml
+    "-e ./../{{ subpackage_distribution_name }}",
 ```
 
-Other relative dependencies need to be added in the same way, with a prefix
-of `file:///\${PROJECT_ROOT}/../` specifying the relative path to the repo
-root directory in a compatible way.
+Other relative dependencies need to be added in the same way, by direcctly adding
+the path (prefixed with `./`) to the `pyproject.toml`.
+
+Then run `invoke setup` or, equivalently, `pdm install`.
 
 From there you should be able to import modules as normal, e.g.:
 
@@ -74,10 +76,11 @@ See instructions on [the PDM website](https://pdm.fming.dev/usage/dependency/).
 
 PDM will work as expected for most operations.
 
-Adding relative imports requires using a modified path in `pdm add`, as follows:
+Adding relative imports requires adding the following line
+to the dependencies field of `pyproject.toml`:
 
-```bash
-pdm add -e "file:///\${PROJECT_ROOT}/../<path_from_repo_root>"
+```toml
+    "-e ./../<path_from_repo_root>",
 ```
 
 Where `<path_from_repo_root>` is the path from the repo root, to the folder
