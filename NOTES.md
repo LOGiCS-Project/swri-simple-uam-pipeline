@@ -19,12 +19,16 @@ Assorted notes for development
   - [pdm](https://pdm.fming.dev/) : Python build and dep management tool like
     poetry or pipenv. (Except it doesn't choke when a package author forgets
     a metadata field)
-  - [duty](https://pawamoy.github.io/duty/) : A task runner for cli
-  <!-- - [invoke](https://docs.pyinvoke.org/en/stable/) : To act as a CLI interface -->
-  <!--   wrapper for setup and evaluation. -->
-  - [dynaconf](https://www.dynaconf.com/validation/) : for config management
-    and parsing
-  - [coloredlogs](https://pypi.org/project/coloredlogs/) : For pretty logs
+  - [invoke](https://docs.pyinvoke.org/en/stable/) : To act as a CLI interface
+    wrapper for setup and evaluation.
+  <!-- - [duty](https://pawamoy.github.io/duty/) : A task runner for cli -->
+  - [omegaconf](https://omegaconf.readthedocs.io) : Just basic config opts
+  <!-- - [hydra](https://hydra.cc/) : For storing and generating hierarchical configs -->
+  <!-- - [dynaconf](https://www.dynaconf.com/validation/) : for config management -->
+  <!--   and parsing -->
+  - [structlog](https://www.structlog.org/en/stable/loggers.html) : for good
+    logging
+  <!-- - [coloredlogs](https://pypi.org/project/coloredlogs/) : For pretty logs -->
   - [attrs](https://www.attrs.org/en/stable/) : For minimizing boilerplate and
     sensible dataclasses.
   - [celery](https://docs.celeryq.dev) : For managing worker/customer
@@ -44,3 +48,6 @@ Assorted notes for development
 ## Other
 
   - Using python 3.9 since that's what a lot of things support
+
+  - Config setup
+    - Use `platformdirs` to get config dir and defaults for

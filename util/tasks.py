@@ -1,5 +1,5 @@
 """
-Various setup and development tasks for {{ subpackage_name }}.
+Various setup and development tasks for SimpleUAM Utility Modules.
 """
 
 import os
