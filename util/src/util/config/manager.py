@@ -1,32 +1,66 @@
 from attrs import define, field
-from typing import TypeVar, Type, List, Dict, Optional, Union, Any
+from attrs.setters import frozen
+from typing import TypeVar, Type, List, Dict, Optional, Union, Any, Callable
 from omegaconf import  OmegaConf
 from pathlib import Path
+import functools
 import argparse
 from .path_config import PathConfig, PATHCONFIG_INTERPOLATION_KEY, PATHCONFIG_FILE_NAME
 
 @define
-class ConfigType():
+class ConfigData():
     """
     Metadata for a single config file used by this project.
     """
 
-    parent_mgr : 'ConfigManager' = field()
-    """ The parent manager this config info object belongs to """
-
-    data_cls : Type = field()
+    data_cls : Type = field(
+        on_setattr=frozen,
+    )
     """ Structured Config Class for this Config """
 
-    interpolation_key : str = field()
+    interpolation_key : str = field(
+        on_setattr=frozen,
+    )
     """ The key for associated interpolation resolver """
 
-    conf_file : Path = field(converter=Path)
+    conf_file : Path = field(
+        converter=Path,
+        on_setattr=frozen,
+    )
     """ The config file for this obj, taken relative to the config_dir root """
 
-    conf_deps : List[Type] = field(factory=dict)
+    conf_deps : List[Type] = field(
+        factory=dict,
+        on_setattr=frozen,
+    )
     """ Config Classes that this depends on (for interpolation) """
 
-    conf_obj : Optional[OmegaConf] = field(default=None, init=False)
+    default_conf : Optional[OmegaConf] = field(
+        default=None,
+        on_setattr=frozen,
+    )
+    """ The default config that serves as the root of the config tree """
+
+    load_path : List[Path] = field(
+        factory=list,
+        on_setattr=frozen,
+    )
+    """ The list of files to load on conf init """
+
+    overrides : Optional[OmegaConf] = field(
+        default=None,
+        on_setattr=frozen,
+    )
+    """
+    A dictionary of values that will override all others when this config
+    is instantiated. I.e. config files can't change it. This is usually where
+    the command line flags, or unchangable settings go.
+    """
+
+    conf_obj : Optional[OmegaConf] = field(
+        default=None,
+        init=False,
+    )
     """ Runtime OmegaConf Object for this Data """
 
     @property
@@ -36,29 +70,87 @@ class ConfigType():
         """
         if self.conf_obj: return self.conf_obj
 
-        # Using the parent get list of ordered config files
-        # Create object w/ dataclass and loaded individual files
-        # Register resolvers for each configuration dependency
-        # Save the config and set as read-only
-        # set self.conf_obj to new variable
+        # Assemble list of configs to merge
+        configs = list()
+        configs.append(OmegaConf.structured(self.data_cls))
+        if self.default_conf: configs.append(self.default_conf)
+        configs = [*configs, *self._load_configs()]
+        if self.overrides: configs.append(self.overrides)
 
-        # return self.conf_obj
+        # Generate merged conf
+        conf = OmegaConf.merge(*configs)
 
-        raise NotImplementedError()
+        # Register resolvers for deps
+        OmegaConf.register_new_resolver(
+            self.interpolation_key,
+            self.resolver,
+        )
 
-T = TypeVar('T', bound='ConfigManager')
+        # Set as read-only
+        OmegaConf.set_readonly(conf, True)
+
+        # Save conf to instance and return
+        self.conf_obj = conf
+        return self.conf_obj
+
+    @property
+    def resolver(self) -> Callable[[str],str]:
+        """
+        Registers the resolver for this class if possible.
+
+        Should only be called once per class.
+        """
+
+        def resolve_func(key : str, conf_dat : ConfigData = self):
+            return OmegaConf.select(conf_dat.config, key)
+
+        return functools.partial(resolve_func, self)
+
+    def _load_configs(self) -> List[OmegaConf]:
+        """
+        Will load all existing configs in load_path
+        """
+
+        configs = list()
+
+        for conf_path in self.load_path:
+            if conf_path.exists():
+                if not conf_path.is_file():
+                    raise RuntimeError(
+                        f"Object at '{conf_path}' is not a file."
+                    )
+                else:
+                    configs.append(OmegaConf.load(conf_path))
+
+        return configs
+
+
+
+T = TypeVar('T')
 
 @define
-class ConfigManager(object):
+class Config(object):
     """
     Singleton, project-wide manager of configuration files.
     """
 
-    config_types : Dict[Type, ConfigType] = field(factory=dict)
+    config_types : Dict[Type, ConfigData] = field(
+        factory=dict,
+        init=False,
+    )
     """ Dict of all the configuration types we manage """
 
-    config_dirs : List[Path] = field(factory=list)
+    config_dirs : List[Path] = field(
+        factory=list,
+        init=False,
+    )
     """ The search path of configuration directories """
+
+    mode_flags : List[str] = field(
+        factory=list,
+        init=False
+    )
+    """ The lode flags from lowest to highest priority """
 
     def __new__(cls):
         """
@@ -67,28 +159,75 @@ class ConfigManager(object):
         """
 
         if not hasattr(cls, 'instance'):
-            cls.instance = super(ConfigManager, cls).__new__(cls)
+            cls.instance = super(Config, cls).__new__(cls)
         return cls.instance
 
-    def __attrs__post_init__(self):
+    def __attrs_post_init__(self) -> None:
 
         # Read args (non-destructively)
+        parser = self._get_argparser()
+        (args, _) = parser.parse_known_args()
+
+        self.mode_flags = args.run_mode
+        self.config_dirs = [*self._get_conf_dir_chain(),*args.config_dir]
+
         # Load PathConfig
-        # Populate config_dirs
+        path_conf_data = ConfigData( # type: ignore[call-arg]
+            data_cls = PathConfig,
+            interpolation_key = PATHCONFIG_INTERPOLATION_KEY,
+            conf_file = PATHCONFIG_FILE_NAME,
+            conf_deps = [],
+            default_conf = OmegaConf.structured(PathConfig),
+            load_path = self._search_path(PATHCONFIG_FILE_NAME),
+            overrides = None,
+        )
+
+        # Register resolver
+        # OmegaConf.register_new_resolver(
+        #     PATHCONFIG_INTERPOLATION_KEY,
+        #     path_conf_data.resolver,
+        # )
+
         # Add PathConfig to config_types
+        self.config_types[PathConfig] = path_conf_data
 
-        raise NotImplementedError()
+    def _get_conf_dir_chain(self) -> List[Path]:
+        """
+        Returns the chain of config_dirs to load.
+        """
 
-    def config_search_path(self, config_file : Union[str,Path]) -> List[Path]:
+        current_dir = Path(PathConfig().config_dir)
+        conf_dirs = [current_dir]
+        path_conf = current_dir / PATHCONFIG_FILE_NAME
+
+        while current_dir and path_conf.is_file():
+            conf = OmegaConf.load(path_conf)
+            current_dir = OmegaConf.select(conf, "config_dir")
+            if current_dir:
+                current_dir = Path(current_dir)
+                conf_dirs.append(current_dir)
+                path_conf = current_dir / PATHCONFIG_FILE_NAME
+
+        return conf_dirs
+
+    def _search_path(self, config_file : Union[str,Path]) -> List[Path]:
         """
         Gives the search path to use for a particular file, with later paths
         over-riding earlier ones.
         """
 
-        raise NotImplementedError()
+        path_list = list()
 
+        for mode_flag in [None, *self.mode_flags]:
+            for conf_dir in self.config_dirs:
+                if not mode_flag:
+                    path_list.append(conf_dir / config_file)
+                else:
+                    path_list.append(conf_dir / mode_flag / config_file)
 
+        return path_list
 
+    @staticmethod
     def register(
             self,
             data_cls : Type,
@@ -113,12 +252,54 @@ class ConfigManager(object):
             conf_deps: The config classes used for interpolations in this one.
         """
 
+        Config()._register(
+            data_cls = data_cls,
+            interpolation_key = interpolation_key,
+            conf_file = conf_file,
+            conf_deps = conf_deps,
+        )
+
+
+    def _register(
+            self,
+            data_cls : Type,
+            interpolation_key : str,
+            conf_file : Union[str, Path],
+            conf_deps : List[Type] = []
+    ) -> None:
+        """
+        See register for details
+        """
+
         # If already registered error
+        if data_cls in self.config_types:
+            raise RuntimeError(
+                f"Class {data_cls.__name__} already registered with Config."
+            )
+
+        # Check dependent configs are installed
+        for par_cls in conf_deps:
+            if par_cls not in self.config_types:
+                raise RuntimeError(
+                    f"Dependent Config Class {par_cls.__name__} not registered."
+                )
+
         # Create object
+        class_data = ConfigData( # type: ignore[call-arg]
+            data_cls = data_cls,
+            interpolation_key = interpolation_key,
+            conf_file = conf_file,
+            conf_deps = conf_deps,
+            default_conf = None,
+            load_path = self._search_path(conf_file),
+            overrides = None,
+        )
 
-        raise NotImplementedError()
+        # Add to map
+        self.config_types[data_cls] = class_data
 
-    def get(self, data_cls : Type[T]) -> T:
+    @staticmethod
+    def get(data_cls : Type[T]) -> T:
         """
         Retrieves an OmegaConf object for the associated dataclass type.
 
@@ -128,12 +309,41 @@ class ConfigManager(object):
 
                 Note: this must have been previously registered.
         """
+        return Config()._get(data_cls)
 
-        raise NotImplementedError()
+    def _get(self, data_cls : Type[T]) -> T:
+        """
+        See get for details
+        """
 
-    def get_argparser(self) -> argparse.ArgumentParser:
+        return self.config_types[data_cls].config
+
+
+    def _get_argparser(self) -> argparse.ArgumentParser:
         """
         Get the arg parser for the conf_dir and run_mode options.
         """
 
-        raise NotImplementedError()
+        parser = argparse.ArgumentParser()
+
+        # Config dir argument
+        parser.add_argument(
+            "--config-dir",
+            action='append',
+            default=[],
+            type=Path,
+            required=False,
+            help="The directory containing all the config files used for this run.",
+        )
+
+        # Run Mode Argument
+        parser.add_argument(
+            "--run-mode",
+            action='append',
+            default=[],
+            type=Path,
+            required=False,
+            help="The mode in which this is being run, e.g. 'local', 'remote', or 'production'.",
+        )
+
+        return parser

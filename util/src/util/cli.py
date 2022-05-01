@@ -12,7 +12,10 @@
 """Module that contains the command line application."""
 
 import argparse
+from omegaconf import OmegaConf
 from typing import List, Optional
+from util.config.manager import Config
+from util.config.path_config import PathConfig
 
 
 def get_parser() -> argparse.ArgumentParser:
@@ -37,7 +40,8 @@ def main(args: Optional[List[str]] = None) -> int:
     Returns:
         An exit code.
     """
-    parser = get_parser()
-    opts = parser.parse_args(args=args)
-    print(opts)  # noqa: WPS421 (side-effect in main is fine)
+
+    # parser = get_parser()
+    opts = Config.get(PathConfig)
+    print(OmegaConf.to_yaml(opts))  # noqa: WPS421 (side-effect in main is fine)
     return 0
