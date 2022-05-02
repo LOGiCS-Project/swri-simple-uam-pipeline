@@ -45,3 +45,18 @@ subpackage_command_line_name:
   type: str
   help: Your CLI name if any (for use in the shell)
   default: "{{ subpackage_name|lower|replace('_', '-')|replace(' ', '-') }}"
+
+config_class_name:
+  type: str
+  help: The name of the configuration dataclass this module will use.
+  default: "{{ subpackage_import_name | capitalize() }}Config"
+
+config_file_name:
+  type: str
+  help: The name of the file where configuation info will be stored
+  default: "{{ subpackage_import_name }}.conf.yaml"
+
+config_interpolation_key:
+  type: str
+  help: The key which other config files can use to acess thos one.
+  default: "{{ subpackage_import_name }}"

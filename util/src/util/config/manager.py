@@ -189,6 +189,7 @@ class Config(object):
         (args, remainder) = parser.parse_known_args()
 
         # Update sys args w/ unused options
+        # sys.argv = remainder
 
         # Set path from args
         self.mode_flags = args.run_mode
@@ -465,12 +466,12 @@ class Config(object):
                 name="config-dir",
                 kind=str,
                 default=[],
-                help="The directory containing all the config files used for this run. Can be given multiple times.",
+                help="The directory containing all the config files used for this run.",
             ),
             Argument(
                 name="run-mode",
                 kind=str,
                 default=[],
-                help="The mode in which this is being run, e.g. 'local', 'remote', or 'production'. Can be given multiple times.",
+                help="The mode in which this is being run, e.g. 'local', 'remote', or 'production'.",
             ),
         ]

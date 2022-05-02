@@ -13,17 +13,14 @@
 
 import argparse
 from typing import List, Optional
+from .config import tasks, {{ config_class_name }}
 
-
-def get_parser() -> argparse.ArgumentParser:
+@task
+def example_task(ctx, arg):
     """
-    Return the CLI argument parser.
-
-    Returns:
-        An argparse parser.
+    An example task with one argument.
     """
-    return argparse.ArgumentParser(prog="{{ subpackage_command_line_name }}")
-
+    print(f"Example Task: {arg}")
 
 def main(args: Optional[List[str]] = None) -> int:
     """
@@ -37,7 +34,22 @@ def main(args: Optional[List[str]] = None) -> int:
     Returns:
         An exit code.
     """
-    parser = get_parser()
-    opts = parser.parse_args(args=args)
-    print(opts)  # noqa: WPS421 (side-effect in main is fine)
-    return 0
+
+    # Tasks initialized in this file
+    namespace = Collection(
+        example_task,
+    )
+
+    # Import tasks from other files/modules
+    namespace.add_collection(
+        Collection.from_module(tasks),
+        'config',
+    )
+
+    # Setup the invoke program runner class
+    program = InvokeProg(
+        namespace=namespace,
+        version="0.1.0",
+    )
+
+    return program.run()

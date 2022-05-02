@@ -76,13 +76,13 @@ def main(args: Optional[List[str]] = None) -> int:
         print_config,
     )
 
-    # Run the invoke main function
+    # Setup the invoke programm runner class
     program = InvokeProg(
         namespace=tasks,
         version="0.1.0",
     )
 
-    program.run()
+    return program.run()
 
     # parser = get_parser()
     # opts = Config.get(PathConfig)
