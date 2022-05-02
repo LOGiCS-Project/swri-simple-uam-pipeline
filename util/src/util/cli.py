@@ -76,7 +76,7 @@ def main(args: Optional[List[str]] = None) -> int:
         print_config,
     )
 
-    # Setup the invoke programm runner class
+    # Setup the invoke program runner class
     program = InvokeProg(
         namespace=tasks,
         version="0.1.0",

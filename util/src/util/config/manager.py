@@ -179,10 +179,18 @@ class Config(object):
         """
 
         if not hasattr(cls, 'instance'):
-            cls.instance = super(Config, cls).__new__(cls)
+            instance = super(Config, cls).__new__(cls)
+            instance.__init__()
+            instance.__attrs_init__()
+            instance.__post_init__()
+            cls.instance = instance
+
         return cls.instance
 
-    def __attrs_post_init__(self) -> None:
+    def __init__(self):
+        pass
+
+    def __post_init__(self) -> None:
 
         # Read args (non-destructively)
         parser = self._get_argparser()
@@ -216,11 +224,14 @@ class Config(object):
         self._add_conf_data(path_conf_data)
 
     def _add_conf_data(self, conf_data : ConfigData) -> None:
+
         data_cls = conf_data.data_cls
+        # print(f"registering: {data_cls}")
         self.config_types[data_cls] = conf_data
         self.key_map[conf_data.interpolation_key] = data_cls
         self.file_map[conf_data.conf_file] = data_cls
         self.name_map[data_cls.__name__] = data_cls
+        # print(f"registering: {self.name_map.keys()}")
 
     def _get_conf_dir_chain(self) -> List[Path]:
         """

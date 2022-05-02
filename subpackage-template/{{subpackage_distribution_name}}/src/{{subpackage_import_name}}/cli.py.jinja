@@ -13,6 +13,7 @@
 
 import argparse
 from typing import List, Optional
+from util.invoke import task, Collection, InvokeProg
 from .config import tasks, {{ config_class_name }}
 
 @task
@@ -34,6 +35,7 @@ def main(args: Optional[List[str]] = None) -> int:
     Returns:
         An exit code.
     """
+
 
     # Tasks initialized in this file
     namespace = Collection(

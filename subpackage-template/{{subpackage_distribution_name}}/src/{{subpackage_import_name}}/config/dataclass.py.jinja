@@ -14,6 +14,6 @@ class {{ config_class_name }}():
 Config.register(
     {{ config_class_name }},
     interpolation_key = "{{ config_interpolation_key }}",
-    conf_file = "{{ config_file_name }},
+    conf_file = "{{ config_file_name }}",
     conf_deps = [PathConfig],
 )
