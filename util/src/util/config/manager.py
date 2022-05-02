@@ -5,7 +5,9 @@ from omegaconf import  OmegaConf
 from pathlib import Path
 import functools
 import argparse
+import sys
 from .path_config import PathConfig, PATHCONFIG_INTERPOLATION_KEY, PATHCONFIG_FILE_NAME
+from invoke import Program, Argument
 
 @define
 class ConfigData():
@@ -140,6 +142,24 @@ class Config(object):
     )
     """ Dict of all the configuration types we manage """
 
+    key_map : Dict[str, Type] = field(
+        factory=dict,
+        init=False,
+    )
+    """ Dict of interpolation keys we manage."""
+
+    name_map : Dict[str, Type] = field(
+        factory=dict,
+        init=False,
+    )
+    """ Dict from type name to key map."""
+
+    file_map : Dict[str, Type] = field(
+        factory=dict,
+        init=False,
+    )
+    """ Dict from file name to key map."""
+
     config_dirs : List[Path] = field(
         factory=list,
         init=False,
@@ -166,8 +186,11 @@ class Config(object):
 
         # Read args (non-destructively)
         parser = self._get_argparser()
-        (args, _) = parser.parse_known_args()
+        (args, remainder) = parser.parse_known_args()
 
+        # Update sys args w/ unused options
+
+        # Set path from args
         self.mode_flags = args.run_mode
         self.config_dirs = [*self._get_conf_dir_chain(),*args.config_dir]
 
@@ -177,7 +200,7 @@ class Config(object):
             interpolation_key = PATHCONFIG_INTERPOLATION_KEY,
             conf_file = PATHCONFIG_FILE_NAME,
             conf_deps = [],
-            default_conf = OmegaConf.structured(PathConfig),
+            default_conf = OmegaConf.structured(PathConfig()),
             load_path = self._search_path(PATHCONFIG_FILE_NAME),
             overrides = None,
         )
@@ -189,7 +212,14 @@ class Config(object):
         # )
 
         # Add PathConfig to config_types
-        self.config_types[PathConfig] = path_conf_data
+        self._add_conf_data(path_conf_data)
+
+    def _add_conf_data(self, conf_data : ConfigData) -> None:
+        data_cls = conf_data.data_cls
+        self.config_types[data_cls] = conf_data
+        self.key_map[conf_data.interpolation_key] = data_cls
+        self.file_map[conf_data.conf_file] = data_cls
+        self.name_map[data_cls.__name__] = data_cls
 
     def _get_conf_dir_chain(self) -> List[Path]:
         """
@@ -227,9 +257,51 @@ class Config(object):
 
         return path_list
 
-    @staticmethod
+    @classmethod
+    def configs(cls) -> List[Type]:
+        """
+        Returns a list of config dataclass types
+        """
+        return list(cls().config_types.keys())
+
+    @classmethod
+    def config_names(cls) -> List[str]:
+        """
+        Returns a list of config dataclass type names
+        """
+        return list(cls().name_map.keys())
+
+    @classmethod
+    def config_files(cls) -> List[str]:
+        """
+        Returns a list of config dataclass file locs. (relative to config dir
+        root)
+        """
+        return list(cls().file_map.keys())
+
+    @classmethod
+    def config_keys(cls) -> List[str]:
+        """
+        Returns a list of config dataclass interpolation keys
+        """
+        return list(cls().key_map.keys())
+
+    @classmethod
+    def load_path(cls, data_cls : Union[str,Type]) -> List[Path]:
+        """
+        returns the list of files that are loaded for a given config dataclass.
+        """
+        return cls()._load_path(data_cls)
+
+    def _load_path(self, data_cls : Union[str,Type]) -> List[Path]:
+        """
+        returns the list of files that are loaded for a given config dataclass.
+        """
+        return self.config_types[self._get_config_class(data_cls)].load_path
+
+    @classmethod
     def register(
-            self,
+            cls,
             data_cls : Type,
             interpolation_key : str,
             conf_file : Union[str, Path],
@@ -252,7 +324,7 @@ class Config(object):
             conf_deps: The config classes used for interpolations in this one.
         """
 
-        Config()._register(
+        cls()._register(
             data_cls = data_cls,
             interpolation_key = interpolation_key,
             conf_file = conf_file,
@@ -296,30 +368,64 @@ class Config(object):
         )
 
         # Add to map
-        self.config_types[data_cls] = class_data
+        self._add_conf_data(class_data)
 
-    @staticmethod
-    def get(data_cls : Type[T]) -> T:
+    @classmethod
+    def _get_config_class(cls, key : Union[str,Type]) -> Type:
+        """
+        Unpacks the key based on its type and value to find the appropriate
+        config class.
+        """
+        inst = cls()
+
+        if isinstance(key, str):
+            if key in inst.name_map:
+                data_cls = inst.name_map[key]
+            elif key in inst.file_map:
+                data_cls = inst.file_map[key]
+            elif key in inst.key_map:
+                data_cls = inst.key_map[key]
+            else:
+                RuntimeError(f"Config with key {key} not found.")
+        else:
+            data_cls = key
+
+        return data_cls
+
+    @classmethod
+    def get(cls, key : Union[str,Type[T]]) -> T:
         """
         Retrieves an OmegaConf object for the associated dataclass type.
 
         Arguments:
-            data_cls: The dataclass or attrs class that represents the
+            key: The dataclass or attrs class that represents the
                 contents of the file.
 
                 Note: this must have been previously registered.
         """
-        return Config()._get(data_cls)
+        return cls()._get(key)
 
-    def _get(self, data_cls : Type[T]) -> T:
+    def _get(self, key : Union[str,Type[T]]) -> T:
         """
         See get for details
         """
 
-        return self.config_types[data_cls].config
+        return self.config_types[self._get_config_class(key)].config
 
+    def __getitem__(self, key : Union[str,Type[T]]) -> T:
+        """
+        See get for details
+        """
+        return self._get(key)
 
-    def _get_argparser(self) -> argparse.ArgumentParser:
+    def __class_getitem__(cls, key : Union[str,Type[T]]) -> T:
+        """
+        See get for details
+        """
+        return cls.get(key)
+
+    @staticmethod
+    def _get_argparser() -> argparse.ArgumentParser:
         """
         Get the arg parser for the conf_dir and run_mode options.
         """
@@ -333,7 +439,7 @@ class Config(object):
             default=[],
             type=Path,
             required=False,
-            help="The directory containing all the config files used for this run.",
+            help="The directory containing all the config files used for this run. Can be given multiple times.",
         )
 
         # Run Mode Argument
@@ -343,7 +449,28 @@ class Config(object):
             default=[],
             type=Path,
             required=False,
-            help="The mode in which this is being run, e.g. 'local', 'remote', or 'production'.",
+            help="The mode in which this is being run, e.g. 'local', 'remote', or 'production'. Can be given multiple times.",
         )
 
         return parser
+
+    @staticmethod
+    def _invoke_args() -> List[Argument]:
+        """
+        Arguments to be used with an invoke Program class
+        """
+
+        return [
+            Argument(
+                name="config-dir",
+                kind=str,
+                default=[],
+                help="The directory containing all the config files used for this run. Can be given multiple times.",
+            ),
+            Argument(
+                name="run-mode",
+                kind=str,
+                default=[],
+                help="The mode in which this is being run, e.g. 'local', 'remote', or 'production'. Can be given multiple times.",
+            ),
+        ]

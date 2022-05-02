@@ -16,6 +16,8 @@ dependencies = [
     "platformdirs>=2.5.2",
     "omegaconf>=2.2.0",
     "attrs>=21.4.0",
+    "setuptools>=62.1.0",
+    "invoke>=1.7.0",
 ]
 
 [project.scripts]

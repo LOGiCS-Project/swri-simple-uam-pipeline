@@ -8,7 +8,6 @@ channels:
 dependencies:
   - python=3.9 # Some packages don't support 3.10
   ## Environment and Package Management ##
-  - setuptools
   - pdm
   - pre-commit
   - pip
@@ -16,8 +15,13 @@ dependencies:
       - invoke
       - copier
       - markupsafe==2.0.1
+      - setuptools>=62.0.0
   ## 3D Modeling and Cad ##
   # - cadquery::CadQuery=master
   # - cq-editor::CadQuery=master
   # - occt::CadQuery
   # - pythonocc-core
+
+variables:
+  # Removes the "Setuptools is replacing distutils." warning.
+  SETUPTOOLS_USE_DISTUTILS: stdlib

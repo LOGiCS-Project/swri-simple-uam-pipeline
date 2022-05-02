@@ -3,14 +3,14 @@ from platformdirs import PlatformDirs
 from pathlib import Path
 from omegaconf import OmegaConf
 
-dirs = PlatformDirs("SimpleUAM")
-
 PATHCONFIG_INTERPOLATION_KEY = "path"
 PATHCONFIG_FILE_NAME = "paths.conf.yaml"
+APP_NAME = "SimpleUAM"
+
+dirs = PlatformDirs(APP_NAME)
 
 @define
 class PathConfig():
-
 
     config_dir  : str = field(
         default = dirs.user_config_dir,

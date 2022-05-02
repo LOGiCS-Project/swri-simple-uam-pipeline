@@ -14,18 +14,44 @@
 import argparse
 from omegaconf import OmegaConf
 from typing import List, Optional
-from util.config.manager import Config
-from util.config.path_config import PathConfig
+from util.config import Config, PathConfig
+from util.invoke import task, Collection, InvokeProg
 
-
-def get_parser() -> argparse.ArgumentParser:
+@task
+def config_classes(ctx):
     """
-    Return the CLI argument parser.
-
-    Returns:
-        An argparse parser.
+    Prints a list of registered configuration classes
     """
-    return argparse.ArgumentParser(prog="simpleuam-utils")
+    print(Config.config_names())
+
+@task
+def config_keys(ctx):
+    """
+    Prints a list of interpolation keys for available config classes
+    """
+    print(Config.config_keys())
+
+@task
+def config_files(ctx):
+    """
+    Prints a list of file locations (relative to config_dir) for config classes.
+    """
+    print(Config.config_files())
+
+@task
+def config_path(ctx, key):
+    """
+    Prints the list of files examined when loading a particular config
+    """
+    print(Config.load_path(key))
+
+@task
+def print_config(ctx, key):
+    """
+    Prints the currently loaded config data for a given class.
+    """
+    opts = Config.get(key)
+    print(OmegaConf.to_yaml(opts))  # noqa: WPS421 (side-effect in main is fine)
 
 
 def main(args: Optional[List[str]] = None) -> int:
@@ -41,7 +67,26 @@ def main(args: Optional[List[str]] = None) -> int:
         An exit code.
     """
 
+    # Tasks initialized in this file
+    tasks = Collection(
+        config_classes,
+        config_keys,
+        config_files,
+        config_path,
+        print_config,
+    )
+
+    # Run the invoke main function
+    program = InvokeProg(
+        namespace=tasks,
+        version="0.1.0",
+    )
+
+    program.run()
+
     # parser = get_parser()
-    opts = Config.get(PathConfig)
-    print(OmegaConf.to_yaml(opts))  # noqa: WPS421 (side-effect in main is fine)
+    # opts = Config.get(PathConfig)
+    # print(Config.configs())
+    # print(Config.load_path(PathConfig))
+    # print(OmegaConf.to_yaml(opts))  # noqa: WPS421 (side-effect in main is fine)
     return 0
