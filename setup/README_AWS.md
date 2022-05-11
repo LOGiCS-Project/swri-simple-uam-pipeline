@@ -107,6 +107,7 @@ you generally want to only have more stable code running.)
     - `sudo apt-get -y install nfs-common`
     - `mkdir fsx`
     - `sudo mount -t nfs -o nfsvers=4.1 10.0.20.223:/fsx/ fsx`
+    - Consider using nfs caching and async. (google for details)
 
   - Attach on Windows (change IP to new FSx interface)
     - Open `cmd.exe` as admin (Not powershell)
