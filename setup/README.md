@@ -5,41 +5,16 @@ Performs various setup tasks for workers and server nodes.
 Instructions for each type of server are in the corresponding README_*.md files
 in this directory.
 
-**Note:** This entire file assumes you're already within this project's conda env.
+  - [AWS Instructions](README_AWS.md): Do this first if you're using AWS to
+    host the various servers.
+  - [License Server](README_LICENSE.md): Instructions for setting up a CREO
+    license server. (Still in old form, needs updating)
+  - [Worker Server](README_WORKER.md): Instructions for setting up a worker
+    node, at least the basic prerequisites.
+    Instructions specific to a particular sub-package will be in that
+    sub-package.
 
-## Setup
-
-Run `invoke setup` while in `<repo_root>/simpleuam-setup`.
-
-## Installation
-
-To use this package as a dependency in other subpackages add the following line
-to the dependencies field of `pyproject.toml`:
-
-```toml
-    "-e ./../simpleuam-setup",
-```
-
-Other relative dependencies need to be added in the same way, by direcctly adding
-the path (prefixed with `./`) to the `pyproject.toml`.
-
-Then run `invoke setup` or, equivalently, `pdm install`.
-
-From there you should be able to import modules as normal, e.g.:
-
-```python
-import setup
-```
-
-## Usage
-
-Run the command defined in `setup.cli:main` as follows:
-
-```bash
-pdm run setup <args>
-```
-
-## Subproject Organization
+## Subproject Organization (Needs updating)
 
 ```
 <repo_root>
