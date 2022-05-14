@@ -13,7 +13,10 @@ class WorkerSetupConfig():
         'sed',
         'openjdk11',
         'openmodelica',
-        'putty'
+        'putty',
+        'checksum',
+        'wget',
+        '7zip',
     ]
     """
     Packages that are needed for worker setup, please only add items to the

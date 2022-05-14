@@ -11,17 +11,11 @@
 
 """Module that contains the command line application."""
 
-import argparse
 from typing import List, Optional
 from util.invoke import task, Collection, InvokeProg
-from .config import tasks, SetupConfig
-
-@task
-def example_task(ctx, arg):
-    """
-    An example task with one argument.
-    """
-    print(f"Example Task: {arg}")
+from ..config import tasks, WorkerSetupConfig
+import setup.worker.choco
+import setup.worker.gui_installers
 
 def main(args: Optional[List[str]] = None) -> int:
     """
@@ -38,7 +32,18 @@ def main(args: Optional[List[str]] = None) -> int:
 
     # Tasks initialized in this file
     namespace = Collection(
-        example_task,
+    )
+
+    # Import tasks from other files/modules
+    namespace.add_collection(
+        Collection.from_module(setup.worker.choco),
+        'choco',
+    )
+
+    # Import tasks from other files/modules
+    namespace.add_collection(
+        Collection.from_module(setup.worker.gui_installers),
+        'install',
     )
 
     # Import tasks from other files/modules

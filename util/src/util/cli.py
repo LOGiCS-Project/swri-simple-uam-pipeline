@@ -16,6 +16,33 @@ from omegaconf import OmegaConf
 from typing import List, Optional
 from util.config import Config, PathConfig
 from util.invoke import task, Collection, InvokeProg
+from util.logging import get_logger
+
+log = get_logger(__name__)
+
+@task
+def test_logging(ctx):
+    """
+    A quick test of logging code.
+    """
+
+    log.debug("debugging is hard", a_list=[1, 2, 3])
+    log.info("informative!", some_key="some_value")
+    log.warning("uh-uh!")
+    log.error("omg", a_dict={"a": 42, "b": "foo"})
+    log.critical("wtf")
+
+    def make_call_stack_more_impressive():
+        try:
+            d = {"x": 42}
+            print(SomeClass(d["y"], "foo"))
+        except Exception as err:
+            log.exception("poor me", ex = err)
+        log.info("all better now!", stack_info=True)
+
+    make_call_stack_more_impressive()
+
+    log.info("done-now")
 
 @task
 def config_classes(ctx):
@@ -74,6 +101,7 @@ def main(args: Optional[List[str]] = None) -> int:
         config_files,
         config_path,
         print_config,
+        test_logging,
     )
 
     # Setup the invoke program runner class

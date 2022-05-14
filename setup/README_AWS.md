@@ -101,6 +101,18 @@ you generally want to only have more stable code running.)
       - VPC: (Our base VPC)
       - Subnet: (Private Subnet)
 
+  - Set permissions to maximally open:
+    - From FSx control panel open up the newly created volume.
+    - Actions -> Update Volume
+    - **NFS Exports:**
+      - **Client Address:** *
+      - **NFS Options:** rw,no_auth_nlm,all_squash,anonuid=0,anongid=0,crossmnt
+    - This will give all users root access to the drive and is horrible insecure
+      but very convenient if you're using the drive to bridge between a local
+      machine and a cloud VM.
+      - Under no circumstances should you use these options if the interface
+        is accessible from the public internet.
+
   - Attach Fsx ON Linux (change IP to appropriate for new FSx interface)
     - Get IP for FSx via network interface
       - IP: 10.0.20.223

@@ -8,7 +8,6 @@ channels:
 dependencies:
   - python=3.9 # Some packages don't support 3.10
   ## Environment and Package Management ##
-  - pdm
   - pre-commit
   - pip
   - pip:
@@ -16,6 +15,7 @@ dependencies:
       - copier
       - markupsafe==2.0.1
       - setuptools>=62.0.0
+      - pdm
   ## 3D Modeling and Cad ##
   # - cadquery::CadQuery=master
   # - cq-editor::CadQuery=master

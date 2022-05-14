@@ -28,7 +28,7 @@ Create a new instance in the AWS Console with the following settings:
     - **Firewall:** Select existing security group
       - **Common Security Groups:** <aws-security-group>
     - **Advanced Network Configuration:** None
-  - **Configure Storage:** 1x 50gb gp2
+  - **Configure Storage:** 1x 100gb gp2
   - **Advanced details:**
     - **Elastic GPU:** eg1.medium
 
@@ -103,49 +103,72 @@ From here <repo-root> will refer to the repo's location.
 
 Setup the conda env for this repo.
 
-  - Open admin powershell to <repo-root> and run:
-    - `conda env create -f environment.yml`
+  - Update the base conda env:
+    - Open: Start Menu -> Anaconda 3 -> Anaconda Powershell Prompt (right-click run as admin)
+    - Run: `conda update -n base -c defaults conda`
+  - Create the project env:
+    - Navigate to <repo-root>
+    - Run: `conda env create -f environment.yml`
 
 For all future steps use an admin powershell with the conda env running.
 
   - Enter the conda env:
     - Open: Start Menu -> Anaconda 3 -> Anaconda Powershell Prompt (right-click run as admin)
-    - `conda activate simple-uam`
+    - Run: `conda activate simple-uam`
 
-# OLD
+### Initialize Setup Package
 
-Make sure you have access to this repo somewhere on the new machine.
+Initalize pdm and packages for worker setup.
 
-  - Setup Chocolatey: (admin powershell)
-    - `D:\src\chocolatey\setup.ps1`
-    - `RefreshEnv.cmd`
-  - Setup Python: (admin powershell)
-    - `choco install python --version=3.10.0 -y`
-    - Close shell
-  - Install Utilities, QoL, and Dependency Apps:
-    - Open new admin powershell
-    - `cd D:`
-    - `python -m setup_aws_worker --run utils qol deps`
-      - Get a sandwich, this step is slow and hand-free.
-    - Reboot here
-    - In admin powershell:
-    - `Add-PoshGitToProfile -AllHosts`
-    - double-click and run `D:/misc/ContextMenuAdminTess.reg` to setup
-      file explorer ctxt menu option to open admin terminal
-  - Install OpenMeta:
-    - `cd D:`
-    - `python -m setup_aws_worker --run openmeta`
-    - follow prompts on gui installer
-  - Install Python Packages:
-    - `cd D:`
-    - `python -m setup_aws_worker --run pip-pkgs openmeta-pip-pkgs`
-  - Install Matlab Runtime:
-    - `cd D:`
-    - `python -m setup_aws_worker --run matlab`
-    - follow prompt on gui installer
-  - Install Creo:
-    - `cd D:`
-    - `python -m setup_aws_worker --run creo`
-    - follow prompt on gui installer
-    - Use `7788@10.0.20.142` as the license address. (Use IP of the license node)
-    - turn off data collection
+  - Open admin conda env at `<repo_root>\setup`
+  - Setup sub-package pdm environment:
+    - Run: `invoke setup`
+    - **Or** run: `pdm install -d`
+  - Test whether setup script was installed:
+    - Run: `pdm run worker-setup --list`
+
+### Setup Chocolatey Packages
+
+Uses Chocolatey to setup various dependencies and quality of life packages.
+
+  - Open admin conda env at `<repo_root>\setup`
+  - Install all packages:
+    - Run: `pdm run worker-setup choco.install-all`
+  - **Or** install only dependencies:
+    - Run: `pdm run worker-setup choco.install-deps`
+  - **(Optional)** Setup posh-git:
+    - This will only add the posh-git prompt to a normal powershell session,
+      installing it within a conda environment would require modifying the
+      conda-hook script.
+    - This requires that the quality of life packages are installed, which
+      is normally part of running `choco.install-all` but can be done separately
+      with: `pdm run worker-setup choco.install-qol`
+    - Run: `pdm run worker-setup choco.activate-poshgit`
+
+### Install Matlab Runtime
+
+Downloads and installs the Matlab Runtime 2020b.
+
+  - Open admin conda env at `<repo_root>\setup`
+  - Run: `pdm run worker-setup install.matlab`
+  - Read instructions in terminal and hit enter when ready.
+  - Follow installer prompts until done.
+
+### Install OpenMETA
+
+Downloads and installs OpenMETA.
+
+  - Open admin conda env at `<repo_root>\setup`
+  - Run: `pdm run worker-setup install.openmeta`
+  - Read instructions in terminal and hit enter when ready.
+  - Follow installer prompts until done.
+
+### Install Creo
+
+Downloads and installs PTC Creo 5.6.
+
+  - Open admin conda env at `<repo_root>\setup`
+  - If using a local license file have it accessible on the target machine.
+  - Run: `pdm run worker-setup install.creo`
+  - Read instructions in terminal and hit enter when ready.
+  - Follow installer prompts until done.

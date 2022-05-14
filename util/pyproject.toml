@@ -18,6 +18,9 @@ dependencies = [
     "attrs>=21.4.0",
     "setuptools>=62.1.0",
     "invoke>=1.7.0",
+    "structlog>=21.5.0",
+    "rich>=12.4.1",
+    "colorama>=0.4.4",
 ]
 
 [project.scripts]
