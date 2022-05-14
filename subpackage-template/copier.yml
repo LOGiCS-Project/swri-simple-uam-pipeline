@@ -1,0 +1,62 @@
+# CONFIGURATION -------------------------
+_min_copier_version: "5.1.0"
+_envops:
+  autoescape: false
+  block_end_string: "%}"
+  block_start_string: "{%"
+  comment_end_string: "#}"
+  comment_start_string: "{#"
+  keep_trailing_newline: true
+  variable_end_string: "}}"
+  variable_start_string: "{{"
+_templates_suffix: .jinja
+_exclude:
+  - "TEMPLATE_README.md"
+  - "copier.yml"
+
+# PROMPT --------------------------------
+subpackage_name:
+  type: str
+  help: The name of your new subpackage.
+
+subpackage_description:
+  type: str
+  help: A description of your new subpackage.
+
+author_fullname:
+  type: str
+  help: Your full name
+
+author_email:
+  type: str
+  help: Your email
+
+subpackage_distribution_name:
+  type: str
+  help: Your subpackage's distribution name (for `pip install NAME`)
+  default: "{{ subpackage_name|lower|replace('_', '-')|replace(' ', '-') }}"
+
+subpackage_import_name:
+  type: str
+  help: Your subpackage's import name (for `import NAME` in Python code)
+  default: "{{ subpackage_name|lower|replace('-', '_')|replace(' ', '_') }}"
+
+subpackage_command_line_name:
+  type: str
+  help: Your CLI name if any (for use in the shell)
+  default: "{{ subpackage_name|lower|replace('_', '-')|replace(' ', '-') }}"
+
+config_class_name:
+  type: str
+  help: The name of the configuration dataclass this module will use.
+  default: "{{ subpackage_import_name | capitalize() }}Config"
+
+config_file_name:
+  type: str
+  help: The name of the file where configuation info will be stored
+  default: "{{ subpackage_import_name }}.conf.yaml"
+
+config_interpolation_key:
+  type: str
+  help: The key which other config files can use to acess thos one.
+  default: "{{ subpackage_import_name }}"

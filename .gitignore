@@ -70,7 +70,7 @@ instance/
 
 # Sphinx documentation
 docs/_build/
-
+docs/site
 # PyBuilder
 target/
 
@@ -127,3 +127,12 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+.vscode/
+caches/
+.idea/
+__pypackages__
+.pdm.toml
+temp.py
+
+# Pyannotate generated stubs
+type_info.json
