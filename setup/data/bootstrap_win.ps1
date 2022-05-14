@@ -11,6 +11,5 @@ choco upgrade git -y
 choco upgrade python -y
 choco upgrade miniconda3 --params="'/AddToPath:1'" -y
 choco upgrade git-lfs -y
-choco upgrade tortoisegit -y
 choco upgrade wget -y
 choco upgrade 7zip -y

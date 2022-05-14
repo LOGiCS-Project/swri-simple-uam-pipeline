@@ -83,7 +83,7 @@ miniconda3.
 This step is idempotent and will just do nothing if these are all installed.
 
   - Open admin powershell and run:
-    - `iwr -Uri https://raw.githubusercontent.com/LOGiCS-Project/swri-simple-uam-pipeline/feature/initial-setup/setup/data/bootstrap_win.ps1 iex`
+    - `iwr -Uri https://raw.githubusercontent.com/LOGiCS-Project/swri-simple-uam-pipeline/feature/initial-setup/setup/data/bootstrap_win.ps1 | iex`
   - Close this powershell terminal and open new ones for future steps.
 
 ### Get This Repo
@@ -126,6 +126,7 @@ Initalize pdm and packages for worker setup.
     - **Or** run: `pdm install -d`
   - Test whether setup script was installed:
     - Run: `pdm run worker-setup --list`
+  - Reboot server
 
 ### Setup Chocolatey Packages
 

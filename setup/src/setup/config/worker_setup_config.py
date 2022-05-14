@@ -17,6 +17,7 @@ class WorkerSetupConfig():
         'checksum',
         'wget',
         '7zip',
+        'git-lfs',
     ]
     """
     Packages that are needed for worker setup, please only add items to the
@@ -33,6 +34,7 @@ class WorkerSetupConfig():
         'poshgit',
         'openscad',
         'freecad',
+        'tortoisegit',
     ]
     """
     Quality of life packages that make actually using a worker node
