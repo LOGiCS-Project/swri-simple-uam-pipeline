@@ -85,7 +85,7 @@ def append_to_file(file_path, lines):
     # Filter out lines already in the file
     with file_path.open('r') as f:
         file_lines = f.readlines()
-        lines = [line for line in inles if line not in file_lines]
+        lines = [line for line in lines if line not in file_lines]
 
     # Write out new lines if needed
     if lines != []:
