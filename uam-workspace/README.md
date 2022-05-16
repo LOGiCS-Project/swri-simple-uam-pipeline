@@ -1,12 +1,14 @@
 # UAM Workspace
 
-The workpace and processing for the athens-uav-workflows
+The workpace and processing for the athens-uav-workflows.
 
 **Note:** This entire file assumes you're already within this project's conda env.
 
 ## Setup
 
 Run `invoke setup` while in `<repo_root>/uam-workspace`.
+
+
 
 ## Installation
 
