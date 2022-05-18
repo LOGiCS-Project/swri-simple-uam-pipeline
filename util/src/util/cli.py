@@ -15,6 +15,7 @@ import argparse
 from omegaconf import OmegaConf
 from typing import List, Optional
 from util.config import Config, PathConfig
+import util.config.tasks
 from util.invoke import task, Collection, InvokeProg
 from util.logging import get_logger
 
@@ -44,41 +45,6 @@ def test_logging(ctx):
 
     log.info("done-now")
 
-@task
-def config_classes(ctx):
-    """
-    Prints a list of registered configuration classes
-    """
-    print(Config.config_names())
-
-@task
-def config_keys(ctx):
-    """
-    Prints a list of interpolation keys for available config classes
-    """
-    print(Config.config_keys())
-
-@task
-def config_files(ctx):
-    """
-    Prints a list of file locations (relative to config_dir) for config classes.
-    """
-    print(Config.config_files())
-
-@task
-def config_path(ctx, key):
-    """
-    Prints the list of files examined when loading a particular config
-    """
-    print(Config.load_path(key))
-
-@task
-def print_config(ctx, key):
-    """
-    Prints the currently loaded config data for a given class.
-    """
-    opts = Config.get(key)
-    print(OmegaConf.to_yaml(opts))  # noqa: WPS421 (side-effect in main is fine)
 
 
 def main(args: Optional[List[str]] = None) -> int:
@@ -96,12 +62,13 @@ def main(args: Optional[List[str]] = None) -> int:
 
     # Tasks initialized in this file
     tasks = Collection(
-        config_classes,
-        config_keys,
-        config_files,
-        config_path,
-        print_config,
         test_logging,
+    )
+
+    # Import tasks from other files/modules
+    namespace.add_collection(
+        Collection.from_module(util.config.tasks),
+        'config',
     )
 
     # Setup the invoke program runner class
