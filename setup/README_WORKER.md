@@ -1,32 +1,32 @@
 # Windows Worker Setup
 
-AWS only and shared setup for the license server.
+AWS only and shared setup for worker nodes.
 
-**Note:** Things in angle brackets <like-this> are placeholders to be filled in
+**Note:** Things in angle brackets `<like-this>` are placeholders to be filled in
 by the user.
 
 ## AWS Instance Setup
 
 Make sure you've followed the instructions [here](README_AWS.md) first.
-Fields created in that section will be prefixed with 'aws', e.g. <aws-keypair>.
+Fields created in that section will be prefixed with 'aws', e.g. `<aws-keypair>`.
 
 ### Provision Worker (AWS)
 
-Create a new instance in the AWS Console with the following settings:
+Create a new instance in the AWS Console with the following **minimum** settings:
 
-  - **Name:** <instance-name>
+  - **Name:** `<instance-name>`
   - **Application and OS Images:** Quick Start -> Windows
     - Microsoft Windows Server 2019 Base
   - **Instance Type:** t2.large
     - 2x vCPU
     - 8gb Memory
-  - **Key Pair:** <aws-keypair>
+  - **Key Pair:** `<aws-keypair>`
   - **Network Settings:**
-    - **VPC:** <aws-vpc>
-    - **Subnet:** <aws-private-subnet>
+    - **VPC:** `<aws-vpc>`
+    - **Subnet:** `<aws-private-subnet>`
     - **Auto-assign Public IP:** Disable
     - **Firewall:** Select existing security group
-      - **Common Security Groups:** <aws-security-group>
+      - **Common Security Groups:** `<aws-security-group>`
     - **Advanced Network Configuration:** None
   - **Configure Storage:** 1x 100gb gp2
   - **Advanced details:**
@@ -40,24 +40,24 @@ Get Worker connection information
  - Hit the Connect Button
  - Connect to Instance -> RDP Client
  - Keep note of:
-   - **Private IP:** <worker-ip>
-   - **Username:** <worker-user>
+   - **Private IP:** `<worker-ip>`
+   - **Username:** `<worker-user>`
    - **RDP File:**
      - Click "Download remote desktop file"
-     - Save to <worker-rdp-file>
+     - Save to `<worker-rdp-file>`
    - **Password:**
      - Click "Get Password"
-     - Upload <aws-keypair>.pem
+     - Upload `<aws-keypair>`.pem
      - Click "Decrypt Password"
-     - Save to <worker-rdp-pass>
+     - Save to `<worker-rdp-pass>`
 
 Connect to worker:
 
   - Via Preferred RDP client (e.g. Remmina):
-    - **Import:** <worker-rdp-file>
-    - **IP:** <worker-ip>
-    - **Username:** <worker-user>
-    - **Password:** <worker-rdp-pass>
+    - **Import:** `<worker-rdp-file>`
+    - **IP:** `<worker-ip>`
+    - **Username:** `<worker-user>`
+    - **Password:** `<worker-rdp-pass>`
 
 ### Initial Worker Setup (AWS)
 
@@ -69,7 +69,7 @@ AWS specific worker setup.
     - https://docs.aws.amazon.com/fsx/latest/WindowsGuide/using-file-shares.html#map-share-windows
     - Open Map Network Drive:
       - Drive: D:
-      - Folder: \\<aws-fsx-ip>\fsx\
+      - Folder: `\\<aws-fsx-ip>\fsx\`
       - Reconnect At Login: Yes
 
 ## Worker Setup
@@ -97,7 +97,7 @@ without constant pushing and pulling.
   - **Option 2:** Clone from Github (SSH):
     - `git clone git@github.com:LOGiCS-Project/swri-simple-uam-pipeline.git`
 
-From here <repo-root> will refer to the repo's location.
+From here `<repo-root>` will refer to the repo's location.
 
 ### Setup Conda Env
 
@@ -107,7 +107,7 @@ Setup the conda env for this repo.
     - Open: Start Menu -> Anaconda 3 -> Anaconda Powershell Prompt (right-click run as admin)
     - Run: `conda update -n base -c defaults conda`
   - Create the project env:
-    - Navigate to <repo-root>
+    - Navigate to `<repo-root>`
     - Run: `conda env create -f environment.yml`
 
 For all future steps use an admin powershell with the conda env running.
@@ -125,7 +125,7 @@ Initalize pdm and packages for worker setup.
     - Run: `invoke setup`
     - **Or** run: `pdm install -d`
   - Test whether setup script was installed:
-    - Run: `pdm run worker-setup --list`
+    - Run: `pdm run setup --help`
   - Reboot server
 
 ### Setup Chocolatey Packages
@@ -133,25 +133,17 @@ Initalize pdm and packages for worker setup.
 Uses Chocolatey to setup various dependencies and quality of life packages.
 
   - Open admin conda env at `<repo_root>\setup`
-  - Install all packages:
-    - Run: `pdm run worker-setup choco.install-all`
-  - **Or** install only dependencies:
-    - Run: `pdm run worker-setup choco.install-deps`
-  - **(Optional)** Setup posh-git:
-    - This will only add the posh-git prompt to a normal powershell session,
-      installing it within a conda environment would require modifying the
-      conda-hook script.
-    - This requires that the quality of life packages are installed, which
-      is normally part of running `choco.install-all` but can be done separately
-      with: `pdm run worker-setup choco.install-qol`
-    - Run: `pdm run worker-setup choco.activate-poshgit`
+  - Install dependencies:
+    - Run: `pdm run setup install.dep-pkgs`
+  - **(Optional)** Install Quality of Life Packages:
+    - Run: `pdm run setup install.qol-pkgs`
 
 ### Install Matlab Runtime
 
 Downloads and installs the Matlab Runtime 2020b.
 
   - Open admin conda env at `<repo_root>\setup`
-  - Run: `pdm run worker-setup install.matlab`
+  - Run: `pdm run setup worker.matlab`
   - Read instructions in terminal and hit enter when ready.
   - Follow installer prompts until done.
 
@@ -160,16 +152,34 @@ Downloads and installs the Matlab Runtime 2020b.
 Downloads and installs OpenMETA.
 
   - Open admin conda env at `<repo_root>\setup`
-  - Run: `pdm run worker-setup install.openmeta`
+  - Run: `pdm run setup worker.openmeta`
   - Read instructions in terminal and hit enter when ready.
   - Follow installer prompts until done.
 
 ### Install Creo
 
+Get license information, optionally installing the license server locally.
+
+  - Open admin conda env at `<repo_root>\setup`
+  - Have your license information ready:
+    - Get your mac address (for generating licenses):
+      - Run: `pdm run setup mac-address`
+    - If using a local license, have the license file for the above mac
+      address downloaded somewhere convenient.
+    - If using a license server, have the server's IP address and port at hand.
+      - You can run the license server locally by following the instructions
+        [here](README_LICENSE.md) under "Install Flexnet Server", before
+        continuing on.
+
 Downloads and installs PTC Creo 5.6.
 
   - Open admin conda env at `<repo_root>\setup`
-  - If using a local license file have it accessible on the target machine.
-  - Run: `pdm run worker-setup install.creo`
+  - Run: `pdm run setup worker.creo`
   - Read instructions in terminal and hit enter when ready.
   - Follow installer prompts until done.
+
+Fix some minor usability issues.
+
+  - If on Windows Server 2019 you can disable the IE Enhanced Security popups
+    that open whenever Creo starts.
+    - Run: `pdm run setup worker.disable-ieesc`

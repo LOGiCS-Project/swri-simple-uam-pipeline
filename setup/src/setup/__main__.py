@@ -9,7 +9,7 @@ Why does this file exist, and why `__main__`? For more info, read:
 
 import sys
 
-from setup.worker.cli import main
+from setup.cli import main
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv[1:]))

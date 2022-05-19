@@ -21,8 +21,10 @@ creo_config = creo_path / "Common Files" / "text" / "config.pro"
 
 # Lines we need to add to the creo config file
 creo_config_edits = [
-    "part_mp_calc_ignore_alt_mp no",
+    "part_mp_calc_ignore_alt_mp no",    # Part of base instructions
+    "suppress_license_loss_dialog yes", # Needed for Direct2Cad
 ]
+
 creo_installer = GUIInstaller(
     installed_path=creo_path,
     path = 'MED-100WIN-CD-420_5-0-6-0_Win64.zip',
@@ -102,3 +104,32 @@ matlab_installer = GUIInstaller(
 def matlab(ctx):
     """ Install Matlab Runtime 2020b """
     matlab_installer.run()
+
+# Directory where chocolatey scripts are found
+setup_script_dir = paths.repo_dir / 'setup' / 'data'
+
+# Chololatey env bootstrap scrip
+disable_ieesc_script = setup_script_dir / 'disable_ieesc.ps1'
+
+@task
+def disable_ieesc(ctx):
+    """
+    Disable Internet Explorer Enhanced Security (Server 2019 only).
+
+    These are the bloody annoying
+
+    Look at the following links for other methods to disable IEESC on other
+    versions of windows or via the GUI.
+      - https://www.wintips.org/how-to-disable-internet-explorer-enhanced-security-configuration-in-server-2016/
+      - https://www.casbay.com/guide/kb/disable-enhanced-security-configuration-for-internet-explorer-in-windows-server-2019-2016
+    """
+
+    log.info(
+        "Disabling IE Enhanced Security .",
+        script=str(disable_ieesc_script),
+    )
+
+    installed = subprocess.run([
+        'powershell',
+        '-executionpolicy','bypass',
+        '-File',disable_ieesc_script])

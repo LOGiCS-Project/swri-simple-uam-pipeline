@@ -23,10 +23,10 @@ def download_file(uri: Path, output: Path):
     log.info(
         "Downloading file from web",
         uri=uri,
-        file_path=str(loc),
+        file_path=str(output),
     )
 
-    subprocess.run(["wget.exe", uri, "-O", loc, "--show-progress"])
+    subprocess.run(["wget.exe", uri, "-O", output, "--show-progress"])
 
 
 def verify_file(input: Path, md5: str):

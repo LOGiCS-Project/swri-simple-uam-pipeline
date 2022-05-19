@@ -36,7 +36,4 @@ def all_pgks(ctx):
 @task
 def mac_address(ctx):
     """ print the mac address of this machine. """
-    log.info(
-        "Getting Mac Address via ipconfig",
-        mac_addr = get_mac_address(),
-    )
+    print(get_mac_address())

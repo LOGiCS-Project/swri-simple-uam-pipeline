@@ -13,10 +13,10 @@
 
 from typing import List, Optional
 from util.invoke import task, Collection, InvokeProg
-from ..config import tasks, WorkerSetupConfig
 import util.config.tasks
 import setup.tasks.shared
 import setup.tasks.worker
+import setup.tasks.license_server
 import setup.windows.choco
 
 def main(args: Optional[List[str]] = None) -> int:
@@ -50,6 +50,12 @@ def main(args: Optional[List[str]] = None) -> int:
     namespace.add_collection(
         Collection.from_module(setup.tasks.worker),
         'worker',
+    )
+
+    # Import tasks from other files/modules
+    namespace.add_collection(
+        Collection.from_module(setup.tasks.license_server),
+        'license_server',
     )
 
     # Import tasks from other files/modules
