@@ -46,13 +46,6 @@ pdm run simpleuam-utils <args>
    ├── pyproject.toml   # PDM managed project info
    ├── tasks.py         # Commands for project management, called with `invoke`
    │
-   ├── config   # Assorted Config Files
-   │   │
-   │   ├── flake8.ini     # Code Quality
-   │   ├── mypy.ini       # Type Checking
-   │   ├── coverage.ini   # Test Coverage
-   │   └── pytest.ini     # Testing
-   │
    ├── src
    │   └── util   # Root module for this package
    │       │

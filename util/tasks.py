@@ -13,7 +13,8 @@ from invoke import task
 PY_SRC_PATHS = (Path(_) for _ in ("src", "tests", "tasks.py"))
 PY_SRC_LIST = tuple(str(_) for _ in PY_SRC_PATHS)
 PY_SRC = " ".join(PY_SRC_LIST)
-CONF_DIR = str(Path(__file__).parent.parent / 'quality-conf')
+CONF_DIR = str(Path(__file__).parent.parent / "quality-conf")
+
 
 @task
 def setup(ctx):
@@ -26,6 +27,7 @@ def setup(ctx):
     """
     ctx.run("pdm install -d")
 
+
 @task
 def check_quality(ctx, files=PY_SRC):
     """
@@ -36,6 +38,7 @@ def check_quality(ctx, files=PY_SRC):
         files: The list of files to check, defaults to all '.py`
     """
     ctx.run(f"pdm run flake8 --config={CONF_DIR}/flake8.ini {files}")
+
 
 @task  # noqa: WPS231
 def check_types(ctx):  # noqa: WPS231
@@ -89,6 +92,7 @@ def check_types(ctx):  # noqa: WPS231
         os.environ["MYPYPATH"] = tmpdir
         ctx.run(f"pdm run mypy --config-file {tmpconfig} {PY_SRC}")
 
+
 @task(check_types, check_quality)
 def check(ctx):
     """
@@ -97,7 +101,7 @@ def check(ctx):
     Arguments:
         ctx: The context instance (passed automatically).
     """
-    pass
+
 
 @task
 def clean(ctx):
@@ -119,6 +123,7 @@ def clean(ctx):
     ctx.run("find . -type d -name __pycache__ | xargs rm -rf")
     ctx.run("find . -name '*.rej' -delete")
 
+
 @task(clean)
 def reset_pdm(ctx):
     """
@@ -128,6 +133,7 @@ def reset_pdm(ctx):
         ctx: The context instance (passed automatically).
     """
     ctx.run("rm -rfv pdm.lock .pdm.toml __pypackages__")
+
 
 @task
 def format(ctx):
@@ -145,7 +151,7 @@ def format(ctx):
 
 
 @task
-def test(ctx, match = ""):
+def test(ctx, match=""):
     """
     Run the test suite.
 
@@ -155,9 +161,8 @@ def test(ctx, match = ""):
     """
     py_version = f"{sys.version_info.major}{sys.version_info.minor}"
     os.environ["COVERAGE_FILE"] = f".coverage.{py_version}"
-    ctx.run(
-        f"pdm run pytest -c {CONF_DIR}/pytest.ini -n auto -k {repr(match)} tests"
-    )
+    ctx.run(f"pdm run pytest -c {CONF_DIR}/pytest.ini -n auto -k {repr(match)} tests")
+
 
 @task
 def coverage(ctx):

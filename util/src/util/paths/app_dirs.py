@@ -1,6 +1,7 @@
 """Wrapper that provides accessor functions for app data directories"""
 
 from pathlib import Path
+
 from util.config import Config, PathConfig
 
 repo_dir = Path(__file__).resolve().parent.parent.parent.parent.parent

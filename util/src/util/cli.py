@@ -11,15 +11,14 @@
 
 """Module that contains the command line application."""
 
-import argparse
-from omegaconf import OmegaConf
 from typing import List, Optional
-from util.config import Config, PathConfig
+
 import util.config.tasks
-from util.invoke import task, Collection, InvokeProg
+from util.invoke import Collection, InvokeProg, task
 from util.logging import get_logger
 
 log = get_logger(__name__)
+
 
 @task
 def test_logging(ctx):
@@ -38,13 +37,12 @@ def test_logging(ctx):
             d = {"x": 42}
             print(SomeClass(d["y"], "foo"))
         except Exception as err:
-            log.exception("poor me", ex = err)
+            log.exception("poor me", ex=err)
         log.info("all better now!", stack_info=True)
 
     make_call_stack_more_impressive()
 
     log.info("done-now")
-
 
 
 def main(args: Optional[List[str]] = None) -> int:
@@ -61,27 +59,20 @@ def main(args: Optional[List[str]] = None) -> int:
     """
 
     # Tasks initialized in this file
-    tasks = Collection(
+    namespace = Collection(
         test_logging,
     )
 
     # Import tasks from other files/modules
     namespace.add_collection(
         Collection.from_module(util.config.tasks),
-        'config',
+        "config",
     )
 
     # Setup the invoke program runner class
     program = InvokeProg(
-        namespace=tasks,
+        namespace=namespace,
         version="0.1.0",
     )
 
     return program.run()
-
-    # parser = get_parser()
-    # opts = Config.get(PathConfig)
-    # print(Config.configs())
-    # print(Config.load_path(PathConfig))
-    # print(OmegaConf.to_yaml(opts))  # noqa: WPS421 (side-effect in main is fine)
-    return 0
