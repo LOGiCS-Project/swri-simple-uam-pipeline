@@ -32,7 +32,6 @@ class WorkerSetupConfig():
         'foxitreader',
         'tess',
         'atom',
-        'poshgit',
         'openscad',
         'freecad',
         'tortoisegit',

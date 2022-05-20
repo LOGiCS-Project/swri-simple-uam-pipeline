@@ -13,9 +13,15 @@
 
 from typing import List, Optional
 from util.invoke import task, Collection, InvokeProg
-from ..config import tasks, WorkerSetupConfig
-import setup.worker.choco
-import setup.worker.gui_installers
+import util.config.tasks
+import setup.tasks.shared
+import setup.tasks.worker
+import setup.tasks.license_server
+import setup.windows.choco
+
+from util.logging import get_logger
+
+log = get_logger(__name__)
 
 def main(args: Optional[List[str]] = None) -> int:
     """
@@ -30,25 +36,41 @@ def main(args: Optional[List[str]] = None) -> int:
         An exit code.
     """
 
-    # Tasks initialized in this file
+    # Tasks initialized in root of namespace
     namespace = Collection(
+        setup.tasks.shared.mac_address,
     )
 
     # Import tasks from other files/modules
     namespace.add_collection(
-        Collection.from_module(setup.worker.choco),
-        'choco',
-    )
-
-    # Import tasks from other files/modules
-    namespace.add_collection(
-        Collection.from_module(setup.worker.gui_installers),
+        Collection(
+            setup.tasks.shared.dep_pkgs,
+            setup.tasks.shared.qol_pkgs,
+        ),
         'install',
     )
 
     # Import tasks from other files/modules
     namespace.add_collection(
-        Collection.from_module(tasks),
+        Collection.from_module(setup.tasks.worker),
+        'worker',
+    )
+
+    # Import tasks from other files/modules
+    namespace.add_collection(
+        Collection.from_module(setup.tasks.license_server),
+        'license_server',
+    )
+
+    # Import tasks from other files/modules
+    namespace.add_collection(
+        Collection.from_module(setup.windows.choco),
+        'choco',
+    )
+
+    # Import tasks from other files/modules
+    namespace.add_collection(
+        Collection.from_module(util.config.tasks),
         'config',
     )
 

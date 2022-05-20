@@ -23,7 +23,7 @@ dependencies = [
 ]
 
 [project.scripts]
-worker-setup = "setup.worker.cli:main"
+setup = "setup.cli:main"
 
 [tool.pdm]
 package-dir = "src"
