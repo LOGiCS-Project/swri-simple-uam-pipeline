@@ -9,4 +9,4 @@ def update_conda(c):
 
 @task
 def new_subpackage(c):
-    copier.copy("subpackage-template",".")
+    copier.copy("subpackage-template",".",cleanup_on_error=False)

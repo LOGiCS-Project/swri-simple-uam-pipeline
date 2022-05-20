@@ -1,2 +1,5 @@
 from .dataclass import {{ config_class_name }}
-from . import tasks
+
+from typing import List
+
+__all__: List[str] = ['{{ config_class_name }}']  # noqa: WPS410 (the only __variable__ we use)

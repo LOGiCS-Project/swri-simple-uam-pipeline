@@ -19,6 +19,10 @@ import setup.tasks.worker
 import setup.tasks.license_server
 import setup.windows.choco
 
+from util.logging import get_logger
+
+log = get_logger(__name__)
+
 def main(args: Optional[List[str]] = None) -> int:
     """
     Run the main program.

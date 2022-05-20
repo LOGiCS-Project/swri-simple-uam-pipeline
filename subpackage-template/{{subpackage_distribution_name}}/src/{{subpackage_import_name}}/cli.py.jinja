@@ -14,14 +14,169 @@
 import argparse
 from typing import List, Optional
 from util.invoke import task, Collection, InvokeProg
-from .config import tasks, {{ config_class_name }}
+
+from util.config import Config, PathConfig
+from .config import *
+import util.config.tasks
+
+from util.logging import get_logger
+
+log = get_logger(__name__)
 
 @task
-def example_task(ctx, arg):
+def task_example(ctx, arg):
     """
-    An example task with one argument.
+    An example task with one argument. (see docstring for more info)
+
+    This docstring will be visible under:
+      - `{{ subpackage_command_line_name }} task-example --help`.
+
+    See https://www.pyinvoke.org/ for details on how to use the `@task` decorator
+    and how to setup a command line app.
     """
+
     print(f"Example Task: {arg}")
+
+@task
+def logging_example(ctx):
+    """
+    A quick test of logging code. (see docstring for more info)
+
+    To use the logging capability, include the following near the start of each
+    module:
+
+    ```
+    from util.logging import get_logger
+
+    log = get_logger(__name__)
+    ```
+
+    From then on, you can use `log` to write information out to STDOUT, as below.
+    Logging to file and command-line logging options will come if there's a specific
+    need for them.
+
+    Logging is done with structlog and mostly default settings.
+    See this for the basic interface:
+      - https://www.structlog.org/en/stable/api.html#structlog.PrintLogger
+    """
+
+    log.debug("debugging is hard", a_list=[1, 2, 3])
+    log.info("informative!", some_key="some_value")
+    log.warning("uh-uh!")
+    log.error("omg", a_dict={"a": 42, "b": "foo"})
+    log.critical("wtf")
+
+    def make_call_stack_more_impressive():
+        try:
+            d = {"x": 42}
+            print(SomeClass(d["y"], "foo"))
+        except Exception as err:
+            log.exception("poor me", ex=err)
+        log.info("all better now!", stack_info=True)
+
+    make_call_stack_more_impressive()
+
+    log.info("done-now")
+
+@task
+def config_example(ctx):
+    """
+    Example config file usage.
+    """
+
+    log.info(
+        """
+        Config files are defined using config dataclasses, see `config/dataclass.py`
+        that specify their fields and defaults.
+
+        In order to use/see a config class it must be imported either directly or
+        indirectly. From there, access the data via the `Config` object.
+        """,
+        example_1 = {
+            "desc": "Accessing config using `.get`",
+            "code":"Config.get(PathConfig)",
+            "result":Config.get(PathConfig),
+        },
+        example_2 = {
+            "desc": "Accessing config using lookup notation",
+            "code":"Config[{{ config_class_name }}]",
+            "result":Config[{{ config_class_name }}],
+        },
+    )
+
+    log.info(
+        "Fields within the config object work just like fields in a dataclass.",
+        example_1 = {
+            "code":"Config.get(PathConfig).config_dir",
+            "result":Config.get(PathConfig).config_dir,
+        },
+        example_2 = {
+            "code":"Config[{{ config_class_name }}].example_str",
+            "result":Config[{{ config_class_name }}].example_str,
+        },
+    )
+
+    log.info(
+        f"""
+        The config system will load config files based on the current load path,
+        a list of directories that are checked in order for approprite config files.
+
+        The load path starts off with:
+          - {Config.config_dirs[0]}
+
+        If there's a `paths.conf.yaml` file in that directory with a `config_dir`
+        specified it adds that to load path, repeating until done.
+
+        Then any directories specified using the `--config-dir=...` command line
+        option are added to the load path.
+
+        Current Load Path:
+        """,
+        load_path = Config.config_dirs,
+    )
+
+    log.info(
+        """
+        With a load path, the config system then looks at the `--run-mode=..` flag.
+        If its there, it adds the subdirectory for each run-mode to the search path.
+
+        So if "conf_dir/" is on the load_path and "--run-mode=production" is
+        specified, the config system will search for files in "conf_dir/" and then
+        "conf_dir/production".
+
+        Note that settings towards the end of the load path override settings
+        from earlier entries.
+
+        The current load paths for PathConfig and {{ config_class_name }}:
+        """,
+        path=Config.load_path(PathConfig),
+        {{ config_interpolation_key }}=Config.load_path({{ config_class_name }}),
+    )
+
+    log.info(
+        """
+        You can further examine the current config state with tasks from the
+        `util.config.tasks` module.
+
+        The three basic tasks will give you information about all available
+        configs:
+          - `{{ subpackage_command_line_name }} config.classes` : List all config class names.
+          - `{{ subpackage_command_line_name }} config.keys` : List all config interpolation keys.
+          - `{{ subpackage_command_line_name }} config.files` : List the different config file names.
+
+       The various strings returned by the above commands can be used to specify
+       the config classes you're interested in for the other commands:
+          - `{{ subpackage_command_line_name }} config.path` : Print the load path
+            for a config class.
+          - `{{ subpackage_command_line_name }} config.print` : Print the currently
+            loaded data for a config class in YAML format.
+          - `{{ subpackage_command_line_name }} config.write` : Write the currently
+            loaded config data to the appropriate file.
+
+       The help system contains more information:
+          - `{{ subpackage_command_line_name }} --help [subcommand]`
+       """
+    )
 
 def main(args: Optional[List[str]] = None) -> int:
     """
@@ -37,14 +192,16 @@ def main(args: Optional[List[str]] = None) -> int:
     """
 
 
-    # Tasks initialized in this file
+    # Tasks in the top level namespace
     namespace = Collection(
-        example_task,
+        task_example,
+        logging_example,
+        config_example,
     )
 
     # Import tasks from other files/modules
     namespace.add_collection(
-        Collection.from_module(tasks),
+        Collection.from_module(util.config.tasks),
         'config',
     )
 

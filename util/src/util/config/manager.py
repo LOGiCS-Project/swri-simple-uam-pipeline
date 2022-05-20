@@ -550,6 +550,7 @@ class Config(object):
         config class.
         """
         inst = cls()
+        data_cls = None
 
         if isinstance(key, str):
             if key in inst.name_map:
@@ -596,6 +597,26 @@ class Config(object):
         See get for details
         """
         return cls.get(key)
+
+    @classmethod
+    def get_yaml(cls, key: Union[str, Type[T]]) -> str:
+        """
+        Returns the yaml string for a given config key.
+
+        Arguments:
+            key: The dataclass or attrs class that represents the
+                contents of the file.
+
+                Note: this must have been previously registered.
+        """
+        return cls()._get_yaml(key)
+
+    def _get_yaml(self, key: Union[str, Type[T]]) -> str:
+        """
+        See get for details
+        """
+
+        return self.config_types[self._get_config_class(key)].yaml
 
     @staticmethod
     def _get_argparser() -> argparse.ArgumentParser:

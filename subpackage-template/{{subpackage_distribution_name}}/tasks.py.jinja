@@ -13,7 +13,7 @@ from invoke import task
 PY_SRC_PATHS = (Path(_) for _ in ("src", "tests", "tasks.py"))
 PY_SRC_LIST = tuple(str(_) for _ in PY_SRC_PATHS)
 PY_SRC = " ".join(PY_SRC_LIST)
-CONF_DIR = str(Path(__file__).parent.parent / 'quality-conf')
+CONF_DIR = str(Path(__file__).parent.parent / 'dev-config')
 
 @task
 def setup(ctx):
