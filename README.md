@@ -25,3 +25,19 @@ Create a new subproject from the template:
     - `<subpkg-dir>/README.md`: General setup and use information.
     - `<subpkg-dir>/src/<subpkg-module>/cli.py`: Has examples for key features
       like logging, CLI development, and config management.
+
+## Project Organization
+
+```
+<repo-root>
+├── environment.yml   # Conda Environment Defintion
+├── LICENSE           # License File
+├── README.md         # This Readme
+├── tasks.py          # Project-wide Utility Commands
+│
+├── dev-config/            # Config files for type checking, linting, etc...
+├── subpackage-template/   # Template for creating new subprojects
+│
+├── util/    # Utility code for logging, config, and other things
+└── setup/   # Setup scipts for various project nodes
+```
