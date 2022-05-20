@@ -9,6 +9,14 @@
 By default {{ subpackage_name }} can be used as a standard python library or
 with a command line interface.
 
+### Initialize PDM
+
+Initialize the package by running `invoke setup` in this directory, once finished
+`pdm run` becomes available for use.
+
+Running `invoke reset-pdm` will delete the entire PDM environment letting you
+run `invoke setup` again.
+
 ### As a Command Line Interface
 
 Run the command defined in `{{ subpackage_import_name }}.cli:main` as follows:
@@ -124,3 +132,5 @@ Run code formatter: `invoke format`
 ## Other
 
 Clean temporary dev files: `invoke clean`
+
+Reset PDM environment: `invoke reset-pdm`

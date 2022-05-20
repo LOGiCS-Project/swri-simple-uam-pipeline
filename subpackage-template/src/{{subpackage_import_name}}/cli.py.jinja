@@ -92,28 +92,20 @@ def config_example(ctx):
         In order to use/see a config class it must be imported either directly or
         indirectly. From there, access the data via the `Config` object.
         """,
-        example_1 = {
-            "desc": "Accessing config using `.get`",
-            "code":"Config.get(PathConfig)",
-            "result":Config.get(PathConfig),
-        },
-        example_2 = {
-            "desc": "Accessing config using lookup notation",
-            "code":"Config[{{ config_class_name }}]",
-            "result":Config[{{ config_class_name }}],
-        },
+        desc_1= "Accessing config using `.get`",
+        code_1="Config.get(PathConfig)",
+        result_1=Config.get(PathConfig),
+        desc_2= "Accessing config using lookup notation",
+        code_2="Config[{{ config_class_name }}]",
+        result_2=Config[{{ config_class_name }}],
     )
 
     log.info(
         "Fields within the config object work just like fields in a dataclass.",
-        example_1 = {
-            "code":"Config.get(PathConfig).config_dir",
-            "result":Config.get(PathConfig).config_dir,
-        },
-        example_2 = {
-            "code":"Config[{{ config_class_name }}].example_str",
-            "result":Config[{{ config_class_name }}].example_str,
-        },
+        code_1="Config.get(PathConfig).config_dir",
+        result_1=Config.get(PathConfig).config_dir,
+        code_2="Config[{{ config_class_name }}].example_str",
+        result_2=Config[{{ config_class_name }}].example_str,
     )
 
     log.info(
@@ -122,7 +114,7 @@ def config_example(ctx):
         a list of directories that are checked in order for approprite config files.
 
         The load path starts off with:
-          - {Config.config_dirs[0]}
+          - {Config().config_dirs[0]}
 
         If there's a `paths.conf.yaml` file in that directory with a `config_dir`
         specified it adds that to load path, repeating until done.
@@ -132,7 +124,7 @@ def config_example(ctx):
 
         Current Load Path:
         """,
-        load_path = Config.config_dirs,
+        load_path = [str(d) for d in Config().config_dirs],
     )
 
     log.info(
@@ -149,8 +141,8 @@ def config_example(ctx):
 
         The current load paths for PathConfig and {{ config_class_name }}:
         """,
-        path=Config.load_path(PathConfig),
-        {{ config_interpolation_key }}=Config.load_path({{ config_class_name }}),
+        path=[str(p) for p in Config.load_path(PathConfig)],
+        {{ config_interpolation_key }}=[str(p) for p inConfig.load_path({{ config_class_name }})],
     )
 
     log.info(

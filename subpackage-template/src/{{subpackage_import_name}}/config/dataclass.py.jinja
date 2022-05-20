@@ -27,6 +27,6 @@ Config.register(
     interpolation_key = "{{ config_interpolation_key }}",
     # Key used by other config classes to access variables in this class.
     # e.g. If another config class registers `{{ config_class_name }}` in its
-    #      `conf_deps`, it can use "${%{%}{{ config_interpolation_key }}:example_str}"
+    #      `conf_deps`, it can use "${{ "{" }}{{ config_interpolation_key }}:example_str}"
     #      in its own definitions.
 )

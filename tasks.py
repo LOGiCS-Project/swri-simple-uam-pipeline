@@ -9,15 +9,21 @@ from pathlib import Path
 
 @task
 def update_conda(c):
+    """
+    Updates conda environment from environment.yml
+    """
     c.run("conda env update -f environment.yml")
 
 @task
 def new_subpackage(c):
     """
-    Creates a new subpackage dir, manually moving stuff around because
+    Creates a new subpackage dir.
+
+    Manually moving stuff around because
     Copier's error recovery will clobber everything.
     """
-    temp_dir = tempfile.gettempdir()
+
+    temp_dir = tempfile.mkdtemp()
     dist_file = 'dist_name.txt'
     print(f"Unpacking template to: {temp_dir}")
     copier.copy("subpackage-template",temp_dir,cleanup_on_error=False)
