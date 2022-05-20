@@ -26,6 +26,7 @@ dependencies = [
 [project.scripts]
 simpleuam-utils = "util.cli:main"
 
+[project.optional-dependencies]
 [tool.pdm]
 package-dir = "src"
 editable-backend = "editables"

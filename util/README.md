@@ -4,11 +4,33 @@ Various modules and wrappers for config, logging, and other general utilities.
 
 **Note:** This entire file assumes you're already within this project's conda env.
 
-## Setup
+## Usage
 
-Run `invoke setup` while in `<repo_root>/util`.
+By default SimpleUAM can be used as a standard python library or
+with a command line interface.
 
-## Installation
+### As a Command Line Interface
+
+Run the command defined in `util.cli:main` as follows:
+
+```bash
+pdm run simpleuam-utils <args>
+```
+
+Global help information uses the `-h`/`--help` flag and, among other things, lists
+all available subcommands:
+
+```bash
+pdm run simpleuam-utils --help
+```
+
+Individual subcommands have their own help pages (taken from docstrings):
+
+```bash
+pdm run simpleuam-utils <sub-command> --help
+```
+
+### As a Library
 
 To use this package as a dependency in other subpackages add the following line
 to the dependencies field of `pyproject.toml`:
@@ -28,6 +50,13 @@ From there you should be able to import modules as normal, e.g.:
 import util
 ```
 
+## Setup
+
+Run `invoke setup` while in `<repo_root>/util`.
+
+## Installation
+
+
 ## Usage
 
 Run the command defined in `util.cli:main` as follows:
@@ -46,19 +75,40 @@ pdm run simpleuam-utils <args>
    ├── pyproject.toml   # PDM managed project info
    ├── tasks.py         # Commands for project management, called with `invoke`
    │
-   ├── config   # Assorted Config Files
-   │   │
-   │   ├── flake8.ini     # Code Quality
-   │   ├── mypy.ini       # Type Checking
-   │   ├── coverage.ini   # Test Coverage
-   │   └── pytest.ini     # Testing
-   │
    ├── src
    │   └── util   # Root module for this package
    │       │
+   │       ├── config   # Handles all project configuration files and settings.
+   │       │   │
+   │       │   ├── __init__.py      # Module Root
+   │       │   ├── manager.py       # Exports `Config` manager class
+   │       │   ├── path_config.py   # Config for important environment paths
+   │       │   └── tasks.py         # Tasks used in CLI for managing configs
+   │       │
+   │       ├── invoke   # Wrapper for default CLI library.
+   │       │   │
+   │       │   ├── __init__.py   # Module Root
+   │       │   └── program.py    # Wrapper CLI class
+   │       │
+   │       ├── logging  # Wrapper for logging
+   │       │   │
+   │       │   ├── __init__.py   # Module Root
+   │       │   └── logger.py     # Wraps `structlog`'s logger function.
+   │       │
+   │       ├── paths  # Important Environment Paths
+   │       │   │
+   │       │   ├── __init__.py   # Module Root
+   │       │   └── app_dirs.py   # Handles for important application directories
+   │       │
+   │       ├── system   # Helpers for system operations
+   │       │   │
+   │       │   ├── __init__.py   # Module Root
+   │       │   ├── backup.py     # Routines to create backup files
+   │       │   └── windows.py    # Windows specific routines
+   │       │
    │       ├── __init__.py   # Module Root
-   │       ├── cli.py        # Entry Point for subpackage's CLI
    │       ├── __main__.py   # Stub wrapping cli.py (don't edit)
+   │       ├── cli.py        # Entry Point for subpackage's CLI
    │       └── py.typed      # Flag to indicate this module is typed
    │
    └── tests   # Testing Code
@@ -70,21 +120,14 @@ pdm run simpleuam-utils <args>
 
 ## Development Tasks
 
+Assorted tasks used during development, mostly automated with the `invoke` command
+(as opposed to runtime tasks which use `pdm run simpleuam-utils`).
+
 ### Dependency Management
 
 See instructions on [the PDM website](https://pdm.fming.dev/usage/dependency/).
 
-PDM will work as expected for most operations.
-
-Adding relative imports requires adding the following line
-to the dependencies field of `pyproject.toml`:
-
-```toml
-    "-e ./../<path_from_repo_root>",
-```
-
-Where `<path_from_repo_root>` is the path from the repo root, to the folder
-containing the dependency's `pyproject.toml`, `setup.py`, or similar config.
+This package shouldn't import any other subpackages in this repo.
 
 ### Running Tests
 
