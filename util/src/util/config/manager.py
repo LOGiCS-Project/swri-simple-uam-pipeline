@@ -92,11 +92,6 @@ class ConfigData:
         # Generate merged conf
         conf = OmegaConf.merge(*configs)
 
-        # Register resolvers for deps
-        OmegaConf.register_new_resolver(
-            self.interpolation_key,
-            self.resolver,
-        )
 
         # Set as read-only
         OmegaConf.set_readonly(conf, True)
@@ -113,10 +108,10 @@ class ConfigData:
         Should only be called once per class.
         """
 
-        def resolve_func(key: str, conf_dat: ConfigData = self):
+        def resolve_func(key: str, conf_dat: ConfigData):
             return OmegaConf.select(conf_dat.config, key)
 
-        return functools.partial(resolve_func, self)
+        return functools.partial(resolve_func, conf_dat=self)
 
     def _load_configs(self) -> List[OmegaConf]:
         """
@@ -306,18 +301,18 @@ class Config(object):
             overrides=None,
         )
 
-        # Register resolver
-        # OmegaConf.register_new_resolver(
-        #     PATHCONFIG_INTERPOLATION_KEY,
-        #     path_conf_data.resolver,
-        # )
-
         # Add PathConfig to config_types
         self._add_conf_data(path_conf_data)
 
     def _add_conf_data(self, conf_data: ConfigData) -> None:
 
         data_cls = conf_data.data_cls
+
+        # Register resolvers for deps
+        OmegaConf.register_new_resolver(
+            conf_data.interpolation_key,
+            conf_data.resolver,
+        )
         # print(f"registering: {data_cls}")
         self.config_types[data_cls] = conf_data
         self.key_map[conf_data.interpolation_key] = data_cls

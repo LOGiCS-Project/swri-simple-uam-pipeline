@@ -1,4 +1,4 @@
-from omegaconf import OmegaConf
+from omegaconf import OmegaConf, read_write
 
 from util.config import Config
 from util.invoke import task
@@ -40,11 +40,19 @@ def path(ctx, key):
 
 
 @task(name="print")
-def print_config(ctx, key):
+def print_config(ctx, key, resolved=False):
     """
     Prints the currently loaded config data for a given class to STDOUT
+
+    Arguments:
+       key: The class name, interpolation key, or config file name of the
+            config to print out. Can be given positionally.
+       resolve: Should we resolve all the interpolations before printing?
     """
     opts = Config.get(key)
+    if resolved:
+        with read_write(opts):
+            OmegaConf.resolve(opts)
     print(OmegaConf.to_yaml(opts))  # noqa: WPS421 (side-effect in main is fine)
 
 
