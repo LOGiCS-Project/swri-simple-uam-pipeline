@@ -1,3 +1,0 @@
-[submodule "dependencies/athens-uav-workflows"]
-	path = dependencies/athens-uav-workflows
-	url = git@git.isis.vanderbilt.edu:SwRI/athens-uav-workflows.git

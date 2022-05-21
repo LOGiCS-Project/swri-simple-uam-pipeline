@@ -4,7 +4,7 @@ build-backend = "pdm.pep517.api"
 
 [project]
 name = "uam-workspace"
-description = "The workpace and processing for the athens-uav-workflows"
+description = "Manages various actions to manipulate designs and run them through cad generation, FDM, and other processes. Also handles creating worker nodes for server interactions."
 authors = [
     {name = "Rohit Ramesh", email = "rkr@berkeley.edu"}
 ]
@@ -20,10 +20,10 @@ dependencies = [
     "structlog>=21.5.0",
     "rich>=12.4.1",
     "colorama>=0.4.4",
-]
+    "filelock>=3.7.0"]
 
 [project.scripts]
-uam-utils = "uam.cli:main"
+uam-worker = "uam_workspace.cli:main"
 
 [tool.pdm]
 package-dir = "src"

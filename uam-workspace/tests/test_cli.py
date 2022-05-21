@@ -2,7 +2,7 @@
 
 import pytest
 
-from uam import cli
+from uam_workspace import cli
 
 
 def test_main():
@@ -20,4 +20,4 @@ def test_show_help(capsys):
     with pytest.raises(SystemExit):
         cli.main(["-h"])
     captured = capsys.readouterr()
-    assert "uam-utils" in captured.out
+    assert "uam-worker" in captured.out

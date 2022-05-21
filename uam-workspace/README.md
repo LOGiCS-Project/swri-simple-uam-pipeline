@@ -1,16 +1,44 @@
-# UAM Workspace
+# SimpleUAM Workspace
 
-The workpace and processing for the athens-uav-workflows.
+Manages various actions to manipulate designs and run them through cad generation, FDM, and other processes. Also handles creating worker nodes for server interactions.
 
 **Note:** This entire file assumes you're already within this project's conda env.
 
-## Setup
+## Usage
 
-Run `invoke setup` while in `<repo_root>/uam-workspace`.
+By default SimpleUAM Workspace can be used as a standard python library or
+with a command line interface.
 
+### Initialize PDM
 
+Initialize the package by running `invoke setup` in this directory, once finished
+`pdm run` becomes available for use.
 
-## Installation
+Running `invoke reset-pdm` will delete the entire PDM environment letting you
+run `invoke setup` again.
+
+### As a Command Line Interface
+
+Run the command defined in `uam_workspace.cli:main` as follows:
+
+```bash
+pdm run uam-worker <args>
+```
+
+Global help information uses the `-h`/`--help` flag and, among other things, lists
+all available subcommands:
+
+```bash
+pdm run uam-worker --help
+```
+
+Individual subcommands have their own help pages (taken from docstrings):
+
+```bash
+pdm run uam-worker <sub-command> --help
+```
+
+### As a Library
 
 To use this package as a dependency in other subpackages add the following line
 to the dependencies field of `pyproject.toml`:
@@ -27,15 +55,7 @@ Then run `invoke setup` or, equivalently, `pdm install`.
 From there you should be able to import modules as normal, e.g.:
 
 ```python
-import uam
-```
-
-## Usage
-
-Run the command defined in `uam.cli:main` as follows:
-
-```bash
-pdm run uam-utils <args>
+import uam_workspace
 ```
 
 ## Subproject Organization
@@ -48,19 +68,18 @@ pdm run uam-utils <args>
    ├── pyproject.toml   # PDM managed project info
    ├── tasks.py         # Commands for project management, called with `invoke`
    │
-   ├── config   # Assorted Config Files
+   ├── src   # Root of Module Hierarchy
    │   │
-   │   ├── flake8.ini     # Code Quality
-   │   ├── mypy.ini       # Type Checking
-   │   ├── coverage.ini   # Test Coverage
-   │   └── pytest.ini     # Testing
-   │
-   ├── src
-   │   └── uam   # Root module for this package
+   │   └── uam_workspace   # Root module for this package
+   │       │
+   │       ├── config   # Configuration files and defaults
+   │       │   │
+   │       │   ├── __init__.py.jinja    # Module Root
+   │       │   └── dataclass.py.jinja   # Dataclass w/ config file info.
    │       │
    │       ├── __init__.py   # Module Root
-   │       ├── cli.py        # Entry Point for subpackage's CLI
    │       ├── __main__.py   # Stub wrapping cli.py (don't edit)
+   │       ├── cli.py        # Entry Point for subpackage's CLI
    │       └── py.typed      # Flag to indicate this module is typed
    │
    └── tests   # Testing Code
@@ -72,11 +91,15 @@ pdm run uam-utils <args>
 
 ## Development Tasks
 
+Assorted tasks used during development, mostly automated with the `invoke` command
+(as opposed to runtime tasks which use `pdm run uam-worker`).
+
 ### Dependency Management
 
 See instructions on [the PDM website](https://pdm.fming.dev/usage/dependency/).
 
-PDM will work as expected for most operations.
+PDM will work as expected for most operations, with the exception of relative
+imports of other packages in this repo.
 
 Adding relative imports requires adding the following line
 to the dependencies field of `pyproject.toml`:
@@ -109,3 +132,5 @@ Run code formatter: `invoke format`
 ## Other
 
 Clean temporary dev files: `invoke clean`
+
+Reset PDM environment: `invoke reset-pdm`
