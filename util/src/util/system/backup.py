@@ -1,10 +1,12 @@
 import shutil
 from datetime import datetime
-from pathlib import Path
-from typing import Union
+from pathlib import Path, WindowsPath
+from typing import Union, List, Optional
 from zipfile import ZipFile
+import subprocess
 import tempfile
 import shutil
+import re
 
 from util.logging import get_logger
 
@@ -149,8 +151,49 @@ class Rsync():
             )
 
     @staticmethod
-    def run(src : Union[str,Path],
-            dst : Union[src,Path],
+    def norm_path(path : Union[str,Path],
+                  is_dir : Optional[bool]) -> str:
+        """
+        Rsync on windows is weird about paths, this will format an input path
+        appropriately.
+
+        Arguments:
+          path: The Path to format.
+          is_dir: if True appends dir suffix to path.
+                  if False does not append suffix,
+                  if None will attempt to detect based on existing file.
+
+        Returns:
+          An absolute path string suitable as a cmd line arg for rsync.
+        """
+
+        path = Path(path).resolve()
+
+        if is_dir == None and path.exists() and not path.is_dir():
+            is_dir = False
+        else:
+            is_dir = True
+
+        path_str = path.as_posix()
+
+        win_dir = re.match(r'([A-z]):(.*)')
+
+        # Uses cygwin style absolute paths for rsync.
+        if win_dir and isinstance(path,WindowsPath):
+            path_str = f"/cygdrive/{win_dir[1]}{win_dir[2]}"
+
+        # Rsync on windows uses the trailing '/' to distingush between a file
+        # and a directory, features like delete don't work if rsync thinks
+        # src is a file.
+        if is_dir and not path_str.endswith('/'):
+            path_str = path_str + '/'
+
+        return path_str
+
+    @classmethod
+    def run(cls,
+            src : Union[str,Path],
+            dst : Union[str,Path],
             exclude : List[str] = [],
             exclude_from : List[Union[str,Path]] = [],
             archive : bool = True,
@@ -187,6 +230,32 @@ class Rsync():
         src = Path(src)
         dst = Path(dst)
 
+        if not (src.exists() and src.is_dir()):
+            err = RuntimeError("Rsync src isn't a dir.")
+            log.exception(
+                "Rsync src argument must be a dir.",
+                src=str(src),
+                exists=src.exists(),
+                is_dir=src.is_dir(),
+                err=err,
+            )
+            raise err
+        else:
+            src = src.resolve()
+
+        if not (dst.exists() and dst.is_dir()):
+            err = RuntimeError("Rsync dst isn't a dir.")
+            log.exception(
+                "Rsync dst argument must be a dir.",
+                dst=str(dst),
+                exists=dst.exists(),
+                is_dir=dst.is_dir(),
+                err=err,
+            )
+            raise err
+        else:
+            dst = dst.resolve()
+
         flags = list()
         if archive:
             flags.append('-a')
@@ -207,19 +276,20 @@ class Rsync():
         for pat in exclude:
             flags.append(f'--exclude={pat}')
         for f in exclude_from:
-            f = Path(f).resolve()
+            f = cls.norm_path(Path(f).resolve())
             flags.append(f'--exclude-from={f}')
 
         return subprocess.run(
-            ['rsync', *flags, src, dst],
+            ['rsync', *flags, cls.norm_path(src), cls.norm_path(dst)],
             capture_output=capture_output,
             universal_newlines=True if capture_output else None,
         )
 
 
-    @staticmethod
-    def copy_dir(src : Union[str,Path],
-                 dst : Union[src,Path],
+    @classmethod
+    def copy_dir(cls,
+                 src : Union[str,Path],
+                 dst : Union[str,Path],
                  exclude : List[str] = [],
                  exclude_from : List[Union[str,Path]] = [],
                  delete : bool = True,
@@ -244,7 +314,7 @@ class Rsync():
           quiet: supress non-error output
         """
 
-        Rsync.run(
+        cls.run(
             src=src,
             dst=dst,
             exclude=exclude,
@@ -256,11 +326,16 @@ class Rsync():
             quiet=quiet,
         )
 
+    itemize_regex = re.compile(r'^[*><\.+a-zA-Z\s]{11}\s(.*)$', re.MULTILINE)
+    """
+    Regex for getting the directories out of the rsync '-i' itemize call.
+    See: https://caissyroger.com/2020/10/06/rsync-itemize-changes/
+    """
 
-
-    @staticmethod
-    def list_changes(src : Union[str,Path],
-                     dst : Union[src,Path],
+    @classmethod
+    def list_changes(cls,
+                     src : Union[str,Path],
+                     dst : Union[str,Path],
                      exclude : List[str] = [],
                      exclude_from : List[Union[str,Path]] = [],
                      preserve_dirs : bool = False,
@@ -280,7 +355,9 @@ class Rsync():
           prune_missing: remove entries that aren't present in dst.
         """
 
-        process = Rsync.run(
+        dst = Path(dst).resolve()
+
+        process = cls.run(
             src=src,
             dst=dst,
             exclude=exclude,
@@ -295,37 +372,16 @@ class Rsync():
             capture_output=True,
         )
 
-        # TODO : Parsing and normalizing here.
+        changes = list()
+        for changed in cls.itemize_regex.findall(process.stdout):
+            if changed == "./":
+                continue
 
-        # Multiline regex to get paths r'^[*><\.+a-zA-Z\s]{11}\s(.*)$'
+            if not prune_missing or (dst / changed).exists():
+                if preserve_dirs or not changed.endswith('/'):
+                    changes.append(Path(changed))
 
-
-        """
-            '-i', # itemize changes
-        Itemize format: https://caissyroger.com/2020/10/06/rsync-itemize-changes/
-
-        regex = re.compile(
-            r"\s+Physical Address[.\s]+:\s(([\dA-F]{2}-){5}[\dA-F]{2})",
-            flags=re.S & re.MULTILINE,
-        )
-
-        Examples:
-
-            > rsync -an fog-optimizer/ test/ --exclude-from=fog-optimizer/.gitignore --delete -i
-            *deleting   foo.bob
-            .d..t...... ./
-            >f..t...... fog-optimizer.cabal
-            cd+++++++++ app/
-            >f+++++++++ app/Main.hs
-
-            > rsync -an fog-optimizer/ test/ --exclude-from=fog-optimizer/.gitignore -i
-            .d..t...... ./
-            >f..t...... fog-optimizer.cabal
-            cd+++++++++ app/
-            >f+++++++++ app/Main.hs
-        """
-
-        raise NotImplementedError()
+        return changes
 
     @staticmethod
     def archive_changes(ref : Union[str,Path],

@@ -8,13 +8,11 @@ from attrs.setters import frozen
 from invoke import Argument
 from omegaconf import OmegaConf
 
-from util.logging import get_logger
 from util.system.backup import backup_file
 
 from .path_config import PATHCONFIG_FILE_NAME, PATHCONFIG_INTERPOLATION_KEY, PathConfig
 
-log = get_logger(__name__)
-
+# No logging in Config because we might use config files to initialize logging
 
 @define
 class ConfigData:
@@ -207,13 +205,6 @@ class ConfigData:
 
             # Write if no file exists
             if not f.exists():
-
-                log.info(
-                    "Writing Config File.",
-                    file_name=str(f),
-                    contents=yaml,
-                )
-
                 f.write_text(yaml)
 
 

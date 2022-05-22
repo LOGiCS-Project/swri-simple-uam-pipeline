@@ -6,7 +6,6 @@ from util.logging import get_logger
 
 log = get_logger(__name__)
 
-
 @task
 def classes(ctx):
     """
