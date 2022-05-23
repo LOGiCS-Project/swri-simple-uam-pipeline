@@ -48,7 +48,7 @@ def print_config(ctx, key, resolved=False):
             config to print out. Can be given positionally.
        resolve: Should we resolve all the interpolations before printing?
     """
-    opts = Config.get(key)
+    opts = Config.get_omegaconf(key)
     if resolved:
         with read_write(opts):
             OmegaConf.resolve(opts)
@@ -59,7 +59,7 @@ def print_config(ctx, key, resolved=False):
     positional=["config"],
     iterable=["config"],
 )
-def write_current(ctx, config=None, mkdir=True, write_all=False, overwrite=False, comment=True):
+def write(ctx, config=None, mkdir=True, write_all=False, overwrite=False, comment=True):
     """
     Writes the current configuration out to file in the appropriate location.
 
@@ -79,12 +79,5 @@ def write_current(ctx, config=None, mkdir=True, write_all=False, overwrite=False
     # Normalize arg for call
     if config == []:
         config = None
-
-    # log.info("Writing out configs",
-    #          config=config,
-    #          mkdir=mkdir,
-    #          write_all=write_all,
-    #          overwrite=overwrite,
-    #          comment=comment)
 
     Config.write_configs(config, mkdir=mkdir, write_all=write_all, overwrite=overwrite, comment=comment)

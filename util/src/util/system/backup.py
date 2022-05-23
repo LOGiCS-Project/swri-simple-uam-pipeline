@@ -124,9 +124,6 @@ def archive_files(cwd : Union[str,Path],
             else:
                 zf.write(sys_file, arc_file)
 
-
-
-
 class Rsync():
     """
     Static class used to wrap a bunch of rsync commands.

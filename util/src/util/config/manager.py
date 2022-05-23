@@ -90,7 +90,6 @@ class ConfigData:
         # Generate merged conf
         conf = OmegaConf.merge(*configs)
 
-
         # Set as read-only
         OmegaConf.set_readonly(conf, True)
 
@@ -127,9 +126,18 @@ class ConfigData:
 
         return configs
 
-    def to_yaml(self) -> str:
-        """Returns a YAML rep of the current config object"""
+    @property
+    def yaml(self) -> str:
+        """Returns a YAML rep of the current config object."""
         return OmegaConf.to_yaml(self.config)
+
+    @property
+    def obj(self) -> Any:
+        """
+        Returns a true instance of the config object, rather than a duck
+        typed wrapper with lazy loading.
+        """
+        return OmegaConf.to_object(self.config)
 
     def write_config(
         self,
@@ -570,7 +578,7 @@ class Config(object):
         See get for details
         """
 
-        return self.config_types[self._get_config_class(key)].config
+        return self.config_types[self._get_config_class(key)].obj
 
     def __getitem__(self, key: Union[str, Type[T]]) -> T:
         """
@@ -603,6 +611,26 @@ class Config(object):
         """
 
         return self.config_types[self._get_config_class(key)].yaml
+
+    @classmethod
+    def get_omegaconf(cls, key: Union[str, Type[T]]) -> T:
+        """
+        Returns the object for a given config key.
+
+        Arguments:
+            key: The dataclass or attrs class that represents the
+                contents of the file.
+
+                Note: this must have been previously registered.
+        """
+        return cls()._get_omegaconf(key)
+
+    def _get_omegaconf(self, key: Union[str, Type[T]]) -> T:
+        """
+        See get_omegaconf for details
+        """
+
+        return self.config_types[self._get_config_class(key)].config
 
     @staticmethod
     def _get_argparser() -> argparse.ArgumentParser:
