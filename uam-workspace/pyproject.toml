@@ -23,7 +23,7 @@ dependencies = [
     "filelock>=3.7.0"]
 
 [project.scripts]
-uam-worker = "uam_workspace.cli:main"
+uam-workspace = "uam_workspace.cli:main"
 
 [tool.pdm]
 package-dir = "src"

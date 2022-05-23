@@ -2,6 +2,8 @@
 
 Manages various actions to manipulate designs and run them through cad generation, FDM, and other processes. Also handles creating worker nodes for server interactions.
 
+**Setup instructions are [here](SETUP.md).**
+
 **Note:** This entire file assumes you're already within this project's conda env.
 
 ## Usage
@@ -22,20 +24,20 @@ run `invoke setup` again.
 Run the command defined in `uam_workspace.cli:main` as follows:
 
 ```bash
-pdm run uam-worker <args>
+pdm run uam-workspace <args>
 ```
 
 Global help information uses the `-h`/`--help` flag and, among other things, lists
 all available subcommands:
 
 ```bash
-pdm run uam-worker --help
+pdm run uam-workspace --help
 ```
 
 Individual subcommands have their own help pages (taken from docstrings):
 
 ```bash
-pdm run uam-worker <sub-command> --help
+pdm run uam-workspace <sub-command> --help
 ```
 
 ### As a Library
@@ -92,7 +94,7 @@ import uam_workspace
 ## Development Tasks
 
 Assorted tasks used during development, mostly automated with the `invoke` command
-(as opposed to runtime tasks which use `pdm run uam-worker`).
+(as opposed to runtime tasks which use `pdm run uam-workspace`).
 
 ### Dependency Management
 
