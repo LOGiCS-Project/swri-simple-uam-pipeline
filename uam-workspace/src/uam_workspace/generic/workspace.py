@@ -11,7 +11,10 @@ from attrs import define,field
 from filelock import Timeout, FileLock
 from functools import wraps
 from .session import Session
+from copy import deepcopy
 import tempfile
+import random
+import string
 import subprocess
 
 log = get_logger(__name__)
@@ -41,8 +44,8 @@ class Workspace():
     def _config_def(self):
         return self.manager.config
 
-    name : Optional[str] = field(
-        default=None,
+    name : str = field(
+        default="generic-session",
     )
     """ A name for the type of session being performed. """
 
@@ -60,12 +63,9 @@ class Workspace():
     The metadata for this session, will be stored in metadata.json in the
     record archive.
 
-    Can be set at init, or modified before session end.
+    Can be set at init, or modified before session start. Changes to this
+    persist between sessions.
     """
-
-    @property
-    def session_ongoing(self):
-        return session_started and not session_ended
 
     session_class : Type[Session] = field(
         default=Session,
@@ -76,26 +76,8 @@ class Workspace():
     The class we're using to generate the active session context.
     """
 
-    session_started : bool = field(
-        default=False,
-        init=False,
-    )
-    """
-    Has the session started yet?
-    If true and not session_ended then we should hold the lock.
-    """
-
-    session_ended : bool = field(
-        default=False,
-        init=False,
-    )
-    """
-    Has the session finished yet?
-    Can only be true if session_started. If true, then lock has been released.
-    """
-
     active_session : Optional[Session] = field(
-        default=False,
+        default=None,
         init=False,
     )
     """
@@ -103,14 +85,22 @@ class Workspace():
     session_started.
     """
 
-    lock : Optional[FileLock] = field(
+    active_workspace : Optional[int] = field(
+        default=None,
+        init=False,
+    )
+    """
+    The current active workspace within a session.
+    """
+
+    active_lock : Optional[FileLock] = field(
         default=None,
         init=False,
     )
     """ The FileLock for the current workspace. """
 
 
-    temp_dir : Optional[tempfile.TemporaryDirectory] = field(
+    active_temp_dir : Optional[tempfile.TemporaryDirectory] = field(
         default=None,
         init=False,
     )
@@ -146,38 +136,93 @@ class Workspace():
         """
 
         # Checks
-        if self.session_ongoing:
+        if self.active_session:
             raise RuntimeError(
                 "Workspace currently in session, can't start a new one.")
 
         # Get lock if possible, fail otherwise.
+        lock_tuple = self.manager.acquire_workspace_lock(self.number)
+        if lock_tuple == None:
+            raise RuntimeError("Could not acquire Workspace lock.")
         try:
             # mark session_start
+            self.record_archive = None
+            self.active_workspace = lock_tuple[0]
+            self.active_lock = lock_tuple[1]
+
             # create temp_dir & temp_records dir name
+            self.active_temp_dir = tempfile.TemporaryDirectory()
+            uniq_str = ''.join(random.choices(
+                string.ascii_lowercase + string.digits, k=10))
+            temp_archive = Path(self.active_temp_dir.name) / f"{self.name}-{uniq_str}.zip"
+
             # setup metadata
+            metadata = deepcopy(self.metadata)
+
             # create active session
-               # in session: reset workspace
+            self.active_session = self.session_class(
+                reference_dir=self.config.reference_path,
+                work_dir=self.config.workspace_path(self.active_workspace),
+                result_archive=temp_archive,
+                metadata=metadata,
+                name=self.name,
+                metadata_file=self.config.records.metadata_file,
+            )
+            self.active_session.reset_workspace(
+                progress=False,
+            )
 
             pass
-        finally:
-            # release lock and reset internal state
-            pass
+        except Exception:
+            # Perform Cleanup
+            if self.active_temp_dir:
+                self.active_temp_dir.cleanup()
+            if lock_tuple:
+                lock_tuple[1].release()
+
+            # Reset Internal State
+            self.active_session = None
+            self.active_workspace = None
+            self.active_lock = None
+            self.active_temp_dir = None
+            self.record_archive = None
+
+            # Re-raise exception
+            raise
 
     def finish(self):
         """
         Finishes an active session.
         """
+        if not self.active_session:
+            raise RuntimeError("Trying to finish session without an active session.")
         try:
-            if WRITING_RECORD_ARCHIVE:
+
+            if self.config.records.max_count != 0:
+                # Generate the records archive
                 self.active_session.write_metadata()
                 self.active_session.generate_record_archive()
-                # Copy archive into rrcord dir via manager, save value to return.
+
+                # Move it to the manager's records directory
+                self.record_archive = self.manager.add_record(
+                    archive=self.active_session.result_archive,
+                    prefix=self.name,
+                    copy=False,
+                )
+
+            # Ensure we can close session
+            self.active_session.validate_complete()
+
         finally:
             # release lock
+            self.active_lock.release()
+            self.active_temp_dir.cleanup()
+
             # reset workspace state
-            # release temp_dir
-            # mark session_end
-            pass
+            self.active_session = None
+            self.active_workspace = None
+            self.active_lock = None
+            self.active_temp_dir = None
 
     def __enter__(self):
         """

@@ -82,7 +82,7 @@ class Session():
             raise RuntimeError("Result archive cannot already exist.")
 
     name : str = field(
-        default="workspace session",
+        default="generic-session",
         kw_only=True,
     )
     """ A name for the type of session being performed. """
