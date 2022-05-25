@@ -38,6 +38,7 @@ Create a new subproject from the template:
 ├── dev-config/            # Config files for type checking, linting, etc...
 ├── subpackage-template/   # Template for creating new subprojects
 │
-├── util/    # Utility code for logging, config, and other things
-└── setup/   # Setup scipts for various project nodes
+├── util/            # Utility code for logging, config, and other things
+├── setup/           # Setup scipts for various project nodes
+└── uam-workspace/   # Worker node runtime code for direct2cad
 ```

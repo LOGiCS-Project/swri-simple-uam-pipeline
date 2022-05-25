@@ -1,11 +1,10 @@
-from omegaconf import OmegaConf
+from omegaconf import OmegaConf, read_write
 
 from util.config import Config
 from util.invoke import task
 from util.logging import get_logger
 
 log = get_logger(__name__)
-
 
 @task
 def classes(ctx):
@@ -40,11 +39,19 @@ def path(ctx, key):
 
 
 @task(name="print")
-def print_config(ctx, key):
+def print_config(ctx, key, resolved=False):
     """
     Prints the currently loaded config data for a given class to STDOUT
+
+    Arguments:
+       key: The class name, interpolation key, or config file name of the
+            config to print out. Can be given positionally.
+       resolve: Should we resolve all the interpolations before printing?
     """
-    opts = Config.get(key)
+    opts = Config.get_omegaconf(key)
+    if resolved:
+        with read_write(opts):
+            OmegaConf.resolve(opts)
     print(OmegaConf.to_yaml(opts))  # noqa: WPS421 (side-effect in main is fine)
 
 
@@ -52,7 +59,7 @@ def print_config(ctx, key):
     positional=["config"],
     iterable=["config"],
 )
-def write_current(ctx, config=None, mkdir=True, write_all=False, overwrite=False, comment=True):
+def write(ctx, config=None, mkdir=True, write_all=False, overwrite=False, comment=True):
     """
     Writes the current configuration out to file in the appropriate location.
 
@@ -72,12 +79,5 @@ def write_current(ctx, config=None, mkdir=True, write_all=False, overwrite=False
     # Normalize arg for call
     if config == []:
         config = None
-
-    # log.info("Writing out configs",
-    #          config=config,
-    #          mkdir=mkdir,
-    #          write_all=write_all,
-    #          overwrite=overwrite,
-    #          comment=comment)
 
     Config.write_configs(config, mkdir=mkdir, write_all=write_all, overwrite=overwrite, comment=comment)

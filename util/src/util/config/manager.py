@@ -8,13 +8,11 @@ from attrs.setters import frozen
 from invoke import Argument
 from omegaconf import OmegaConf
 
-from util.logging import get_logger
 from util.system.backup import backup_file
 
 from .path_config import PATHCONFIG_FILE_NAME, PATHCONFIG_INTERPOLATION_KEY, PathConfig
 
-log = get_logger(__name__)
-
+# No logging in Config because we might use config files to initialize logging
 
 @define
 class ConfigData:
@@ -92,12 +90,6 @@ class ConfigData:
         # Generate merged conf
         conf = OmegaConf.merge(*configs)
 
-        # Register resolvers for deps
-        OmegaConf.register_new_resolver(
-            self.interpolation_key,
-            self.resolver,
-        )
-
         # Set as read-only
         OmegaConf.set_readonly(conf, True)
 
@@ -113,10 +105,10 @@ class ConfigData:
         Should only be called once per class.
         """
 
-        def resolve_func(key: str, conf_dat: ConfigData = self):
+        def resolve_func(key: str, conf_dat: ConfigData):
             return OmegaConf.select(conf_dat.config, key)
 
-        return functools.partial(resolve_func, self)
+        return functools.partial(resolve_func, conf_dat=self)
 
     def _load_configs(self) -> List[OmegaConf]:
         """
@@ -134,9 +126,18 @@ class ConfigData:
 
         return configs
 
-    def to_yaml(self) -> str:
-        """Returns a YAML rep of the current config object"""
+    @property
+    def yaml(self) -> str:
+        """Returns a YAML rep of the current config object."""
         return OmegaConf.to_yaml(self.config)
+
+    @property
+    def obj(self) -> Any:
+        """
+        Returns a true instance of the config object, rather than a duck
+        typed wrapper with lazy loading.
+        """
+        return OmegaConf.to_object(self.config)
 
     def write_config(
         self,
@@ -212,13 +213,6 @@ class ConfigData:
 
             # Write if no file exists
             if not f.exists():
-
-                log.info(
-                    "Writing Config File.",
-                    file_name=str(f),
-                    contents=yaml,
-                )
-
                 f.write_text(yaml)
 
 
@@ -306,18 +300,18 @@ class Config(object):
             overrides=None,
         )
 
-        # Register resolver
-        # OmegaConf.register_new_resolver(
-        #     PATHCONFIG_INTERPOLATION_KEY,
-        #     path_conf_data.resolver,
-        # )
-
         # Add PathConfig to config_types
         self._add_conf_data(path_conf_data)
 
     def _add_conf_data(self, conf_data: ConfigData) -> None:
 
         data_cls = conf_data.data_cls
+
+        # Register resolvers for deps
+        OmegaConf.register_new_resolver(
+            conf_data.interpolation_key,
+            conf_data.resolver,
+        )
         # print(f"registering: {data_cls}")
         self.config_types[data_cls] = conf_data
         self.key_map[conf_data.interpolation_key] = data_cls
@@ -584,7 +578,7 @@ class Config(object):
         See get for details
         """
 
-        return self.config_types[self._get_config_class(key)].config
+        return self.config_types[self._get_config_class(key)].obj
 
     def __getitem__(self, key: Union[str, Type[T]]) -> T:
         """
@@ -617,6 +611,26 @@ class Config(object):
         """
 
         return self.config_types[self._get_config_class(key)].yaml
+
+    @classmethod
+    def get_omegaconf(cls, key: Union[str, Type[T]]) -> T:
+        """
+        Returns the object for a given config key.
+
+        Arguments:
+            key: The dataclass or attrs class that represents the
+                contents of the file.
+
+                Note: this must have been previously registered.
+        """
+        return cls()._get_omegaconf(key)
+
+    def _get_omegaconf(self, key: Union[str, Type[T]]) -> T:
+        """
+        See get_omegaconf for details
+        """
+
+        return self.config_types[self._get_config_class(key)].config
 
     @staticmethod
     def _get_argparser() -> argparse.ArgumentParser:

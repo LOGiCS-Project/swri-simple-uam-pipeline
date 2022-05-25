@@ -3,11 +3,11 @@
 # You might be tempted to import things from `__main__` later,
 # but that will cause problems: the code will get executed twice:
 #
-# - When you run `python -m {{ subpackage_import_name }}` python will execute
+# - When you run `python -m uam_worker` python will execute
 #   `__main__.py` as a script. That means there won't be any
-#   `{{ subpackage_import_name }}.__main__` in `sys.modules`.
+#   `uam_worker.__main__` in `sys.modules`.
 # - When you import `__main__` it will get executed again (as a module) because
-#   there's no `{{ subpackage_import_name }}.__main__` in `sys.modules`.
+#   there's no `uam_worker.__main__` in `sys.modules`.
 
 """Module that contains the command line application."""
 
@@ -29,7 +29,7 @@ def task_example(ctx, arg):
     An example task with one argument. (see docstring for more info)
 
     This docstring will be visible under:
-      - `{{ subpackage_command_line_name }} task-example --help`.
+      - `uam-worker task-example --help`.
 
     See https://www.pyinvoke.org/ for details on how to use the `@task` decorator
     and how to setup a command line app.
@@ -96,16 +96,16 @@ def config_example(ctx):
         code_1="Config.get(PathConfig)",
         result_1=Config.get(PathConfig),
         desc_2= "Accessing config using lookup notation",
-        code_2="Config[{{ config_class_name }}]",
-        result_2=Config[{{ config_class_name }}],
+        code_2="Config[UAMWorkerConfig]",
+        result_2=Config[UAMWorkerConfig],
     )
 
     log.info(
         "Fields within the config object work just like fields in a dataclass.",
         code_1="Config.get(PathConfig).config_dir",
         result_1=Config.get(PathConfig).config_dir,
-        code_2="Config[{{ config_class_name }}].example_str",
-        result_2=Config[{{ config_class_name }}].example_str,
+        code_2="Config[UAMWorkerConfig].example_str",
+        result_2=Config[UAMWorkerConfig].example_str,
     )
 
     log.info(
@@ -139,10 +139,10 @@ def config_example(ctx):
         Note that settings towards the end of the load path override settings
         from earlier entries.
 
-        The current load paths for PathConfig and {{ config_class_name }}:
+        The current load paths for PathConfig and UAMWorkerConfig:
         """,
         path=[str(p) for p in Config.load_path(PathConfig)],
-        {{ config_interpolation_key }}=[str(p) for p in Config.load_path({{ config_class_name }})],
+        uam_worker=[str(p) for p in Config.load_path(UAMWorkerConfig)],
     )
 
     log.info(
@@ -152,21 +152,21 @@ def config_example(ctx):
 
         The three basic tasks will give you information about all available
         configs:
-          - `{{ subpackage_command_line_name }} config.classes` : List all config class names.
-          - `{{ subpackage_command_line_name }} config.keys` : List all config interpolation keys.
-          - `{{ subpackage_command_line_name }} config.files` : List the different config file names.
+          - `uam-worker config.classes` : List all config class names.
+          - `uam-worker config.keys` : List all config interpolation keys.
+          - `uam-worker config.files` : List the different config file names.
 
        The various strings returned by the above commands can be used to specify
        the config classes you're interested in for the other commands:
-          - `{{ subpackage_command_line_name }} config.path` : Print the load path
+          - `uam-worker config.path` : Print the load path
             for a config class.
-          - `{{ subpackage_command_line_name }} config.print` : Print the currently
+          - `uam-worker config.print` : Print the currently
             loaded data for a config class in YAML format.
-          - `{{ subpackage_command_line_name }} config.write` : Write the currently
+          - `uam-worker config.write` : Write the currently
             loaded config data to the appropriate file.
 
        The help system contains more information:
-          - `{{ subpackage_command_line_name }} --help [subcommand]`
+          - `uam-worker --help [subcommand]`
        """
     )
 
@@ -174,7 +174,7 @@ def main(args: Optional[List[str]] = None) -> int:
     """
     Run the main program.
 
-    This function is executed when you type `{{ subpackage_command_line_name }}` or `python -m {{ subpackage_import_name }}`.
+    This function is executed when you type `uam-worker` or `python -m uam_worker`.
 
     Arguments:
         args: Arguments passed from the command line.

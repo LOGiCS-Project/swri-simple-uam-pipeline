@@ -1,0 +1,6 @@
+[submodule "uam-workspace/external/creoson-server"]
+	path = uam-workspace/external/creoson-server
+	url = git@git.isis.vanderbilt.edu:SwRI/creoson/creoson-server.git
+[submodule "uam-workspace/external/uam_direct2cad"]
+	path = uam-workspace/external/uam_direct2cad
+	url = git@git.isis.vanderbilt.edu:SwRI/uam_direct2cad.git

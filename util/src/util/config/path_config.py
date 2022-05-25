@@ -7,7 +7,6 @@ APP_NAME = "SimpleUAM"
 
 dirs = PlatformDirs(APP_NAME)
 
-
 @define
 class PathConfig:
 
