@@ -28,21 +28,10 @@ class Workspace():
     closed.
 
     Acts as a context manager.
+
+    Have another class inherit from it to change the default session_class
+    and set a default manager.
     """
-
-    manager : WorkspaceManager = field(
-        frozen=True,
-    )
-
-    config : WorkspaceConfig = field(
-        init=False,
-        frozen=True,
-    )
-    """ The workspace config object that collects all the relevant paths. """
-
-    @config.default
-    def _config_def(self):
-        return self.manager.config
 
     name : str = field(
         default="generic-session",
@@ -53,7 +42,7 @@ class Workspace():
         default=None,
         kw_only=True,
     )
-    """ The number of the workspace this object is operating with. """
+    """ The number of the workspace Vthis object is operating with. """
 
     metadata : Dict = field(
         factory=dict,
@@ -66,6 +55,22 @@ class Workspace():
     Can be set at init, or modified before session start. Changes to this
     persist between sessions.
     """
+
+    manager : WorkspaceManager = field(
+        frozen=True,
+        kw_only=True,
+    )
+    """ The manager object that holds all the locks. """
+
+    config : WorkspaceConfig = field(
+        init=False,
+        frozen=True,
+    )
+    """ The workspace config object that collects all the relevant paths. """
+
+    @config.default
+    def _config_def(self):
+        return self.manager.config
 
     session_class : Type[Session] = field(
         default=Session,
@@ -156,7 +161,7 @@ class Workspace():
                 string.ascii_lowercase + string.digits, k=10))
             temp_archive = Path(self.active_temp_dir.name) / f"{self.name}-{uniq_str}.zip"
 
-            # setup metadata
+            # setup metadata (more stuff can go here I guess)
             metadata = deepcopy(self.metadata)
 
             # create active session
@@ -199,6 +204,7 @@ class Workspace():
         try:
 
             if self.config.records.max_count != 0:
+
                 # Generate the records archive
                 self.active_session.write_metadata()
                 self.active_session.generate_record_archive()
@@ -214,6 +220,7 @@ class Workspace():
             self.active_session.validate_complete()
 
         finally:
+
             # release lock
             self.active_lock.release()
             self.active_temp_dir.cleanup()

@@ -19,6 +19,9 @@ class WorkerSetupConfig():
         '7zip',
         'git-lfs',
         'rsync',
+        'memcached',
+        'redis',
+        'rabbitmq',
     ]
     """
     Packages that are needed for worker setup, please only add items to the
