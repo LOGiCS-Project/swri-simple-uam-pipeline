@@ -1,0 +1,20 @@
+# Changes here will be overwritten by Copier
+_commit: 0.9.7
+_src_path: gh:pawamoy/copier-pdm
+author_email: rkr@berkeley.edu
+author_fullname: Rohit Ramesh
+author_username: rohit507
+copyright_date: '2022'
+copyright_holder: UC Berkeley
+copyright_holder_email: rkr@berkeley.edu
+copyright_license: MIT License
+project_description: 'A set of libraries and wrappers around the SWRi athens-uav project.  '
+project_name: Simple UAM Pipleline
+python_package_command_line_name: simple-uam
+python_package_distribution_name: simple-uam
+python_package_import_name: simple_uam
+repository_name: swri-simple-uam-pipleline
+repository_namespace: LOGiCS-Project
+repository_provider: github.com
+use_precommit: false
+

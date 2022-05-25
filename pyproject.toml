@@ -1,0 +1,71 @@
+[build-system]
+requires = ["pdm-pep517"]
+build-backend = "pdm.pep517.api"
+
+[project]
+name = "simple-uam"
+description = "A set of libraries and wrappers around the SWRi athens-uav project."
+authors = [{name = "Rohit Ramesh", email = "rkr@berkeley.edu"}]
+license-expression = "MIT"
+readme = "README.md"
+requires-python = ">=3.7"
+keywords = []
+dynamic = ["version"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Documentation",
+    "Topic :: Software Development",
+    "Topic :: Software Development :: Documentation",
+    "Topic :: Utilities",
+    "Typing :: Typed",
+]
+dependencies = [
+    "omegaconf>=2.2.0",
+    "attrs>=21.4.0",
+    "invoke>=1.7.0",
+    "structlog>=21.5.0",
+    "rich>=12.4.1",
+    "colorama>=0.4.4",
+]
+
+[project.urls]
+Homepage = "https://LOGiCS-Project.github.io/swri-simple-uam-pipleline"
+Documentation = "https://LOGiCS-Project.github.io/swri-simple-uam-pipleline"
+Changelog = "https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/changelog"
+Repository = "https://github.com/LOGiCS-Project/swri-simple-uam-pipleline"
+Issues = "https://github.com/LOGiCS-Project/swri-simple-uam-pipleline/issues"
+Discussions = "https://github.com/LOGiCS-Project/swri-simple-uam-pipleline/discussions"
+
+# [project.scripts]
+# simple-uam = "simple_uam.cli:main"
+
+[tool.pdm]
+version = {use_scm = true}
+editable-backend = "editables"
+
+[tool.pdm.dev-dependencies]
+docs = [
+    "mkdocs>=1.3",
+    "mkdocs-coverage>=0.2",
+    "mkdocs-gen-files>=0.3",
+    "mkdocs-literate-nav>=0.4",
+    "mkdocs-material>=7.3",
+    "mkdocs-section-index>=0.3",
+    "mkdocstrings[python]>=0.18",
+    "markdown-callouts>=0.2",
+    "markdown-exec>=0.5",
+    "toml>=0.10",
+]
+maintain = [
+    "git-changelog>=0.4",
+]
+security = ["safety>=1.10"]
