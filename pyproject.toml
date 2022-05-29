@@ -45,12 +45,15 @@ Repository = "https://github.com/LOGiCS-Project/swri-simple-uam-pipleline"
 Issues = "https://github.com/LOGiCS-Project/swri-simple-uam-pipleline/issues"
 Discussions = "https://github.com/LOGiCS-Project/swri-simple-uam-pipleline/discussions"
 
-# [project.scripts]
-# simple-uam = "simple_uam.cli:main"
+[project.scripts]
+simple-uam = "simple_uam.cli:main"
 
 [tool.pdm]
 version = {use_scm = true}
 editable-backend = "editables"
+
+[tool.pdm.scripts]
+test = {call = "simple_uam.cli:main"}
 
 [tool.pdm.dev-dependencies]
 docs = [
