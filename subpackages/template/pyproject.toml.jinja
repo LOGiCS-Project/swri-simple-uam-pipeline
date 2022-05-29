@@ -22,11 +22,10 @@ dependencies = [
     "colorama>=0.4.4",
 ]
 
-[project.scripts]
-{{ subpackage_command_line_name }} = "{{ subpackage_import_name }}.cli:main"
+# [project.scripts]
+# {{ subpackage_command_line_name }} = "{{ subpackage_import_name }}.cli:main"
 
 [tool.pdm]
-package-dir = "src"
 editable-backend = "editables"
 
 [tool.pdm.dev-dependencies]

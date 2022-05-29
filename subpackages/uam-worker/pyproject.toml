@@ -24,11 +24,10 @@ dependencies = [
     "dramatiq[redis,rabbitmq]>=1.13.0",
 ]
 
-[project.scripts]
-uam-worker = "uam_worker.cli:main"
+# [project.scripts]
+# uam-worker = "uam_worker.cli:main"
 
 [tool.pdm]
-package-dir = "src"
 editable-backend = "editables"
 
 [tool.pdm.dev-dependencies]

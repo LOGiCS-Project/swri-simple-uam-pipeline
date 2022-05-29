@@ -11,7 +11,7 @@ authors = [
 readme = "README.md"
 requires-python = ">=3.9,<3.10"
 version = "0.0.1"
-license = { text = "UNSPECIFIED" }
+license-expression = "MIT"
 dependencies = [
     "platformdirs>=2.5.2",
     "omegaconf>=2.2.0",
@@ -23,12 +23,11 @@ dependencies = [
     "colorama>=0.4.4",
 ]
 
-[project.scripts]
-simpleuam-utils = "util.cli:main"
+# [project.scripts]
+# simpleuam-utils = "util.cli:main"
 
 [project.optional-dependencies]
 [tool.pdm]
-package-dir = "src"
 editable-backend = "editables"
 
 [tool.pdm.dev-dependencies]

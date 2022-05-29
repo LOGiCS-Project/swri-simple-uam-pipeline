@@ -25,7 +25,6 @@ def get_parser() -> argparse.ArgumentParser:
     """
     return argparse.ArgumentParser(prog="simple-uam")
 
-
 def main(args: Optional[List[str]] = None) -> int:
     """
     Run the main program.

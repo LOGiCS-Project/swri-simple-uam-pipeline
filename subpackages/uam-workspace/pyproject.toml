@@ -22,11 +22,10 @@ dependencies = [
     "colorama>=0.4.4",
     "filelock>=3.7.0"]
 
-[project.scripts]
-uam-workspace = "uam_workspace.cli:main"
+# [project.scripts]
+# uam-workspace = "uam_workspace.cli:main"
 
 [tool.pdm]
-package-dir = "src"
 editable-backend = "editables"
 
 [tool.pdm.dev-dependencies]
