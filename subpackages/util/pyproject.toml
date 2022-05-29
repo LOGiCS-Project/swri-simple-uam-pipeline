@@ -20,11 +20,13 @@ dependencies = [
     "invoke>=1.7.0",
     "structlog>=21.5.0",
     "rich>=12.4.1",
+    "copier>=6.0.0",
     "colorama>=0.4.4",
 ]
 
-# [project.scripts]
-# simpleuam-utils = "util.cli:main"
+[project.scripts]
+simpleuam-utils = "util.cli:main"
+simpleuam-dev = "util.dev.cli:main"
 
 [project.optional-dependencies]
 [tool.pdm]

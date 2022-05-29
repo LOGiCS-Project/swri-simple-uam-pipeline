@@ -24,6 +24,7 @@ classifiers = [
     "Topic :: Utilities",
     "Typing :: Typed",
 ]
+
 dependencies = [
     "omegaconf>=2.2.0",
     "attrs>=21.4.0",
@@ -43,7 +44,10 @@ Issues = "https://github.com/LOGiCS-Project/swri-simple-uam-pipleline/issues"
 Discussions = "https://github.com/LOGiCS-Project/swri-simple-uam-pipleline/discussions"
 
 [project.scripts]
-simple-uam = "simple_uam.cli:main"
+simpleuam-config = "simple_uam.config.cli:main"
+simpleuam-rootdev = "simple_uam.root_dev.cli:main"
+simpleuam-utils = "util.cli:main"
+simpleuam-dev = "util.dev.cli:main"
 
 [tool.pdm]
 version = {use_scm = true}

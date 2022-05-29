@@ -13,8 +13,8 @@ requires-python = ">=3.9,<3.10"
 version = "0.0.1"
 license = { text = "UNSPECIFIED" }
 dependencies = [
-    "-e ./../util",
-    "-e ./../uam-workspace",
+    "util @ file:///${PROJECT_ROOT}/deps/util",
+    "uam-workspace @ file:///${PROJECT_ROOT}/deps/uam-workspace",
     "omegaconf>=2.2.0",
     "attrs>=21.4.0",
     "invoke>=1.7.0",

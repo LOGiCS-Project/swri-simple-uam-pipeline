@@ -12,6 +12,7 @@
 """Module that contains the command line application."""
 
 import argparse
+import sys
 from typing import List, Optional
 
 
@@ -23,7 +24,6 @@ def get_parser() -> argparse.ArgumentParser:
         An argparse parser.
     """
     return argparse.ArgumentParser(prog="simple-uam")
-
 
 def main(args: Optional[List[str]] = None) -> int:
     """
@@ -37,6 +37,8 @@ def main(args: Optional[List[str]] = None) -> int:
     Returns:
         An exit code.
     """
+    print(sys.argv)
+    print(args)
     parser = get_parser()
     opts = parser.parse_args(args=args)
     print(opts)  # noqa: WPS421 (side-effect in main is fine)
