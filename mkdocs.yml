@@ -4,20 +4,17 @@ site_url: "https://LOGiCS-Project.github.io/swri-simple-uam-pipleline"
 repo_url: "https://github.com/LOGiCS-Project/swri-simple-uam-pipleline"
 repo_name: "LOGiCS-Project/swri-simple-uam-pipleline"
 site_dir: "site"
-watch: [README.md, CONTRIBUTING.md, CHANGELOG.md]
+watch: [README.md, CONTRIBUTING.md]
 
 nav:
 - Home:
   - Overview: index.md
-  - Changelog: changelog.md
   - Credits: credits.md
   - License: license.md
 # defer to gen-files + literate-nav
 - Code Reference: reference/
 - Development:
   - Contributing: contributing.md
-  - Code of Conduct: code_of_conduct.md
-  - Coverage report: coverage.md
 
 theme:
   name: material
