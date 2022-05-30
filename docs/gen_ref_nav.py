@@ -1,7 +1,7 @@
 """Generate the code reference pages and navigation."""
 
 from pathlib import Path
-
+import os
 import mkdocs_gen_files
 
 nav = mkdocs_gen_files.Nav()
@@ -12,6 +12,7 @@ packages = {
 }
 
 for package, data in packages.items():
+
     src_dir = Path(data['src_dir'])
 
     for path in sorted(src_dir.rglob("*.py")):
@@ -19,6 +20,7 @@ for package, data in packages.items():
         module_path = path.relative_to(src_dir.parent).with_suffix("")
         doc_path = path.relative_to(src_dir.parent).with_suffix(".md")
         full_doc_path = Path("reference", doc_path)
+
 
         parts = tuple(module_path.parts)
 
@@ -33,7 +35,9 @@ for package, data in packages.items():
 
 
         with mkdocs_gen_files.open(full_doc_path, "w") as fd:
+
             ident = ".".join(parts)
+
             fd.write(f"::: {ident}")
 
         mkdocs_gen_files.set_edit_path(full_doc_path, path)
