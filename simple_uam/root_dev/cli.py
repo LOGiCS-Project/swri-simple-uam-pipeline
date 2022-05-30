@@ -33,9 +33,6 @@ def main(args: Optional[List[str]] = None) -> int:
         An exit code.
     """
 
-    print(sys.argv)
-    print(args)
-
     # Setup the invoke program runner class
     program = InvokeProg(
         namespace=Collection.from_module(simple_uam.root_dev.tasks),

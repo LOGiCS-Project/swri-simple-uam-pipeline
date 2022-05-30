@@ -32,6 +32,7 @@ dependencies = [
     "structlog>=21.5.0",
     "rich>=12.4.1",
     "colorama>=0.4.4",
+    "-e file:///${PROJECT_ROOT}/subpackages/util#egg=util",
 ]
 
 [project.urls]
@@ -54,19 +55,12 @@ editable-backend = "editables"
 
 [tool.pdm.scripts]
 config = {call = "simple_uam.config.cli:main(['pdm run config'])"}
-# config.help = "Utilities for manipulating config files."
 check-docs = {call = "simple_uam.root_dev.cli:main(['pdm run check-docs','check-docs'])"}
-# check-docs.help = "Check if documentation builds correctly."
 docs = {call = "simple_uam.root_dev.cli:main(['pdm run docs','docs'])"}
-# docs.help = "Build the documentation locally."
 docs-serve = {call = "simple_uam.root_dev.cli:main(['pdm run docs-serve','docs-serve'])"}
-# docs-serve.help = "Serve the documentation (default: 'localhost:8000')."
 docs-deploy = {call = "simple_uam.root_dev.cli:main(['pdm run docs-deploy','docs-deploy'])"}
-# docs-deploy.help = "Deploy the documentation to github pages."
 clean = {call = "simple_uam.root_dev.cli:main(['pdm run clean','clean'])"}
-# clean.help = "Delete temporary files."
 reset-pdm = {call = "simple_uam.root_dev.cli:main(['pdm run reset-pdm','reset-pdm'])"}
-# reset-pdm.help = "Delete all local pdm install files."
 
 [tool.pdm.dev-dependencies]
 docs = [

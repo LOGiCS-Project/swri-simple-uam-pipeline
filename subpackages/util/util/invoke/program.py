@@ -24,5 +24,4 @@ class InvokeProg(Program):
             and sys.argv[0] == '-c'):
             argv = argv + sys.argv[1:]
 
-        print(argv)
         return super(InvokeProg, self).run(argv,exit)
