@@ -15,15 +15,17 @@ import argparse
 import sys
 from typing import List, Optional
 
+# Importing all the different config dataclasses to ensure that they're loaded
+from util.config import Config, PathConfig #noqa
+from setup.config import WorkerSetupConfig #noqa
+from uam_workspace.config import UAMWorkspaceConfig #noqa
+from uam_worker.config import UAMWorkerConfig #noqa
 
-def get_parser() -> argparse.ArgumentParser:
-    """
-    Return the CLI argument parser.
+import util.config.tasks
+from util.invoke import task, Collection, InvokeProg
+from util.logging import get_logger
 
-    Returns:
-        An argparse parser.
-    """
-    return argparse.ArgumentParser(prog="simple-uam")
+log = get_logger(__name__)
 
 def main(args: Optional[List[str]] = None) -> int:
     """
@@ -37,9 +39,11 @@ def main(args: Optional[List[str]] = None) -> int:
     Returns:
         An exit code.
     """
-    print(sys.argv)
-    print(args)
-    parser = get_parser()
-    opts = parser.parse_args(args=args)
-    print(opts)  # noqa: WPS421 (side-effect in main is fine)
-    return 0
+
+    # Setup the invoke program runner class
+    program = InvokeProg(
+        namespace=Collection.from_module(util.config.tasks),
+        version="0.1.0",
+    )
+
+    return program.run(argv=args)

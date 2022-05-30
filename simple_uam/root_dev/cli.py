@@ -14,16 +14,11 @@
 import argparse
 import sys
 from typing import List, Optional
+import simple_uam.root_dev.tasks
+from util.invoke import Collection, InvokeProg, task
+from util.logging import get_logger
 
-
-def get_parser() -> argparse.ArgumentParser:
-    """
-    Return the CLI argument parser.
-
-    Returns:
-        An argparse parser.
-    """
-    return argparse.ArgumentParser(prog="simple-uam")
+log = get_logger(__name__)
 
 def main(args: Optional[List[str]] = None) -> int:
     """
@@ -37,9 +32,35 @@ def main(args: Optional[List[str]] = None) -> int:
     Returns:
         An exit code.
     """
+
     print(sys.argv)
     print(args)
-    parser = get_parser()
-    opts = parser.parse_args(args=args)
-    print(opts)  # noqa: WPS421 (side-effect in main is fine)
-    return 0
+
+    # Setup the invoke program runner class
+    program = InvokeProg(
+        namespace=Collection.from_module(simple_uam.root_dev.tasks),
+        version="0.1.0",
+    )
+
+    return program.run(argv=args)
+
+def docs_serve(args: Optional[List[str]] = None) -> int:
+
+    docs_args = argparse.ArgumentParser(
+        description="Compile and serve the documentation on a local server.")
+
+    docs_args.add_argument(
+        'host',
+        type=str,
+        default="0.0.0.0",
+        help="The host to serve the docs from.",
+    )
+
+    docs_args.add_argument(
+        'port',
+        type=int,
+        default=8000,
+        help="The port to serve the docs on.",
+    )
+
+    args = docs_args.parse_args()

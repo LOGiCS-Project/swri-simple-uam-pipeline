@@ -7,35 +7,56 @@ from util.logging import get_logger
 log = get_logger(__name__)
 
 @task
-def classes(ctx):
+def dir(ctx, all=False):
+    """
+    Prints the current terminal config directory.
+
+    Arguments:
+        all: Print all config directories in load order (higher priority last).
+    """
+    if all:
+        for d in Config.config_dirs:
+            print(str(d))
+    else:
+        print(str(Config.config_dirs[-1]))
+
+@task
+def file(ctx, key, all=False):
+    """
+    Prints the terminal file examined when loading a particular config.
+
+    Arguments:
+        all: Print all the files examined in load order (highest priority last).
+    """
+    if all:
+        for p in Config.load_path(key):
+            print(str(p))
+    else:
+        print(str(Config.load_path(key)[-1]))
+
+@task
+def list_classes(ctx):
     """
     Prints a list of registered configuration classes
     """
-    print(Config.config_names())
-
+    for n in Config.config_names():
+        print(n)
 
 @task
-def keys(ctx):
+def list_keys(ctx):
     """
     Prints a list of interpolation keys for available config classes
     """
-    print(Config.config_keys())
-
+    for k in Config.config_keys():
+        print(k)
 
 @task
-def files(ctx):
+def list_files(ctx):
     """
     Prints a list of file locations (relative to config_dir) for config classes.
     """
-    print(Config.config_files())
-
-
-@task
-def path(ctx, key):
-    """
-    Prints the list of files examined when loading a particular config to STDOUT.
-    """
-    print([str(p) for p in Config.load_path(key)])
+    for f in Config.config_files():
+        print(f)
 
 
 @task(name="print")
@@ -80,4 +101,10 @@ def write(ctx, config=None, mkdir=True, write_all=False, overwrite=False, commen
     if config == []:
         config = None
 
-    Config.write_configs(config, mkdir=mkdir, write_all=write_all, overwrite=overwrite, comment=comment)
+    Config.write_configs(
+        config,
+        mkdir=mkdir,
+        write_all=write_all,
+        overwrite=overwrite,
+        comment=comment
+    )

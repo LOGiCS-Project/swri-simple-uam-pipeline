@@ -19,7 +19,6 @@ from util.logging import get_logger
 
 log = get_logger(__name__)
 
-
 @task
 def test_logging(ctx):
     """
@@ -43,7 +42,6 @@ def test_logging(ctx):
     make_call_stack_more_impressive()
 
     log.info("done-now")
-
 
 def main(args: Optional[List[str]] = None) -> int:
     """
