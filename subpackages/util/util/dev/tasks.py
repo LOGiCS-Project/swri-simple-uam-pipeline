@@ -2,8 +2,6 @@
 Various setup and development tasks for SimpleUAM Utility Modules.
 """
 
-
-import copier
 import tempfile
 import shutil
 import os
@@ -17,7 +15,7 @@ from urllib.request import urlopen
 from pathlib import Path
 from invoke import task
 
-PY_SRC_PATHS = ["tasks.py"]
+PY_SRC_PATHS = list()
 for src_dir in Path.cwd().iterdir():
     if src_dir.is_dir() and (src_dir / "__init__.py").exists():
         PY_SRC_PATHS.append(src_dir)
@@ -50,18 +48,6 @@ def _get_proj_root():
 
 PROJ_ROOT = _get_proj_root()
 CONF_DIR = PROJ_ROOT / "dev-config"
-
-@task
-def setup(ctx):
-    """
-    Sets up the subproject using `pdm install -d`.
-    Will also process changes to `pyproject.toml`.
-
-    Arguments:
-        ctx: The context instance (passed automatically).
-    """
-    ctx.run("pdm install -d")
-
 
 @task
 def check_quality(ctx, files=PY_SRC):

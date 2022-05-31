@@ -20,13 +20,22 @@ dependencies = [
     "invoke>=1.7.0",
     "structlog>=21.5.0",
     "rich>=12.4.1",
-    "copier>=6.0.0",
     "colorama>=0.4.4",
 ]
 
-[project.scripts]
-simpleuam-utils = "util.cli:main"
-simpleuam-dev = "util.dev.cli:main"
+# [project.scripts]
+# simpleuam-utils = "util.cli:main"
+# simpleuam-dev = "util.dev.cli:main"
+
+[tool.pdm.scripts]
+check = {call = "util.dev.cli:main(['pdm run check','check'])"}
+check-quality = {call = "util.dev.cli:main(['pdm run check-quality','check-quality'])"}
+check-types = {call = "util.dev.cli:main(['pdm run check-types','check-types'])"}
+clean = {call = "util.dev.cli:main(['pdm run clean','clean'])"}
+reset-pdm = {call = "util.dev.cli:main(['pdm run reset-pdm','reset-pdm'])"}
+format = {call = "util.dev.cli:main(['pdm run format','format'])"}
+test = {call = "util.dev.cli:main(['pdm run test','test'])"}
+coverage = {call = "util.dev.cli:main(['pdm run coverage','coverage'])"}
 
 [project.optional-dependencies]
 [tool.pdm]

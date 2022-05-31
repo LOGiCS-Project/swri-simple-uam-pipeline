@@ -38,4 +38,4 @@ def main(args: Optional[List[str]] = None) -> int:
         version="0.1.0",
     )
 
-    return program.run()
+    return program.run(argv=args)

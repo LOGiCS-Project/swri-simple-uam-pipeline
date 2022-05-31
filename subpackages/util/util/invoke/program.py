@@ -23,5 +23,4 @@ class InvokeProg(Program):
             and argv[0].startswith("pdm run")
             and sys.argv[0] == '-c'):
             argv = argv + sys.argv[1:]
-
         return super(InvokeProg, self).run(argv,exit)
