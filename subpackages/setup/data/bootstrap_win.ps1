@@ -8,8 +8,7 @@ Else {
 }
 
 choco upgrade git -y
-choco upgrade python -y
-choco upgrade miniconda3 --params="'/AddToPath:1'" -y
-choco upgrade git-lfs -y
-choco upgrade wget -y
-choco upgrade 7zip -y
+choco upgrade python3 -y
+choco upgrade openssl -y
+RefreshEnv.cmd
+python -m pip install pdm

@@ -11,7 +11,7 @@ authors = [
 readme = "README.md"
 requires-python = ">=3.9,<3.10"
 version = "0.0.1"
-license = { text = "UNSPECIFIED" }
+license-expression = "MIT"
 dependencies = [
     "-e file:///${PROJECT_ROOT}/deps/util#egg=util",
     "omegaconf>=2.2.0",
@@ -23,10 +23,19 @@ dependencies = [
 ]
 
 [project.scripts]
-setup = "setup.cli:main"
+setup-win = "setup.windows.cli:main"
+
+[tool.pdm.scripts]
+check = {call = "util.dev.cli:main(['pdm run check','check'])"}
+check-quality = {call = "util.dev.cli:main(['pdm run check-quality','check-quality'])"}
+check-types = {call = "util.dev.cli:main(['pdm run check-types','check-types'])"}
+clean = {call = "util.dev.cli:main(['pdm run clean','clean'])"}
+reset-pdm = {call = "util.dev.cli:main(['pdm run reset-pdm','reset-pdm'])"}
+format = {call = "util.dev.cli:main(['pdm run format','format'])"}
+test = {call = "util.dev.cli:main(['pdm run test','test'])"}
+coverage = {call = "util.dev.cli:main(['pdm run coverage','coverage'])"}
 
 [tool.pdm]
-package-dir = "src"
 editable-backend = "editables"
 
 [tool.pdm.dev-dependencies]

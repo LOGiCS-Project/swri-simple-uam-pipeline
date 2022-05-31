@@ -45,7 +45,7 @@ def docs(ctx):
     ctx.run("pdm run mkdocs build")
 
 @task
-def docs_serve(ctx, host="127.0.0.1", port=8000):
+def docs_serve(ctx, host="0.0.0.0", port=8000):
     """
     Serve the documentation (localhost:8000).
 

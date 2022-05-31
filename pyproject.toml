@@ -33,6 +33,7 @@ dependencies = [
     "rich>=12.4.1",
     "colorama>=0.4.4",
     "-e file:///${PROJECT_ROOT}/subpackages/util#egg=util",
+    "-e file:///${PROJECT_ROOT}/subpackages/setup#egg=simpleuam-setup",
 ]
 
 [project.urls]
@@ -45,9 +46,7 @@ Discussions = "https://github.com/LOGiCS-Project/swri-simple-uam-pipleline/discu
 
 [project.scripts]
 simpleuam-config = "simple_uam.config.cli:main"
-simpleuam-rootdev = "simple_uam.root_dev.cli:main"
-simpleuam-utils = "util.cli:main"
-simpleuam-dev = "util.dev.cli:main"
+setup-win = "setup.windows.cli:main"
 
 [tool.pdm]
 version = {use_scm = true}
