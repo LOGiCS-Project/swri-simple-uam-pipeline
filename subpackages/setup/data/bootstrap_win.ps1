@@ -11,4 +11,6 @@ choco upgrade git -y
 choco upgrade python3 -y
 choco upgrade openssl -y
 RefreshEnv.cmd
-python -m pip install pdm
+C:\python310\python.exe -m pip install --upgrade pip pdm
+# Enable symlinks on remote drive
+# fsutil behavior set SymlinkEvaluation R2R:1

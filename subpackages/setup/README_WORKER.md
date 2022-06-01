@@ -71,6 +71,9 @@ AWS specific worker setup.
       - Drive: D:
       - Folder: `\\<aws-fsx-ip>\fsx\`
       - Reconnect At Login: Yes
+  - Run to enable relative symlinks on mounted drive: 
+    - `fsutil behavior set SymlinkEvaluation R2R:1`
+    - See [here](https://neurotechnics.com/blog/fix-symbolic-link-cannot-be-followed/) for more info.
 
 ## Worker Setup
 

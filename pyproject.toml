@@ -8,7 +8,7 @@ description = "A set of libraries and wrappers around the SWRi athens-uav projec
 authors = [{name = "Rohit Ramesh", email = "rkr@berkeley.edu"}]
 license-expression = "MIT"
 readme = "README.md"
-requires-python = ">=3.9,<3.10"
+requires-python = ">=3.9"
 keywords = []
 dynamic = ["version"]
 classifiers = [
@@ -74,8 +74,8 @@ coverage = {call = "util.dev.cli:main(['pdm run coverage','coverage'])"}
 editable = [
     "-e file:///${PROJECT_ROOT}/subpackages/util#egg=simpleuam-util",
     "-e file:///${PROJECT_ROOT}/subpackages/setup#egg=simpleuam-setup",
-    "-e file:///${PROJECT_ROOT}/subpackages/workspace#egg=simpleuam-workspace",
-    "-e file:///${PROJECT_ROOT}/subpackages/worker#egg=simpleuam-worker",
+    # "-e file:///${PROJECT_ROOT}/subpackages/workspace#egg=simpleuam-workspace",
+    # "-e file:///${PROJECT_ROOT}/subpackages/worker#egg=simpleuam-worker",
 ]
 docs = [
     "mkdocs>=1.3",
