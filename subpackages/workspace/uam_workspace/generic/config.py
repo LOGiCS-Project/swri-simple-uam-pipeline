@@ -92,7 +92,7 @@ class WorkspaceConfig():
     def reference_lockfile(self):
         """ The lockfile for the reference directory. """
 
-        return self.locks_path() / "reference.lock"
+        return self.locks_path / "reference.lock"
 
     @property
     def records_path(self):
@@ -104,10 +104,22 @@ class WorkspaceConfig():
             return Path(self.workspace_path / self.records_subdir).resolve()
 
     @property
+    def records_lockdir(self):
+        """
+        The lockfile for the reference directory.
+
+        Unlike the other lockfiles this is kept in the records directory.
+        This allows multiple computers to share a records dir by,
+        for instance, keeping it on a shared drive.
+        """
+
+        return self.records_path / 'locks'
+
+    @property
     def records_lockfile(self):
         """ The lockfile for the reference directory. """
 
-        return self.locks_path() / "records.lock"
+        return self.records_lockdir / "records.lock"
 
     def validate_workspace_subdir_num(self, num : int):
         """ Validate whether a particular worker subdir can exist. """
@@ -165,5 +177,11 @@ class WorkspaceConfig():
 
     @property
     def workspace_lockfiles(self) -> List[Path]:
-        """ List of all workspace lockfiles. """
-        return [self.workspace_lockfile(n) for n in self.workspace_nums]
+        """ List of all workspa/
+
+
+
+        Unlike the other lockfiles this is kept in the records directory.
+        This allows multiple computers to share a records dir by,
+        for instance, keeping it on a shared drive.
+        r[self.workspace_lockfile(n) for n in self.workspace_nums]

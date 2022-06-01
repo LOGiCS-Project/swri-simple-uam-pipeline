@@ -13,7 +13,7 @@ requires-python = ">=3.9,<3.10"
 version = "0.0.1"
 license-expression = "MIT"
 dependencies = [
-    "-e file:///${PROJECT_ROOT}/deps/util#egg=util",
+    "simpleuam-util @ file:///${PROJECT_ROOT}/deps/util",
     "omegaconf>=2.2.0",
     "attrs>=21.4.0",
     "invoke>=1.7.0",
@@ -39,6 +39,9 @@ coverage = {call = "util.dev.cli:main(['pdm run coverage','coverage'])"}
 editable-backend = "editables"
 
 [tool.pdm.dev-dependencies]
+editable = [
+    "-e file:///${PROJECT_ROOT}/deps/util#egg=simpleuam-util",
+]
 format = [
     "autoflake>=1.4",
     "black>=21.10b0",

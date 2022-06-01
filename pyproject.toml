@@ -32,8 +32,10 @@ dependencies = [
     "structlog>=21.5.0",
     "rich>=12.4.1",
     "colorama>=0.4.4",
-    "-e file:///${PROJECT_ROOT}/subpackages/util#egg=util",
-    "-e file:///${PROJECT_ROOT}/subpackages/setup#egg=simpleuam-setup",
+    "simpleuam-util @ file:///${PROJECT_ROOT}/subpackages/util",
+    "simpleuam-setup @ file:///${PROJECT_ROOT}/subpackages/setup",
+    "simpleuam-workspace @ file:///${PROJECT_ROOT}/subpackages/workspace",
+    "simpleuam-workser @ file:///${PROJECT_ROOT}/subpackages/worker",
 ]
 
 [project.urls]
@@ -47,6 +49,7 @@ Discussions = "https://github.com/LOGiCS-Project/swri-simple-uam-pipleline/discu
 [project.scripts]
 simpleuam-config = "simple_uam.config.cli:main"
 setup-win = "setup.windows.cli:main"
+workspace-mgr = "uam_workspace.cli:main"
 
 [tool.pdm]
 version = {use_scm = true}
@@ -58,10 +61,22 @@ check-docs = {call = "simple_uam.root_dev.cli:main(['pdm run check-docs','check-
 docs = {call = "simple_uam.root_dev.cli:main(['pdm run docs','docs'])"}
 docs-serve = {call = "simple_uam.root_dev.cli:main(['pdm run docs-serve','docs-serve'])"}
 docs-deploy = {call = "simple_uam.root_dev.cli:main(['pdm run docs-deploy','docs-deploy'])"}
-clean = {call = "simple_uam.root_dev.cli:main(['pdm run clean','clean'])"}
-reset-pdm = {call = "simple_uam.root_dev.cli:main(['pdm run reset-pdm','reset-pdm'])"}
+check = {call = "util.dev.cli:main(['pdm run check','check'])"}
+check-quality = {call = "util.dev.cli:main(['pdm run check-quality','check-quality'])"}
+check-types = {call = "util.dev.cli:main(['pdm run check-types','check-types'])"}
+clean = {call = "util.dev.cli:main(['pdm run clean','clean'])"}
+reset-pdm = {call = "util.dev.cli:main(['pdm run reset-pdm','reset-pdm'])"}
+format = {call = "util.dev.cli:main(['pdm run format','format'])"}
+test = {call = "util.dev.cli:main(['pdm run test','test'])"}
+coverage = {call = "util.dev.cli:main(['pdm run coverage','coverage'])"}
 
 [tool.pdm.dev-dependencies]
+editable = [
+    "-e file:///${PROJECT_ROOT}/subpackages/util#egg=simpleuam-util",
+    "-e file:///${PROJECT_ROOT}/subpackages/setup#egg=simpleuam-setup",
+    "-e file:///${PROJECT_ROOT}/subpackages/workspace#egg=simpleuam-workspace",
+    "-e file:///${PROJECT_ROOT}/subpackages/worker#egg=simpleuam-worker",
+]
 docs = [
     "mkdocs>=1.3",
     "mkdocs-coverage>=0.2",

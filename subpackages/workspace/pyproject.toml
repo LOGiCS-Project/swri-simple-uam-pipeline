@@ -3,7 +3,7 @@ requires = ["pdm-pep517>=0.12.0"]
 build-backend = "pdm.pep517.api"
 
 [project]
-name = "uam-workspace"
+name = "simpleuam-workspace"
 description = "Manages various actions to manipulate designs and run them through cad generation, FDM, and other processes. Also handles creating worker nodes for server interactions."
 authors = [
     {name = "Rohit Ramesh", email = "rkr@berkeley.edu"}
@@ -13,7 +13,7 @@ requires-python = ">=3.9,<3.10"
 version = "0.0.1"
 license = { text = "UNSPECIFIED" }
 dependencies = [
-    "-e file:///${PROJECT_ROOT}/deps/util#egg=util",
+    "simpleuam-util @ file:///${PROJECT_ROOT}/deps/util",
     "omegaconf>=2.2.0",
     "attrs>=21.4.0",
     "invoke>=1.7.0",
@@ -22,13 +22,25 @@ dependencies = [
     "colorama>=0.4.4",
     "filelock>=3.7.0"]
 
-# [project.scripts]
-# uam-workspace = "uam_workspace.cli:main"
+[project.scripts]
+workspace-mgr = "uam_workspace.cli:main"
 
+[tool.pdm.scripts]
+check = {call = "util.dev.cli:main(['pdm run check','check'])"}
+check-quality = {call = "util.dev.cli:main(['pdm run check-quality','check-quality'])"}
+check-types = {call = "util.dev.cli:main(['pdm run check-types','check-types'])"}
+clean = {call = "util.dev.cli:main(['pdm run clean','clean'])"}
+reset-pdm = {call = "util.dev.cli:main(['pdm run reset-pdm','reset-pdm'])"}
+format = {call = "util.dev.cli:main(['pdm run format','format'])"}
+test = {call = "util.dev.cli:main(['pdm run test','test'])"}
+coverage = {call = "util.dev.cli:main(['pdm run coverage','coverage'])"}
 [tool.pdm]
 editable-backend = "editables"
 
 [tool.pdm.dev-dependencies]
+editable = [
+    "-e file:///${PROJECT_ROOT}/deps/util#egg=simpleuam-util",
+]
 format = [
     "autoflake>=1.4",
     "black>=21.10b0",

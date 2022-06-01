@@ -11,14 +11,7 @@
 
 """Module that contains the command line application."""
 
-import argparse
 from typing import List, Optional
-from util.invoke import task, Collection, InvokeProg
-
-from util.config import Config, PathConfig
-from .config import *
-import util.config.tasks
-
 from util.logging import get_logger
 
 log = get_logger(__name__)
@@ -36,20 +29,12 @@ def main(args: Optional[List[str]] = None) -> int:
         An exit code.
     """
 
-    # Tasks in the top level namespace
-    namespace = Collection(
-    )
-
-    # Import tasks from other files/modules
-    namespace.add_collection(
-        Collection.from_module(util.config.tasks),
-        'config',
-    )
+    raise NotImplementedError()
 
     # Setup the invoke program runner class
     program = InvokeProg(
-        namespace=namespace,
+        namespace=Collection.from_module(util.dev.tasks),
         version="0.1.0",
     )
 
-    return program.run()
+    return program.run(args)

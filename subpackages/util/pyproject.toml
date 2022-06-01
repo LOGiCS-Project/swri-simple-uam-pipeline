@@ -3,7 +3,7 @@ requires = ["pdm-pep517>=0.12.0"]
 build-backend = "pdm.pep517.api"
 
 [project]
-name = "util"
+name = "simpleuam-util"
 description = "Various modules and wrappers for config, logging, and other general utilities."
 authors = [
     {name = "Rohit Ramesh", email = "rkr@berkeley.edu"}

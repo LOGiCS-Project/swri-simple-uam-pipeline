@@ -40,7 +40,7 @@ choco_exe_map = {
 def setup(ctx):
     """ Install Chocolatey (idempotent) """
 
-    if shutil.which(choco):
+    if shutil.which('choco.exe'):
         log.info(
             "Chocolatey executable found, skipping.",
             script=choco_setup_script,

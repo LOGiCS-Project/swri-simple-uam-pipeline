@@ -13,8 +13,8 @@ requires-python = ">=3.9,<3.10"
 version = "0.0.1"
 license = { text = "UNSPECIFIED" }
 dependencies = [
-    "-e file:///${PROJECT_ROOT}/deps/util#egg=util",
-    "-e file:///${PROJECT_ROOT}/deps/uam-workspace#egg=uam_workspace",
+    "simpleuam-util @ file:///${PROJECT_ROOT}/deps/util",
+    "simpleuam-workspace @ file:///${PROJECT_ROOT}/deps/workspace",
     "omegaconf>=2.2.0",
     "attrs>=21.4.0",
     "invoke>=1.7.0",
@@ -31,6 +31,10 @@ dependencies = [
 editable-backend = "editables"
 
 [tool.pdm.dev-dependencies]
+editable = [
+    "-e file:///${PROJECT_ROOT}/deps/workspace#egg=simpleuam-workspace",
+    "-e file:///${PROJECT_ROOT}/deps/util#egg=simpleuam-util",
+]
 format = [
     "autoflake>=1.4",
     "black>=21.10b0",

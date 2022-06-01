@@ -90,6 +90,7 @@ class WorkspaceManager():
             self.config.locks_path,
             self.config.reference_path,
             self.config.records_path,
+            self.config.records_lockdir,
             *self.config.workspace_paths,
         ]
 
