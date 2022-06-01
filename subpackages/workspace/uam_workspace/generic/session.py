@@ -49,6 +49,11 @@ class Session():
     particular context.
     """
 
+    number : int = field(
+        kw_only=True,
+    )
+    """ The number of the workspace this object is operating with. """
+
     reference_dir : Path = field(
         kw_only=True,
     )
@@ -72,7 +77,10 @@ class Session():
     result_archive : Path = field(
         kw_only=True,
     )
-    """ Where the result archive should be written to. """
+    """
+    Where the result archive should be written to, after session completion
+    the workspace should update this to the final archive location.
+    """
 
     @result_archive.validator
     def _result_archive_valid(self, attr, val):
@@ -244,6 +252,7 @@ class Session():
         info['start-time'] = self.start_time.isoformat()
         info['end-time'] = datetime.now().isoformat()
         info['reference-dir'] = str(self.reference_dir)
+        info['workspace-num'] = self.number
         info['workspace'] = str(self.work_dir)
         info['platform']= platform.system()
         info['platform-release']=platform.release()
@@ -263,14 +272,12 @@ class Session():
         Writes the current metadata to a file in the working directory.
         """
 
-        metadata = deepcopy(self.metdata)
-
-        metadata['session-info'] = self.session_info()
+        self.metadata['session-info'] = self.session_info()
 
         meta_path = self.work_dir / self.metadata_file
 
         with meta_path.open('w') as out_file:
-            json.dump(metadata, out_file)
+            json.dump(self.metadata, out_file)
 
     @session_op
     def generate_record_archive(self):

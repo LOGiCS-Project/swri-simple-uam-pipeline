@@ -97,6 +97,29 @@ class WorkspaceManager():
         for d in managed_dirs:
             d.mkdir(parents=True, exist_ok=True)
 
+    def delete_locks(self,
+                     skip_reference=False,
+                     skip_records=False):
+        """
+        Deletes all the locks that this WorkspaceManager can interact with.
+
+        Arguments:
+           skip_reference: If true, skip deleting the reference lockfile.
+           skip_records: If true, skip deleting the records lock.
+        """
+
+        lockfiles = [
+            *self.config.workspace_lockfiles
+        ]
+
+        if not skip_reference:
+            lockfiles.append(self.config.reference_lockfile)
+        if not skip_records:
+            lockfiles.append(self.config.records_lockfile)
+
+        for lf in lockfiles:
+            lf.unlink(missing_ok=True)
+
     def add_record(self,
                    archive : Union[str,Path],
                    prefix : Optional[str] = None,

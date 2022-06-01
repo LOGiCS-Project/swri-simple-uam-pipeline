@@ -42,7 +42,7 @@ class Workspace():
         default=None,
         kw_only=True,
     )
-    """ The number of the workspace Vthis object is operating with. """
+    """ The number of the workspace this object is operating with. """
 
     metadata : Dict = field(
         factory=dict,
@@ -114,14 +114,6 @@ class Workspace():
     moved into the records directory.
     """
 
-    record_archive : Optional[Path] = field(
-        default=None,
-        init=False,
-    )
-    """
-    The path to the record archive file after a session has completed.
-    """
-
     def start(self) -> Session:
         """
         Starts the session, meant to be used in a try-finally style.
@@ -151,7 +143,6 @@ class Workspace():
             raise RuntimeError("Could not acquire Workspace lock.")
         try:
             # mark session_start
-            self.record_archive = None
             self.active_workspace = lock_tuple[0]
             self.active_lock = lock_tuple[1]
 
@@ -167,6 +158,7 @@ class Workspace():
             # create active session
             self.active_session = self.session_class(
                 reference_dir=self.config.reference_path,
+                number=self.active_workspace,
                 work_dir=self.config.workspace_path(self.active_workspace),
                 result_archive=temp_archive,
                 metadata=metadata,
@@ -210,7 +202,7 @@ class Workspace():
                 self.active_session.generate_record_archive()
 
                 # Move it to the manager's records directory
-                self.record_archive = self.manager.add_record(
+                self.active_session.result_archive = self.manager.add_record(
                     archive=self.active_session.result_archive,
                     prefix=self.name,
                     copy=False,

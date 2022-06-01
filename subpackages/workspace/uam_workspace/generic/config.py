@@ -177,11 +177,6 @@ class WorkspaceConfig():
 
     @property
     def workspace_lockfiles(self) -> List[Path]:
-        """ List of all workspa/
-
-
-
-        Unlike the other lockfiles this is kept in the records directory.
-        This allows multiple computers to share a records dir by,
-        for instance, keeping it on a shared drive.
-        r[self.workspace_lockfile(n) for n in self.workspace_nums]
+        """ List of all workspace lockfiles.
+        """
+        return [self.workspace_lockfile(n) for n in self.workspace_nums]

@@ -34,8 +34,8 @@ dependencies = [
     "colorama>=0.4.4",
     "simpleuam-util @ file:///${PROJECT_ROOT}/subpackages/util",
     "simpleuam-setup @ file:///${PROJECT_ROOT}/subpackages/setup",
-    "simpleuam-workspace @ file:///${PROJECT_ROOT}/subpackages/workspace",
-    "simpleuam-workser @ file:///${PROJECT_ROOT}/subpackages/worker",
+    # "simpleuam-workspace @ file:///${PROJECT_ROOT}/subpackages/workspace",
+    # "simpleuam-worker @ file:///${PROJECT_ROOT}/subpackages/worker",
 ]
 
 [project.urls]
