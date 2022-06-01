@@ -71,6 +71,9 @@ plugins:
       python:
         paths:
           - 'subpackages/util'
+          - 'subpackages/setup'
+          - 'subpackages/workspace'
+          - 'subpackages/worker'
           - '.'
 
 

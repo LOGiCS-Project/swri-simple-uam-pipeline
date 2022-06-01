@@ -9,6 +9,9 @@ nav = mkdocs_gen_files.Nav()
 packages = {
     "simple-uam": {"src_dir": "simple_uam/"},
     "util": {"src_dir": "subpackages/util/util/"},
+    "setup": {"src_dir": "subpackages/setup/setup/"},
+    "workspace": {"src_dir": "subpackages/workspace/uam_workspace/"},
+    "worker": {"src_dir": "subpackages/worker/uam_worker/"},
 }
 
 for package, data in packages.items():
