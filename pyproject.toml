@@ -32,10 +32,10 @@ dependencies = [
     "structlog>=21.5.0",
     "rich>=12.4.1",
     "colorama>=0.4.4",
-    "simpleuam-util @ file:///${PROJECT_ROOT}/subpackages/util",
-    "simpleuam-setup @ file:///${PROJECT_ROOT}/subpackages/setup",
-    # "simpleuam-workspace @ file:///${PROJECT_ROOT}/subpackages/workspace",
-    # "simpleuam-worker @ file:///${PROJECT_ROOT}/subpackages/worker",
+    "simpleuam-util @ file:///${PROJECT_ROOT}/deps/util",
+    "simpleuam-setup @ file:///${PROJECT_ROOT}/deps/setup",
+    # "simpleuam-workspace @ file:///${PROJECT_ROOT}/deps/workspace",
+    # "simpleuam-worker @ file:///${PROJECT_ROOT}/deps/worker",
 ]
 
 [project.urls]
@@ -72,10 +72,10 @@ coverage = {call = "util.dev.cli:main(['pdm run coverage','coverage'])"}
 
 [tool.pdm.dev-dependencies]
 editable = [
-    "-e file:///${PROJECT_ROOT}/subpackages/util#egg=simpleuam-util",
-    "-e file:///${PROJECT_ROOT}/subpackages/setup#egg=simpleuam-setup",
-    # "-e file:///${PROJECT_ROOT}/subpackages/workspace#egg=simpleuam-workspace",
-    # "-e file:///${PROJECT_ROOT}/subpackages/worker#egg=simpleuam-worker",
+    "-e file:///${PROJECT_ROOT}/deps/util#egg=simpleuam-util",
+    "-e file:///${PROJECT_ROOT}/deps/setup#egg=simpleuam-setup",
+    # "-e file:///${PROJECT_ROOT}/deps/workspace#egg=simpleuam-workspace",
+    # "-e file:///${PROJECT_ROOT}/deps/worker#egg=simpleuam-worker",
 ]
 docs = [
     "mkdocs>=1.3",
