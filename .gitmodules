@@ -1,0 +1,9 @@
+[submodule "data/direct2cad"]
+	path = data/direct2cad
+	url = git@git.isis.vanderbilt.edu:SwRI/uam_direct2cad.git
+[submodule "data/craidl"]
+	path = data/craidl
+	url = git@git.isis.vanderbilt.edu:SwRI/ta1/sri-ta1/trinity-craidl.git
+[submodule "data/creoson-server"]
+	path = data/creoson-server
+	url = git@git.isis.vanderbilt.edu:SwRI/creoson/creoson-server.git
