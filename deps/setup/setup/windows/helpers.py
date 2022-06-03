@@ -135,9 +135,9 @@ class GUIInstaller():
         if self.unpack_dir:
             deps.append('7zip')
         if deps:
-            return [call(choco.install,pkg=deps)]
+            return [installer_cache,call(choco.install,pkg=deps)]
         else:
-            return []
+            return [installer_cache]
 
     @property
     def already_installed(self) -> bool:
@@ -173,7 +173,7 @@ class GUIInstaller():
                     textwrap.dedent(
                         """
                         No installer found. Attempting to download file to
-                        the following location manually.
+                        the following.
                         """
                     ),
                          path=str(self.installer_path),

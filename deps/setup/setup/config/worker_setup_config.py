@@ -10,16 +10,16 @@ class WorkerSetupConfig():
     """
 
     choco_dep_packages : List[str] = [
-        'sed',
-        'openjdk11',
-        'openmodelica',
-        'putty',
+        # 'sed',
+        # 'openjdk11',
+        # 'openmodelica',
+        # 'putty',
         'checksum',
         'wget',
         '7zip',
-        'git-lfs',
+        # 'git-lfs',
         'rsync',
-        'rabbitmq',
+        # 'rabbitmq',
     ]
     """
     Packages that are needed for worker setup, please only add items to the
@@ -32,8 +32,8 @@ class WorkerSetupConfig():
         'notepadplusplus',
         'foxitreader',
         'tess',
-        'atom',
-        'openscad',
+        # 'atom',
+        # 'openscad',
         'freecad',
         'tortoisegit',
     ]
@@ -42,14 +42,14 @@ class WorkerSetupConfig():
     bearable.
     """
 
-    pip_packages : List[str] = [
-        "minio",
-        "elasticsearch",
-        "pyyaml",
-    ]
-    """
-    Pip packages needed for the worker nodes to run.
-    """
+    # pip_packages : List[str] = [
+    #     "minio",
+    #     "elasticsearch",
+    #     "pyyaml",
+    # ]
+    # """
+    # Pip packages needed for the worker nodes to run.
+    # """
 
 # Add to the configuration manager
 Config.register(

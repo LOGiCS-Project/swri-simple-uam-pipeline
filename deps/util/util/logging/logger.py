@@ -175,6 +175,5 @@ def get_logger(name: str):
     return structlog.wrap_logger(
         logger,
         processors=[
-            CustomRenderer
         ]
     )

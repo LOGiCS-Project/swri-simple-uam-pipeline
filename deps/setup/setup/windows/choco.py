@@ -11,7 +11,7 @@ import subprocess
 log = get_logger(__name__)
 
 # Directory where chocolatey scripts are found
-choco_script_dir = paths.repo_dir / 'setup' / 'data'
+choco_script_dir = paths.repo_dir / 'deps' / 'setup' / 'data'
 
 # Chololatey env bootstrap script
 choco_bootstrap_script = choco_script_dir / 'bootstrap_win.ps1'
@@ -43,12 +43,12 @@ def setup(ctx):
     if shutil.which('choco.exe'):
         log.info(
             "Chocolatey executable found, skipping.",
-            script=choco_setup_script,
+            script=str(choco_setup_script),
         )
     else:
         log.info(
             "Installing Chocolatey.",
-            script=choco_setup_script,
+            script=str(choco_setup_script),
         )
 
         installed = subprocess.run([

@@ -26,7 +26,12 @@ def download_file(uri: Path, output: Path):
         file_path=str(output),
     )
 
-    subprocess.run(["wget.exe", uri, "-O", output, "--show-progress"])
+    subprocess.run([
+        "wget.exe", uri,
+        "-O", output,
+        "--show-progress",
+        "--no-check-certificate"
+    ])
 
 
 def verify_file(input: Path, md5: str):

@@ -69,10 +69,10 @@ def main(args: Optional[List[str]] = None) -> int:
     )
 
     # Import tasks from other files/modules
-    namespace.add_collection(
-        Collection.from_module(util.config.tasks),
-        'config',
-    )
+    # namespace.add_collection(
+    #     Collection.from_module(util.config.tasks),
+    #     'config',
+    # )
 
     # Setup the invoke program runner class
     program = InvokeProg(
