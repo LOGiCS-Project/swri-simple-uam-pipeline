@@ -1,49 +1,32 @@
 """Generate the code reference pages and navigation."""
 
 from pathlib import Path
-import os
+
 import mkdocs_gen_files
 
 nav = mkdocs_gen_files.Nav()
 
-packages = {
-    "simple-uam": {"src_dir": "simple_uam/"},
-    "util": {"src_dir": "subpackages/util/util/"},
-    "setup": {"src_dir": "subpackages/setup/setup/"},
-    "workspace": {"src_dir": "subpackages/workspace/uam_workspace/"},
-    "worker": {"src_dir": "subpackages/worker/uam_worker/"},
-}
+for path in sorted(Path("src").rglob("*.py")):
+    module_path = path.relative_to("src").with_suffix("")
+    doc_path = path.relative_to("src").with_suffix(".md")
+    full_doc_path = Path("reference", doc_path)
 
-for package, data in packages.items():
+    parts = tuple(module_path.parts)
 
-    src_dir = Path(data['src_dir'])
+    if parts[-1] == "__init__":
+        parts = parts[:-1]
+        doc_path = doc_path.with_name("index.md")
+        full_doc_path = full_doc_path.with_name("index.md")
+    elif parts[-1] == "__main__":
+        continue
 
-    for path in sorted(src_dir.rglob("*.py")):
+    nav[parts] = doc_path.as_posix()
 
-        module_path = path.relative_to(src_dir.parent).with_suffix("")
-        doc_path = path.relative_to(src_dir.parent).with_suffix(".md")
-        full_doc_path = Path("reference", doc_path)
+    with mkdocs_gen_files.open(full_doc_path, "w") as fd:
+        ident = ".".join(parts)
+        fd.write(f"::: {ident}")
 
-
-        parts = tuple(module_path.parts)
-
-        if parts[-1] == "__init__":
-            parts = parts[:-1]
-            doc_path = doc_path.with_name("index.md")
-            full_doc_path = full_doc_path.with_name("index.md")
-        elif parts[-1] == "__main__":
-            continue
-
-        nav[parts] = doc_path.as_posix()
-
-
-        with mkdocs_gen_files.open(full_doc_path, "w") as fd:
-
-            ident = ".".join(parts)
-
-            fd.write(f"::: {ident}")
-
-        mkdocs_gen_files.set_edit_path(full_doc_path, path)
+    mkdocs_gen_files.set_edit_path(full_doc_path, path)
 
 # add pages manually:
 # nav["package", "module"] = "path/to/file.md"

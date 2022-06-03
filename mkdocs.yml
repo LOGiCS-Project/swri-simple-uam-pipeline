@@ -66,18 +66,4 @@ plugins:
     nav_file: SUMMARY.md
 - coverage
 - section-index
-- mkdocstrings:
-    handlers:
-      python:
-        paths:
-          - 'subpackages/util'
-          - 'subpackages/setup'
-          - 'subpackages/workspace'
-          - 'subpackages/worker'
-          - '.'
-
-
-# extra:
-#   social:
-#   - icon: fontawesome/brands/github
-#     link: https://github.com/rohit507
+- mkdocstrings

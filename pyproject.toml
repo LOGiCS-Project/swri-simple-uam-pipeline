@@ -18,6 +18,8 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
     "Topic :: Documentation",
     "Topic :: Software Development",
     "Topic :: Software Development :: Documentation",
@@ -32,10 +34,6 @@ dependencies = [
     "structlog>=21.5.0",
     "rich>=12.4.1",
     "colorama>=0.4.4",
-    "simpleuam-util @ file:///${PROJECT_ROOT}/deps/util",
-    "simpleuam-setup @ file:///${PROJECT_ROOT}/deps/setup",
-    # "simpleuam-workspace @ file:///${PROJECT_ROOT}/deps/workspace",
-    # "simpleuam-worker @ file:///${PROJECT_ROOT}/deps/worker",
 ]
 
 [project.urls]
@@ -47,36 +45,35 @@ Issues = "https://github.com/LOGiCS-Project/swri-simple-uam-pipleline/issues"
 Discussions = "https://github.com/LOGiCS-Project/swri-simple-uam-pipleline/discussions"
 
 [project.scripts]
-simpleuam-config = "simple_uam.config.cli:main"
-setup-win = "setup.windows.cli:main"
-workspace-mgr = "uam_workspace.cli:main"
+suam-cfg = "simple_uam.tools.config_mgr.cli:main"
+suam-setup-win = "simple_uam.tools.setup_win.cli:main"
 
 [tool.pdm]
 version = {use_scm = true}
+package-dir = "src"
 editable-backend = "editables"
+includes = [
+    "data/**/*",
+]
 
 [tool.pdm.scripts]
-config = {call = "simple_uam.config.cli:main(['pdm run config'])"}
-check-docs = {call = "simple_uam.root_dev.cli:main(['pdm run check-docs','check-docs'])"}
-docs = {call = "simple_uam.root_dev.cli:main(['pdm run docs','docs'])"}
-docs-serve = {call = "simple_uam.root_dev.cli:main(['pdm run docs-serve','docs-serve'])"}
-docs-deploy = {call = "simple_uam.root_dev.cli:main(['pdm run docs-deploy','docs-deploy'])"}
-check = {call = "util.dev.cli:main(['pdm run check','check'])"}
-check-quality = {call = "util.dev.cli:main(['pdm run check-quality','check-quality'])"}
-check-types = {call = "util.dev.cli:main(['pdm run check-types','check-types'])"}
-clean = {call = "util.dev.cli:main(['pdm run clean','clean'])"}
-reset-pdm = {call = "util.dev.cli:main(['pdm run reset-pdm','reset-pdm'])"}
-format = {call = "util.dev.cli:main(['pdm run format','format'])"}
-test = {call = "util.dev.cli:main(['pdm run test','test'])"}
-coverage = {call = "util.dev.cli:main(['pdm run coverage','coverage'])"}
+config-mgr = {call = "simple_uam.tools.config_mgr.cli:main(['pdm run config-mgr'])"}
+setup-win = {call = "simple_uam.tools.setup_win.cli:main(['pdm run setup-win'])"}
+check-docs = {call = "simple_uam.tools.dev_util.cli:main(['pdm run check-docs','check-docs'])"}
+docs = {call = "simple_uam.tools.dev_util.cli:main(['pdm run docs','docs'])"}
+docs-serve = {call = "simple_uam.tools.dev_util.cli:main(['pdm run docs-serve','docs-serve'])"}
+docs-deploy = {call = "simple_uam.tools.dev_util.cli:main(['pdm run docs-deploy','docs-deploy'])"}
+check = {call = "simple_uam.tools.dev_util.cli:main(['pdm run check','check'])"}
+check-quality = {call = "simple_uam.tools.dev_util.cli:main(['pdm run check-quality','check-quality'])"}
+check-types = {call = "simple_uam.tools.dev_util.cli:main(['pdm run check-types','check-types'])"}
+clean = {call = "simple_uam.tools.dev_util.cli:main(['pdm run clean','clean'])"}
+reset-pdm = {call = "simple_uam.tools.dev_util.cli:main(['pdm run reset-pdm','reset-pdm'])"}
+format = {call = "simple_uam.tools.dev_util.cli:main(['pdm run format','format'])"}
+test = {call = "simple_uam.tools.dev_util.cli:main(['pdm run test','test'])"}
+coverage = {call = "simple_uam.tools.dev_util.cli:main(['pdm run coverage','coverage'])"}
+
 
 [tool.pdm.dev-dependencies]
-editable = [
-    "-e file:///${PROJECT_ROOT}/deps/util#egg=simpleuam-util",
-    "-e file:///${PROJECT_ROOT}/deps/setup#egg=simpleuam-setup",
-    # "-e file:///${PROJECT_ROOT}/deps/workspace#egg=simpleuam-workspace",
-    # "-e file:///${PROJECT_ROOT}/deps/worker#egg=simpleuam-worker",
-]
 docs = [
     "mkdocs>=1.3",
     "mkdocs-coverage>=0.2",
@@ -89,3 +86,48 @@ docs = [
     "markdown-exec>=0.5",
     "toml>=0.10",
 ]
+format = [
+    "autoflake>=1.4",
+    "black>=21.10b0",
+    "isort>=5.10",
+]
+quality = [
+    "darglint>=1.8",
+    "flake8-bandit>=2.1",
+    "flake8-black>=0.2",
+    "flake8-bugbear>=21.9",
+    "flake8-builtins>=1.5",
+    "flake8-comprehensions>=3.7",
+    "flake8-docstrings>=1.6",
+    "flake8-pytest-style>=1.5",
+    "flake8-string-format>=0.3",
+    "flake8-tidy-imports>=4.5",
+    "flake8-variables-names>=0.0",
+    "pep8-naming>=0.12",
+    "wps-light>=0.15",
+]
+tests = [
+    "pytest>=6.2",
+    "pytest-cov>=3.0",
+    "pytest-randomly>=3.10",
+    "pytest-xdist>=2.4",
+]
+typing = [
+    "mypy>=0.910",
+    "types-markdown>=3.3",
+    "types-toml>=0.10",
+]
+
+[tool.black]
+line-length = 120
+exclude = "tests/fixtures"
+
+[tool.isort]
+line_length = 120
+not_skip = "__init__.py"
+multi_line_output = 3
+force_single_line = false
+balanced_wrapping = true
+default_section = "THIRDPARTY"
+known_first_party = "simple_uam"
+include_trailing_comma = true
