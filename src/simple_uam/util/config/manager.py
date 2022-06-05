@@ -8,7 +8,7 @@ from attrs.setters import frozen
 from invoke import Argument
 from omegaconf import OmegaConf
 
-from util.system.backup import backup_file
+from ..system.backup import backup_file
 
 from .path_config import PATHCONFIG_FILE_NAME, \
     PATHCONFIG_INTERPOLATION_KEY, PathConfig
@@ -331,7 +331,7 @@ class Config(object):
 
         while current_dir and path_conf.is_file():
             conf = OmegaConf.load(path_conf)
-            current_dir = OmegaConf.select(conf, "config_dir")
+            current_dir = OmegaConf.select(conf, "config_directory")
             if current_dir:
                 current_dir = Path(current_dir)
                 conf_dirs.append(current_dir)

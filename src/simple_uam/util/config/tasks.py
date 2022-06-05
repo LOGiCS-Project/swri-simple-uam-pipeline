@@ -15,10 +15,10 @@ def dir(ctx, all=False):
         all: Print all config directories in load order (higher priority last).
     """
     if all:
-        for d in Config.config_dirs:
+        for d in Config().config_dirs:
             print(str(d))
     else:
-        print(str(Config.config_dirs[-1]))
+        print(str(Config().config_dirs[-1]))
 
 @task
 def file(ctx, key, all=False):
@@ -29,10 +29,10 @@ def file(ctx, key, all=False):
         all: Print all the files examined in load order (highest priority last).
     """
     if all:
-        for p in Config.load_path(key):
+        for p in Config().load_path(key):
             print(str(p))
     else:
-        print(str(Config.load_path(key)[-1]))
+        print(str(Config().load_path(key)[-1]))
 
 @task
 def list_classes(ctx):

@@ -50,6 +50,12 @@ class WorkspaceConfig():
     workspace.
     """
 
+    assets_subdir : str = "assets"
+    """
+    The subdirectory which contains various static files for use in the
+    workspace, usually by symlinking.
+    """
+
     locks_subdir : str = "workspace_locks"
     """ Subdir of workspaces_dir where the various lockfiles are kept. """
 
@@ -90,6 +96,19 @@ class WorkspaceConfig():
         """ The lockfile for the reference directory. """
 
         return self.locks_path / "reference.lock"
+
+    @property
+    def assets_path(self):
+        """
+        Absolute form of workspace asset directory.
+
+        Note: The asset subdir should share the reference lock.
+        """
+
+        if Path(self.assets_subdir).is_absolute():
+            return Path(self.assets_subdir).resolve()
+        else:
+            return Path(self.workspace_path / self.assets_subdir).resolve()
 
     @property
     def records_path(self):

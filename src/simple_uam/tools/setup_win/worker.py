@@ -58,16 +58,28 @@ creo_installer = GUIInstaller(
         Which can be found by running `ipconfig /all` under
         the 'Physical Address' field.
 
-      - During 'Application Selection' I disabled all the diagnostic
-        reporting.
+      - During 'Application Selection':
+
+        - Enable the JLink adapter for Creo Parameteric under:
+
+          Customize.. -> Creo Parametric -> API Toolkits -> Creo Object TOOLKIT for Java and JLink
+
+          See this link for more detailed instructions: http://simplifiedlogic.com/how-to-install-jlink-for-creo
+
+        - Consider disabling all the diagnostic reporting.
     """,
 )
 
 
 @task(pre=creo_installer.invoke_deps)
-def creo(ctx):
-    """ Install Creo 5.6 """
-    creo_installer.run()
+def creo(ctx, force=False):
+    """
+    Install Creo 5.6
+
+    Arguments:
+      force: Run the installer even if creo is already installed.
+    """
+    creo_installer.run(force=force)
 
     log.info(
         "Making changes to creo config (if needed).",
@@ -86,9 +98,14 @@ openmeta_installer = GUIInstaller(
 )
 
 @task(pre=openmeta_installer.invoke_deps)
-def openmeta(ctx):
-    """ Install OpenMETA v0.22.0 """
-    openmeta_installer.run()
+def openmeta(ctx, force=False):
+    """
+    Install OpenMETA v0.22.0
+
+    Arguments:
+      force: Run the installer even if openmeta is already installed.
+    """
+    openmeta_installer.run(force=force)
 
 matlab_installer = GUIInstaller(
     installed_path="C:\\Program Files\MATLAB\MATLAB Runtime",
@@ -111,12 +128,17 @@ matlab_installer = GUIInstaller(
 )
 
 @task(pre=matlab_installer.invoke_deps)
-def matlab(ctx):
-    """ Install Matlab Runtime 2020b """
-    matlab_installer.run()
+def matlab(ctx, force=False):
+    """
+    Install Matlab Runtime 2020b
+
+    Arguments:
+      force: Run the installer even if matlab is already installed.
+    """
+    matlab_installer.run(force=force)
 
 # Directory where chocolatey scripts are found
-setup_script_dir = paths.repo_dir / 'setup' / 'data'
+setup_script_dir = Config[PathConfig].data_dir / 'setup'
 
 # Chololatey env bootstrap scrip
 disable_ieesc_script = setup_script_dir / 'disable_ieesc.ps1'
@@ -144,20 +166,38 @@ def disable_ieesc(ctx):
         '-executionpolicy','bypass',
         '-File',disable_ieesc_script])
 
-
 creoson_installer = GUIInstaller(
     # installed_path="C:\\Program Files (x86)\META",
     path =  "CreosonServerWithSetup-2.8.0-win64.zip",
     unpack_dir = 'creoson-server',
-    exe = 'CreosonSetup.exe',
-    instructions="""## Installing Creoson Server 2.8.0 ##""",
+    md5="E96479F5BE369EC6DABB116DBB02E04C",
+    exe = 'CreosonServerWithSetup-2.8.0-win64/CreosonSetup.exe',
+    instructions="""
+    ## Installing Creoson Server 2.8.0 ##
+
+      - Ensure you have the JLink adapter installed for Creo Parametric.
+
+      - If creo is already installed without JLink you can add it:
+        - Run: 'pdm run setup-win worker.creo --force'
+        - Follow the prompts provided before starting the installer, except to
+          select the option to "Upgrade Existing Installation" at the beginning.
+
+      - Step 1: If using defaults Creo is installed at "C:\Program Files\PTC\Creo 5.0.6.0\Common Files"
+
+      - Step 2: Leave the port number at 9056
+    """,
 )
 
 creoson_zip = Config[PathConfig].data_dir / 'creoson-server' / creoson_installer.path
 
 @task(pre=creoson_installer.invoke_deps)
-def creoson(ctx):
-    """ Install Creoson Server 2.8.0 """
+def creoson(ctx, force=False):
+    """
+    Install Creoson Server 2.8.0
+
+    Arguments:
+      force: Run the installer even if creoson server is already installed.
+    """
     if not creoson_zip.is_file():
         err = RuntimeError(f"Missing Installer: {creoson_zip}")
         log.exception(
@@ -169,11 +209,22 @@ def creoson(ctx):
         )
         raise err
 
-    log.info(
-        "Copying Creoson installer from repo to installer cache.",
-        src = creoson_zip,
-        dst = creoson_installer.installer_path,
-    )
-    shutil.copy2(creoson_zip, creoson_installer.installer_path)
+    if creoson_installer.already_installed and not force:
+        log.info("Creoson Server already installed, skipping.")
+    else:
 
-    creoson_installer.run()
+        if creoson_installer.installer_path.exists():
+            log.info(
+                "Creoson installer already in cache, skipping copy.",
+                src = creoson_zip,
+                dst = creoson_installer.installer_path,
+            )
+        else:
+            log.info(
+                "Copying Creoson installer from repo to installer cache.",
+                src = creoson_zip,
+                dst = creoson_installer.installer_path,
+            )
+            shutil.copy2(creoson_zip, creoson_installer.installer_path)
+
+        creoson_installer.run(force=force)

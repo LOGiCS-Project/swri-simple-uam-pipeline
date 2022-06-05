@@ -8,7 +8,8 @@ from typing import Optional, Union, List
 
 from pathlib import Path
 from copy import copy
-from . import choco
+from .choco import install
+from .shared import installer_cache, installer_cache_path
 
 from simple_uam.util.invoke import task, call
 from simple_uam.util.config import Config, PathConfig, WinSetupConfig
@@ -18,20 +19,6 @@ from simple_uam.util.system.windows import download_file, verify_file, unpack_fi
 
 log = get_logger(__name__)
 
-# Directory where chocolatey scripts are found
-setup_data_dir = Config[PathConfig].data_dir / 'setup'
-
-# Dir where we keep downloaded installers
-installer_cache_path = Config[PathConfig].cache_dir / 'simple_uam_installers'
-
-@task
-def installer_cache(ctx):
-    """ Create the cache directory where installers are downloaded. """
-
-    if not installer_cache_path.exists():
-        log.info("Creating Installer Cache Dir.", loc=str(installer_cache_path))
-        installer_cache_path.mkdir(parents=True)
-
 @define
 class GUIInstaller():
     """
@@ -39,6 +26,7 @@ class GUIInstaller():
     """
 
     installed_path : Optional[Path] = field(
+        default=None,
         converter=conv.optional(Path),
         kw_only = True,
     )
@@ -54,6 +42,7 @@ class GUIInstaller():
     """ Installer location (as subdir of install cache) """
 
     uri : Optional[str] = field(
+        default=None,
         kw_only = True,
     )
     """
@@ -104,10 +93,7 @@ class GUIInstaller():
 
     @property
     def installer_path(self) -> Path:
-        if self.path.is_absolute():
-            return self.path
-        else:
-            return (installer_cache_path / self.path).resolve()
+        return (installer_cache_path / self.path).resolve()
 
     @property
     def installer_unpack_dir(self) -> Optional[Path]:
@@ -140,7 +126,7 @@ class GUIInstaller():
         if self.unpack_dir:
             deps.append('7zip')
         if deps:
-            return [installer_cache,call(choco.install,pkg=deps)]
+            return [installer_cache,call(install,pkg=deps)]
         else:
             return [installer_cache]
 
@@ -215,9 +201,16 @@ class GUIInstaller():
 
         return self.installer_exe
 
-    def run(self):
+    def run(self, force=False):
+        """
+        Runs the installer.
 
-        if not self.already_installed:
+        Arguments:
+          force: Run the installer even if the application is already installed.
+        """
+
+
+        if not self.already_installed or force:
 
             exe = self.get_installer_exe()
 

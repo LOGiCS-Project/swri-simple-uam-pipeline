@@ -15,9 +15,14 @@ class D2CManager(WorkspaceManager):
         init = False,
     )
 
-    def initialize_reference(self):
+    @staticmethod
+    def init_ref_dir(self):
         """
         Copies files over from direct2cad submodule.
         """
 
+        # Copy over direct2cad workspace
+        # Extract the creoson server archive
+        # Rename the creoson server dir to 'creoson-server'
+        # change the version of creo in 'parametric.bat" from '6.0.4.0' to '5.0.6.0'
         raise NotImplementedError()

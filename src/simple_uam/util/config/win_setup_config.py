@@ -23,7 +23,7 @@ class WinSetupConfig():
         'rabbitmq',
     ]
     """
-    Packages needed for a windows broker node.
+    Chocolatey packages needed for a windows broker node.
     """
 
     worker_dep_packages : List[str] = [
@@ -32,13 +32,30 @@ class WinSetupConfig():
         'rsync',
     ]
     """
-    Packages needed for a windows worker node.
+    Chocolatey packages needed for a windows worker node.
     """
+
+    worker_pip_packages : List[str] = [
+        # Direct2Cad
+        'psutil',
+        # Craidl
+        'gremlinpython',
+    ]
+    """
+    Pip packages needed for a windows worker node.
+    """
+
 
     license_dep_packages : List[str] = [
     ]
     """
-    Packages needed for a windows license server node.
+    Chocolatey packages needed for a windows license server node.
+    """
+
+    graph_dep_packages : List[str] = [
+    ]
+    """
+    Chocolatey packages needed for a windows graph server node.
     """
 
     qol_packages : List[str] = [

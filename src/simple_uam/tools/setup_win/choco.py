@@ -31,6 +31,7 @@ choco_exe_map = {
     'tess': 'tess.exe',
     'atom': 'atom.cmd',
     'wget': 'wget.exe',
+    'tortoisegit': 'TortoiseGitMerge.exe', # not really a CLI app but it's a test
 }
 
 @task
@@ -80,6 +81,8 @@ def install(ctx, pkg):
         installed = subprocess.run([
             'powershell',
             '-executionpolicy','bypass',
-            '-File',choco_install_script,*pkg])
-    else:
+            '-File',choco_install_script,*pkgs])
+    elif len(pkg) <= 0:
         log.warning("No Chocolatey packages specified for install, skipping.")
+    else:
+        log.info("No Chocolatey packages specified for install, skipping.")

@@ -91,6 +91,7 @@ class WorkspaceManager():
             self.config.workspaces_path,
             self.config.locks_path,
             self.config.reference_path,
+            self.config.assets_path,
             self.config.records_path,
             self.config.records_lockdir,
             *self.config.workspace_paths,
@@ -183,7 +184,7 @@ class WorkspaceManager():
             # Return the resulting filepath
             return out_path
 
-    def prune_records(cls):
+    def prune_records(self):
         """
         Deletes the oldest files in the records dir if there are too many.
         """
@@ -226,14 +227,34 @@ class WorkspaceManager():
         except Timeout:
             pass
 
-    def initialize_reference(self):
+    def setup_reference_dir(self):
+        """
+        Wraps init_ref_dir with appropriate locks and file deletion.
+        """
+
+        ref_lock = self.reference_lock()
+
+        try:
+            with ref_lock:
+                self.init_ref_dir(
+                    self.config.reference_path,
+                    self.config.assets_path,
+                )
+        except Timeout as err:
+            log.exception(
+                "Could not acquire reference directory lock.",
+                err=err,
+            )
+            raise err
+
+    @staticmethod
+    def init_ref_dir(reference_dir : Path, assets_dir : Path):
         """
         This function should be overloaded by a child class with a task
         specific setup operation.
 
         Sets up the reference directory that workspaces are copied from.
-        Should ensure that it acquires a lock on the reference directory
-        beforehand.
+        Should only be called by
         """
 
         raise NotImplementedError("Overload in child class. See docstring.")

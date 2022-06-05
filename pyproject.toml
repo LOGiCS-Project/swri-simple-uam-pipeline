@@ -8,7 +8,7 @@ description = "A set of libraries and wrappers around the SWRi athens-uav projec
 authors = [{name = "Rohit Ramesh", email = "rkr@berkeley.edu"}]
 license-expression = "MIT"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.9,<3.11"
 keywords = []
 dynamic = ["version"]
 classifiers = [
@@ -19,7 +19,6 @@ classifiers = [
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
     "Topic :: Documentation",
     "Topic :: Software Development",
     "Topic :: Software Development :: Documentation",
@@ -45,19 +44,21 @@ Issues = "https://github.com/LOGiCS-Project/swri-simple-uam-pipleline/issues"
 Discussions = "https://github.com/LOGiCS-Project/swri-simple-uam-pipleline/discussions"
 
 [project.scripts]
-suam-cfg = "simple_uam.tools.config_mgr.cli:main"
+suam-config-mgr = "simple_uam.tools.config_mgr.cli:main"
 suam-setup-win = "simple_uam.tools.setup_win.cli:main"
+suam-workspace-mgr = "simple_uam.tools.workspace_mgr.cli:main"
 
 [tool.pdm]
 version = {use_scm = true}
 package-dir = "src"
 editable-backend = "editables"
-includes = [
-    "data/**/*",
-]
+# includes = [
+#     "data/**/*",
+# ]
 
 [tool.pdm.scripts]
 config-mgr = {call = "simple_uam.tools.config_mgr.cli:main(['pdm run config-mgr'])"}
+workspace-mgr = {call = "simple_uam.tools.config_mgr.cli:main(['pdm run workspace-mgr'])"}
 setup-win = {call = "simple_uam.tools.setup_win.cli:main(['pdm run setup-win'])"}
 check-docs = {call = "simple_uam.tools.dev_util.cli:main(['pdm run check-docs','check-docs'])"}
 docs = {call = "simple_uam.tools.dev_util.cli:main(['pdm run docs','docs'])"}
@@ -91,43 +92,43 @@ format = [
     "black>=21.10b0",
     "isort>=5.10",
 ]
-quality = [
-    "darglint>=1.8",
-    "flake8-bandit>=2.1",
-    "flake8-black>=0.2",
-    "flake8-bugbear>=21.9",
-    "flake8-builtins>=1.5",
-    "flake8-comprehensions>=3.7",
-    "flake8-docstrings>=1.6",
-    "flake8-pytest-style>=1.5",
-    "flake8-string-format>=0.3",
-    "flake8-tidy-imports>=4.5",
-    "flake8-variables-names>=0.0",
-    "pep8-naming>=0.12",
-    "wps-light>=0.15",
-]
-tests = [
-    "pytest>=6.2",
-    "pytest-cov>=3.0",
-    "pytest-randomly>=3.10",
-    "pytest-xdist>=2.4",
-]
+# quality = [
+#     "darglint>=1.8",
+#     "flake8-bandit>=2.1",
+#     "flake8-black>=0.2",
+#     "flake8-bugbear>=21.9",
+#     "flake8-builtins>=1.5",
+#     "flake8-comprehensions>=3.7",
+#     "flake8-docstrings>=1.6",
+#     "flake8-pytest-style>=1.5",
+#     "flake8-string-format>=0.3",
+#     "flake8-tidy-imports>=4.5",
+#     "flake8-variables-names>=0.0",
+#     "pep8-naming>=0.12",
+#     "wps-light>=0.15",
+# ]
+# tests = [
+#     "pytest>=6.2",
+#     "pytest-cov>=3.0",
+#     "pytest-randomly>=3.10",
+#     "pytest-xdist>=2.4",
+# ]
 typing = [
     "mypy>=0.910",
     "types-markdown>=3.3",
     "types-toml>=0.10",
 ]
 
-[tool.black]
-line-length = 120
-exclude = "tests/fixtures"
+# [tool.black]
+# line-length = 120
+# exclude = "tests/fixtures"
 
-[tool.isort]
-line_length = 120
-not_skip = "__init__.py"
-multi_line_output = 3
-force_single_line = false
-balanced_wrapping = true
-default_section = "THIRDPARTY"
-known_first_party = "simple_uam"
-include_trailing_comma = true
+# [tool.isort]
+# line_length = 120
+# not_skip = "__init__.py"
+# multi_line_output = 3
+# force_single_line = false
+# balanced_wrapping = true
+# default_section = "THIRDPARTY"
+# known_first_party = "simple_uam"
+# include_trailing_comma = true
