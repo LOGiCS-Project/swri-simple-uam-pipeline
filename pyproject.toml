@@ -33,7 +33,6 @@ dependencies = [
     "structlog>=21.5.0",
     "rich>=12.4.1",
     "colorama>=0.4.4",
-    "trinity-craidl @ file:///${PROJECT_ROOT}/data/craidl",
 ]
 
 [project.urls]
@@ -53,9 +52,9 @@ suam-workspace-mgr = "simple_uam.tools.workspace_mgr.cli:main"
 version = {use_scm = true}
 package-dir = "src"
 editable-backend = "editables"
-# includes = [
-#     "data/**/*",
-# ]
+includes = [
+    "data/**/*",
+]
 
 [tool.pdm.scripts]
 config-mgr = {call = "simple_uam.tools.config_mgr.cli:main(['pdm run config-mgr'])"}

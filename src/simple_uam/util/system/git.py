@@ -21,8 +21,8 @@ class Git():
     Static class used to wrap a bunch of git commands.
     """
 
+    @staticmethod
     def clone_or_pull(
-            self,
             repo_uri : str,
             deploy_dir : Union[str,Path],
             branch : Optional[str] = None,

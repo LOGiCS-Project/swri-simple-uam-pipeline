@@ -38,6 +38,8 @@ class WinSetupConfig():
     worker_pip_packages : List[str] = [
         # Direct2Cad
         'psutil',
+        'creopyson',
+        'numpy',
         # Craidl
         'gremlinpython',
     ]
