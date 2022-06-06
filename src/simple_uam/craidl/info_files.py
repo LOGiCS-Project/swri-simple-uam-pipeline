@@ -60,45 +60,17 @@ class DesignInfoFiles():
                 cmp_maps.append(new_entry)
         return cmp_maps
 
+    connection_maps : List[dict] = field(
+        init=False,
+    )
+    """ List of connections in the design. """
 
-@define
-class ComponentMapList():
+    connection_maps_file = 'info_connectionMap6.json'
 
-    ci_to_comp = field(factory=list)
-
-    filename = 'info_componentMapList1.json'
-
-    def gen_rep(self, corpus, design):
-        rep = list()
-        for comp_entry in design['components']:
-            from_comp = comp_entry['component_instance']
-            lib_component = comp_entry['component_choice']
-            self.ci_to_comp[from_comp] = lib_component
-            cad_prt = corpus[lib_component].cad_part
-            new_entry = {
-                'FROM_COMP': from_comp,
-                'LIB_COMPONENT': lib_component,
-                'CAD_PRT': cad_prt
-            }
-
-            if from_comp and lib_component and cad_prt:
-                rep.append(new_entry)
-            else:
-                log.warning(
-                    'Skipping entry in componentMapList due to null values',
-                    comp_entry=comp_entry,
-                    **new_entry,
-                )
-        return rep
-
-@define
-class ConnectionMap():
-
-    filename = 'info_connectionMap6.json'
-
-    def gen_rep(self, corpus, design):
-        rep = list()
-        for conn_entry in design['connections']:
+    @connection_maps.default
+    def _conn_maps_def(self):
+        conn_maps = list()
+        for conn_entry in self.design['connections']:
             from_comp = conn_entry['from_ci']
             from_conn = conn_entry['from_conn']
             to_comp = conn_entry['to_ci']
@@ -109,27 +81,29 @@ class ConnectionMap():
                 'TO_COMP': to_comp,
                 'TO_CONN': to_conn
             }
-            if from_comp and from_conn and to_comp and to_conn:
-                rep.append(new_entry)
-            else:
+            if any_none(from_comp, from_conn, to_comp, to_conn):
                 log.warning(
                     'Skipping entry in connectionMap due to null values',
-                    comp_entry=comp_entry,
+                    comp_entry=conn_entry,
                     **new_entry,
                 )
-        return rep
+            else:
+                conn_maps.append(new_entry)
+        return conn_maps
 
-@define
-class ParamMap():
+    param_maps : List[dict] = field(
+        init = False,
+    )
 
-    filename = "info_paramMap4.json"
+    param_maps_file = "info_paramMap4.json"
 
-    def gen_rep(self, corpus, design):
-        rep = list()
-        for param_entry in design['parameters']:
+    @param_maps.default
+    def _param_maps_default(self):
+        param_maps = list()
+        for param_entry in self.design['parameters']:
             design_param = param_entry['parameter_name']
             design_param_val = param_entry['value']
-            for target in param_entry['component_properties']:
+            for target in self.param_entry['component_properties']:
                 component_name = target['component_name']
                 component_param = target['component_property']
                 new_entry = {
@@ -138,30 +112,33 @@ class ParamMap():
                     'COMPONENT_NAME': component_name,
                     'COMPONENT_PARAM': component_param
                 }
-                if design_param and design_param_val \
-                   and component_name and component_param:
-                    rep.append(new_entry)
-                else:
+                if any_none(design_param,
+                            design_param_val,
+                            component_name,
+                            component_param):
                     log.warning(
                         'Skipping entry in paramMap due to null values',
                         comp_entry=comp_entry,
                         **new_entry,
                     )
-        return rep
+                else:
+                    param_maps.append(new_entry)
+        return param_maps
 
+    cad_properties : List[dict] = field(
+        init = False,
+    )
 
-@define
-class ComponentCadProps():
+    cad_properties_file = "info_componentCadProp2.json"
 
-    filename = "info_componentCadProp2.json"
-
-    def gen_rep(self, corpus, design):
-        rep = list()
-        for entry in componentMapList: # NOTE : needs component map list
+    @cad_properties.default
+    def _cad_props_default(self):
+        cad_props = list()
+        for entry in self.component_maps: # NOTE : needs component map list
             comp_name = entry['FROM_COMP']
             lib_name = entry['LIB_COMPONENT']
             cad_part = entry['CAD_PRT']
-            prop_vals = corpus[lib_name].cad_properties
+            prop_vals = self.corpus[lib_name].cad_properties
             for prop_val in prop_vals:
                 prop_name = prop_val['PROP_NAME']
                 prop_value = prop_val['PROP_VALUE']
@@ -172,61 +149,64 @@ class ComponentCadProps():
                     'PROP_NAME': prop_name,
                     'PROP_VALUE': prop_value
                 }
-                if prop_name and prop_value is not None:
-                    rep.append(new_entry)
-                else:
+                if any_non(prop_name, prop_value):
                     log.warning(
                         'Skipping entry in paramMap due to null values',
                         entry=entry,
                         prop_val=prop_val,
                         **new_entry,
                     )
-        return rep
+                else:
+                    cad_props.append(new_entry)
+        return cad_props
 
-@define
-class ConnectionCadMap():
+    cad_connections : List[dict] = field(
+        init=False,
+    )
 
-    filename = "info_connectionCADMap3.json"
+    cad_connections_file = "info_connectionCADMap3.json"
 
-    def gen_rep(self, corpus, design):
-        rep = list()
-        for entry in connectionMap: ## NOTE: need connmap
+    @cad_connections.default
+    def _cad_conn_default(self):
+        cad_conns = list()
+        for entry in self.connection_maps: ## NOTE: need connmap
             from_comp = entry['FROM_COMP']
             to_comp = entry['TO_COMP']
             from_conn = entry['FROM_CONN']
             to_conn = entry['TO_CONN']
             from_comp_type = ci_to_comp[from_comp] ## NOTE: needs ci_to_comp
             to_comp_type = ci_to_comp[to_comp]
-            from_conn_cs = corpus[from_comp_type].cad_connection(from_conn)
-            to_conn_cs = corpus[to_comp_type].cad_connection(to_conn)
+            from_conn_cs = self.corpus[from_comp_type].cad_connection(from_conn)
+            to_conn_cs = self.corpus[to_comp_type].cad_connection(to_conn)
             new_entry = {
                 'FROM_COMP': from_comp,
                 'FROM_CONN_CS': from_conn_cs,
                 'TO_COMP': to_comp,
                 'TO_CONN_CS': to_conn_cs
             }
-            if from_conn_cs and to_conn_cs:
-                rep.append(new_entry)
-            else:
+            if any_none(from_conn_cs and to_conn_cs):
                 log.warning(
                     'Skipping entry in connectionCadMap due to null values',
                     entry=entry,
                     **new_entry,
-                    )
-        return rep
+                )
+            else:
+                cad_conns.append(new_entry)
+        return cad_conns
 
-@define
-class ComponentProps():
+    component_props : List[dict] = field(
+        init=False,
+    )
 
-    filename = "info_componentProps7.json"
+    component_props_file = "info_componentProps7.json"
 
-    def gen_rep(self, corpus, design):
-        rep = list()
-
-        for entry in componentMapList: ## NOTE: componentMapList
+    @component_props.default
+    def _comp_props_default(self):
+        comp_props = list()
+        for entry in self.component_maps:
             comp_name = entry['FROM_COMP']
             lib_name = entry['LIB_COMPONENT']
-            prop_vals = corpus[lib_name].properties
+            prop_vals = self.corpus[lib_name].properties
             for prop_val in prop_vals:
                 prop_name = prop_val['PROP_NAME']
                 prop_value = prop_val['PROP_VALUE']
@@ -236,28 +216,31 @@ class ComponentProps():
                     'PROP_NAME': prop_name,
                     'PROP_VALUE': prop_value
                 }
-                if prop_name and prop_value:
-                    rep.append(new_entry)
-                else:
+                if any_none(prop_name. prop_value):
                     log.warning(
                         'Skipping entry in componentProps due to null values',
                         entry=entry,
                         prop_val=prop_val,
                         **new_entry,
                     )
-        return rep
+                else:
+                    comp_props.append(new_entry)
+        return comp_props
 
-@define
-class ComponentParams():
 
-    filename = 'info_componentParams8.json'
+    component_params : List[dict] = field(
+        init=False,
+    )
 
-    def gen_rep(self, corpus, design):
-        rep = list()
-        for entry in componentMapList: ## NOTE: ComponentMapList
+    component_params_file = 'info_componentParams8.json'
+
+    @component_params.default
+    def _comp_params_default(self):
+        comp_params = list()
+        for entry in self.component_maps:
             comp_name = entry['FROM_COMP']
             lib_name = entry['LIB_COMPONENT']
-            prop_vals = corpus[lib_name].params
+            prop_vals = self.corpus[lib_name].params
             for prop_val in prop_vals:
                 prop_name = prop_val['PROP_NAME']
                 prop_value = prop_val['PROP_VALUE']
@@ -267,29 +250,31 @@ class ComponentParams():
                     'PROP_NAME': prop_name,
                     'PROP_VALUE': prop_value
                 }
-                if prop_name and prop_value:
-                    rep.append(new_entry)
-                else:
+                if any_none(prop_name, prop_value):
                     log.warning(
                         'Skipping entry in componentParams due to null values',
                         entry=entry,
                         prop_val=prop_val,
                         **new_entry,
                     )
-        return rep
+                else:
+                    comp_params.append(new_entry)
+        return comp_params
 
-@define
-class ComponentCadParams():
+    cad_params : List[dict] = field(
+        init=False,
+    )
 
-    filename = 'info_componentCADParams5.json'
+    cad_params_file = 'info_componentCADParams5.json'
 
-    def gen_rep(self, corpus, design):
+    @cad_params.default
+    def _cad_params(self):
         rep = list()
-        for entry in componentMapList: ## NOTE: ComponentMapList
+        for entry in self.component_maps: ## NOTE: ComponentMapList
             comp_name = entry['FROM_COMP']
             lib_name = entry['LIB_COMPONENT']
             cad_part = entry['CAD_PRT']
-            prop_vals = corpus[lib_name].cad_params
+            prop_vals = self.corpus[lib_name].cad_params
             for prop_val in prop_vals:
                 prop_name = prop_val['PROP_NAME']
                 prop_value = prop_val['PROP_VALUE']
@@ -300,13 +285,30 @@ class ComponentCadParams():
                     'PROP_NAME': prop_name,
                     'PROP_VALUE': prop_value
                 }
-                if prop_name and prop_value:
-                    rep.append(new_entry)
-                else:
+                if any_none(prop_name, prop_value):
                     log.warning(
-                        'Skipping entry in componentCADParams due to null values',
+                        'Skipping entry in componentCadParams due to null values',
                         entry=entry,
                         prop_val=prop_val,
                         **new_entry,
                     )
-        return rep
+                else:
+                    cad_params.append(new_entry)
+        return cad_params
+
+    @property
+    def info_file_map(self):
+        """
+        Map from filename to file data.
+        """
+
+        return {
+            self.component_maps_file: self.component_maps,
+            self.connection_maps_file: self.connection_maps,
+            self.param_maps_file: self.param_maps,
+            self.cad_properties_file: self.cad_properties,
+            self.cad_connections_file: self.cad_connections,
+            self.component_props_file: self.component_props,
+            self.component_params_file: self.component_params,
+            self.cad_params_file: self.cad_params,
+        }
