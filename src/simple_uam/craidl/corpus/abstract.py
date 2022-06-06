@@ -90,6 +90,9 @@ class CorpusReader(ABC):
     def __getitem__(self, comp :str) -> ComponentReader:
         """
         Allows you to get a component by providing its name.
+
+        Implementations may error on call or defer errors till compoent
+        is used.
         """
         ...
 
