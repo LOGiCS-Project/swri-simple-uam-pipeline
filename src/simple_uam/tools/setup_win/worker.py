@@ -12,12 +12,19 @@ import subprocess
 
 log = get_logger(__name__)
 
+@task
+def pip_pkgs(ctx):
+    """
+    Install worker pip reqirements.
+    """
+    raise NotImplementedError()
+
 worker_dep_pkg_list = [
     *Config[WinSetupConfig].global_dep_packages,
     *Config[WinSetupConfig].worker_dep_packages,
 ]
 
-@task(pre=[call(choco.install, pkg=worker_dep_pkg_list)])
+@task(pre=[call(choco.install, pkg=worker_dep_pkg_list),pip_pkgs])
 def dep_pkgs(ctx):
     """ Install/Update Worker Node Dependencies (idempotent) """
 
@@ -166,65 +173,65 @@ def disable_ieesc(ctx):
         '-executionpolicy','bypass',
         '-File',disable_ieesc_script])
 
-creoson_installer = GUIInstaller(
-    # installed_path="C:\\Program Files (x86)\META",
-    path =  "CreosonServerWithSetup-2.8.0-win64.zip",
-    unpack_dir = 'creoson-server',
-    md5="E96479F5BE369EC6DABB116DBB02E04C",
-    exe = 'CreosonServerWithSetup-2.8.0-win64/CreosonSetup.exe',
-    instructions="""
-    ## Installing Creoson Server 2.8.0 ##
+# creoson_installer = GUIInstaller(
+#     # installed_path="C:\\Program Files (x86)\META",
+#     path =  "CreosonServerWithSetup-2.8.0-win64.zip",
+#     unpack_dir = 'creoson-server',
+#     md5="E96479F5BE369EC6DABB116DBB02E04C",
+#     exe = 'CreosonServerWithSetup-2.8.0-win64/CreosonSetup.exe',
+#     instructions="""
+#     ## Installing Creoson Server 2.8.0 ##
 
-      - Ensure you have the JLink adapter installed for Creo Parametric.
+#       - Ensure you have the JLink adapter installed for Creo Parametric.
 
-      - If creo is already installed without JLink you can add it:
-        - Run: 'pdm run setup-win worker.creo --force'
-        - Follow the prompts provided before starting the installer, except to
-          select the option to "Upgrade Existing Installation" at the beginning.
+#       - If creo is already installed without JLink you can add it:
+#         - Run: 'pdm run setup-win worker.creo --force'
+#         - Follow the prompts provided before starting the installer, except to
+#           select the option to "Upgrade Existing Installation" at the beginning.
 
-      - Step 1: If using defaults Creo is installed at "C:\Program Files\PTC\Creo 5.0.6.0\Common Files"
+#       - Step 1: If using defaults Creo is installed at "C:\Program Files\PTC\Creo 5.0.6.0\Common Files"
 
-      - Step 2: Leave the port number at 9056
-    """,
-)
+#       - Step 2: Leave the port number at 9056
+#     """,
+# )
 
-creoson_zip = Config[PathConfig].data_dir / 'creoson-server' / creoson_installer.path
+# creoson_zip = Config[PathConfig].data_dir / 'creoson-server' / creoson_installer.path
 
-@task(pre=creoson_installer.invoke_deps)
-def creoson(ctx, force=False):
+@task
+def creopyson(ctx):
     """
-    Install Creoson Server 2.8.0
-
-    Arguments:
-      force: Run the installer even if creoson server is already installed.
+    Clones the creopyson repository and installs the python library with pip.
     """
-    if not creoson_zip.is_file():
-        err = RuntimeError(f"Missing Installer: {creoson_zip}")
-        log.exception(
-            """
-            Could not find creoson installer in the correct location, have
-            you run 'git submodule --init' in the source repo?
-            """,
-            file = creoson_zip,
-        )
-        raise err
+    # clone creopyson repo into appropriate dir
 
-    if creoson_installer.already_installed and not force:
-        log.info("Creoson Server already installed, skipping.")
-    else:
+    raise NotImplementedError()
+    # if not creoson_zip.is_file():
+    #     err = RuntimeError(f"Missing Installer: {creoson_zip}")
+    #     log.exception(
+    #         """
+    #         Could not find creoson installer in the correct location, have
+    #         you run 'git submodule --init' in the source repo?
+    #         """,
+    #         file = creoson_zip,
+    #     )
+    #     raise err
 
-        if creoson_installer.installer_path.exists():
-            log.info(
-                "Creoson installer already in cache, skipping copy.",
-                src = creoson_zip,
-                dst = creoson_installer.installer_path,
-            )
-        else:
-            log.info(
-                "Copying Creoson installer from repo to installer cache.",
-                src = creoson_zip,
-                dst = creoson_installer.installer_path,
-            )
-            shutil.copy2(creoson_zip, creoson_installer.installer_path)
+    # if creoson_installer.already_installed and not force:
+    #     log.info("Creoson Server already installed, skipping.")
+    # else:
 
-        creoson_installer.run(force=force)
+    #     if creoson_installer.installer_path.exists():
+    #         log.info(
+    #             "Creoson installer already in cache, skipping copy.",
+    #             src = creoson_zip,
+    #             dst = creoson_installer.installer_path,
+    #         )
+    #     else:
+    #         log.info(
+    #             "Copying Creoson installer from repo to installer cache.",
+    #             src = creoson_zip,
+    #             dst = creoson_installer.installer_path,
+    #         )
+    #         shutil.copy2(creoson_zip, creoson_installer.installer_path)
+
+    #     creoson_installer.run(force=force)

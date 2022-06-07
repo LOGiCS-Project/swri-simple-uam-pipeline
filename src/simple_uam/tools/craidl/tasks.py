@@ -16,6 +16,34 @@ import subprocess
 log = get_logger(__name__)
 
 @task
+def download_corpus(ctx):
+    """
+    Will retrieve a default version of the corpus (from a isis repo) and
+    install it into the location specified by system config.
+    """
+    # clone uam_workflows into cache
+    # copy the corpus.grapml into location
+    raise NotImplementedError()
+
+@task
+def download_examples(ctx):
+    """
+    Clones the trinity-craidl repo into the appropriate folder. With a default
+    config this makes the examples available for use with other options.
+    """
+    # clone trinity-craidl repo into cache
+    # copy examples dir into location.
+    raise NotImplementedError()
+
+@task
+def clean_examples(ctx):
+    """
+    Deletes all available examples in the default directory.
+    """
+    # delete all examples in dir
+    raise NotImplementedError()
+
+@task
 def download_server(ctx):
     """
     Downloads, and unpacks the gremlin server stub.
@@ -48,6 +76,7 @@ def run_server(ctx):
     """
     raise NotImplementedError()
 
+
 @task
 def gen_static_corpus(ctx,
                       host = None,
@@ -70,6 +99,7 @@ def gen_static_corpus(ctx,
 def gen_info_files(ctx,
                    design = None,
                    output = None,
+                   copy_design = False,
                    random = False,
                    static = None,
                    host = None,
@@ -81,6 +111,8 @@ def gen_info_files(ctx,
       design: '.json' with design information. Default: 'design_swri.json'
       output: The output **directory** in which to place the files.
         Default: cwd
+      copy_design: Do we copy the input design to the output directory?
+        Treats string as filename, True as 'design_swri.json'. Default: False
 
       random: Choose a random example from the configured examples directory.
         Mutually exclusive with design. Default: False

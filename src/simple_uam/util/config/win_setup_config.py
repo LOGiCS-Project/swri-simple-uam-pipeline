@@ -1,5 +1,6 @@
 from attrs import define, field
 from .manager import Config
+from .path_config import PathConfig
 from typing import List
 
 @define
@@ -41,12 +42,11 @@ class WinSetupConfig():
         # 'creopyson', # Need to use the creopyson from the swri repo
         'numpy',
         # Craidl
-        'gremlinpython',
+        # 'gremlinpython', # Handling this internally now
     ]
     """
     Pip packages needed for a windows worker node.
     """
-
 
     license_dep_packages : List[str] = [
     ]
@@ -79,5 +79,5 @@ Config.register(
     WinSetupConfig,
     interpolation_key = "win_setup",
     conf_file = "win_setup.conf.yaml",
-    conf_deps = [],
+    conf_deps = [PathConfig],
 )

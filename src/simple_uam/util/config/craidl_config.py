@@ -18,14 +18,14 @@ class StubServerConfig():
     """
 
     server_dir: str = field(
-        default=SI("${path:work_directory}/corpus_stub_server")
+        default=SI("${path:data_directory}/corpus_stub_server")
     )
     """
     Dir where the gremlin stub server will be unpacked.
     """
 
-    graphml_corpus : Optional[str] = field(
-        default=None,
+    graphml_corpus : str = field(
+        default=SI("${path:data_directory}/corpus_stub.graphml")
     )
     """
     The corpus to use with the stub server. Relative paths are assumed to be
@@ -52,12 +52,11 @@ class CraidlConfig():
     Config properties for working with craidl and the gremlin stub server.
     """
 
-    example_design_dir : Optional[str] = field(
-        default=None,
+    example_dir : Optional[str] = field(
+        default=SI("${trinity_craidl_dir}/examples"),
     )
     """
-    Dir containing example designs. Relative paths are assumed to be relative
-    to repo_root.
+    Dir containing craidl example designs (each in their own subfolder.)
     """
 
     stub_server : StubServerConfig = StubServerConfig()
@@ -80,7 +79,7 @@ class CraidlConfig():
     """
 
     static_corpus : str = field(
-        default=SI("${cache_dir}/corpus_static_dump.json"),
+        default=SI("${path:data_directory}/corpus_static_dump.json"),
     )
     """
     The parsed static corpus to be generated/used when creating info files.
