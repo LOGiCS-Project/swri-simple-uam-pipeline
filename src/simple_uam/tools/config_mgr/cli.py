@@ -15,7 +15,7 @@ from typing import List, Optional
 
 import simple_uam.util.config.tasks
 from simple_uam.util.config import PathConfig, Config, WinSetupConfig, \
-    D2CWorkspaceConfig, D2CWorkerConfig # noqa
+    D2CWorkspaceConfig, D2CWorkerConfig, CraidlConfig # noqa
 from simple_uam.util.invoke import Collection, InvokeProg, task
 from simple_uam.util.logging import get_logger
 

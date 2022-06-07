@@ -3,6 +3,7 @@ from omegaconf import SI
 from .manager import Config
 from .path_config import PathConfig
 from .workspace_config import RecordsConfig, WorkspaceConfig
+from typing import Optional
 
 @define
 class StubServerConfig():
@@ -53,7 +54,7 @@ class CraidlConfig():
     """
 
     example_dir : Optional[str] = field(
-        default=SI("${trinity_craidl_dir}/examples"),
+        default=SI("${path:data_directory}/craidl_examples"),
     )
     """
     Dir containing craidl example designs (each in their own subfolder.)

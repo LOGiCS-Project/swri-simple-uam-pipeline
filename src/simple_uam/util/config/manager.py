@@ -106,7 +106,8 @@ class ConfigData:
         Should only be called once per class.
         """
 
-        def resolve_func(conf_dat : ConfigData, key: Optional[str] = None):
+        def resolve_func(key: Optional[str] = None,
+                         conf_dat : ConfigData = self):
             if key:
                 val = OmegaConf.select(conf_dat.config, key, default=None)
                 if val is None:
@@ -322,7 +323,7 @@ class Config(object):
         # print(f"registering: {data_cls}")
         self.config_types[data_cls] = conf_data
         self.key_map[conf_data.interpolation_key] = data_cls
-        self.file_map[conf_data.conf_file] = str(data_cls)
+        self.file_map[str(conf_data.conf_file)] = data_cls
         self.name_map[data_cls.__name__] = data_cls
         # print(f"registering: {self.name_map.keys()}")
 

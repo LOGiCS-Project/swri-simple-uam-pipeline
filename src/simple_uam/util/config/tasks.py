@@ -21,18 +21,19 @@ def dir(ctx, all=False):
         print(str(Config().config_dirs[-1]))
 
 @task
-def file(ctx, key, all=False):
+def file(ctx, config, all=False):
     """
     Prints the terminal file examined when loading a particular config.
 
     Arguments:
+        config: the file to examine
         all: Print all the files examined in load order (highest priority last).
     """
     if all:
-        for p in Config().load_path(key):
+        for p in Config().load_path(config):
             print(str(p))
     else:
-        print(str(Config().load_path(key)[-1]))
+        print(str(Config().load_path(config)[-1]))
 
 @task
 def list_classes(ctx):
@@ -59,39 +60,42 @@ def list_files(ctx):
         print(f)
 
 
-@task(name="print")
-def print_config(ctx, key=None, resolved=False, all=False):
+@task(name="print", iterable=['config'])
+def print_config(ctx, config, resolved=False, all=False):
     """
     Prints the currently loaded config data for a given class to STDOUT
 
     Arguments:
-       key: The class name, interpolation key, or config file name of the
-            config to print out. Can be given positionally.
+       config: The class name, interpolation key, or config file name of the
+            config to print out. Can be given multiple times.
        resolve: Should we resolve all the interpolations before printing?
        all: Print all the configs, mutually exclusive with key.
     """
-    opts = dict()
-    if key and not all:
-        filename = str(Config().config_types[Config()._get_config_class(key)].conf_file)
-        opts[filename] = Config.get_omegaconf(key)
-    elif all and not key:
-        opts = {
-            filename:Config.get_omegaconf(filename)
-            for filename in Config().file_map.keys()
-        }
-    else:
-        raise RuntimeError("Cannot use a config key and '--all' at the same time.")
 
-    for filename, opt in opts.items():
+    keys = config
+
+    if len(keys) == 0 and all:
+        keys = [str(k) for k in Config().file_map.keys()]
+    elif len(keys) == 0:
+        raise RuntimeError("Please specify keys to print or '--all'")
+
+    for k in keys:
+        config_class = Config()._get_config_class(k)
+        config_data = Config().config_types[config_class]
+        filename = str(config_data.conf_file)
+
+        print(f"### {filename} ###\n\n") # Print here to help w/ debug
+
+        conf = config_data.config
         if resolved:
-            with read_write(opt):
-                OmegaConf.resolve(opt)
+            with read_write(conf):
+                OmegaConf.resolve(conf)
 
-        print(f"### {filename} ###\n\n{OmegaConf.to_yaml(opt)}")
+        print(OmegaConf.to_yaml(conf))
 
 
 @task(
-    positional=["config"],
+#    positional=["config"],
     iterable=["config"],
 )
 def write(ctx, config=None, mkdir=True, write_all=False, overwrite=False, comment=True):
