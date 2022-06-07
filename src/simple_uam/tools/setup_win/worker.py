@@ -4,6 +4,7 @@ import shutil
 from simple_uam.util.invoke import task, call
 from simple_uam.util.config import Config, PathConfig, WinSetupConfig
 from simple_uam.util.logging import get_logger
+from simple_uam.util.system import Git, Pip
 
 from . import choco
 from .helpers import GUIInstaller, append_to_file, get_mac_address
@@ -24,11 +25,22 @@ worker_dep_pkg_list = [
     *Config[WinSetupConfig].worker_dep_packages,
 ]
 
-@task(pre=[call(choco.install, pkg=worker_dep_pkg_list),pip_pkgs])
-def dep_pkgs(ctx):
-    """ Install/Update Worker Node Dependencies (idempotent) """
+@task(pre=[call(choco.install, pkg=worker_dep_pkg_list)])
+def choco_pkgs(ctx):
+    """ Install/Update Worker Node Dependencies. """
 
     log.info("Finished Installing Dependency Packages")
+
+@task(call(choco.install, pkg=['python3']))
+def pip_pkgs(ctx):
+    """ Install Worker Node public Pip packages. """
+
+    Pip.install(*Config[WinSetupConfig].worker_pip_packages)
+
+@task(choco_pkgs, pip_pkgs)
+def dep_pkgs(ctx):
+    """ Install all the hands-free worker node dependencies. """
+    pass
 
 # Directory where creo will be installed
 creo_path = Path("C:\Program Files\PTC\Creo 5.0.6.0")
@@ -173,65 +185,56 @@ def disable_ieesc(ctx):
         '-executionpolicy','bypass',
         '-File',disable_ieesc_script])
 
-# creoson_installer = GUIInstaller(
-#     # installed_path="C:\\Program Files (x86)\META",
-#     path =  "CreosonServerWithSetup-2.8.0-win64.zip",
-#     unpack_dir = 'creoson-server',
-#     md5="E96479F5BE369EC6DABB116DBB02E04C",
-#     exe = 'CreosonServerWithSetup-2.8.0-win64/CreosonSetup.exe',
-#     instructions="""
-#     ## Installing Creoson Server 2.8.0 ##
+creopyson_dir = Config[PathConfig].work_dir / 'creopyson'
+""" Directory with creopyson repo. """
 
-#       - Ensure you have the JLink adapter installed for Creo Parametric.
+creopyson_repo = "https://git.isis.vanderbilt.edu/SwRI/creoson/creopyson.git"
 
-#       - If creo is already installed without JLink you can add it:
-#         - Run: 'pdm run setup-win worker.creo --force'
-#         - Follow the prompts provided before starting the installer, except to
-#           select the option to "Upgrade Existing Installation" at the beginning.
-
-#       - Step 1: If using defaults Creo is installed at "C:\Program Files\PTC\Creo 5.0.6.0\Common Files"
-
-#       - Step 2: Leave the port number at 9056
-#     """,
-# )
-
-# creoson_zip = Config[PathConfig].data_dir / 'creoson-server' / creoson_installer.path
+creopyson_branch = "main"
 
 @task
-def creopyson(ctx):
+def creopyson(ctx, prompt=True, quiet=False, verbose=False):
     """
-    Clones the creopyson repository and installs the python library with pip.
+    Clones/updates the creopyson repository and installs the python library
+    globally with pip.
+
+    Arguments:
+      prompt: Prompt for a password on initial git clone.
+      quiet: Run in quiet mode.
+      verbose: Run in verbose mode.
     """
-    # clone creopyson repo into appropriate dir
 
-    raise NotImplementedError()
-    # if not creoson_zip.is_file():
-    #     err = RuntimeError(f"Missing Installer: {creoson_zip}")
-    #     log.exception(
-    #         """
-    #         Could not find creoson installer in the correct location, have
-    #         you run 'git submodule --init' in the source repo?
-    #         """,
-    #         file = creoson_zip,
-    #     )
-    #     raise err
+    #### Git ####
 
-    # if creoson_installer.already_installed and not force:
-    #     log.info("Creoson Server already installed, skipping.")
-    # else:
+    git_args = dict(
+        repo_uri = creopyson_repo,
+        deploy_dir = creopyson_dir,
+        branch = creopyson_branch,
+        password_prompt = prompt,
+        quiet = quiet,
+        verbose = verbose,
+        mkdir = True
+    )
 
-    #     if creoson_installer.installer_path.exists():
-    #         log.info(
-    #             "Creoson installer already in cache, skipping copy.",
-    #             src = creoson_zip,
-    #             dst = creoson_installer.installer_path,
-    #         )
-    #     else:
-    #         log.info(
-    #             "Copying Creoson installer from repo to installer cache.",
-    #             src = creoson_zip,
-    #             dst = creoson_installer.installer_path,
-    #         )
-    #         shutil.copy2(creoson_zip, creoson_installer.installer_path)
+    if not quiet:
+        log.info("Running git clone/pull for creopyson.",**git_args)
 
-    #     creoson_installer.run(force=force)
+    Git.clone_or_pull(**git_args)
+
+    #### Pip ####
+
+    pip_args = dict(
+        editable = True,
+        upgrade = False,
+        quiet = quiet,
+        verbose = verbose,
+        cwd = creopyson_dir,
+    )
+
+    if not quiet:
+        log.info("Running pip install w/ local package.",
+                 package=creopyson_dir,
+                 **pip_args,
+        )
+
+    Pip.install(creopyson_dir, **pip_args)

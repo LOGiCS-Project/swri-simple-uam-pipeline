@@ -18,8 +18,8 @@ graph_dep_pkg_list = [
 ]
 
 @task(pre=[call(choco.install, pkg=graph_dep_pkg_list)])
-def dep_pkgs(ctx):
-    """ Install/Update Graph Server Dependencies (idempotent) """
+def choco_pkgs(ctx):
+    """ Install/Update Graph Stub Server Dependencies """
 
     log.info("Finished Installing Dependency Packages")
 

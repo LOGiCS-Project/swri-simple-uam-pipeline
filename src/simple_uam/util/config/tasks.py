@@ -84,7 +84,7 @@ def print_config(ctx, config, resolved=False, all=False):
         config_data = Config().config_types[config_class]
         filename = str(config_data.conf_file)
 
-        print(f"### {filename} ###\n\n") # Print here to help w/ debug
+        print(f"### {filename} ###\n") # Print here to help w/ debug
 
         conf = config_data.config
         if resolved:

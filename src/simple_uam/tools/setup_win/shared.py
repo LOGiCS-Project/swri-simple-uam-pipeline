@@ -16,8 +16,8 @@ log = get_logger(__name__)
 global_pkg_list = Config[WinSetupConfig].global_dep_packages
 
 @task(pre=[call(install, pkg=global_pkg_list)])
-def global_dep_pkgs(ctx):
-    """ Install/Update global Dependencies (idempotent) """
+def global_pkgs(ctx):
+    """ Install/Update Global Dependencies """
 
     log.info("Finished Installing Dependency Packages")
 
@@ -25,7 +25,7 @@ qol_pkg_list = Config[WinSetupConfig].qol_packages
 
 @task(pre=[call(install, pkg=qol_pkg_list)])
 def qol_pkgs(ctx):
-    """ Install/Update Worker QoL Packages (idempotent) """
+    """ Install/Update Worker QoL Packages """
 
     log.info("Finished Installing Quality of Life Packages")
 

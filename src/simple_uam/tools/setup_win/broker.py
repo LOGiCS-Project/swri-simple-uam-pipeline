@@ -18,7 +18,7 @@ broker_dep_pkg_list = [
 ]
 
 @task(pre=[call(choco.install, pkg=broker_dep_pkg_list)])
-def dep_pkgs(ctx):
-    """ Install/Update Message Broker Dependencies (idempotent) """
+def choco_pkgs(ctx):
+    """ Install/Update Message Broker Dependencies """
 
     log.info("Finished Installing Dependency Packages")

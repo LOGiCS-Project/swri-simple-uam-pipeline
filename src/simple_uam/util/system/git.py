@@ -39,6 +39,7 @@ class Git():
             quiet : bool = False,
             progress : bool = True,
             verbose : bool = False,
+            mkdir : bool = False,
     ):
         """
         Central function that will run a git init/update operation.
@@ -61,6 +62,7 @@ class Git():
             quiet: Run silently. Implies `not password_prompt`.
             progress: Display a progress meter.
             verbose: verbose git output if possible.
+            mkdir: create the parent directory of the repo if needed.
         """
 
         ### Param Init ###
@@ -72,8 +74,8 @@ class Git():
         if not repo_name:
             repo_name = repo_uri.path
 
-        repo_uri.username = remote_user or repo_uri.username
-        repo_uri.password = remote_pass or repo_uri.password
+        remote_user = remote_user or repo_uri.username
+        remote_pass = remote_pass or repo_uri.password
 
         password_prompt = password_prompt and quiet
 
@@ -81,11 +83,16 @@ class Git():
         work_dir = deploy_dir.parent # working dir for clone operations
         target_dir = deploy_dir.name # target dir for clone operations
 
+        if mkdir:
+            work_dir.mkdir(parents=True, exist_ok=True)
+
         is_clone_op = not deploy_dir.exists() # is this a clone-style or pull-style op?
 
         opts = dict(
             repo_uri = repo_uri,
             remote_name = remote_name,
+            remote_user = remote_user,
+            remote_pass = remote_pass is not None,
             repo_name = repo_name,
             password_prompt = password_prompt,
             deploy_dir = str(deploy_dir),
@@ -94,11 +101,13 @@ class Git():
             recursive=recursive,
             quiet=quiet,
             progress = progress,
+            rui_user = repo_uri.username,
+            rui_pass = repo_uri.password,
         )
 
         ### Select Cmd ###
 
-        git_cmd = list()
+        git_cmd = ['git']
         op_name = "Cloning"
         err = RuntimeError("Invalid git op.")
 
@@ -144,7 +153,7 @@ class Git():
         ### Prompt for password ###
 
         def has_pass():
-            return repo_uri.username != '' and repo_uri.password != ''
+            return remote_user and remote_pass
 
         password_prompt = password_prompt and is_clone_op
 
@@ -178,10 +187,8 @@ class Git():
                 )
                 raise err
             else:
-                username = input(f"Enter Username for {remote_name}: ")
-                password = input(f"Enter Password for {remote_name}: ")
-                repo_uri.username = username
-                repo_uri.password = password
+                remote_user = input(f"Enter Username for {remote_name}: ")
+                remote_pass = input(f"Enter Password for {remote_name}: ")
 
         ### Validate Password Entry ###
 
@@ -198,6 +205,13 @@ class Git():
                 raise RuntimeError("Confirmation not given, aborting operation.")
             elif choice != "y":
                 raise RuntimeError("Invalid confirmation, aborting operation.")
+
+        ## Fix up the uri if we have a username and password.
+
+        if has_pass():
+            repo_uri = repo_uri._replace(
+                netloc=f"{remote_user}:{remote_pass}@{repo_uri.hostname}"
+            )
 
         ### Run the command ###
 

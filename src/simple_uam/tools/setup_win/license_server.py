@@ -18,8 +18,8 @@ license_dep_pkg_list = [
 ]
 
 @task(pre=[call(choco.install, pkg=license_dep_pkg_list)])
-def dep_pkgs(ctx):
-    """ Install/Update License Server Dependencies (idempotent) """
+def choco_pkgs(ctx):
+    """ Install/Update License Server Dependencies. """
 
     log.info("Finished Installing Dependency Packages")
 

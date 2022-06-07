@@ -31,6 +31,7 @@ choco_exe_map = {
     'tess': 'tess.exe',
     'atom': 'atom.cmd',
     'wget': 'wget.exe',
+    'python3': 'python.exe',
     'tortoisegit': 'TortoiseGitMerge.exe', # not really a CLI app but it's a test
 }
 
