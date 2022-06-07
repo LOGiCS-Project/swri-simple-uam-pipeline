@@ -16,7 +16,7 @@ from typing import List, Optional
 from simple_uam.util.invoke import Collection, InvokeProg, task
 from simple_uam.util.logging import get_logger
 
-from . import shared, worker, license_server, broker, choco
+from . import shared, worker, license_server, broker, choco, graph_server
 
 log = get_logger(__name__)
 
@@ -45,6 +45,7 @@ def main(args: Optional[List[str]] = None) -> int:
     install.add_task(license_server.dep_pkgs, name='licence-pkgs')
     install.add_task(broker.dep_pkgs, name='broker-pkgs')
     install.add_task(shared.qol_pkgs, name='qol-pkgs')
+    install.add_task(graph_server.dep_pkgs, name='graph-pkgs')
     namespace.add_collection(install, name='install')
 
     # Import tasks from other files/modules
@@ -63,6 +64,11 @@ def main(args: Optional[List[str]] = None) -> int:
     namespace.add_collection(
         Collection.from_module(license_server),
         'license_server',
+    )
+
+    namespace.add_collection(
+        Collection.from_module(graph_server),
+        'graph_server',
     )
 
     # Import tasks from other files/modules

@@ -2,6 +2,7 @@ from attrs import define, field
 from omegaconf import SI
 from .manager import Config
 from .path_config import PathConfig
+from .craidl_config import CraidlConfig
 from .workspace_config import RecordsConfig, WorkspaceConfig
 
 @define
@@ -16,14 +17,25 @@ class D2CWorkspaceConfig(WorkspaceConfig):
     """
 
     workspaces_dir : str = field(
-        default=SI("${path:work_dir}/d2c_workspaces")
+        default=SI("${path:work_directory}/d2c_workspaces")
     )
+    """
+    Dir where workspaces are stored.
+    """
+
+    craidl : CraidlConfig = field(
+        default=SI("${craidl:}")
+    )
+    """
+    The config to use for craidl in the workspace. Should interpolate into
+    the currently loaded craidl.conf.yaml by default.
+    """
 
 # Add to the configuration manager
 Config.register(
     D2CWorkspaceConfig, # class to be registered
 
-    conf_deps = [PathConfig],
+    conf_deps = [PathConfig, CraidlConfig],
     # Config classes this can interpolate with.
     # e.g. If `PathConfig` is in `conf_deps` this config file (and the defaults)
     #      can use "${path:data_dir}/foo/bar.txt" and have it resolve correctly.

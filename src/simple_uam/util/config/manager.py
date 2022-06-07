@@ -106,8 +106,14 @@ class ConfigData:
         Should only be called once per class.
         """
 
-        def resolve_func(key: str, conf_dat: ConfigData):
-            return OmegaConf.select(conf_dat.config, key)
+        def resolve_func(conf_dat : ConfigData, key: Optional[str] = None):
+            if key:
+                val = OmegaConf.select(conf_dat.config, key, default=None)
+                if val is None:
+                    val = getattr(conf_dat.obj, key, None)
+                return val
+            else:
+                return conf_dat.config
 
         return functools.partial(resolve_func, conf_dat=self)
 

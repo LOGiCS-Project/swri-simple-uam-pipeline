@@ -33,6 +33,7 @@ dependencies = [
     "structlog>=21.5.0",
     "rich>=12.4.1",
     "colorama>=0.4.4",
+    "gremlinpython>=3.6.0",
 ]
 
 [project.urls]
