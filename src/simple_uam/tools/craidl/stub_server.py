@@ -9,16 +9,12 @@ from simple_uam.util.logging import get_logger
 from simple_uam.util.system import Git
 from simple_uam.util.system.windows import download_file, verify_file, unpack_file, \
     run_gui_exe, append_to_file, get_mac_address
-
-from simple_uam.d2c_workspace.manager import D2CManager
-from simple_uam.d2c_workspace.session import D2CSession
-from simple_uam.d2c_workspace.workspace import D2CWorkspace
-
+from pathlib import Path
 import subprocess
 
 log = get_logger(__name__)
 
-uav_workflows_dir = Config[CraidlConfig].stub_server.cache_dir / 'uav_workflows'
+uav_workflows_dir = Path(Config[CraidlConfig].stub_server.cache_dir) / 'uav_workflows'
 
 uav_workflows_repo = "https://git.isis.vanderbilt.edu/SwRI/athens-uav-workflows.git"
 
@@ -129,7 +125,7 @@ gremlin_server_md5 = None
 gremlin_server_cmd = Path('bin','gremlin-server.bat')
 
 @task
-def download_server_archive(ctx, force_download=False):
+def download_server(ctx, force_download=False):
     """
     Downloads, and the gremlin server stub.
 
@@ -206,7 +202,7 @@ def unpack_server(ctx, force_unpack=False, force_download=False):
         )
         unpack_file(gremlin_server_zip, gremlin_server_dir)
 
-conf_data_root = Config[PathConfig].repo_root / 'data' / 'gremlin-server'
+conf_data_root = Config[PathConfig].repo_dir / 'data' / 'gremlin-server'
 
 server_conf_data = conf_data_root / 'gremlin-server-uam.yaml'
 server_conf_target = Path('conf','gremlin-server-uam.yaml')

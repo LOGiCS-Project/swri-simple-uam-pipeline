@@ -6,6 +6,7 @@ import shutil
 from simple_uam.util.invoke import task, call
 from simple_uam.util.config import Config, PathConfig, CraidlConfig
 from simple_uam.util.logging import get_logger
+from simple_uam.util.system import Git
 
 from typing import Tuple
 
@@ -79,7 +80,7 @@ def clean_examples(ctx):
 
     example_path.mkdir(parents=True, exist_ok=True)
 
-    for name, design_file in all_examples():
+    for name, design_file in all_examples().items():
         design_file = design_file.resolve()
 
         log.info(
@@ -96,7 +97,7 @@ def clean_examples(ctx):
                     "Deleting example directory.",
                     design_dir = str(example),
                 )
-                design_dir.rmdir()
+                example.rmdir()
             else:
                 log.warning(
                     "Example design directory still has items, skipping deletion.",
@@ -126,6 +127,11 @@ def add_examples(ctx, input, name=None, skip=False):
     examples = dict()
     input_loc = Path(input).resolve(strict=True)
 
+    log.info(
+        "Attempting to add examples from input.",
+        input=input,
+    )
+
     if input_loc.is_file() and not name:
         err = RuntimeError("Need name argument for single fine input.")
         log.exception(
@@ -137,7 +143,9 @@ def add_examples(ctx, input, name=None, skip=False):
     elif input_loc.is_file():
         examples[name] = input_loc
     else:
-        examples = all_examples()
+        for example in input_loc.glob(f'*/{design_filename}'):
+            name = example.parent.name
+            examples[name] = example
 
     for name, design in examples.items():
         target_dir = example_path / name
@@ -149,16 +157,16 @@ def add_examples(ctx, input, name=None, skip=False):
             log.info(
                 "Example does not exist, installing.",
                 name=name,
-                source=design,
-                destination=target_file,
+                source=str(design),
+                destination=str(target_file),
             )
             shutil.copy2(design, target_file)
         elif not skip:
-            log.info(
+            log.warning(
                 "Example already exists, deleting and reinstalling.",
                 name=name,
-                source=design,
-                destination=target_file,
+                source=str(design),
+                destination=str(target_file),
             )
             target_file.unlink()
             shutil.copy2(design, target_file)
@@ -166,11 +174,11 @@ def add_examples(ctx, input, name=None, skip=False):
             log.info(
                 "Example already exists, skipping.",
                 name=name,
-                source=design,
-                destination=target_file,
+                source=str(design),
+                destination=str(target_file),
             )
 
-trinity_craidl_dir = Config[PathConfig].cache_path / 'trinity_craidl'
+trinity_craidl_dir = Config[PathConfig].cache_dir / 'trinity_craidl'
 
 trinity_craidl_repo = "https://git.isis.vanderbilt.edu/SwRI/ta1/sri-ta1/trinity-craidl.git"
 
@@ -206,9 +214,18 @@ def download_examples(ctx,  prompt=True, quiet=False, verbose=False):
 
     Git.clone_or_pull(**git_args)
 
-@task(download_examples, call(add_examples, trinity_craidl_examples))
+@task(pre=[download_examples, call(add_examples,input=trinity_craidl_examples)])
 def install_examples(ctx):
     """
     Installs the trinity-craidl examples after, possibly, downloading them.
     """
     pass
+
+@task
+def list_examples(ctx):
+    """
+    Lists all currently loaded examples.
+    """
+
+    for name, path in all_examples().items():
+        print(f"{name}:  {str(path)}")

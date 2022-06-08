@@ -7,10 +7,6 @@ from simple_uam.util.invoke import task, call
 from simple_uam.util.config import Config, PathConfig, CraidlConfig
 from simple_uam.util.logging import get_logger
 
-from simple_uam.d2c_workspace.manager import D2CManager
-from simple_uam.d2c_workspace.session import D2CSession
-from simple_uam.d2c_workspace.workspace import D2CWorkspace
-
 import subprocess
 
 log = get_logger(__name__)
