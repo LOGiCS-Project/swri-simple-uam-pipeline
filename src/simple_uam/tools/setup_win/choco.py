@@ -8,7 +8,7 @@ import subprocess
 log = get_logger(__name__)
 
 # Directory where chocolatey scripts are found
-setup_data_dir = Config[PathConfig].data_dir / 'setup'
+setup_data_dir = Config[PathConfig].repo_data_dir / 'setup'
 
 # Chololatey env bootstrap script
 choco_bootstrap_script = setup_data_dir / 'bootstrap_win.ps1'

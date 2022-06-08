@@ -157,7 +157,7 @@ def matlab(ctx, force=False):
     matlab_installer.run(force=force)
 
 # Directory where chocolatey scripts are found
-setup_script_dir = Config[PathConfig].data_dir / 'setup'
+setup_script_dir = Config[PathConfig].repo_data_dir / 'setup'
 
 # Chololatey env bootstrap scrip
 disable_ieesc_script = setup_script_dir / 'disable_ieesc.ps1'

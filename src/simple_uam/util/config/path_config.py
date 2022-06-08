@@ -32,6 +32,11 @@ class PathConfig:
         converter=str,
     )
 
+    data_directory: str = field(
+        default=dirs.user_data_dir,
+        converter=str,
+    )
+
     @property
     def repo_dir(self):
         """ Repository root dir. """
@@ -59,6 +64,11 @@ class PathConfig:
 
     @property
     def data_dir(self):
+        """ Ysytem user static data storage. """
+        return Path(self.data_directory)
+
+    @property
+    def repo_data_dir(self):
         """ Repository static data storage. """
         return Path(self.repo_dir) / 'data'
 
