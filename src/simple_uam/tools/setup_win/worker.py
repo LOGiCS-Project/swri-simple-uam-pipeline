@@ -192,7 +192,7 @@ creopyson_repo = "https://git.isis.vanderbilt.edu/SwRI/creoson/creopyson.git"
 
 creopyson_branch = "main"
 
-@task
+@task(pre=[call(choco.install, pkg=['python3','pip'])])
 def creopyson(ctx, prompt=True, quiet=False, verbose=False):
     """
     Clones/updates the creopyson repository and installs the python library

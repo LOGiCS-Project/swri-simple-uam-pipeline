@@ -46,6 +46,7 @@ Discussions = "https://github.com/LOGiCS-Project/swri-simple-uam-pipleline/discu
 suam-config-mgr = "simple_uam.tools.config_mgr.cli:main"
 suam-setup-win = "simple_uam.tools.setup_win.cli:main"
 suam-workspace-mgr = "simple_uam.tools.workspace_mgr.cli:main"
+suam-craidl = "simple_uam.tools.craidl.cli:main"
 
 [tool.pdm]
 version = {use_scm = true}
@@ -58,19 +59,20 @@ editable-backend = "editables"
 [tool.pdm.scripts]
 config-mgr = {call = "simple_uam.tools.config_mgr.cli:main(['pdm run config-mgr'])"}
 setup-win = {call = "simple_uam.tools.setup_win.cli:main(['pdm run setup-win'])"}
+craidl = {call = "simple_uam.tools.craidl.cli:main(['pdm run craidl'])"}
 workspace-mgr = {call = "simple_uam.tools.config_mgr.cli:main(['pdm run workspace-mgr'])"}
-check-docs = {call = "simple_uam.tools.dev_util.cli:main(['pdm run check-docs','check-docs'])"}
-docs = {call = "simple_uam.tools.dev_util.cli:main(['pdm run docs','docs'])"}
-docs-serve = {call = "simple_uam.tools.dev_util.cli:main(['pdm run docs-serve','docs-serve'])"}
-docs-deploy = {call = "simple_uam.tools.dev_util.cli:main(['pdm run docs-deploy','docs-deploy'])"}
-check = {call = "simple_uam.tools.dev_util.cli:main(['pdm run check','check'])"}
-check-quality = {call = "simple_uam.tools.dev_util.cli:main(['pdm run check-quality','check-quality'])"}
-check-types = {call = "simple_uam.tools.dev_util.cli:main(['pdm run check-types','check-types'])"}
-clean = {call = "simple_uam.tools.dev_util.cli:main(['pdm run clean','clean'])"}
-reset-pdm = {call = "simple_uam.tools.dev_util.cli:main(['pdm run reset-pdm','reset-pdm'])"}
-format = {call = "simple_uam.tools.dev_util.cli:main(['pdm run format','format'])"}
-test = {call = "simple_uam.tools.dev_util.cli:main(['pdm run test','test'])"}
-coverage = {call = "simple_uam.tools.dev_util.cli:main(['pdm run coverage','coverage'])"}
+# check-docs = {call = "simple_uam.tools.dev_util.cli:main(['pdm run check-docs','check-docs'])"}
+# docs = {call = "simple_uam.tools.dev_util.cli:main(['pdm run docs','docs'])"}
+# docs-serve = {call = "simple_uam.tools.dev_util.cli:main(['pdm run docs-serve','docs-serve'])"}
+# docs-deploy = {call = "simple_uam.tools.dev_util.cli:main(['pdm run docs-deploy','docs-deploy'])"}
+# check = {call = "simple_uam.tools.dev_util.cli:main(['pdm run check','check'])"}
+# check-quality = {call = "simple_uam.tools.dev_util.cli:main(['pdm run check-quality','check-quality'])"}
+# check-types = {call = "simple_uam.tools.dev_util.cli:main(['pdm run check-types','check-types'])"}
+# clean = {call = "simple_uam.tools.dev_util.cli:main(['pdm run clean','clean'])"}
+# reset-pdm = {call = "simple_uam.tools.dev_util.cli:main(['pdm run reset-pdm','reset-pdm'])"}
+# format = {call = "simple_uam.tools.dev_util.cli:main(['pdm run format','format'])"}
+# test = {call = "simple_uam.tools.dev_util.cli:main(['pdm run test','test'])"}
+# coverage = {call = "simple_uam.tools.dev_util.cli:main(['pdm run coverage','coverage'])"}
 
 
 [tool.pdm.dev-dependencies]

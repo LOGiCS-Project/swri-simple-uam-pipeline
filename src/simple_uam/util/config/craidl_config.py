@@ -47,6 +47,13 @@ class StubServerConfig():
     The port the stub server will serve from.
     """
 
+    read_only : bool = field(
+        default = True,
+    )
+    """
+    Should the stub server be run as a read only database?
+    """
+
 @define
 class CraidlConfig():
     """

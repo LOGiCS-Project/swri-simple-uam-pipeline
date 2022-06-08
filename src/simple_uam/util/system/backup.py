@@ -1,7 +1,7 @@
 import shutil
 from datetime import datetime
 from pathlib import Path, WindowsPath
-from typing import Union, List, Optional
+from typing import Union, List, Optional, Dict
 from zipfile import ZipFile
 import subprocess
 import tempfile
@@ -123,3 +123,69 @@ def archive_files(cwd : Union[str,Path],
                 pass
             else:
                 zf.write(sys_file, arc_file)
+
+def configure_file(input_file : Union[str,Path],
+                   output_file : Union[str, Path],
+                   replacements : Dict[str,str] = {},
+                   exist_ok : bool = False,
+                   backup : bool = True,
+                   backup_dir : Union[str,Path,None] = None):
+    """
+    Will "configure" and install a file by performing a set of string
+    replacements and moving it to a final location.
+
+    Arguments:
+       input_file: The input_file to use.
+       output_file: The output location to place the configured file.
+       replacements: The string to find and replace in the input file.
+       exist_ok: If true will overwrite an existing file.
+       backup: If overwriting a file do we create a backup?
+       backup_dir: Place backups in this directory, if not specified defaults
+         to output directory.
+    """
+
+    input_file = Path(input_file).resolve()
+    output_file = Path(output_file).resolve()
+
+    # Verification
+    if not exist_ok and output_file.exists():
+        err = RuntimeError("Target file already exists.")
+        log.exception(
+            "Cannot configure file because output already exists.",
+            err = err,
+            input_file = input_file,
+            output_file = output_file,
+        )
+        raise err
+
+    # Backup
+    if backup:
+        backup_file(
+            output_file,
+            backup_dir = backup_dir,
+        )
+
+    # Delete
+    output_file.unlink(missing_ok=True)
+
+    log.info(
+        "Reading configuration input.",
+        input_file = input_file)
+
+    with input_file.open('r') as file :
+        filedata = file.read()
+
+    for find, replace in replacements.items():
+        log.info(
+            "Performing configuration replacement.",
+            find=find,
+            replace=replace,
+        )
+        filedata = filedata.replace(find, replace)
+
+    log.info(
+        "Writing configuration output.",
+        output_file=output_file)
+
+    with output_file.open('w') as file:
+        file.write(filedata)

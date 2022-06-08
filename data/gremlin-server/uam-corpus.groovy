@@ -4,9 +4,9 @@ def globals = [:]
 
 globals << [hook : [
   onStartUp: { ctx ->
-    ctx.logger.info("Loading graph data from 'data/all_schema_uam.graphml'.")
-    graph.io(graphml()).readGraph('data/all_schema_uam.graphml')
+    ctx.logger.info("Loading graph data from '<<CORPUS_DATA>>'.")
+    graph.io(graphml()).readGraph('<<CORPUS_DATA>>')
   }
 ] as LifeCycleHook]
 
-globals << [g : graph.traversal()] // .withStrategies(ReadOnlyStrategy)] 
+globals << [g : graph.traversal().withStrategies(<<TRAVERSAL_STRATEGIES>>)]

@@ -4,7 +4,7 @@ Various setup and development tasks for SimpleUAM Utility Modules.
 
 import shutil
 from simple_uam.util.invoke import task, call
-from simple_uam.util.config import Config, PathConfig, WinSetupConfig
+from simple_uam.util.config import Config, PathConfig, CraidlConfig
 from simple_uam.util.logging import get_logger
 
 from simple_uam.d2c_workspace.manager import D2CManager
@@ -14,68 +14,6 @@ from simple_uam.d2c_workspace.workspace import D2CWorkspace
 import subprocess
 
 log = get_logger(__name__)
-
-@task
-def download_corpus(ctx):
-    """
-    Will retrieve a default version of the corpus (from a isis repo) and
-    install it into the location specified by system config.
-    """
-    # clone uam_workflows into cache
-    # copy the corpus.grapml into location
-    raise NotImplementedError()
-
-@task
-def download_examples(ctx):
-    """
-    Clones the trinity-craidl repo into the appropriate folder. With a default
-    config this makes the examples available for use with other options.
-    """
-    # clone trinity-craidl repo into cache
-    # copy examples dir into location.
-    raise NotImplementedError()
-
-@task
-def clean_examples(ctx):
-    """
-    Deletes all available examples in the default directory.
-    """
-    # delete all examples in dir
-    raise NotImplementedError()
-
-@task
-def download_server(ctx):
-    """
-    Downloads, and unpacks the gremlin server stub.
-    """
-    raise NotImplementedError()
-
-@task
-def configure_server(ctx,
-                     host = None,
-                     port = None,
-                     corpus = None):
-    """
-    Will patch the stub server's config files and copy over the corpus if
-    needed.
-
-    Arguments:
-      host: The host the server will serve on.
-      port: The port the server will server on.
-      corpus: The '.graphml' file to be loaded whenever the server starts.
-
-    All three arguments will default to values from 'CraidlConfig's
-    'stub_server' entry.
-    """
-    raise NotImplementedError()
-
-@task
-def run_server(ctx):
-    """
-    Runs the stub server with the configured settings.
-    """
-    raise NotImplementedError()
-
 
 @task
 def gen_static_corpus(ctx,
@@ -95,9 +33,9 @@ def gen_static_corpus(ctx,
     """
     raise NotImplementedError()
 
-@task
+@task(positional=['design'])
 def gen_info_files(ctx,
-                   design = None,
+                   design,
                    output = None,
                    copy_design = False,
                    random = False,
