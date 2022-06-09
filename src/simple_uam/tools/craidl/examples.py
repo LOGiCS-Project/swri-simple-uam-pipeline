@@ -17,7 +17,7 @@ import subprocess
 
 log = get_logger(__name__)
 
-example_path = Config[CraidlConfig].example_dir
+example_path = Path(Config[CraidlConfig].example_dir)
 
 design_filename = 'design_swri.json'
 

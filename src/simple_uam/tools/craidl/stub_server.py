@@ -6,10 +6,11 @@ import shutil
 from simple_uam.util.invoke import task, call
 from simple_uam.util.config import Config, PathConfig, CraidlConfig
 from simple_uam.util.logging import get_logger
-from simple_uam.util.system import Git
+from simple_uam.util.system import Git, configure_file, backup_file
 from simple_uam.util.system.windows import download_file, verify_file, unpack_file, \
     run_gui_exe, append_to_file, get_mac_address
 from pathlib import Path
+import tempfile
 import subprocess
 
 log = get_logger(__name__)
@@ -36,7 +37,7 @@ def download_corpus(ctx,  prompt=True, quiet=False, verbose=False):
 
     git_args = dict(
         repo_uri = uav_workflows_repo,
-        deploy_dir = uav_workflows_dir,
+        deploy_dir = str(uav_workflows_dir),
         branch = uav_workflows_branch,
         password_prompt = prompt,
         quiet = quiet,
@@ -45,18 +46,19 @@ def download_corpus(ctx,  prompt=True, quiet=False, verbose=False):
     )
 
     if not quiet:
-        log.info("Running git clone/pull for creopyson.",**git_args)
+        log.info("Running git clone/pull for uav-workflows.",**git_args)
 
     Git.clone_or_pull(**git_args)
 
 @task
-def install_corpus(ctx, corpus=None, yes=False):
+def install_corpus(ctx, corpus=None, skip=False, yes=False):
     """
     Install the stub server corpus into the configured location.
 
     Arguments:
       corpus: The '.graphml' file to generate the corpus from, defaults to the
         file from the download step if found.
+      skip: skip updating corpus if existing corpus is found.
       yes: skip confirmation prompt if old corpus is deleted.
     """
 
@@ -90,7 +92,13 @@ def install_corpus(ctx, corpus=None, yes=False):
 
     target = Path(Config[CraidlConfig].stub_server.graphml_corpus)
 
-    if target.exists() and not yes:
+    if target.exists() and skip:
+        log.info(
+            "Corpus already exists at target location, skipping update.",
+            target = target,
+        )
+        return
+    elif target.exists() and not yes:
         log.warning(
             "Corpus already exists at target location, delete?",
             target = target,
@@ -118,9 +126,11 @@ gremlin_server_uri = "https://downloads.apache.org/tinkerpop/3.6.0/apache-tinker
 
 gremlin_server_zip = Path(Config[CraidlConfig].stub_server.cache_dir) / 'gremlin-server-3.6.0.zip'
 
+gremlin_unpack_folder = "apache-tinkerpop-gremlin-server-3.6.0"
+
 gremlin_server_dir = Path(Config[CraidlConfig].stub_server.server_dir)
 
-gremlin_server_md5 = None
+gremlin_server_md5 = "EB7FC24DDC886CF38A2D972F7688C574"
 
 gremlin_server_cmd = Path('bin','gremlin-server.bat')
 
@@ -200,7 +210,10 @@ def unpack_server(ctx, force_unpack=False, force_download=False):
             server_zip = str(gremlin_server_zip),
             server_dir = str(gremlin_server_dir),
         )
-        unpack_file(gremlin_server_zip, gremlin_server_dir)
+        with tempfile.TemporaryDirectory() as temp_dir:
+            unpack_file(gremlin_server_zip, temp_dir)
+            gremlin_unpack_dir = Path(temp_dir) / gremlin_unpack_folder
+            shutil.move(gremlin_unpack_dir, gremlin_server_dir)
 
 conf_data_root = Config[PathConfig].repo_dir / 'data' / 'gremlin-server'
 
@@ -213,7 +226,7 @@ corpus_loader_target = Path('scripts','uam-corpus.groovy')
 corpus_loader_path = gremlin_server_dir / corpus_loader_target
 
 corpus_data_target = Path('data', 'all_schema_uam.graphml')
-corpus_data_path = gremlin_server_dir / corpus_loader_target
+corpus_data_path = gremlin_server_dir / corpus_data_target
 
 @task(unpack_server)
 def configure_server(ctx,
@@ -242,7 +255,7 @@ def configure_server(ctx,
         port = Config[CraidlConfig].stub_server.port
 
     if not corpus:
-        install_corpus(ctx)
+        install_corpus(ctx, skip=True)
         corpus = Path(Config[CraidlConfig].stub_server.graphml_corpus)
     else:
         corpus = Path(corpus)
@@ -254,7 +267,7 @@ def configure_server(ctx,
         server_conf_path,
         replacements = {
             '<<HOSTNAME>>': host,
-            '<<PORT>>': port,
+            '<<PORT>>': str(port),
             '<<LOAD_SCRIPT>>': corpus_loader_target.as_posix(),
         },
         exist_ok = True,
@@ -307,7 +320,16 @@ def run_server(ctx):
     server as a service, it's just in the current session.
     """
 
+    cmd = (gremlin_server_dir / gremlin_server_cmd).resolve()
+
+    log.info(
+        "Starting gremlin stub server.",
+        cmd=str(cmd),
+        conf=str(server_conf_target),
+        cwd=str(gremlin_server_dir),
+    )
+
     subprocess.run(
-        [gremlin_server_cmd, server_conf_target],
+        [cmd, server_conf_target],
         cwd = gremlin_server_dir,
     )

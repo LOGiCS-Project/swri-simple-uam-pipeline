@@ -31,6 +31,7 @@ def backup_file(
     """
 
     file_path = Path(file_path)
+    bak_file = file_path.with_name(f"{file_path.name}.bak")
 
     if not backup_dir:
         backup_dir = file_path.parent
@@ -51,8 +52,8 @@ def backup_file(
 
         log.info(
             "Creating Backup File.",
-            file=file_path,
-            backup=bak_file,
+            file=str(file_path),
+            backup=str(bak_file),
             delete_original=delete,
         )
 
@@ -69,8 +70,8 @@ def backup_file(
 
         log.info(
             "No file to backup.",
-            file=file_path,
-            backup=bak_file,
+            file=str(file_path),
+            backup=str(bak_file),
         )
 
 def archive_files(cwd : Union[str,Path],
@@ -170,7 +171,7 @@ def configure_file(input_file : Union[str,Path],
 
     log.info(
         "Reading configuration input.",
-        input_file = input_file)
+        input_file = str(input_file))
 
     with input_file.open('r') as file :
         filedata = file.read()
@@ -185,7 +186,7 @@ def configure_file(input_file : Union[str,Path],
 
     log.info(
         "Writing configuration output.",
-        output_file=output_file)
+        output_file=str(output_file))
 
     with output_file.open('w') as file:
         file.write(filedata)
