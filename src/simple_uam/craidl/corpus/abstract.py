@@ -1,34 +1,38 @@
 from attrs import define, field
 from typing import List, Dict, Any, Iterator, Tuple, Optional
-from abc import ABC
+from abc import ABC, abstractmethod
 
 class ComponentReader(ABC):
     """
     Abstract interface representing a single component in a corpus.
     """
 
-    @abstractproperty
+    @property
+    @abstractmethod
     def name(self) -> str:
         """
         The component name.
         """
         ...
 
-    @abstractproperty
+    @property
+    @abstractmethod
     def connections(self) -> Iterator[str]:
         """
         The list of connections this component type can have.
         """
         ...
 
-    @abstractproperty
+    @property
+    @abstractmethod
     def cad_part(self) -> Optional[str]:
         """
         Get a string with the name of the cad file for this component.
         """
         ...
 
-    @abstractproperty
+    @property
+    @abstractmethod
     def cad_properties(self) -> List[Dict[str,Any]]:
         """
         Cad Properties for this component.
@@ -38,7 +42,8 @@ class ComponentReader(ABC):
         """
         ...
 
-    @abstractproperty
+    @property
+    @abstractmethod
     def cad_params(self) -> List[Dict[str,Any]]:
         """
         Cad parameters for this component.
@@ -61,7 +66,8 @@ class ComponentReader(ABC):
         ...
 
 
-    @abstractproperty
+    @property
+    @abstractmethod
     def properties(self) -> List[Dict[str,Any]]:
         """
         Properties for this component.
@@ -71,7 +77,8 @@ class ComponentReader(ABC):
         """
         ...
 
-    @abstractproperty
+    @property
+    @abstractmethod
     def params(self) -> List[Dict[str,Any]]:
         """
         Parameters for this component.
@@ -96,7 +103,8 @@ class CorpusReader(ABC):
         """
         ...
 
-    @abstractproperty
+    @property
+    @abstractmethod
     def components(self) -> Iterator[ComponentReader]:
         """
         Iterates over a list of all components.

@@ -55,6 +55,7 @@ class WinSetupConfig():
     """
 
     graph_dep_packages : List[str] = [
+        'openjdk11',
     ]
     """
     Chocolatey packages needed for a windows graph server node.
@@ -62,12 +63,10 @@ class WinSetupConfig():
 
     qol_packages : List[str] = [
         'firefox',
-        'chocolateygui',
         'notepadplusplus',
         'foxitreader',
         'tess',
         'freecad',
-        'tortoisegit',
     ]
     """
     Quality of life packages that make actually using a windows node

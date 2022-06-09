@@ -13,6 +13,7 @@ from gremlin_python.process.traversal import T, Order, Cardinality, Column, \
     Direction, Operator, P, Pop, Scope, Barrier, Bindings, WithOptions
 
 from .abstract import *
+import time
 
 from simple_uam.util.logging import get_logger
 
@@ -24,9 +25,9 @@ class GremlinComponent(ComponentReader):
     A wrapper for a component in a gremlin db, will only perform queries lazily.
     """
 
-    g = field()
+    parent = field()
     """
-    The graph on which queries happen.
+    The parent corpus.
     """
 
     _name = field()
@@ -37,6 +38,10 @@ class GremlinComponent(ComponentReader):
     @property
     def name(self) -> str:
         return self._name
+
+    @property
+    def g(self) -> str:
+        return self.parent.g
 
     @property
     def connections(self) -> List[str]:
@@ -81,7 +86,6 @@ class GremlinComponent(ComponentReader):
             .select('PROP_NAME','PROP_VALUE') \
             .toList()
 
-    @property
     def cad_connection(self, conn : str) -> Optional[str]:
 
         conn = self.g.V().has('[avm]Component','[]Name',self.name) \
@@ -129,9 +133,15 @@ class GremlinCorpus(CorpusReader):
         default=None,
     )
 
-    path : Optional[str] = field(
-        default=None,
+    conn_timeout : int = field(
+        default=300000,
     )
+    """ Connection timeout in ms. """
+
+    eval_timeout : int = field(
+        default=120000,
+    )
+    """ Single query timeout in ms. """
 
     url : str = field(
         init=False,
@@ -139,27 +149,52 @@ class GremlinCorpus(CorpusReader):
 
     @url.default
     def _default_url(self):
-        url = urlparse(self.host or 'localhost', scheme='ws')
-        url.port = self.port or url.port or 8182
-        url.path = self.path or url.path or '/gremlin'
-        return url.geturl()
+        host = self.host or 'localhost'
+        port = self.port or 8182
+        return f"ws://{host}:{port}/gremlin"
 
-    g = field(
+    conn = field(
         init=False,
     )
 
-    @g.default
-    def _init_g(self):
+    @conn.default
+    def init_conn(self):
         log.info(
             'Connecting to Gremlin server...',
             server=self.url,
         )
         return traversal().withRemote(DriverRemoteConnection(self.url,'g'))
 
-    def __getitem__(self, comp : str) -> GremlinComponent:
-        return GremlinComponent(self.g, comp)
+    start_time : float = field(
+        init=False,
+    )
 
-    @abstractproperty
+    @start_time.default
+    def _start_time_default(self):
+        return time.monotonic()
+
+    @property
+    def g(self):
+        curr_time = time.monotonic()
+        elapsed = curr_time - self.start_time
+        if elapsed > self.conn_timeout:
+            log.info(
+                "Connection timeout met, creating new connection.",
+                start_time = self.start_time,
+                curr_time = curr_time,
+                elapsed = elapsed,
+                conn_timeout = self.conn_timeout,
+            )
+            self.conn = self.init_conn()
+            self.start_time = time.monotonic()
+
+        return self.conn.with_('evaluationTimeout', self.eval_timeout)
+
+
+    def __getitem__(self, comp : str) -> GremlinComponent:
+        return GremlinComponent(self, comp)
+
+    @property
     def components(self) -> Iterator[ComponentReader]:
 
         return self.g.V().hasLabel('[avm]Component') \

@@ -2,7 +2,7 @@
 
 host: <<HOSTNAME>>
 port: <<PORT>>
-evaluationTimeout: 300000
+evaluationTimeout: 30000000
 channelizer: org.apache.tinkerpop.gremlin.server.channel.WsAndHttpChannelizer
 graphs: {
   graph: conf/tinkergraph-empty.properties}
@@ -20,10 +20,10 @@ processors:
   - { className: org.apache.tinkerpop.gremlin.server.op.session.SessionOpProcessor, config: { sessionTimeout: 28800000 }}
   - { className: org.apache.tinkerpop.gremlin.server.op.traversal.TraversalOpProcessor, config: { cacheExpirationTime: 600000, cacheMaxSize: 1000 }}
 metrics: {
-  slf4jReporter: {enabled: false, interval: 180000}}
+  slf4jReporter: {enabled: false, interval: 18000000}}
 strictTransactionManagement: false
-idleConnectionTimeout: 600
-keepAliveInterval: 300
+idleConnectionTimeout: 60000
+keepAliveInterval: 30000
 maxInitialLineLength: 4096
 maxHeaderSize: 8192
 maxChunkSize: 8192

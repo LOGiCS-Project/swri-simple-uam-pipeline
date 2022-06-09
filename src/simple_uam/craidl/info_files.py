@@ -1,7 +1,8 @@
 from .corpus.abstract import *
-from attrs import define, field
+from attrs import define, field, frozen
 from typing import List, Dict, Any, Iterator, Tuple, Optional
-
+import json
+from pathlib import Path
 from simple_uam.util.logging import get_logger
 
 log = get_logger(__name__)
@@ -42,16 +43,16 @@ class DesignInfoFiles():
     @component_maps.default
     def _cmp_maps_default(self):
         cmp_maps = list()
-        for (from_comp, lib_comp) in self.design_to_corpus:
+        for from_comp, lib_comp in self.design_to_corpus.items():
             cad_prt = self.corpus[lib_comp].cad_part
 
             new_entry = {
                 'FROM_COMP': from_comp,
-                'LIB_COMPONENT': lib_component,
+                'LIB_COMPONENT': lib_comp,
                 'CAD_PRT': cad_prt
             }
 
-            if any_none(from_comp, lib_comp, car_prt):
+            if any_none(from_comp, lib_comp, cad_prt):
                 log.warning(
                     'Skipping entry in component_maps due to null values',
                     **new_entry,
@@ -103,7 +104,7 @@ class DesignInfoFiles():
         for param_entry in self.design['parameters']:
             design_param = param_entry['parameter_name']
             design_param_val = param_entry['value']
-            for target in self.param_entry['component_properties']:
+            for target in param_entry['component_properties']:
                 component_name = target['component_name']
                 component_param = target['component_property']
                 new_entry = {
@@ -149,7 +150,7 @@ class DesignInfoFiles():
                     'PROP_NAME': prop_name,
                     'PROP_VALUE': prop_value
                 }
-                if any_non(prop_name, prop_value):
+                if any_none(prop_name, prop_value):
                     log.warning(
                         'Skipping entry in paramMap due to null values',
                         entry=entry,
@@ -174,8 +175,8 @@ class DesignInfoFiles():
             to_comp = entry['TO_COMP']
             from_conn = entry['FROM_CONN']
             to_conn = entry['TO_CONN']
-            from_comp_type = ci_to_comp[from_comp] ## NOTE: needs ci_to_comp
-            to_comp_type = ci_to_comp[to_comp]
+            from_comp_type = self.design_to_corpus[from_comp] ## NOTE: needs ci_to_comp
+            to_comp_type = self.design_to_corpus[to_comp]
             from_conn_cs = self.corpus[from_comp_type].cad_connection(from_conn)
             to_conn_cs = self.corpus[to_comp_type].cad_connection(to_conn)
             new_entry = {
@@ -216,7 +217,7 @@ class DesignInfoFiles():
                     'PROP_NAME': prop_name,
                     'PROP_VALUE': prop_value
                 }
-                if any_none(prop_name. prop_value):
+                if any_none(prop_name, prop_val):
                     log.warning(
                         'Skipping entry in componentProps due to null values',
                         entry=entry,
@@ -269,7 +270,7 @@ class DesignInfoFiles():
 
     @cad_params.default
     def _cad_params(self):
-        rep = list()
+        cad_params = list()
         for entry in self.component_maps: ## NOTE: ComponentMapList
             comp_name = entry['FROM_COMP']
             lib_name = entry['LIB_COMPONENT']
@@ -312,3 +313,17 @@ class DesignInfoFiles():
             self.component_params_file: self.component_params,
             self.cad_params_file: self.cad_params,
         }
+
+    def write_files(self, out_dir):
+        """
+        Write all the info files to the output directory.
+        """
+
+        out_dir = Path(out_dir)
+        out_dir.mkdir(parents=True, exist_ok=True)
+
+        for filename, content in self.info_file_map.items():
+            filepath = out_dir / filename
+
+            with filepath.open('w') as fp:
+                json.dump(content, fp, indent="  ")

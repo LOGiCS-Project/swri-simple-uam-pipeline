@@ -93,6 +93,13 @@ class CraidlConfig():
     The parsed static corpus to be generated/used when creating info files.
     """
 
+    static_corpus_cache : str = field(
+        default=SI("${path:cache_directory}/static_corpus_cache"),
+    )
+    """
+    The cache directory to use when generating a static corpus.
+    """
+
     use_static_corpus : bool = True
     """
     Use the static corpus for generating design info files if true, otherwise
