@@ -16,13 +16,19 @@ class D2CManager(WorkspaceManager):
     )
 
     @staticmethod
-    def init_ref_dir(self):
+    def init_ref_dir(reference_dir : Path,
+                     assets_dir : Path,
+                     direct2cad_repo : Path,
+                     creoson_server_zip : Path):
         """
-        Copies files over from direct2cad submodule.
+        This function should be overloaded by a child class with a task
+        specific setup operation.
+
+        Sets up the reference directory that workspaces are copied from.
+        Should only be called by
         """
 
-        # Copy over direct2cad workspace
-        # Extract the creoson server archive
-        # Rename the creoson server dir to 'creoson-server'
-        # change the version of creo in 'parametric.bat" from '6.0.4.0' to '5.0.6.0'
-        raise NotImplementedError()
+        # copy direct2cad files into ref_dir
+        # unpack creoson_server into ref_dir
+
+        raise NotImplementedError("Overload in child class. See docstring.")

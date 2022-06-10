@@ -24,37 +24,29 @@ def mkdirs(ctx):
 
     manager.init_dirs()
 
-@task
-def delete_locks(ctx,
-                 skip_reference=False,
-                 skip_records=False):
-    """
-    Forcefully deletes all the locks for direct2cad workspaces.
-    Only use this when no workspaces are operational, otherwise sessions in a
-    workspace can clobber each other.
-
-    Arguments:
-        skip_reference: If true, skip deleting the reference lockfile.
-        skip_records: If true, skip deleting the records lock.
-    """
-
-    manager.delete_locks(
-        skip_reference=skip_reference,
-        skip_records=skip_records,
-    )
 
 @task
-def prune_records(ctx):
+def creoson_server(ctx):
     """
-    Deletes the oldest files in the records dir if there are too many.
+    Downloads the creoson server files to cache.
     """
-    manager.prune_records()
+    pass
 
-@task(mkdirs)
+@task
+def direct2cad(ctx):
+    """
+    Downloads the direct2cad repository to cache.
+    """
+    pass
+
+@task(mkdirs, creoson_server, direct2cad)
 def setup_reference(ctx):
     """
     Will set up the reference directory if needed.
 
     Note: Will delete the contents of the reference directory!
     """
-    manager.setup_ref_dir()
+    manager.setup_ref_dir(
+        direct2cad_repo=...,
+        creoson_server_zip=...,
+    )

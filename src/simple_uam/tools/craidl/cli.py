@@ -48,13 +48,17 @@ def main(args: Optional[List[str]] = None) -> int:
     server_ns.add_task(stub_server.configure_server, 'configure')
     server_ns.add_task(stub_server.run_server, 'run')
 
+    corpus_ns = Collection()
+    corpus_ns.add_task(tasks.copy_static_corpus, 'copy')
+    corpus_ns.add_task(tasks.gen_static_corpus, 'generate')
+
     namespace = Collection(
-        tasks.gen_static_corpus,
         tasks.gen_info_files,
     )
-
     namespace.add_collection(examples_ns, 'examples')
     namespace.add_collection(server_ns, 'stub_server')
+    namespace.add_collection(corpus_ns, 'static_corpus')
+
     # Setup the invoke program runner class
     program = InvokeProg(
         namespace=namespace,

@@ -121,7 +121,7 @@ class Session():
         kw_only=True,
     )
     """
-    Patterns to exclude from workspace initialization and records packaging.
+    Patterns to exclude from workspace initialization.
     """
 
     @exclude_patterns.default

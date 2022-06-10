@@ -19,6 +19,63 @@ import subprocess
 
 log = get_logger(__name__)
 
+repo_data_corpus = Config[PathConfig].repo_data_dir / 'corpus_static_dump.json'
+
+@task
+def copy_static_corpus(ctx,
+                       input = None,
+                       output = None,
+                       force = False,
+                       backup = True):
+    """
+    Generates a static corpus from a running corpus server.
+
+    Arguments:
+      input: The input copy of the static corpus, defaults to the copy provided
+        with the repo.
+      output: The output file to write the corpus dump to. Defaults to the
+        configured corpus location.
+      force: Do we overwrite the corpus if it's already there? Defaults to
+        true if output is specified otherwise defaults to false.
+      backup: Should we create a backup if there's a preexisting output file?
+    """
+
+    if input == None:
+        input = repo_data_corpus
+    input = Path(input)
+
+    if output == None:
+        output = Config[CraidlConfig].static_corpus
+    else:
+        force = True
+    output = Path(output)
+
+    if output.exists() and not force:
+        log.info(
+            "Found existing corpus dump, skipping further operations.",
+            output=str(output),
+        )
+        return
+    elif output.exists() and backup:
+        log.info(
+            "Found existing corpus dump, creating backup and removing.",
+            output=str(output),
+        )
+        backup_file(output, delete=True)
+    elif output.exists():
+        log.warning(
+            "Found existing corpus dump, deleting.",
+            output=str(output),
+        )
+        output.unlink()
+
+    log.info(
+        "Copying corpus data into location.",
+        input_corpus = str(input),
+        output_corpus = str(output),
+    )
+    shutil.copy2(input, output)
+
 corpus_cache = Config[CraidlConfig].static_corpus_cache
 
 corpus_cache_opts = 'corpus_options.json'
@@ -40,13 +97,14 @@ def gen_static_corpus(ctx,
       host: The hostname of the server we connect to.
       port: The port we're connecting to the server on.
       output: The output file to write the corpus dump to.
+
+    Secondary Arguments:
       force: Do we overwrite the corpus if it's already there? Defaults to
         true if output is specified otherwise defaults to false.
       backup: Should we create a backup if there's a preexisting output file?
       cache: Should we use a cache to generate this corpus?
       cache_dir: What directory should we use as a cache?
       cluster_size: If we're using a cache
-
 
     All three arguments will default to values from 'CraidlConfig' if not
     specified.

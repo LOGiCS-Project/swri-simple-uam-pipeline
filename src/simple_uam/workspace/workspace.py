@@ -167,7 +167,6 @@ class Workspace():
                 progress=False,
             )
 
-            pass
         except Exception:
             # Perform Cleanup
             if self.active_temp_dir:
@@ -184,6 +183,8 @@ class Workspace():
 
             # Re-raise exception
             raise
+
+        return self.active_session
 
     def finish(self):
         """

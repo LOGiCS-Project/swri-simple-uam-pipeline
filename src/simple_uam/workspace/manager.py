@@ -227,7 +227,7 @@ class WorkspaceManager():
         except Timeout:
             pass
 
-    def setup_reference_dir(self):
+    def setup_reference_dir(self,**kwargs):
         """
         Wraps init_ref_dir with appropriate locks and file deletion.
         """
@@ -239,6 +239,7 @@ class WorkspaceManager():
                 self.init_ref_dir(
                     self.config.reference_path,
                     self.config.assets_path,
+                    **kwargs,
                 )
         except Timeout as err:
             log.exception(

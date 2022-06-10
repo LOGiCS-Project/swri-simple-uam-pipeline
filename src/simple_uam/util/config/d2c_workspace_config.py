@@ -23,6 +23,13 @@ class D2CWorkspaceConfig(WorkspaceConfig):
     Dir where workspaces are stored.
     """
 
+    cache_dir : str = field(
+        default=SI("${path:cache_directory}/d2c_workspaces")
+    )
+    """
+    Dir for cached data.
+    """
+
     craidl : CraidlConfig = field(
         default=SI("${craidl:}")
     )
