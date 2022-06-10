@@ -116,7 +116,7 @@ class WorkspaceConfig():
         if Path(self.locks_subdir).is_absolute():
             return Path(self.locks_subdir).resolve()
         else:
-            return Path(self.workspace_path / self.locks_subdir).resolve()
+            return Path(self.workspaces_path / self.locks_subdir).resolve()
 
     @property
     def reference_path(self):
@@ -125,7 +125,7 @@ class WorkspaceConfig():
         if Path(self.reference_subdir).is_absolute():
             return Path(self.reference_subdir).resolve()
         else:
-            return Path(self.workspace_path / self.reference_subdir).resolve()
+            return Path(self.workspaces_path / self.reference_subdir).resolve()
 
     @property
     def reference_lockfile(self):
@@ -144,7 +144,7 @@ class WorkspaceConfig():
         if Path(self.assets_subdir).is_absolute():
             return Path(self.assets_subdir).resolve()
         else:
-            return Path(self.workspace_path / self.assets_subdir).resolve()
+            return Path(self.workspaces_path / self.assets_subdir).resolve()
 
     @property
     def records_path(self):
@@ -153,7 +153,7 @@ class WorkspaceConfig():
         if Path(self.records_subdir).is_absolute():
             return Path(self.records_subdir).resolve()
         else:
-            return Path(self.workspace_path / self.records_subdir).resolve()
+            return Path(self.workspaces_path / self.records_subdir).resolve()
 
     @property
     def records_lockdir(self):
@@ -203,12 +203,12 @@ class WorkspaceConfig():
     def workspace_path(self, num : int) -> Path:
         """ Get the full dirpath for a particular workspace. """
 
-        return (self.workspaces_path / workspace_subdir(num)).resolve()
+        return (self.workspaces_path / self.workspace_subdir(num)).resolve()
 
     def workspace_lockfile(self, num : int) -> Path:
         """ Get the lockfile for a particular workspace. """
 
-        return lock_dir / f"{workspace_subdir(num)}.lock"
+        return lock_dir / f"{self.workspace_subdir(num)}.lock"
 
     @property
     def workspace_nums(self) -> List[int]:

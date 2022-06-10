@@ -44,8 +44,8 @@ def main(args: Optional[List[str]] = None) -> int:
 
     tasks_ns = Collection()
     tasks_ns.add_task(tasks.start_creoson, "start_creoson")
-    tasks_na.add_task(tasks.gen_info_files, "gen_info_files")
-    tasks_na.add_task(tasks.process_design, "process_design")
+    tasks_ns.add_task(tasks.gen_info_files, "gen_info_files")
+    tasks_ns.add_task(tasks.process_design, "process_design")
 
     namespace = Collection(
     )

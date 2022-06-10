@@ -4,7 +4,9 @@ from simple_uam.craidl.corpus import get_corpus
 from simple_uam.util.logging import get_logger
 from simple_uam.util.system import Git, Rsync
 from simple_uam.util.system.windows import unpack_file
+from attrs import define, frozen, field
 import tempfile
+from pathlib import Path
 
 log = get_logger(__name__)
 

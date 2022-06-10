@@ -1,6 +1,6 @@
-from typing import List, Tuple, Dict
+from typing import List, Tuple, Dict, Optional, Union, Type
 from pathlib import Path
-from attrs import define,field,converters
+from attrs import define,field,converters, setters
 from filelock import Timeout, FileLock
 from functools import wraps
 from copy import deepcopy
@@ -11,6 +11,7 @@ import subprocess
 
 from simple_uam.util.logging import get_logger
 from simple_uam.util.invoke import task
+from simple_uam.util.config.workspace_config import WorkspaceConfig
 
 from .manager import WorkspaceManager
 from .session import Session
@@ -56,14 +57,14 @@ class Workspace():
     """
 
     manager : WorkspaceManager = field(
-        frozen=True,
+        on_setattr=setters.frozen,
         kw_only=True,
     )
     """ The manager object that holds all the locks. """
 
     config : WorkspaceConfig = field(
         init=False,
-        frozen=True,
+        on_setattr=setters.frozen,
     )
     """ The workspace config object that collects all the relevant paths. """
 
@@ -74,7 +75,7 @@ class Workspace():
     session_class : Type[Session] = field(
         default=Session,
         kw_only=True,
-        frozen=True,
+        on_setattr=setters.frozen,
     )
     """
     The class we're using to generate the active session context.

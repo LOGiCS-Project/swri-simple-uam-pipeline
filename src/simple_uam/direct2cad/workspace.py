@@ -1,6 +1,11 @@
 
+from attrs import define, field, frozen, setters
+from typing import List, Tuple, Dict, Optional, Union, Type
+
 from simple_uam.util.config import Config, D2CWorkspaceConfig
 from simple_uam.util.logging import get_logger
+
+from simple_uam.workspace import Workspace
 
 from .manager import D2CManager
 from .session import D2CSession
@@ -19,13 +24,13 @@ class D2CWorkspace(Workspace):
 
     manager : D2CManager = field(
         factory=D2CManager,
-        frozen=True,
+        on_setattr=setters.frozen,
         init=False,
     )
 
     config : D2CWorkspaceConfig = field(
         init=False,
-        frozen=True,
+        on_setattr=setters.frozen,
     )
     """ The workspace config object that collects all the relevant paths. """
 
@@ -36,7 +41,7 @@ class D2CWorkspace(Workspace):
     session_class : Type[D2CSession] = field(
         default=D2CSession,
         init=False,
-        frozen=True,
+        on_setattr=setters.frozen,
     )
     """
     The class we're using to generate the active session context.
