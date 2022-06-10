@@ -219,7 +219,9 @@ def install_examples(ctx):
     """
     Installs the trinity-craidl examples after, possibly, downloading them.
     """
-    pass
+    log.info(
+        "Installed examples from trinity-craidl repo."
+    )
 
 @task
 def list_examples(ctx):

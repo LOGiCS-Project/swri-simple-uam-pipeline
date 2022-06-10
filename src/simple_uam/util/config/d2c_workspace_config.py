@@ -3,6 +3,7 @@ from omegaconf import SI
 from .manager import Config
 from .path_config import PathConfig
 from .craidl_config import CraidlConfig
+from typing import List
 from .workspace_config import RecordsConfig, WorkspaceConfig
 
 @define

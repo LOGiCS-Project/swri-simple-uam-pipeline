@@ -31,10 +31,9 @@ def main(args: Optional[List[str]] = None) -> int:
         An exit code.
     """
 
-
     sri_ns = Collection()
     sri_ns.add_task(examples.download_examples, "download")
-    sri_ns.add_task(examples.download_examples, "install")
+    sri_ns.add_task(examples.install_examples, "install")
 
     examples_ns = Collection()
     examples_ns.add_task(examples.list_examples, 'list')
