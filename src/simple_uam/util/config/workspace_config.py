@@ -208,7 +208,7 @@ class WorkspaceConfig():
     def workspace_lockfile(self, num : int) -> Path:
         """ Get the lockfile for a particular workspace. """
 
-        return lock_dir / f"{self.workspace_subdir(num)}.lock"
+        return self.locks_path / f"{self.workspace_subdir(num)}.lock"
 
     @property
     def workspace_nums(self) -> List[int]:

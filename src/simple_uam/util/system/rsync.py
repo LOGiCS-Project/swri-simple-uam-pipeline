@@ -38,7 +38,7 @@ class Rsync():
 
     @staticmethod
     def norm_path(path : Union[str,Path],
-                  is_dir : Optional[bool]) -> str:
+                  is_dir : Optional[bool] = None) -> str:
         """
         Rsync on windows is weird about paths, this will format an input path
         appropriately.
@@ -62,7 +62,7 @@ class Rsync():
 
         path_str = path.as_posix()
 
-        win_dir = re.match(r'([A-z]):(.*)')
+        win_dir = re.match(r'([A-z]):(.*)',path_str)
 
         # Uses cygwin style absolute paths for rsync.
         if win_dir and isinstance(path,WindowsPath):
@@ -182,17 +182,24 @@ class Rsync():
         if quiet:
             flags.append('--quiet')
         if dry_run:
-            flags.append('--dry_run')
+            flags.append('--dry-run')
         if itemize_changes:
-            flags.append('--itemize_changes')
+            flags.append('--itemize-changes')
         for pat in exclude:
             flags.append(f'--exclude={pat}')
         for f in exclude_from:
             f = cls.norm_path(Path(f).resolve())
             flags.append(f'--exclude-from={f}')
 
+        rsync_cmd = ['rsync', *flags, cls.norm_path(src), cls.norm_path(dst)]
+
+        log.info(
+            "Running Rsync.",
+            cmd= " ".join(rsync_cmd),
+        )
+
         return subprocess.run(
-            ['rsync', *flags, cls.norm_path(src), cls.norm_path(dst)],
+            rsync_cmd,
             capture_output=capture_output,
             universal_newlines=True if capture_output else None,
         )
@@ -267,7 +274,8 @@ class Rsync():
           prune_missing: remove entries that aren't present in dst.
         """
 
-        dst = Path(dst).resolve()
+        ref = Path(ref)
+        src = Path(src).resolve()
 
         process = cls.run(
             src=ref,
@@ -284,14 +292,27 @@ class Rsync():
             capture_output=True,
         )
 
+        process.check_returncode()
+
         changes = list()
         for changed in cls.itemize_regex.findall(process.stdout):
             if changed == "./":
                 continue
 
-            if not prune_missing or (dst / changed).exists():
+            if not prune_missing or (src / changed).exists():
                 if preserve_dirs or not changed.endswith('/'):
                     changes.append(Path(changed))
+
+        log.info(
+            "Rsync found following changes during itemizations.",
+            ref=str(ref),
+            src=str(src),
+            # stdout=process.stdout,
+            # args=process.args,
+            return_code=process.returncode,
+            # stderr=process.stderr,
+            changes=[str(f) for f in changes],
+        )
 
         return changes
 

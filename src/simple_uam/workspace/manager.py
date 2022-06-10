@@ -14,6 +14,7 @@ from simple_uam.util.config.workspace_config import \
     RecordsConfig, WorkspaceConfig
 from simple_uam.util.logging import get_logger
 from simple_uam.util.invoke import task
+from simple_uam.util.config import Config
 
 log = get_logger(__name__)
 
@@ -73,7 +74,7 @@ class WorkspaceManager():
             lock = self.workspace_lock(workspace_num)
             try:
                 lock.acquire(blocking=False)
-                return tuple(workspace_num,lock)
+                return tuple([workspace_num,lock])
             except Timeout:
                 # Will only fail in lock.acquire and that cleans up after itself.
                 pass
@@ -144,7 +145,7 @@ class WorkspaceManager():
         """
 
         # No records to save, don't bother.
-        if Config[UAMWorkspaceConfig].max_record_count == 0:
+        if self.config.records.max_count == 0:
             return None
 
         # Normalize and validate input
@@ -190,7 +191,7 @@ class WorkspaceManager():
         """
 
         # Never pruning records, don't bother.
-        if Config[UAMWorkspaceConfig].max_record_count < 0:
+        if self.config.records.max_count < 0:
             return
 
         # Gather records that are old enough to prune.

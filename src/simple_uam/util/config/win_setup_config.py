@@ -28,8 +28,8 @@ class WinSetupConfig():
     """
 
     worker_dep_packages : List[str] = [
-        'openjdk11',
-        'openmodelica',
+        # 'openjdk11',
+        # 'openmodelica',
         'rsync',
     ]
     """

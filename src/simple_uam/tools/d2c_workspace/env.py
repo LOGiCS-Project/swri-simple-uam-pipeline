@@ -6,6 +6,7 @@ import shutil
 from simple_uam.util.invoke import task, call
 from simple_uam.util.config import Config, PathConfig, D2CWorkspaceConfig
 from simple_uam.util.logging import get_logger
+from simple_uam.util.system import Git
 
 from simple_uam.direct2cad.manager import D2CManager
 from simple_uam.direct2cad.session import D2CSession
@@ -103,10 +104,10 @@ def setup_reference(ctx):
 
     log.info(
         "Settting up d2c workspace reference directory.",
-        direct2cad_repo=direct2cad_dir,
-        creoson_server_zip=creoson_server_zip,
+        direct2cad_repo=str(direct2cad_dir),
+        creoson_server_zip=str(creoson_server_zip),
     )
-    manager.setup_ref_dir(
+    manager.setup_reference_dir(
         direct2cad_repo=direct2cad_dir,
         creoson_server_zip=creoson_server_zip,
     )

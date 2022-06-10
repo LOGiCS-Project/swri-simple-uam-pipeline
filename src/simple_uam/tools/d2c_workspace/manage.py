@@ -50,7 +50,7 @@ def workspaces_dir(ctx):
     Prints the root directory of the workspaces.
     """
 
-    print(manager.config.workspaces_dir)
+    print(str(Path(manager.config.workspaces_dir)))
 
 @task
 def cache_dir(ctx):
@@ -58,4 +58,12 @@ def cache_dir(ctx):
     Prints the cache directory for these workspaces.
     """
 
-    print(manager.config.cache_dir)
+    print(str(Path(manager.config.cache_dir)))
+
+@task
+def records_dir(ctx):
+    """
+    Prints the directory where session records are kept.
+    """
+
+    print(str(manager.config.records_path))

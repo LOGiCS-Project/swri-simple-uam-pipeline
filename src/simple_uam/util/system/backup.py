@@ -119,7 +119,7 @@ def archive_files(cwd : Union[str,Path],
     # needed.
     with ZipFile(out, 'x') as zf:
         for arc_file in files:
-            sys_file = cwd / rel_file
+            sys_file = cwd / arc_file
             if not sys_file.exists() and missing_ok:
                 pass
             else:

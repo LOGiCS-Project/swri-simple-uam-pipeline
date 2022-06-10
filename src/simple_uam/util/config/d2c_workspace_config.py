@@ -33,11 +33,11 @@ class D2CWorkspaceConfig(WorkspaceConfig):
 
     exclude : List[str] = ['.git']
 
-    exclude_from : List[str] = ['.gitignore']
+    exclude_from : List[str] = []
 
     record_exclude : List[str] = ['.git']
 
-    record_exclude_from : List[str] = ['.gitignore']
+    record_exclude_from : List[str] = []
 
     craidl : CraidlConfig = field(
         default=SI("${craidl:}")

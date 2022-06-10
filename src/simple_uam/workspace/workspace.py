@@ -167,10 +167,10 @@ class Workspace():
                 result_archive=temp_archive,
                 metadata=metadata,
                 name=self.name,
-                metadata_file=self.config.records.metadata_file,
+                metadata_file=Path(self.config.records.metadata_file),
             )
             self.active_session.reset_workspace(
-                progress=False,
+                progress=True,
             )
 
         except Exception:
@@ -185,7 +185,6 @@ class Workspace():
             self.active_workspace = None
             self.active_lock = None
             self.active_temp_dir = None
-            self.record_archive = None
 
             # Re-raise exception
             raise
@@ -246,6 +245,6 @@ class Workspace():
         return session
 
     def __exit__(self, exp_typ, exp_val, exp_traceback):
-        self.active_session.exist_workdir()
+        self.active_session.exit_workdir()
         self.finish()
         return None

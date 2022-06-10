@@ -36,7 +36,7 @@ def start_creoson(ctx,
     if output:
         output = Path(output)
 
-    with D2CWorkspace(number=workspace) as session:
+    with D2CWorkspace(name="start-creoson",number=workspace) as session:
         session.start_creoson()
 
     if output:
@@ -79,7 +79,7 @@ def gen_info_files(ctx,
     with design.open('r') as fp:
         design_data = json.load(fp)
 
-    with D2CWorkspace(number=workspace) as session:
+    with D2CWorkspace(name="gen-info-files", number=workspace) as session:
         session.write_design(design_data)
         session.gen_info_files(design_data)
 
@@ -123,7 +123,7 @@ def process_design(ctx,
     with design.open('r') as fp:
         design_data = json.load(fp)
 
-    with D2CWorkspace(number=workspace) as session:
+    with D2CWorkspace(name="process-design",number=workspace) as session:
         session.process_design(design_data)
 
     if output:

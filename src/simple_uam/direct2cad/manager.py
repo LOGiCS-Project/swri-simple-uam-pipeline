@@ -6,6 +6,7 @@ from simple_uam.util.system import Git, Rsync
 from simple_uam.util.system.windows import unpack_file
 from attrs import define, frozen, field
 import tempfile
+import shutil
 from pathlib import Path
 
 log = get_logger(__name__)
@@ -48,7 +49,7 @@ class D2CManager(WorkspaceManager):
             src=str(direct2cad_repo),
             dst=str(reference_dir),
             exclude=['.git'],
-            exclude_from=[str(direct2cad_repo / '.gitignore')],
+            exclude_from=[],
             delete=True,
             update=False,
             progress=True,

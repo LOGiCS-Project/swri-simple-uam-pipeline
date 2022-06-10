@@ -83,8 +83,6 @@ class Session():
     def _result_archive_valid(self, attr, val):
         if not val.is_absolute():
             raise RuntimeError("Session init paths must be absolute.")
-        if val.exists():
-            raise RuntimeError("Result archive cannot already exist.")
 
     @property
     def result_archive(self):
@@ -226,12 +224,12 @@ class Session():
         log.info(
             "Running console command in session.",
             workspace=self.number,
-            args=args,
+            args=vargs,
             cwd=str(cwd),
             **kwargs
         )
 
-        return subprocess.run(*args, cwd=cwd, **kwargs)
+        return subprocess.run(*vargs, cwd=cwd, **kwargs)
 
     @session_op
     def reset_workspace(self,
@@ -347,12 +345,12 @@ class Session():
 
         log.info(
             "Writing session metadata to file.",
-            metadata_file=str(self.meta_path),
+            metadata_file=str(meta_path),
             metadata=self.metadata,
         )
 
         with meta_path.open('w') as out_file:
-            json.dump(self.metadata, out_file)
+            json.dump(self.metadata, out_file, indent="  ")
 
     @session_op
     def generate_record_archive(self):

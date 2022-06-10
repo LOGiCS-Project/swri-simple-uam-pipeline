@@ -13,12 +13,12 @@ dirs = PlatformDirs(APP_NAME)
 class PathConfig:
 
     config_directory: str = field(
-        default=dirs.user_config_dir,
+        default=str(dirs.site_config_path / 'config'),
         converter=str,
     )
 
     cache_directory: str = field(
-        default=dirs.user_cache_dir,
+        default=str(dirs.site_data_path / 'cache'),
         converter=str,
     )
 
@@ -28,12 +28,12 @@ class PathConfig:
     )
 
     work_directory: str = field(
-        default=dirs.user_runtime_dir,
+        default=str(dirs.site_data_path),
         converter=str,
     )
 
     data_directory: str = field(
-        default=dirs.user_data_dir,
+        default=str(dirs.site_data_path / 'data'),
         converter=str,
     )
 
