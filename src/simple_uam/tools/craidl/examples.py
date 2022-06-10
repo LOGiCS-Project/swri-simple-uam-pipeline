@@ -200,7 +200,7 @@ def download_examples(ctx,  prompt=True, quiet=False, verbose=False):
 
     git_args = dict(
         repo_uri = trinity_craidl_repo,
-        deploy_dir = trinity_craidl_dir,
+        deploy_dir = str(trinity_craidl_dir),
         branch = trinity_craidl_branch,
         password_prompt = prompt,
         quiet = quiet,

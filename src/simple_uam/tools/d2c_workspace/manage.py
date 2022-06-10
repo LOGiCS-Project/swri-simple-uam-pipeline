@@ -14,6 +14,7 @@ from simple_uam.d2c_workspace.workspace import D2CWorkspace
 import subprocess
 
 log = get_logger(__name__)
+
 manager = D2CManager()
 
 @task
@@ -41,3 +42,19 @@ def prune_records(ctx):
     Deletes the oldest files in the records dir if there are too many.
     """
     manager.prune_records()
+
+@task
+def workspaces_dir(ctx):
+    """
+    Prints the root directory of the workspaces.
+    """
+
+    print(manager.config.workspaces_dir)
+
+@task
+def cache_dir(ctx):
+    """
+    Prints the cache directory for these workspaces.
+    """
+
+    print(manager.config.cache_dir)

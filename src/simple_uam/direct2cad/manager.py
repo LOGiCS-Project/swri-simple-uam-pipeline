@@ -1,5 +1,6 @@
 from simple_uam.util.config import Config, D2CWorkspaceConfig
 from simple_uam.workspace.manager import WorkspaceManager
+from simple_uam.craidl.corpus import get_corpus
 from simple_uam.util.logging import get_logger
 
 log = get_logger(__name__)

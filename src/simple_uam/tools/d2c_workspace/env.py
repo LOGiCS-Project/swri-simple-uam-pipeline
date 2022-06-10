@@ -22,22 +22,75 @@ def mkdirs(ctx):
     Creates the various directories needed for managing direct2cad workspaces.
     """
 
+    log.info(
+        "Initializing workspace directory structure."
+    )
     manager.init_dirs()
 
+creoson_server_dir = Path(Config[D2CWorkspaceConfig].cache_dir) / 'creoson_server'
+creoson_server_repo = "https://git.isis.vanderbilt.edu/SwRI/creoson/creoson-server.git"
+creoson_server_branch = 'dchee-jars'
+creoson_server_zip = creoson_server_dir / "CreosonServerWithSetup-2.8.0-win64.zip"
 
 @task
-def creoson_server(ctx):
+def creoson_server(ctx,  prompt=True, quiet=False, verbose=False):
     """
-    Downloads the creoson server files to cache.
+    Clones the creoson server repo into the appropriate cache folder.
+    Required to setup direct2cad reference dir.
+
+    Arguments:
+      prompt: Prompt for a password on initial git clone.
+      quiet: Run in quiet mode.
+      verbose: Run in verbose mode.
     """
-    pass
+
+    git_args = dict(
+        repo_uri = creoson_server_repo,
+        deploy_dir = str(creoson_server_dir),
+        branch = creoson_server_branch,
+        password_prompt = prompt,
+        quiet = quiet,
+        verbose = verbose,
+        mkdir = True
+    )
+
+    if not quiet:
+        log.info("Running git clone/pull for creoson server zip."
+                 ,**git_args)
+
+    Git.clone_or_pull(**git_args)
+
+direct2cad_dir = Path(Config[D2CWorkspaceConfig].cache_dir) / 'direct2cad'
+direct2cad_repo = "https://git.isis.vanderbilt.edu/SwRI/uam_direct2cad.git"
+direct2cad_branch = 'main'
 
 @task
-def direct2cad(ctx):
+def direct2cad(ctx,  prompt=True, quiet=False, verbose=False):
     """
-    Downloads the direct2cad repository to cache.
+    Clones the creoson server repo into the appropriate cache folder.
+    Required to setup direct2cad reference dir.
+
+    Arguments:
+      prompt: Prompt for a password on initial git clone.
+      quiet: Run in quiet mode.
+      verbose: Run in verbose mode.
     """
-    pass
+
+    git_args = dict(
+        repo_uri = direct2cad_repo,
+        deploy_dir = str(direct2cad_dir),
+        branch = direct2cad_branch,
+        password_prompt = prompt,
+        quiet = quiet,
+        verbose = verbose,
+        mkdir = True
+    )
+
+    if not quiet:
+        log.info("Running git clone/pull for uam_direct2cad."
+                 ,**git_args)
+
+    Git.clone_or_pull(**git_args)
 
 @task(mkdirs, creoson_server, direct2cad)
 def setup_reference(ctx):
@@ -46,7 +99,13 @@ def setup_reference(ctx):
 
     Note: Will delete the contents of the reference directory!
     """
+
+    log.info(
+        "Settting up d2c workspace reference directory.",
+        direct2cad_repo=direct2cad_dir,
+        creoson_server_zip=creoson_server_zip,
+    )
     manager.setup_ref_dir(
-        direct2cad_repo=...,
-        creoson_server_zip=...,
+        direct2cad_repo=direct2cad_dir,
+        creoson_server_zip=creoson_server_zip,
     )

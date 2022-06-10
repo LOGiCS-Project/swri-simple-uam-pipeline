@@ -14,7 +14,7 @@
 from typing import List, Optional
 from simple_uam.util.invoke import Collection, InvokeProg, task
 from simple_uam.util.logging import get_logger
-from . import tasks
+from . import tasks, env, manage
 
 log = get_logger(__name__)
 
@@ -30,10 +30,26 @@ def main(args: Optional[List[str]] = None) -> int:
     Returns:
         An exit code.
     """
+    setup_ns = Collection()
+    setup_ns.add_task(env.mkdirs, "dirs")
+    setup_ns.add_task(env.creoson_server, "creoson_server")
+    setup_ns.add_task(env.direct2cad, "uam_direct2cad")
+    setup_ns.add_task(env.setup_reference, "reference_workspace")
+
+    manage_ns = Collection()
+    manage_ns.add_task(manage.delete_locks, "delete_locks")
+    manage_ns.add_task(manage.prune_records, "prune_records")
+    manage_ns.add_task(manage.workspaces_dir, "workspaces_dir")
+    manage_ns.add_task(manage.cache_dir, "cache_dir")
+
+    namespace = Collection(
+    )
+    namespace.add_collection(setup_ns, 'setup')
+    namespace.add_collection(manage_ns, 'manage')
 
     # Setup the invoke program runner class
     program = InvokeProg(
-        namespace=Collection.from_module(tasks),
+        namespace=namespace,
         version="0.1.0",
     )
 

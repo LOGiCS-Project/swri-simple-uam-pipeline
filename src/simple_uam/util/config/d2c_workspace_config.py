@@ -30,6 +30,14 @@ class D2CWorkspaceConfig(WorkspaceConfig):
     Dir for cached data.
     """
 
+    exclude : List[str] = ['.git']
+
+    exclude_from : List[str] = ['.gitignore']
+
+    record_exclude : List[str] = ['.git']
+
+    record_exclude_from : List[str] = ['.gitignore']
+
     craidl : CraidlConfig = field(
         default=SI("${craidl:}")
     )

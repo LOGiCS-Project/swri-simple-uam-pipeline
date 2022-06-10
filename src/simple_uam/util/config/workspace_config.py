@@ -68,6 +68,42 @@ class WorkspaceConfig():
     max_workspaces : int = 4
     """ The maximum number of workspaces operating simultaneously """
 
+    exclude : List[str] = ['.git']
+    """
+    File patterns to not copy from the reference dir to each workspace.
+    Effectively specified relative to the reference dir.
+
+    See rsync's '--exclude' argument for more info.
+    """
+
+    exclude_from : List[str] = ['.gitignore']
+    """
+    Files to extract exclude patterns from for workspace initialization.
+    Relative paths are taken to be in the reference directory.
+
+    See rsync's '--exclude-from' argument for more info.
+    """
+
+    record_exclude : List[str] = ['.git']
+    """
+    File patterns to not include in a session's record archive.
+    Effectively specified relative to the current workspace dir, as such all
+    patterns should be relative.
+
+    See rsync's '--exclude' argument for more info.
+    """
+
+    record_exclude_from : List[str] = ['.gitignore']
+    """
+    Files to extract exclude patterns from when creating a session's record
+    archive. All the patterns in a file should be relative.
+
+    Relative paths are taken to be files in the reference directory, not the
+    corresponding workspace.
+
+    See rsync's '--exclude-from' argument for more info.
+    """
+
     @property
     def workspaces_path(self):
         """ Path form of Workspaces_dir. """
@@ -196,3 +232,29 @@ class WorkspaceConfig():
         """ List of all workspace lockfiles.
         """
         return [self.workspace_lockfile(n) for n in self.workspace_nums]
+
+    @property
+    def exclude_from_paths(self):
+        """
+        self.exclude_from with all absolute Paths.
+        """
+        paths = list()
+        for f in self.exclude_from:
+            f = Path(f)
+            if not f.is_absolute():
+                f = self.reference_path / f
+            paths.append(f)
+        return paths
+
+    @property
+    def record_exclude_from_paths(self):
+        """
+        self.exclude_from with all absolute Paths.
+        """
+        paths = list()
+        for f in self.exclude_from:
+            f = Path(f)
+            if not f.is_absolute():
+                f = self.reference_path / f
+            paths.append(f)
+        return paths

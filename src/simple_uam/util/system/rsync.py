@@ -220,8 +220,8 @@ class Rsync():
 
     @classmethod
     def list_changes(cls,
+                     ref : Union[str,Path],
                      src : Union[str,Path],
-                     dst : Union[str,Path],
                      exclude : List[str] = [],
                      exclude_from : List[Union[str,Path]] = [],
                      preserve_dirs : bool = False,
@@ -233,8 +233,8 @@ class Rsync():
         Output paths are all given relative to dst.
 
         Arguments:
-          src: source dir
-          dst: destination dir
+          ref: the reference directory
+          src: the source dir, to check for changes
           exclude: patterns for list of files to ignore
           exclude_from: File to read exclude patterns from (great for gitignore)
           preserve_dirs: preserve directories in the output file list.
@@ -244,8 +244,8 @@ class Rsync():
         dst = Path(dst).resolve()
 
         process = cls.run(
-            src=src,
-            dst=dst,
+            src=ref,
+            dst=src,
             exclude=exclude,
             exclude_from=exclude_from,
             archive=True,
@@ -272,7 +272,9 @@ class Rsync():
     @staticmethod
     def archive_changes(ref : Union[str,Path],
                         src : Union[str,Path],
-                        out : Union[str,Path]
+                        out : Union[str,Path],
+                        exclude : List[str] = [],
+                        exclude_from : List[Union[str,Path]] = [],
     ):
         """
         Package any files that are different in src (compared to ref) into
@@ -282,11 +284,18 @@ class Rsync():
           ref: The reference directory
           src: The modified directory
           out: The location of the output zip file
+          exclude: patterns for list of files to ignore
+          exclude_from: File to read exclude patterns from (great for gitignore)
         """
 
         ref = Path(ref)
         src = Path(src)
         out = Path(out)
 
-        changes = Rsync.list_changes(ref, src)
+        changes = Rsync.list_changes(
+            ref=ref,
+            src=src,
+            exclude=exclude,
+            exclude_from=exclude_from,
+        )
         archive_files(src,changes,out)

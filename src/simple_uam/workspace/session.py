@@ -117,37 +117,69 @@ class Session():
         if val.is_absolute():
             raise RuntimeError("The metadata file must be specified relative to the workdir.")
 
-    exclude_patterns : List[str] = field(
+    init_exclude_patterns : List[str] = field(
         kw_only=True,
     )
     """
     Patterns to exclude from workspace initialization.
     """
 
-    @exclude_patterns.default
-    def _exclude_pats_def(self):
+    @init_exclude_patterns.default
+    def _init_exclude_pats_def(self):
         return [".git"]
 
-    exclude_files : List[Path] = field(
+    init_exclude_files : List[Path] = field(
         kw_only=True,
     )
     """
     Files to read for exclude lists.
     """
 
-    @exclude_files.default
-    def _exclude_files_def(self):
+    @init_exclude_files.default
+    def _init_exclude_files_def(self):
         e_files = list()
         gitignore = self.reference_dir / ".gitignore"
         if gitignore.exists():
             e_files.append(gitignore)
         return e_files
 
-    @exclude_files.validator
-    def _exclude_files_valid(self, attr, val):
+    @init_exclude_files.validator
+    def _init_exclude_files_valid(self, attr, val):
         for e_file in val:
             if not e_file.is_absolute():
-                raise RuntimeError("Session init paths must be absolute.")
+                raise RuntimeError("Session init exclude paths must be absolute.")
+
+    record_exclude_patterns : List[str] = field(
+        kw_only=True,
+    )
+    """
+    Patterns to exclude from workspace record archive.
+    """
+
+    @record_exclude_patterns.default
+    def _record_exclude_pats_def(self):
+        return [".git"]
+
+    record_exclude_files : List[Path] = field(
+        kw_only=True,
+    )
+    """
+    Files to read for record archive exclude lists.
+    """
+
+    @record_exclude_files.default
+    def _record_exclude_files_def(self):
+        e_files = list()
+        gitignore = self.reference_dir / ".gitignore"
+        if gitignore.exists():
+            e_files.append(gitignore)
+        return e_files
+
+    @record_exclude_files.validator
+    def _record_exclude_files_valid(self, attr, val):
+        for e_file in val:
+            if not e_file.is_absolute():
+                raise RuntimeError("Session record exclude paths must be absolute.")
 
     old_work_dir : Optional[Path] = field(
         default=None,
@@ -202,8 +234,8 @@ class Session():
         Rsync.copy_dir(
             self.reference_dir,
             self.work_dir,
-            exclude=self.exclude_patterns,
-            exclude_from=self.exclude_files,
+            exclude=self.init_exclude_patterns,
+            exclude_from=self.init_exclude_files,
             delete=True,
             update=False,
             progress=progress,
@@ -284,9 +316,11 @@ class Session():
         """
 
         Rsync.archive_changes(
-            self.reference_dir,
-            self.work_dir,
-            self.result_archive,
+            ref=self.reference_dir,
+            src=self.work_dir,
+            out=self.result_archive,
+            exclude=self.record_exclude_patterns,
+            exclude_from=self.record_exclude_files,
         )
 
     @session_op
