@@ -130,7 +130,7 @@ class DesignInfoFiles():
         init = False,
     )
 
-    cad_properties_file = "info_componentCadProp2.json"
+    cad_properties_file = "info_componentCadProps2.json"
 
     @cad_properties.default
     def _cad_props_default(self):

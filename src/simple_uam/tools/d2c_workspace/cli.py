@@ -44,7 +44,7 @@ def main(args: Optional[List[str]] = None) -> int:
     manage_ns.add_task(manage.records_dir, "records_dir")
 
     tasks_ns = Collection()
-    tasks_ns.add_task(tasks.start_creoson, "start_creoson")
+    tasks_ns.add_task(tasks.start_creo, "start_creo")
     tasks_ns.add_task(tasks.gen_info_files, "gen_info_files")
     tasks_ns.add_task(tasks.process_design, "process_design")
 

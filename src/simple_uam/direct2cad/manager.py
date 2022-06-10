@@ -2,7 +2,7 @@ from simple_uam.util.config import Config, D2CWorkspaceConfig
 from simple_uam.workspace.manager import WorkspaceManager
 from simple_uam.craidl.corpus import get_corpus
 from simple_uam.util.logging import get_logger
-from simple_uam.util.system import Git, Rsync
+from simple_uam.util.system import Git, Rsync, configure_file, backup_file
 from simple_uam.util.system.windows import unpack_file
 from attrs import define, frozen, field
 import tempfile
@@ -54,6 +54,7 @@ class D2CManager(WorkspaceManager):
             update=False,
             progress=True,
         )
+
         log.info(
             "Copying direct2cad repo into reference directory.",
             **rsync_args,
@@ -61,6 +62,20 @@ class D2CManager(WorkspaceManager):
         Rsync.copy_dir(**rsync_args)
 
         creoson_ref_dir = reference_dir / self.creoson_server_subdir
+
+        log.info(
+            "Modifying parametric.bat to reference correct Creo version")
+
+        para_bat = reference_dir / "parametric.bat"
+
+        configure_file(
+            para_bat,
+            para_bat,
+            replacements={"6.0.4.0":"5.0.6.0"},
+            backup=True,
+            exist_ok=True,
+        )
+
         log.info(
             "Unpacking creoson server zip into reference dir.",
             creoson_zip = str(creoson_server_zip),

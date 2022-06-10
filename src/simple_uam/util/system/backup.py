@@ -62,6 +62,8 @@ def backup_file(
         else:
             shutil.copy2(file_path, bak_file)
 
+        return bak_file
+
     elif not missing_ok:
 
         raise RuntimeError(f"Cannot backup {str(file_path)} file does not exist.")
@@ -73,6 +75,8 @@ def backup_file(
             file=str(file_path),
             backup=str(bak_file),
         )
+
+        return None
 
 def archive_files(cwd : Union[str,Path],
                   files : List[Union[str,Path]],
@@ -166,8 +170,6 @@ def configure_file(input_file : Union[str,Path],
             backup_dir = backup_dir,
         )
 
-    # Delete
-    output_file.unlink(missing_ok=True)
 
     log.info(
         "Reading configuration input.",
@@ -183,6 +185,9 @@ def configure_file(input_file : Union[str,Path],
             replace=replace,
         )
         filedata = filedata.replace(find, replace)
+
+    # delete output here incase output == input
+    output_file.unlink(missing_ok=True)
 
     log.info(
         "Writing configuration output.",

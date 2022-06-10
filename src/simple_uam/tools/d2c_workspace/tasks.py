@@ -20,11 +20,11 @@ log = get_logger(__name__)
 manager = D2CManager()
 
 @task
-def start_creoson(ctx,
+def start_creo(ctx,
                   workspace=None,
                   output=None):
     """
-    Start creoson within the specified workspace, whichever's available if
+    Start creo within the specified workspace, whichever's available if
     none.
 
     Arguments:
@@ -36,8 +36,8 @@ def start_creoson(ctx,
     if output:
         output = Path(output)
 
-    with D2CWorkspace(name="start-creoson",number=workspace) as session:
-        session.start_creoson()
+    with D2CWorkspace(name="start-creo",number=workspace) as session:
+        session.start_creo()
 
     if output:
         log.info(
@@ -51,7 +51,7 @@ def start_creoson(ctx,
 
 @task
 def gen_info_files(ctx,
-                 design='design_swri.json',
+                 input='design_swri.json',
                  workspace=None,
                  output=None):
     """
@@ -60,13 +60,13 @@ def gen_info_files(ctx,
     The workspace will be reset on the next run.
 
     Arguments:
-      design: The design file to read in.
+      input: The design file to read in.
       workspace: The workspace to run this operation in.
       output: File to write output session metadata to, prints to stdout if
         not specified.
     """
 
-    design = Path(design).resolve()
+    design = Path(input).resolve()
 
     if output:
         output = Path(output).resolve()

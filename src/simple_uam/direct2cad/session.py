@@ -4,6 +4,8 @@ from simple_uam.util.logging import get_logger
 from simple_uam.craidl.corpus import GremlinCorpus, StaticCorpus, get_corpus
 from simple_uam.craidl.info_files import DesignInfoFiles
 from attrs import define,field
+import json
+from pathlib import Path
 
 log = get_logger(__name__)
 
@@ -14,19 +16,21 @@ class D2CSession(Session):
     """
 
     @session_op
-    def start_creoson(self):
+    def start_creo(self):
         """
-        Runs startcreoson.bat in order to ensure that creoson and an instance
+        Runs startCreo.bat in order to ensure that creoson and an instance
         of creo is running.
         """
 
         log.info(
-            "Starting creoson server.",
+            "Starting Creo.",
             workspace=self.number,
         )
 
         self.run(
-            ["startcreoson.bat"]
+            ["startCreo.bat"],
+            input="y\n",
+            text=True,
             )
 
     @session_op
@@ -98,7 +102,7 @@ class D2CSession(Session):
         to manage.
         """
 
-        self.start_creoson()
+        self.start_creo()
 
         log.info(
             "Starting buildcad.py",
