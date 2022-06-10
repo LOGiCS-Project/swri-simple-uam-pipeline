@@ -42,10 +42,16 @@ def main(args: Optional[List[str]] = None) -> int:
     manage_ns.add_task(manage.workspaces_dir, "workspaces_dir")
     manage_ns.add_task(manage.cache_dir, "cache_dir")
 
+    tasks_ns = Collection()
+    tasks_ns.add_task(tasks.start_creoson, "start_creoson")
+    tasks_na.add_task(tasks.gen_info_files, "gen_info_files")
+    tasks_na.add_task(tasks.process_design, "process_design")
+
     namespace = Collection(
     )
     namespace.add_collection(setup_ns, 'setup')
     namespace.add_collection(manage_ns, 'manage')
+    namespace.add_collection(tasks_ns, 'tasks')
 
     # Setup the invoke program runner class
     program = InvokeProg(

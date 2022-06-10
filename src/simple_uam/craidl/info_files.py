@@ -327,3 +327,31 @@ class DesignInfoFiles():
 
             with filepath.open('w') as fp:
                 json.dump(content, fp, indent="  ")
+
+    @classmethod
+    def load_design(cls, corpus, fp, **kwargs):
+        """
+        Load from filepointer to design.
+
+        Arguments:
+          corpus: The corpus accessor to use.
+          fp: the file pointer to load from.
+          **kwargs: same as json.load's kwargs
+        """
+
+        design_rep = json.load(fp, **kwargs)
+        return cls(corpus, design_rep)
+
+    @classmethod
+    def load_design_str(cls, corpus, s, **kwargs):
+        """
+        Load from a json string of a design.
+
+        Arguments:
+          corpus: The corpus accessor to use.
+          s: the json string to load from.
+          **kwargs: same as json.loads's kwargs
+        """
+
+        design_rep = json.loads(s, **kwargs)
+        return cls(corpus, design_rep)

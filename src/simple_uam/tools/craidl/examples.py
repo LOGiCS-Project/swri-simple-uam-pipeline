@@ -17,7 +17,7 @@ import subprocess
 
 log = get_logger(__name__)
 
-example_path = Path(Config[CraidlConfig].example_dir)
+example_path = Path(Config[CraidlConfig].example_dir).resolve()
 
 design_filename = 'design_swri.json'
 
@@ -229,3 +229,10 @@ def list_examples(ctx):
 
     for name, path in all_examples().items():
         print(f"{name}:  {str(path)}")
+
+@task
+def examples_dir(ctx):
+    """
+    Print the current examples directory.
+    """
+    print(str(example_path))

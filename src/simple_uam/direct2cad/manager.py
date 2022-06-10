@@ -2,6 +2,9 @@ from simple_uam.util.config import Config, D2CWorkspaceConfig
 from simple_uam.workspace.manager import WorkspaceManager
 from simple_uam.craidl.corpus import get_corpus
 from simple_uam.util.logging import get_logger
+from simple_uam.util.system import Git, Rsync
+from simple_uam.util.system.windows import unpack_file
+import tempfile
 
 log = get_logger(__name__)
 
@@ -16,8 +19,18 @@ class D2CManager(WorkspaceManager):
         init = False,
     )
 
-    @staticmethod
-    def init_ref_dir(reference_dir : Path,
+    creoson_server_subdir : str = field(
+        default="creoson-server",
+        init=False,
+    )
+
+    creoson_unpack_folder : str = field(
+        default="CreosonServerWithSetup-2.8.0-win64",
+        init=False,
+    )
+
+    def init_ref_dir(self,
+                     reference_dir : Path,
                      assets_dir : Path,
                      direct2cad_repo : Path,
                      creoson_server_zip : Path):
@@ -29,7 +42,29 @@ class D2CManager(WorkspaceManager):
         Should only be called by
         """
 
-        # copy direct2cad files into ref_dir
-        # unpack creoson_server into ref_dir
+        rsync_args = dict(
+            src=str(direct2cad_repo),
+            dst=str(reference_dir),
+            exclude=['.git'],
+            exclude_from=[str(direct2cad_repo / '.gitignore')],
+            delete=True,
+            update=False,
+            progress=True,
+        )
+        log.info(
+            "Copying direct2cad repo into reference directory.",
+            **rsync_args,
+        )
+        Rsync.copy_dir(**rsync_args)
 
-        raise NotImplementedError("Overload in child class. See docstring.")
+        creoson_ref_dir = reference_dir / self.creoson_server_subdir
+        log.info(
+            "Unpacking creoson server zip into reference dir.",
+            creoson_zip = str(creoson_server_zip),
+            creoson_dir = str(creoson_ref_dir),
+        )
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            unpack_file(creoson_server_zip, temp_dir)
+            creoson_unpack_dir = Path(temp_dir) / self.creoson_unpack_folder
+            shutil.move(creoson_unpack_dir, creoson_ref_dir)

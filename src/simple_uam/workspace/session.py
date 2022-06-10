@@ -71,7 +71,7 @@ class Session():
         if not val.is_absolute():
             raise RuntimeError("Session init paths must be absolute.")
 
-    result_archive : Path = field(
+    _result_archive : Path = field(
         kw_only=True,
     )
     """
@@ -79,12 +79,21 @@ class Session():
     the workspace should update this to the final archive location.
     """
 
-    @result_archive.validator
+    @_result_archive.validator
     def _result_archive_valid(self, attr, val):
         if not val.is_absolute():
             raise RuntimeError("Session init paths must be absolute.")
         if val.exists():
             raise RuntimeError("Result archive cannot already exist.")
+
+    @property
+    def result_archive(self):
+        return self._result_archive
+
+    @result_archive.setter
+    def result_archive(self, val):
+        self.metadata['result-archive'] = str(val)
+        self._result_archive = val
 
     name : str = field(
         default="generic-session",
@@ -214,6 +223,14 @@ class Session():
         if not cwd.is_absolute():
             cwd = self.work_dir / cwd
 
+        log.info(
+            "Running console command in session.",
+            workspace=self.number,
+            args=args,
+            cwd=str(cwd),
+            **kwargs
+        )
+
         return subprocess.run(*args, cwd=cwd, **kwargs)
 
     @session_op
@@ -231,9 +248,9 @@ class Session():
            quiet: perform the copy silently.
         """
 
-        Rsync.copy_dir(
-            self.reference_dir,
-            self.work_dir,
+        rsync_args = dict(
+            src=self.reference_dir,
+            dst=self.work_dir,
             exclude=self.init_exclude_patterns,
             exclude_from=self.init_exclude_files,
             delete=True,
@@ -242,6 +259,14 @@ class Session():
             verbose=verbose,
             quiet=quiet,
         )
+
+        log.info(
+            "Resetting workspace with rsync.",
+            workspace=self.number,
+            **rsync_args,
+        )
+
+        Rsync.copy_dir(**rsync_args)
 
     @session_op
     def enter_workdir(self):
@@ -253,6 +278,14 @@ class Session():
                 "Trying to enter session directory when already in session directory.")
 
         self.old_work_dir = Path.cwd().resolve()
+
+        log.info(
+            "Entering workdir within session.",
+            workspace=self.number,
+            old_cwd=str(self.old_work_dir),
+            new_cwd=str(self.work_dir),
+        )
+
         os.chdir(self.work_dir)
 
     @session_op
@@ -264,6 +297,13 @@ class Session():
         if self.old_work_dir == None:
             raise RuntimeError(
                 "Trying to exist session dir without first entering")
+
+        log.info(
+            "Exiting workdir within session.",
+            workspace=self.number,
+            old_cwd=str(self.work_dir),
+            new_cwd=str(self.old_work_dir),
+        )
 
         os.chdir(self.old_work_dir)
         self.old_work_dir = None
@@ -305,6 +345,12 @@ class Session():
 
         meta_path = self.work_dir / self.metadata_file
 
+        log.info(
+            "Writing session metadata to file.",
+            metadata_file=str(self.meta_path),
+            metadata=self.metadata,
+        )
+
         with meta_path.open('w') as out_file:
             json.dump(self.metadata, out_file)
 
@@ -315,18 +361,32 @@ class Session():
         is.
         """
 
-        Rsync.archive_changes(
-            ref=self.reference_dir,
-            src=self.work_dir,
-            out=self.result_archive,
+        rsync_args = dict(
+            ref=str(self.reference_dir),
+            src=str(self.work_dir),
+            out=str(self.result_archive),
             exclude=self.record_exclude_patterns,
-            exclude_from=self.record_exclude_files,
+            exclude_from=[str(f) for f in self.record_exclude_files],
         )
+
+        log.info(
+            "Generating record archive for session.",
+            workspace=self.number,
+            **rsync_args,
+        )
+
+        Rsync.archive_changes(**rsync_args)
 
     @session_op
     def validate_complete(self):
         """
         Runs any checks we need to ensure that we can close down the session.
         """
+
+        log.info(
+            "Running session close validation checks.",
+            workspace=self.number,
+        )
+
         if self.old_work_dir != None:
             raise RuntimeError("Still in work_dir on closing.")

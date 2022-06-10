@@ -40,6 +40,7 @@ def main(args: Optional[List[str]] = None) -> int:
     examples_ns.add_task(examples.list_examples, 'list')
     examples_ns.add_task(examples.add_examples, 'add')
     examples_ns.add_task(examples.clean_examples, 'clean')
+    examples_ns.add_task(examples.examples_dir, 'dir')
     examples_ns.add_collection(sri_ns, 'sri')
 
     server_ns = Collection()

@@ -230,6 +230,9 @@ class WorkspaceManager():
     def setup_reference_dir(self,**kwargs):
         """
         Wraps init_ref_dir with appropriate locks and file deletion.
+
+        Arguments:
+          **kwargs: Passed to the init_ref_dir call.
         """
 
         ref_lock = self.reference_lock()
@@ -248,8 +251,7 @@ class WorkspaceManager():
             )
             raise err
 
-    @staticmethod
-    def init_ref_dir(reference_dir : Path, assets_dir : Path):
+    def init_ref_dir(self, reference_dir : Path, assets_dir : Path):
         """
         This function should be overloaded by a child class with a task
         specific setup operation.

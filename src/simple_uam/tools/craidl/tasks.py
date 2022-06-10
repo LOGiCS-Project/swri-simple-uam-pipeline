@@ -258,7 +258,7 @@ def gen_info_files(ctx,
     corpus = get_corpus(static=static, host=host, port=port)
 
     log.info(
-        "Loading design from file.",
+        "Loading designs from file.",
         design=str(design),
     )
 

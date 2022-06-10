@@ -1,6 +1,6 @@
 from typing import List, Tuple, Dict
 from pathlib import Path
-from attrs import define,field
+from attrs import define,field,converters
 from filelock import Timeout, FileLock
 from functools import wraps
 from copy import deepcopy
@@ -38,6 +38,7 @@ class Workspace():
 
     number : Optional[int] = field(
         default=None,
+        converter=converters.optional(int),
         kw_only=True,
     )
     """ The number of the workspace this object is operating with. """

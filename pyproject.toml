@@ -60,7 +60,7 @@ editable-backend = "editables"
 config-mgr = {call = "simple_uam.tools.config_mgr.cli:main(['pdm run config-mgr'])"}
 setup-win = {call = "simple_uam.tools.setup_win.cli:main(['pdm run setup-win'])"}
 craidl = {call = "simple_uam.tools.craidl.cli:main(['pdm run craidl'])"}
-workspace-mgr = {call = "simple_uam.tools.config_mgr.cli:main(['pdm run workspace-mgr'])"}
+d2c-workspace = {call = "simple_uam.tools.d2c_workspace.cli:main(['pdm run d2c-workspace'])"}
 # check-docs = {call = "simple_uam.tools.dev_util.cli:main(['pdm run check-docs','check-docs'])"}
 # docs = {call = "simple_uam.tools.dev_util.cli:main(['pdm run docs','docs'])"}
 # docs-serve = {call = "simple_uam.tools.dev_util.cli:main(['pdm run docs-serve','docs-serve'])"}

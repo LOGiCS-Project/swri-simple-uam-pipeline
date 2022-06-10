@@ -80,6 +80,7 @@ class Rsync():
     def run(cls,
             src : Union[str,Path],
             dst : Union[str,Path],
+            *,
             exclude : List[str] = [],
             exclude_from : List[Union[str,Path]] = [],
             archive : bool = True,
@@ -91,6 +92,12 @@ class Rsync():
             dry_run : bool = False,
             itemize_changes : bool = False,
             capture_output : bool = False,
+            links : bool = False,
+            times : bool = False,
+            owner : bool = False,
+            group : bool = False,
+            perms : bool = False,
+            recursive : bool = False,
     ) -> subprocess.CompletedProcess:
         """
         Run rsync with args return the completed process object.
@@ -109,6 +116,13 @@ class Rsync():
           dry_run: make no changes
           itemize_changes: print a list of all changes to stdout
           capture_output: do we capture stdout?
+          links: When symlinks are encountered, recreate the symlink on the
+            destination.
+          recursive: This tells rsync to copy directories recursively.
+          times: preserve modification times.
+          owner: preserve owner (super-user only)
+          group: preserve group
+          perms: preserve permissions
         """
 
         Rsync.require()
@@ -144,21 +158,33 @@ class Rsync():
 
         flags = list()
         if archive:
-            flags.append('-a')
+            flags.append('--archive')
+        if recursive:
+            flags.append('--recursive')
+        if links:
+            flags.append('--links')
         if delete:
             flags.append('--delete')
         if update:
-            flags.append('-u')
+            flags.append('--update')
+        if owner:
+            flags.append('--owner')
+        if perms:
+            flags.append('--perms')
+        if group:
+            flags.append('--owner')
         if progress:
-            flags.append('--progress')
+            flags.append('--group')
+        if times:
+            flags.append('--times')
         if verbose:
-            flags.append('-v')
+            flags.append('--verbose')
         if quiet:
-            flags.append('-q')
+            flags.append('--quiet')
         if dry_run:
-            flags.append('-n')
+            flags.append('--dry_run')
         if itemize_changes:
-            flags.append('-i')
+            flags.append('--itemize_changes')
         for pat in exclude:
             flags.append(f'--exclude={pat}')
         for f in exclude_from:

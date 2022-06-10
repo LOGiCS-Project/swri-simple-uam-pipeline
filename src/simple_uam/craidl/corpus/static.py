@@ -91,13 +91,13 @@ class StaticComponent(ComponentReader):
         """ Same arguments as json.loads. """
         return cls.from_rep(json.loads(s, **kwargs))
 
-    def dump_json(self, fp, **kwargs):
+    def dump_json(self, fp, indent="  ", **kwargs):
         """ Same arguments as json.dump less the first. """
-        return json.dump(self.rep, fp, **kwargs)
+        return json.dump(self.rep, fp, indent=indent, **kwargs)
 
-    def dump_json_str(**kwargs):
+    def dump_json_str(indent="  ", **kwargs):
         """ Same arguments as json.dumps less the first. """
-        return json.dumps(self.rep, **kwargs)
+        return json.dumps(self.rep, indent=indent, **kwargs)
 
     @classmethod
     def component_rep(cls,comp : ComponentReader) -> dict:
@@ -216,13 +216,13 @@ class StaticCorpus(CorpusReader):
         """ Same arguments as json.loads. """
         return cls.from_rep(json.loads(s, **kwargs))
 
-    def dump_json(self, fp, **kwargs):
+    def dump_json(self, fp, indent="  ", **kwargs):
         """ Same arguments as json.dump less the first. """
-        return json.dump(self.rep, fp, **kwargs)
+        return json.dump(self.rep, fp, indent=indent, **kwargs)
 
-    def dump_json_str(**kwargs):
+    def dump_json_str(indent="  ", **kwargs):
         """ Same arguments as json.dumps less the first. """
-        return json.dumps(self.rep, **kwargs)
+        return json.dumps(self.rep, indent=indent, **kwargs)
 
     @staticmethod
     def corpus_rep(corp : CorpusReader,
