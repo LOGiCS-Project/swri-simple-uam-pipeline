@@ -15,7 +15,8 @@ import subprocess
 
 log = get_logger(__name__)
 
-def get_corpus(static = None,
+def get_corpus(config : CraidlConfig,
+               static = None,
                host = None,
                port = None):
     """
@@ -23,6 +24,7 @@ def get_corpus(static = None,
     where needed.
 
     Arguments:
+      config: The CraidlConfig that the defaults are taken from.
       static: The static '.json' corpus to use when generating the files.
         Mutually exclusive with host and port. Default: As configured
       host: The hostname of the corpus server to use when generating the files.
@@ -44,7 +46,7 @@ def get_corpus(static = None,
         )
         raise err
     elif not static and not host:
-        if Config[CraidlConfig].use_static_corpus:
+        if config.use_static_corpus:
             mk_static = True
             static = True
         else:
@@ -55,7 +57,7 @@ def get_corpus(static = None,
     if mk_static:
 
         if isinstance(static, bool) and static:
-            static = Config[CraidlConfig].static_corpus
+            static = config.static_corpus
         static = Path(static)
 
         log.info(
@@ -69,10 +71,10 @@ def get_corpus(static = None,
     else:
 
         if isinstance(host, bool) and host:
-            host = Config[CraidlConfig].server_host
+            host = config.server_host
 
         if not port:
-            port = Config[CraidlConfig].server_port
+            port = config.server_port
 
         log.info(
             "Creating corpus client.",

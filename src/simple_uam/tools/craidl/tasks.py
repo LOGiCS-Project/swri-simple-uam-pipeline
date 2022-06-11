@@ -255,7 +255,12 @@ def gen_info_files(ctx,
 
     output = Path(output)
 
-    corpus = get_corpus(static=static, host=host, port=port)
+    corpus = get_corpus(
+        config=Config[CraidlConfig],
+        static=static,
+        host=host,
+        port=port
+    )
 
     log.info(
         "Loading designs from file.",
