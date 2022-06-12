@@ -33,6 +33,7 @@ dependencies = [
     "structlog>=21.5.0",
     "gremlinpython>=3.6.0",
     "filelock>=3.7.1",
+    "dramatiq[rabbitmq,redis]>=1.13.0",
 ]
 
 [project.urls]

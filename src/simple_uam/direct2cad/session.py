@@ -5,6 +5,8 @@ from simple_uam.util.config import Config, D2CWorkspaceConfig
 from simple_uam.craidl.corpus import GremlinCorpus, StaticCorpus, get_corpus
 from simple_uam.craidl.info_files import DesignInfoFiles
 from attrs import define,field
+from simple_uam.worker import actor
+
 import json
 from pathlib import Path
 
