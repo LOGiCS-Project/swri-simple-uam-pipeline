@@ -4,11 +4,12 @@ Various setup and development tasks for SimpleUAM Utility Modules.
 
 import shutil
 from simple_uam.util.invoke import task, call
-from simple_uam.util.config import Config, PathConfig, D2CWorkspaceConfig
+from simple_uam.util.config import Config, PathConfig, D2CWorkerConfig
 from simple_uam.util.logging import get_logger
 
 from simple_uam.worker.run_worker import run_worker_node
 from simple_uam import direct2cad
+from dramatiq import get_broker
 
 from pathlib import Path
 import json
@@ -16,11 +17,12 @@ import json
 import subprocess
 
 log = get_logger(__name__)
-manager = D2CManager()
 
-@task
-def run(processes=Config[D2CWorkspaceConfig].max_processes,
-        threads=Config[D2CWorkspaceConfig].max_threads):
+@task(incrementable=['verbose'])
+def run(ctx,
+        processes=0,
+        threads=0,
+        verbose=0):
     """
     Runs the worker node compute process. This will pull tasks from the broker
     and perform them.
@@ -28,13 +30,21 @@ def run(processes=Config[D2CWorkspaceConfig].max_processes,
     Arguments:
       processes: Number of simultaneous worker processes.
       threads: Number of threads per worker process.
+      verbose: Verbosity of output.
     """
 
+    if processes <= 0:
+        processes = Config[D2CWorkerConfig].max_processes
+
+    if threads <= 0:
+        threads = Config[D2CWorkerConfig].max_threads
+
     return run_worker_node(
+        modules=[__name__],
         processes=processes,
         threads=threads,
-        shutdown_timeout=Config[D2CWorkspaceConfig].shutdown_timeout,
-        skip_logging=Config[D2CWorkspaceConfig].skip_logging,
+        shutdown_timeout=Config[D2CWorkerConfig].shutdown_timeout,
+        skip_logging=Config[D2CWorkerConfig].skip_logging,
     )
 
 @task
@@ -55,6 +65,15 @@ def gen_info_files(ctx,
         not specified.
     """
 
+    broker = get_broker()
+
+    log.info(
+        "Setting up dramatiq broker.",
+        type=type(broker).__name__,
+        actors=broker.get_declared_actors(),
+        queues=broker.get_declared_queues(),
+        middleware=[type(m).__name__ for m in broker.middleware],
+    )
     design = Path(input).resolve()
     metadata_json = Path(metadata) if metadata else None
 
@@ -65,27 +84,50 @@ def gen_info_files(ctx,
         "Loading design data.",
         input=str(design),
     )
+
     design_data = None
     with design.open('r') as fp:
         design_data = json.load(fp)
 
-    metadata = None
+    metadata = dict(design_file=str(design))
     if metadata_json:
         log.info(
             "Loading metadata.",
             metadata=str(metadata_json),
         )
         with metadata_json.open('r') as fp:
-            metadata = json.load(fp)
+            metadata.update(json.load(fp))
 
-    result = direct2cad.gen_info_files(design_data, metadata=metadata)
+    log.info(
+        "Sending task gen_info_files to message broker.",
+        design=str(design),
+    )
+    msg = direct2cad.gen_info_files.send(design_data, metadata=metadata)
 
-    if not D2CWorkerConfig.backend.enabled:
+    log.info(
+        "Finished sending task gen_info_files to message broker.",
+        design=str(design),
+        queue_name=msg.queue_name,
+        actor_name=msg.actor_name,
+        message_id=msg.message_id,
+        **msg.options,
+    )
+
+    if not Config[D2CWorkerConfig].backend.enabled:
         log.warning(
             "No result backend provided. Please examine the records archives "\
             "for the generated results.")
         return None
 
+    log.info(
+        "Waiting for gen_info_files result.",
+    )
+    result = msg.get_result(block=True)
+
+    log.info(
+        "Received gen_info_files result.",
+        result=result,
+    )
 
     if output:
         log.info(
@@ -93,9 +135,9 @@ def gen_info_files(ctx,
             output=str(output),
         )
         with output.open('w') as fp:
-            json.dump(session.metadata, fp)
+            json.dump(result, fp)
     else:
-        print(json.dumps(session.metadata, indent="  "))
+        print(json.dumps(result, indent="  "))
 
 @task
 def process_design(ctx,
@@ -114,6 +156,16 @@ def process_design(ctx,
         not specified.
     """
 
+    broker = get_broker()
+
+    log.info(
+        "Setting up dramatiq broker.",
+        type=type(broker).__name__,
+        actors=broker.get_declared_actors(),
+        queues=broker.get_declared_queues(),
+        middleware=[type(m).__name__ for m in broker.middleware],
+    )
+
     design = Path(input).resolve()
     metadata_json = Path(metadata) if metadata else None
 
@@ -128,23 +180,46 @@ def process_design(ctx,
     with design.open('r') as fp:
         design_data = json.load(fp)
 
-    metadata = None
+    metadata = dict(design_file=str(design))
     if metadata_json:
         log.info(
             "Loading metadata.",
             metadata=str(metadata_json),
         )
         with metadata_json.open('r') as fp:
-            metadata = json.load(fp)
+            metadata.update(json.load(fp))
 
-    result = direct2cad.process_design(design_data, metadata=metadata)
+    log.info(
+        "Sending task process_design to message broker.",
+        design=str(design),
+    )
 
-    if not D2CWorkerConfig.backend.enabled:
+    msg = direct2cad.process_design.send(design_data, metadata=metadata)
+
+    log.info(
+        "Finished sending task process_design to message broker.",
+        design=str(design),
+        queue_name=msg.queue_name,
+        actor_name=msg.actor_name,
+        message_id=msg.message_id,
+        **msg.options,
+    )
+
+    if not Config[D2CWorkerConfig].backend.enabled:
         log.warning(
             "No result backend provided. Please examine the records archives "\
             "for the generated results.")
         return None
 
+    log.info(
+        "Waiting for process_design result.",
+    )
+    result = msg.get_result(block=True)
+
+    log.info(
+        "Received process_design result.",
+        result=result,
+    )
 
     if output:
         log.info(
@@ -152,6 +227,6 @@ def process_design(ctx,
             output=str(output),
         )
         with output.open('w') as fp:
-            json.dump(session.metadata, fp)
+            json.dump(result, fp)
     else:
-        print(json.dumps(session.metadata, indent="  "))
+        print(json.dumps(result, indent="  "))

@@ -9,7 +9,7 @@ from typing import Optional
 @define
 class BrokerConfig():
 
-    protocol : str = 'redis'
+    protocol : str = 'amqp'
     """
     The broker protocol, must be either 'amqp' (for rabbitmq) or 'redis'
     (for redis).
@@ -20,17 +20,17 @@ class BrokerConfig():
     The broker host.
     """
 
-    port : int = 6379
+    port : int = 5672
     """
     The broker's port.
     """
 
-    db : str = "0"
+    db : str = ""
     """
     The database (on redis) or virtualhost (on rabbit mq).
     """
 
-    url : str = '${protocol}://${host}:${port}/${db}'
+    url : str = '${.protocol}://${.host}:${.port}${.db}'
     """
     The url to connect to for the broker.
     Note that this supersedes all the finer grade connection parameters if
@@ -65,7 +65,7 @@ class BackendConfig():
     The database (on redis).
     """
 
-    url : str = '${protocol}://${host}:${port}/${db}'
+    url : str = '${.protocol}://${.host}:${.port}/${.db}'
     """
     The url to connect to for the backend.
     Note that this supersedes all the finer grade connection parameters if
@@ -112,9 +112,6 @@ class D2CWorkerConfig():
     """
     Do we keep dramatiq specific logs? This doesn't affect structlog logs.
     """
-
-
-
 
 # Add to the configuration manager
 Config.register(

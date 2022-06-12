@@ -14,7 +14,7 @@
 from typing import List, Optional
 from simple_uam.util.invoke import Collection, InvokeProg, task
 from simple_uam.util.logging import get_logger
-from . import tasks, env, manage
+from . import tasks
 
 log = get_logger(__name__)
 
@@ -30,12 +30,14 @@ def main(args: Optional[List[str]] = None) -> int:
     Returns:
         An exit code.
     """
-    tasks_ns = Collection()
-    tasks_ns.add_task(tasks.start_creo, "start_creo")
+    worker_ns = Collection()
+    worker_ns.add_task(tasks.run, "run")
 
     namespace = Collection(
+        tasks.process_design,
+        tasks.gen_info_files,
     )
-    namespace.add_collection(tasks_ns, 'tasks')
+    namespace.add_collection(worker_ns, 'worker')
 
     # Setup the invoke program runner class
     program = InvokeProg(

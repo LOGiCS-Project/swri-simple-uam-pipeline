@@ -54,8 +54,8 @@ def default_broker():
     return broker
 
 # Initialize the system broker based on the default.
-__BROKER = default_broker()
-dramatiq.set_broker(__BROKER)
+_BROKER = default_broker()
+dramatiq.set_broker(_BROKER)
 
 def actor(fn=None,
           *,
@@ -85,6 +85,6 @@ def actor(fn=None,
         actor_name=actor_name,
         queue_name=queue_name,
         priority=priority,
-        broker=__BROKER,
+        broker=_BROKER,
         **options,
     )

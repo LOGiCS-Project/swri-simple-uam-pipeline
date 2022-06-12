@@ -20,6 +20,9 @@ def gen_info_files(design, metadata=None):
     and return metadata information.
     """
 
+    if not metadata:
+        metadata = dict()
+
     with D2CWorkspace(name="gen-info-files",metadata=metadata) as session:
         session.write_design(design)
         session.gen_info_files(design)
@@ -35,7 +38,10 @@ def process_design(design, metadata=None):
     created.
     """
 
+    if not metadata:
+        metadata = dict()
+
     with D2CWorkspace(name="process-design",metadata=metadata) as session:
-        session.process_design(design_data)
+        session.process_design(design)
 
     return session.metadata
