@@ -124,6 +124,8 @@ class Workspace():
         try:
            do_stuff_here()
            session.run(...)
+        catch Exception as err:
+           session.log_exception(err)
         finally:
            workspace.finish()
         ```
@@ -161,9 +163,7 @@ class Workspace():
                 number=self.active_workspace,
                 work_dir=self.config.workspace_path(self.active_workspace),
                 init_exclude_patterns=self.config.exclude,
-                init_exclude_files=self.config.exclude_from_paths,
                 record_exclude_patterns=self.config.record_exclude,
-                record_exclude_files=self.config.record_exclude_from_paths,
                 result_archive=temp_archive,
                 metadata=metadata,
                 name=self.name,
@@ -244,7 +244,12 @@ class Workspace():
         session.enter_workdir()
         return session
 
-    def __exit__(self, exp_typ, exp_val, exp_traceback):
+    def __exit__(self, exp_type, exp_val, exp_traceback):
+        self.active_session.log_exception(
+            exc_type=exc_type,
+            exc_val=exc_val,
+            exc_tb=exc_traceback,
+        )
         self.active_session.exit_workdir()
         self.finish()
         return None

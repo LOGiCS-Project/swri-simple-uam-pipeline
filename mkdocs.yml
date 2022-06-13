@@ -7,13 +7,25 @@ site_dir: "site"
 watch: [README.md, CONTRIBUTING.md]
 
 nav:
-- Home:
-  - Overview: index.md
-  - Credits: credits.md
-  - License: license.md
-# defer to gen-files + literate-nav
-- Code Reference: reference/
-- Development:
+  - Home:
+    - Overview: index.md
+    - Install:
+      - Introduction: setup/intro.md
+      - AWS (Network): setup/aws-network.md
+      - AWS (Instance): setup/aws-instance.md
+      - General Setup: setup/general.md
+      - License Server: setup/license_server.md
+      - Message Broker: setup/broker.md
+      - Graph Server: setup/graph.md
+      - Worker Node: setup/worker.md
+    - Usage:
+      - Configuration: usage/config.md
+      - Craidl: usage/craidl.md
+      - Workspaces: usage/workspaces.md
+      - Workers: usage/workers.md
+    - License: license.md
+  # defer to gen-files + literate-nav
+  - Code Reference: reference/
   - Contributing: contributing.md
 
 theme:
@@ -46,6 +58,7 @@ markdown_extensions:
 - admonition
 - callouts
 - pymdownx.emoji
+- pymdownx.details
 - pymdownx.magiclink
 - pymdownx.snippets:
     check_paths: true

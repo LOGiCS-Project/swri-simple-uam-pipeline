@@ -76,14 +76,6 @@ class WorkspaceConfig():
     See rsync's '--exclude' argument for more info.
     """
 
-    exclude_from : List[str] = ['.gitignore']
-    """
-    Files to extract exclude patterns from for workspace initialization.
-    Relative paths are taken to be in the reference directory.
-
-    See rsync's '--exclude-from' argument for more info.
-    """
-
     record_exclude : List[str] = ['.git']
     """
     File patterns to not include in a session's record archive.
@@ -91,17 +83,6 @@ class WorkspaceConfig():
     patterns should be relative.
 
     See rsync's '--exclude' argument for more info.
-    """
-
-    record_exclude_from : List[str] = ['.gitignore']
-    """
-    Files to extract exclude patterns from when creating a session's record
-    archive. All the patterns in a file should be relative.
-
-    Relative paths are taken to be files in the reference directory, not the
-    corresponding workspace.
-
-    See rsync's '--exclude-from' argument for more info.
     """
 
     @property

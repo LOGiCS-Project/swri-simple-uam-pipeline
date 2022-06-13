@@ -8,6 +8,7 @@ from filelock import Timeout, FileLock
 from functools import wraps
 from datetime import datetime
 from copy import deepcopy
+import traceback
 import subprocess
 import platform
 import os
@@ -90,7 +91,7 @@ class Session():
 
     @result_archive.setter
     def result_archive(self, val):
-        self.metadata['result-archive'] = str(val)
+        self.metadata['result_archive'] = str(val)
         self._result_archive = val
 
     name : str = field(
@@ -119,6 +120,15 @@ class Session():
     the current metadata.
     """
 
+    log_file : Path = field(
+        default=Path("log.json"),
+        kw_only=True,
+    )
+    """
+    The file in the workdir (and eventually in the records archive) that stores
+    logs.
+    """
+
     @metadata_file.validator
     def _meta_file_valid(self, attr, val):
         if val.is_absolute():
@@ -135,27 +145,6 @@ class Session():
     def _init_exclude_pats_def(self):
         return [".git"]
 
-    init_exclude_files : List[Path] = field(
-        kw_only=True,
-    )
-    """
-    Files to read for exclude lists.
-    """
-
-    @init_exclude_files.default
-    def _init_exclude_files_def(self):
-        e_files = list()
-        gitignore = self.reference_dir / ".gitignore"
-        if gitignore.exists():
-            e_files.append(gitignore)
-        return e_files
-
-    @init_exclude_files.validator
-    def _init_exclude_files_valid(self, attr, val):
-        for e_file in val:
-            if not e_file.is_absolute():
-                raise RuntimeError("Session init exclude paths must be absolute.")
-
     record_exclude_patterns : List[str] = field(
         kw_only=True,
     )
@@ -166,27 +155,6 @@ class Session():
     @record_exclude_patterns.default
     def _record_exclude_pats_def(self):
         return [".git"]
-
-    record_exclude_files : List[Path] = field(
-        kw_only=True,
-    )
-    """
-    Files to read for record archive exclude lists.
-    """
-
-    @record_exclude_files.default
-    def _record_exclude_files_def(self):
-        e_files = list()
-        gitignore = self.reference_dir / ".gitignore"
-        if gitignore.exists():
-            e_files.append(gitignore)
-        return e_files
-
-    @record_exclude_files.validator
-    def _record_exclude_files_valid(self, attr, val):
-        for e_file in val:
-            if not e_file.is_absolute():
-                raise RuntimeError("Session record exclude paths must be absolute.")
 
     old_work_dir : Optional[Path] = field(
         default=None,
@@ -204,6 +172,86 @@ class Session():
     """
     The time when the session object was created/started.
     """
+
+    def log_exception(self, *excs, exc_type=None, exc_val=None, exc_tb=None):
+        """
+        Adds the provided exception to the metadata of this session.
+        Useful for detecting errors during the run.
+
+        Arguments:
+          *exc: list of exceptions to process, mutually exclusive with
+            following args.
+          exc_type: The type of the exception.
+          exc_val: The value of the exception.
+          exc_tb: The traceback of the exception.
+        """
+
+        if (exc_type or exc_val or exc_tb) and len(excs) > 0:
+            raise RuntimeError(
+                "Can only provide positional arg or kw args, not both."
+            )
+
+        elif len(excs) > 1:
+            raise RuntimeError(
+                "Can only log a single exception at a time."
+            )
+
+        ### Organize Exceptions ###
+
+        exceptions = list()
+
+        current = None
+
+        if len(excs) > 0:
+            current = dict(
+                type=type(exc),
+                val=exc,
+                tb=exc.__traceback__,
+            )
+        elif exc_type or exc_val or exc_tb:
+            current = dict(
+                type=exc_type or type(exc_val),
+                val=exc_val,
+                tb=exc_tb or exc_val.__traceback__,
+            )
+        else:
+            return # Nothing to do
+
+        while current:
+            exceptions.append(current)
+            next = current['val'].__cause__ or current['val'].__context__
+            if next:
+                current = dict(
+                    type=type(next),
+                    val=next,
+                    tb=next,
+                )
+            else:
+                current = None
+
+        ### Serialize Exceptions ###
+
+        exception_data = dict(
+            time = datetime.now().isoformat(),
+            chain = list()
+        )
+
+        for exception in exceptions:
+            exception_data['chain'].append(dict(
+                type = exception['type'].__name__,
+                value = traceback.format_exception_only(
+                    exception['type'],
+                    exception['val'],
+                ),
+                stack = traceback.format_stack(exception['tb']),
+            ))
+
+        ### Add to Metadata ###
+
+        if 'exceptions' not in self.metadata:
+            self.metadata['exceptions'] = list()
+
+        self.metadata['exceptions'].append(exception_data)
 
     @session_op
     def run(self,
@@ -250,7 +298,6 @@ class Session():
             src=self.reference_dir,
             dst=self.work_dir,
             exclude=self.init_exclude_patterns,
-            exclude_from=self.init_exclude_files,
             delete=True,
             update=False,
             progress=progress,
@@ -316,18 +363,18 @@ class Session():
         info = dict()
 
         info['name'] = self.name
-        info['start-time'] = self.start_time.isoformat()
-        info['end-time'] = datetime.now().isoformat()
-        info['reference-dir'] = str(self.reference_dir)
-        info['workspace-num'] = self.number
+        info['start_time'] = self.start_time.isoformat()
+        info['end_time'] = datetime.now().isoformat()
+        info['reference_dir'] = str(self.reference_dir)
+        info['workspace_num'] = self.number
         info['workspace'] = str(self.work_dir)
         info['platform']= platform.system()
-        info['platform-release']=platform.release()
-        info['platform-version']=platform.version()
+        info['platform_release']=platform.release()
+        info['platform_version']=platform.version()
         info['architecture']=platform.machine()
         info['hostname']=socket.gethostname()
-        info['ip-address']=socket.gethostbyname(socket.gethostname())
-        info['mac-address']=':'.join(re.findall('..', '%012x' % uuid.getnode()))
+        info['ip_address']=socket.gethostbyname(socket.gethostname())
+        info['mac_address']=':'.join(re.findall('..', '%012x' % uuid.getnode()))
         info['processor']=platform.processor()
 
         return info
@@ -339,7 +386,7 @@ class Session():
         Writes the current metadata to a file in the working directory.
         """
 
-        self.metadata['session-info'] = self.session_info()
+        self.metadata['session_info'] = self.session_info()
 
         meta_path = self.work_dir / self.metadata_file
 
@@ -363,7 +410,6 @@ class Session():
             ref=str(self.reference_dir),
             src=str(self.work_dir),
             out=str(self.result_archive),
-            exclude=self.record_exclude_patterns,
             exclude_from=[str(f) for f in self.record_exclude_files],
         )
 

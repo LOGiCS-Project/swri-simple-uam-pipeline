@@ -14,8 +14,8 @@
 from typing import List, Optional
 
 import simple_uam.tools.dev_util.tasks
-from ..util.invoke import Collection, InvokeProg, task
-from ..util.logging import get_logger
+from simple_uam.util.invoke import Collection, InvokeProg, task
+from simple_uam.util.logging import get_logger
 
 log = get_logger(__name__)
 

@@ -48,7 +48,7 @@ class StubServerConfig():
     """
 
     read_only : bool = field(
-        default = True,
+        default = False,
     )
     """
     Should the stub server be run as a read only database?

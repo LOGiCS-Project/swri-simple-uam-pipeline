@@ -42,7 +42,7 @@ def main(args: Optional[List[str]] = None) -> int:
     # Collect all choco install tasks
     install = Collection()
     install.add_task(worker.dep_pkgs, name='worker-deps')
-    install.add_task(license_server.choco_pkgs, name='licence-deps')
+    install.add_task(license_server.choco_pkgs, name='license-deps')
     install.add_task(broker.choco_pkgs, name='broker-deps')
     install.add_task(shared.qol_pkgs, name='qol-deps')
     install.add_task(shared.global_pkgs, name='global-deps')
