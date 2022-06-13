@@ -40,8 +40,12 @@ Fix some minor usability issues.
 
 ### Install Creopyson
 
+- Prepare to connect to git.isis.vanderbilt.edu:
+    - Install SSH keys for git.isis.vanderbilt.edu
+    - **Or** have credentials ready for prompt.
 - Open an admin powershell to `<repo-root>`:
-  - Run: `pdm run setup-win worker.creopyson`
+    - Run: `pdm run setup-win worker.creopyson`
+    - Follow prompts.
 
 **Configure component corpus [here](../usage/craidl.md)...**<br/>
 **Configure and use local analysis pipeline [here](../usage/workspaces.md)...**<br/>

@@ -92,7 +92,7 @@ class ConfigData:
         conf = OmegaConf.merge(*configs)
 
         # Set as read-only
-        OmegaConf.set_readonly(conf, True)
+        # OmegaConf.set_readonly(conf, True)
 
         # Save conf to instance and return
         self.conf_obj = conf

@@ -24,17 +24,14 @@ repo_data_corpus = Config[PathConfig].repo_data_dir / 'corpus_static_dump.json'
 @task
 def copy_static_corpus(ctx,
                        input = None,
-                       output = None,
                        force = False,
                        backup = True):
     """
-    Generates a static corpus from a running corpus server.
+    Copies a provided static corpus to the configured location.
 
     Arguments:
       input: The input copy of the static corpus, defaults to the copy provided
         with the repo.
-      output: The output file to write the corpus dump to. Defaults to the
-        configured corpus location.
       force: Do we overwrite the corpus if it's already there? Defaults to
         true if output is specified otherwise defaults to false.
       backup: Should we create a backup if there's a preexisting output file?
@@ -44,10 +41,7 @@ def copy_static_corpus(ctx,
         input = repo_data_corpus
     input = Path(input)
 
-    if output == None:
-        output = Config[CraidlConfig].static_corpus
-    else:
-        force = True
+    output = Config[CraidlConfig].static_corpus
     output = Path(output)
 
     if output.exists() and not force:
