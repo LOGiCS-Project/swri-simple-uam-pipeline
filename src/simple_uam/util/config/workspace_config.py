@@ -59,8 +59,8 @@ class WorkspaceConfig():
     locks_subdir : str = "workspace_locks"
     """ Subdir of workspaces_dir where the various lockfiles are kept. """
 
-    records_subdir : str = "records"
-    """ Subdir of workspaces_dir for cached transaction records. """
+    records_dir : str = "${workspaces_dir}/records"
+    """ Dir for cached transaction records. """
 
     records : RecordsConfig = RecordsConfig()
     """ Options concerning records. """
@@ -131,10 +131,10 @@ class WorkspaceConfig():
     def records_path(self):
         """ Absolute form of records directory. """
 
-        if Path(self.records_subdir).is_absolute():
-            return Path(self.records_subdir).resolve()
+        if Path(self.records_dir).is_absolute():
+            return Path(self.records_dir).resolve()
         else:
-            return Path(self.workspaces_path / self.records_subdir).resolve()
+            return Path(self.workspaces_path / self.records_dir).resolve()
 
     @property
     def records_lockdir(self):

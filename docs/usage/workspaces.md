@@ -38,6 +38,12 @@ stored.
 
 See [here](config.md) for more information on config files.
 
+!!! important
+    Make sure the `records_dir` is set how you want. That is where all the
+    results archives will go.
+    If you don't want it to be a sub-directory of `workspaces_dir` make sure
+    `records_dir` is an absolute path.
+
 ### Manage Workspaces
 
 Get the cache directory for these workspaces.

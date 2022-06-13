@@ -93,6 +93,7 @@ Options:
 The configuration requirements are identical to the command-line case.
 
 Sending a request requires:
+
   - SimpleUAM and `dramatiq` as dependencies.
   - `design` as a JSON-serializable python object.
   - Optional `metadata` a JSON-serializable python dictionary.
