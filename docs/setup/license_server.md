@@ -4,9 +4,12 @@ This sets up a floating Creo license that worker nodes can use.
 A machine or VM with direct access can use a node-locked Creo license instead.
 However if you need to access the VM through RDP a floating license is required.
 
-Keep note of the IP of this machine as: `<license-server-ip>`
+### Prerequisites
 
-Ensure you've completed the steps in [General Setup](general.md) already.
+- [General Setup](general.md) has been completed.
+- You must be okay using [chocolatey](https://chocolatey.org/) as your package
+  manager.
+- The IP of this machine is saved as: `<license-server-ip>`
 
 ### Get License File
 

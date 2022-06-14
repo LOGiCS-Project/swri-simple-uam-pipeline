@@ -73,7 +73,7 @@ class CraidlConfig():
     """
 
     server_host : str = field(
-        default=SI("${stub_server.host}")
+        default=SI("localhost")
     )
     """
     The host to connect to when using a gremlin corpus server.

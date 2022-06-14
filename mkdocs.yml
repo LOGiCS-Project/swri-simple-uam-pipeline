@@ -16,13 +16,15 @@ nav:
       - General Setup: setup/general.md
       - License Server: setup/license_server.md
       - Message Broker: setup/broker.md
-      - Graph Server: setup/graph.md
+      - Corpus Database: setup/graph.md
+      - Static Corpus: setup/corpus.md
       - Worker Node: setup/worker.md
     - Usage:
       - Configuration: usage/config.md
       - Craidl: usage/craidl.md
       - Workspaces: usage/workspaces.md
       - Workers: usage/workers.md
+      - Clients: usage/clients.md
     - License: license.md
   # defer to gen-files + literate-nav
   - Code Reference: reference/
@@ -57,6 +59,8 @@ extra_css:
 markdown_extensions:
 - admonition
 - callouts
+- attr_list
+- md_in_html
 - pymdownx.emoji
 - pymdownx.details
 - pymdownx.magiclink
@@ -77,6 +81,5 @@ plugins:
     - docs/gen_ref_nav.py
 - literate-nav:
     nav_file: SUMMARY.md
-- coverage
 - section-index
 - mkdocstrings

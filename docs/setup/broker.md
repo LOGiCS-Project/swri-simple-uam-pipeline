@@ -5,16 +5,29 @@ queue.
 The standard message broker is [RabbitMQ](https://www.rabbitmq.com/) with
 the default settings.
 
-## *(Recommended)* Run RabbitMQ on a Linux Machine
+## **Option 1:** Run RabbitMQ on a Linux Machine *(Recommended)*
+
+RabbitMQ is a backendless message broker that's sufficient if you're okay
+with clients not being notified when the analysis result
+is complete. (It will just appear in the results directory.)
 
 - Follow the instructions [here](https://www.rabbitmq.com/download.html) to
   set up RabbitMQ.
     - Keep this machine's IP as: `<broker-ip>`
     - Keep rabbitmq's open port as: `<broker-port>` (default: 5672)
 
-## *(Alternate)* Run RabbitMQ as a Windows Service
+## **Option 2:** Run Redis on a Linux Machine
 
-Ensure you've completed the steps in [General Setup](general.md) already.
+Redis can be configured as a response backend as well as a message broker.
+This means that clients can get notified when an analysis is complete.
+
+We have not tried to get this running so don't have install instructions.
+
+## **Option 3:** Run RabbitMQ as a Windows Service
+
+### Prerequisites
+
+- [General Setup](general.md) has been completed.
 
 ### Install Dependencies
 

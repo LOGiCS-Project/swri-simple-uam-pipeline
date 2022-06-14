@@ -39,14 +39,15 @@ dependencies = [
 [project.urls]
 Homepage = "https://LOGiCS-Project.github.io/swri-simple-uam-pipleline"
 Documentation = "https://LOGiCS-Project.github.io/swri-simple-uam-pipleline"
-Changelog = "https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/changelog"
-Repository = "https://github.com/LOGiCS-Project/swri-simple-uam-pipleline"
+Repository = "https://github.com/LOGiCS-Project/swri-simple-uam-pipeline/"
 Issues = "https://github.com/LOGiCS-Project/swri-simple-uam-pipleline/issues"
 Discussions = "https://github.com/LOGiCS-Project/swri-simple-uam-pipleline/discussions"
 
 [project.scripts]
 suam-config = "simple_uam.tools.config_mgr.cli:main"
 craidl = "simple_uam.tools.craidl.cli:main"
+d2c-worker = "simple_uam.tools.d2c_worker.cli:main"
+d2c-client = "simple_uam.tools.d2c_client.cli:main"
 
 [tool.pdm]
 version = {use_scm = true}
@@ -60,8 +61,6 @@ editable-backend = "editables"
 # config-mgr = {call = "simple_uam.tools.config_mgr.cli:main(['pdm run config-mgr'])"}
 # craidl = {call = "simple_uam.tools.craidl.cli:main(['pdm run craidl'])"}
 setup-win = {call = "simple_uam.tools.setup_win.cli:main(['pdm run setup-win'])"}
-d2c-workspace = {call = "simple_uam.tools.d2c_workspace.cli:main(['pdm run d2c-workspace'])"}
-d2c-worker = {call = "simple_uam.tools.d2c_worker.cli:main(['pdm run d2c-worker'])"}
 check-docs = {call = "simple_uam.tools.dev_util.cli:main(['pdm run check-docs','check-docs'])"}
 docs = {call = "simple_uam.tools.dev_util.cli:main(['pdm run docs','docs'])"}
 docs-serve = {call = "simple_uam.tools.dev_util.cli:main(['pdm run docs-serve','docs-serve'])"}

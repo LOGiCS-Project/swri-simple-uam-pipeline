@@ -39,13 +39,13 @@ class D2CWorkspaceConfig(WorkspaceConfig):
 
     record_exclude_from : List[str] = []
 
-    craidl : CraidlConfig = field(
-        default=SI("${craidl:}")
-    )
-    """
-    The config to use for craidl in the workspace. Should interpolate into
-    the currently loaded craidl.conf.yaml by default.
-    """
+    # craidl : CraidlConfig = field(
+    #     default=SI("${craidl:}")
+    # )
+    # """
+    # The config to use for craidl in the workspace. Should interpolate into
+    # the currently loaded craidl.conf.yaml by default.
+    # """
 
 # Add to the configuration manager
 Config.register(

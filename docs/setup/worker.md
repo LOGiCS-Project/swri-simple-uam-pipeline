@@ -3,9 +3,11 @@
 A worker can analyze designs on behalf of clients and requires access to a
 license server and a broker for most tasks.
 
-Ensure you have a `<license-server-ip>`, `<broker-ip>`, and `<broker-port>`.
+### Prerequisites
 
-Ensure you've completed the steps in [General Setup](general.md) already.
+- [General Setup](general.md) has been completed.
+- SSH keys or credentials for `git.isis.vanderbilt.edu`
+- A broker running at `<broker-ip>` and `<broker-port>`
 
 ### Install Dependencies
 
@@ -14,16 +16,20 @@ Install utilities like wget and rsync.
 - Open an admin powershell to `<repo-root>`:
     - Run: `pdm run setup-win install.worker-deps`
 
+### Get License Information
+
+**Option 1:** License Server
+
+- Have a license server running at `<license-server-ip>` on port `<license-server-port>`.
+
+**Option 2:** Static Creo License
+
+- Get your mac address (for generating licenses):
+    - Run: `pdm run setup-win mac-address`
+- If using a local license, have the license file for the above mac
+  address downloaded somewhere convenient.
+
 ### Install Creo
-
-Get license information, optionally installing the license server locally.
-
-- Have your license information ready:
-    - Get your mac address (for generating licenses):
-        - Run: `pdm run setup-win mac-address`
-    - If using a local license, have the license file for the above mac
-      address downloaded somewhere convenient.
-    - If using a license server, have `<license-server-ip>` at hand.
 
 Downloads and installs PTC Creo 5.6.
 
@@ -47,6 +53,33 @@ Fix some minor usability issues.
     - Run: `pdm run setup-win worker.creopyson`
     - Follow prompts.
 
-**Configure component corpus [here](../usage/craidl.md)...**<br/>
-**Configure and use local analysis pipeline [here](../usage/workspaces.md)...**<br/>
-**Configure and use remote analysis pipeline [here](../usage/workers.md)...**
+### Configure Corpus Settings
+
+!!! todo
+    - corpus / craidl settings
+    - have static corpus installed or corpus db running
+    - see usage craidl for deets
+
+### Configure Records Dir
+
+!!! todo
+    - d2c_workspace set records_dir
+    - see usage workspaces for deets
+
+### Configure Worker Settings
+
+!!! todo
+    - set broker
+    - set process limit
+    - see usage worker for deets
+
+### Run Worker Node
+
+- Once configured open admin powershell at `<repo-root>`.
+- Run the graph server as a process.
+    - Run: `pdm run d2c-worker worker.run`
+    - Note that this isn't a service, the server will stop if you close the
+      terminal.
+
+!!! todo
+    goto client
