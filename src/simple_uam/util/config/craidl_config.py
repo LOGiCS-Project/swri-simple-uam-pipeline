@@ -3,6 +3,7 @@ from omegaconf import SI
 from .manager import Config
 from .path_config import PathConfig
 from .workspace_config import RecordsConfig, WorkspaceConfig
+from .service_config import ServiceConfig
 from typing import Optional
 
 @define
@@ -52,6 +53,16 @@ class StubServerConfig():
     )
     """
     Should the stub server be run as a read only database?
+    """
+
+    service : ServiceConfig = field(
+        default = ServiceConfig(
+            stdout_file = SI("${path:log_directory}/craidl_stub_db/stdout.log"),
+            stderr_file = SI("${path:log_directory}/craidl_stub_db/stderr.log"),
+        )
+    )
+    """
+    Settings for running the stub server as a service.
     """
 
 @define

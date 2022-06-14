@@ -2,6 +2,7 @@ from attrs import define, field
 from .path_config import PathConfig
 from .craidl_config import CraidlConfig
 from .d2c_workspace_config import D2CWorkspaceConfig
+from .service_config import ServiceConfig
 from .manager import Config
 from omegaconf import SI
 from typing import Optional
@@ -111,6 +112,16 @@ class D2CWorkerConfig():
     skip_logging : bool = False
     """
     Do we keep dramatiq specific logs? This doesn't affect structlog logs.
+    """
+
+    service : ServiceConfig = field(
+        default = ServiceConfig(
+            stdout_file = SI("${path:log_directory}/d2c/stdout.log"),
+            stderr_file = SI("${path:log_directory}/d2c/stderr.log"),
+        )
+    )
+    """
+    Settings for running the worker node service.
     """
 
 # Add to the configuration manager
