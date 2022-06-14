@@ -121,8 +121,8 @@ SimpleUAM uses an internal configuration system based on
 [OmegaConf](omegaconf.readthedocs.io/).
 It reads YAML files in a platform specific directory for settings that are
 used throughout the system.
-While you can find a more detailed breakdown of the system [here](../usage/config.md)
-here is a quick overview.
+While you can find a more detailed breakdown of the system [here](../usage/config.md),
+this is a quick overview.
 
 Once the SimpleUAM project is installed (in [General Setup](general.md)) you
 can run the following command to find the config file directory:
@@ -441,3 +441,8 @@ message broker, before the worker nodes.
 - **[Message Broker](broker.md)**
 - **[Engineering Corpus](corpus.md)**
 - **[Worker Node](worker.md)**
+
+Client nodes are less directly dependent on the SimpleUAM start and their
+setup can skip directly to the corresponding section:
+
+- **[Client Node](client.md)**

@@ -56,9 +56,8 @@ git clone git@github.com:LOGiCS-Project/swri-simple-uam-pipeline.git <repo-root>
   ```bash
   pdm run setup-win --help
   ```
-
-Result should be a help message showing all of `setup-win`'s flags and
-subcommands.
+  Result should be a help message showing all of `setup-win`'s flags and
+  subcommands.
 
 ### Get Configuration Directory
 

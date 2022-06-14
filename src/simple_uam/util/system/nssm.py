@@ -68,6 +68,7 @@ class NssmService():
     def _exe_validator(self, attr, val):
         if platform.system != 'Windows':
             return
+            raise RuntimeError("NSSM service managment is Windows only.")
         elif val.is_absolute() and val.exists():
             pass
         elif (cwd / val).exists():
@@ -128,6 +129,9 @@ class NssmService():
         """
         Install the service.
         """
+        if platform.system != 'Windows':
+            raise RuntimeError("NSSM service managment is Windows only.")
+
         subprocess.run(
             ['nssm', 'install', self.service_name],
         )
@@ -137,6 +141,8 @@ class NssmService():
         """
         Uninstall the service.
         """
+        if platform.system != 'Windows':
+            raise RuntimeError("NSSM service managment is Windows only.")
         subprocess.run(
             ['nssm', 'remove', self.service_name],
         )
@@ -145,6 +151,8 @@ class NssmService():
         """
         Configures all the service parameters.
         """
+        if platform.system != 'Windows':
+            raise RuntimeError("NSSM service managment is Windows only.")
         assignments = {
             "Application":str(self.exe),
             "AppDirectory":str(self.cwd),
@@ -188,6 +196,8 @@ class NssmService():
         """
         Start the service.
         """
+        if platform.system != 'Windows':
+            raise RuntimeError("NSSM service managment is Windows only.")
 
         if self.config.redirect_io:
             stdout_dir = Path(self.config.stdout_file).parent
@@ -203,6 +213,8 @@ class NssmService():
         """
         Stop the service.
         """
+        if platform.system != 'Windows':
+            raise RuntimeError("NSSM service managment is Windows only.")
 
         subprocess.run(
             ['nssm', 'stop', self.service_name],
@@ -212,6 +224,8 @@ class NssmService():
         """
         Restart the service.
         """
+        if platform.system != 'Windows':
+            raise RuntimeError("NSSM service managment is Windows only.")
 
         subprocess.run(
             ['nssm', 'restart', self.service_name],
@@ -221,6 +235,8 @@ class NssmService():
         """
         Get service status.
         """
+        if platform.system != 'Windows':
+            raise RuntimeError("NSSM service managment is Windows only.")
 
         process = subprocess.run(
             ['nssm', 'status', self.service_name],

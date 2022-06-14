@@ -96,7 +96,7 @@ license server and a broker for most tasks.
     - Set `use_static_corpus` to `False`.
     - Set `server_host` to `<corpus-db-host`.
     - Set `server_port` to `<corpus-db-port>`.
-- See the [config file guide](../usage/configuration.md) for more detailed
+- See the [config file guide](../usage/config.md) for more detailed
   instructions and information.
 
 **Further details on using a static or database corpus can be found
@@ -114,7 +114,7 @@ in this [section](../usage/craidl.md)...**
   ```
 - Update the config at `<config-dir>/d2c_workspace.conf.yaml`:
     - Set `results_dir` to `<results-dir>`.
-- See the [config file guide](../usage/configuration.md) for more detailed
+- See the [config file guide](../usage/config.md) for more detailed
   instructions and information.
 
 **Further details on results storage and local worker node operations are
@@ -138,7 +138,7 @@ in [this page](../usage/workspaces.md)...**
 **For further details on workspace configuration, operation, and running analyses
 locally see [this page](../usage/workspaces.md)...**
 
-### Configure Worker Settings
+### Configure Broker Settings
 
 > The worker process itself needs to be configured with how to connect to a
 > message broker.
@@ -154,7 +154,7 @@ locally see [this page](../usage/workspaces.md)...**
     - Set `broker.host` to `<broker-ip>`.
     - Set `broker.port` to `<broker-port>`.
     - If using Redis, set `broker.db` to `<broker-db>`
-- See the [config file guide](../usage/configuration.md) for more detailed
+- See the [config file guide](../usage/config.md) for more detailed
   instructions and information.
 
 **Further details on configuring the worker's backend are
@@ -183,7 +183,7 @@ locally see [this page](../usage/workspaces.md)...**
   ```
 - Edit the config at `<config-dir>/d2c_worker.conf.yaml`:
     - Set `service.auto_start` to `True`
-- See the [config file guide](../usage/configuration.md) for more detailed
+- See the [config file guide](../usage/config.md) for more detailed
   instructions and information.
 
 **Further details on configuring the worker as a service are

@@ -10,6 +10,7 @@ from dramatiq.brokers.redis import RedisBroker
 from dramatiq.results import Results
 from dramatiq.results.backends import RedisBackend
 from dramatiq.actor import Actor
+from dramatiq.middleware import CurrentMessage
 
 import textwrap
 
@@ -40,6 +41,8 @@ def default_broker():
             schema=parsed.scheme,
         )
         raise err
+
+    broker.add_middleware(CurrentMessage())
 
     ### Setup Results Backend ###
 
@@ -87,4 +90,18 @@ def actor(fn=None,
         priority=priority,
         broker=_BROKER,
         **options,
+    )
+
+def message_metadata():
+    """
+    When called in a running actor provides a dictionary of metadata from the
+    message being processed.
+    """
+
+    msg = CurrentMessage.get_current_message()
+
+    return dict(
+        actor_name = msg.actor_name,
+        message_id = msg.message_id,
+        message_timestamp = msg.message_timestamp,
     )

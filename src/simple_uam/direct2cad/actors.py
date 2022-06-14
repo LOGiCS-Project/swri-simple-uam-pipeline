@@ -3,7 +3,7 @@ from simple_uam.workspace.session import Session, session_op
 from simple_uam.util.logging import get_logger
 from simple_uam.craidl.corpus import GremlinCorpus, StaticCorpus, get_corpus
 from simple_uam.craidl.info_files import DesignInfoFiles
-from simple_uam.worker import actor
+from simple_uam.worker import actor, message_metadata
 from attrs import define,field
 import json
 from pathlib import Path
@@ -22,8 +22,9 @@ def gen_info_files(design, metadata=None):
 
     if not metadata:
         metadata = dict()
+    metadata['message_info'] = message_metadata()
 
-    with D2CWorkspace(name="gen-info-files",metadata=metadata) as session:
+    with D2CWorkspace(name="gen_info_files",metadata=metadata) as session:
         session.write_design(design)
         session.gen_info_files(design)
 
@@ -40,8 +41,9 @@ def process_design(design, metadata=None):
 
     if not metadata:
         metadata = dict()
+    metadata['message_info'] = message_metadata()
 
-    with D2CWorkspace(name="process-design",metadata=metadata) as session:
+    with D2CWorkspace(name="process_design",metadata=metadata) as session:
         session.process_design(design)
 
     return session.metadata

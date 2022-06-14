@@ -74,7 +74,7 @@ be queried for various tasks.
 - *(Optional)* If serving the graph to other machines then update the
   `stub_server.host` config property.
     - Set `stub_server.host` to `0.0.0.0`.
-    - See the [config file guide](../usage/configuration.md) for more detailed
+    - See the [config file guide](../usage/config.md) for more detailed
       instructions and information.
 
 - Install and configure corpus DB:

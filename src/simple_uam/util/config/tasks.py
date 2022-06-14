@@ -98,7 +98,13 @@ def print_config(ctx, config, resolved=False, all=False):
 #    positional=["config"],
     iterable=["config"],
 )
-def write(ctx, config=None, mkdir=True, write_all=False, overwrite=False, comment=True):
+def write(ctx,
+          config=None,
+          mkdir=True,
+          write_all=False,
+          overwrite=False,
+          comment=True,
+          output=None):
     """
     Writes the current configuration out to file in the appropriate location.
 
@@ -113,6 +119,7 @@ def write(ctx, config=None, mkdir=True, write_all=False, overwrite=False, commen
         backups as needed)? Otherwise, skip existing config files.
       comment (default=True): Should the configs be written as a block comment?
         Otherwise, write the raw yaml directly.
+      output (default=None): The directory to write the output files to.
     """
 
     # Normalize arg for call
@@ -124,5 +131,6 @@ def write(ctx, config=None, mkdir=True, write_all=False, overwrite=False, commen
         mkdir=mkdir,
         write_all=write_all,
         overwrite=overwrite,
-        comment=comment
+        comment=comment,
+        out_dir=output,
     )
