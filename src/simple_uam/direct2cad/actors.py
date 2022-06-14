@@ -33,7 +33,7 @@ def gen_info_files(design, metadata=None):
 @actor
 def process_design(design, metadata=None):
     """
-    Processes a design on a worker node and saves the result into a record
+    Processes a design on a worker node and saves the result into a result
     archive on the worker. Returns metadata on the worker used and archive
     created.
     """

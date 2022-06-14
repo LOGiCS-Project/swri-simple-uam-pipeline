@@ -5,88 +5,128 @@ be queried for various tasks.
 
 ## **Option 1:** Running a Local Stub Server *(Recommended)*
 
-This is a local, minimal version of a corpus DB that uses
-[TinkerPop](https://tinkerpop.apache.org)'s reference graph db implementation.
-It is not persistent so no changes will be preserved between restarts.
+> This is a local, minimal version of a corpus DB that uses
+> [TinkerPop](https://tinkerpop.apache.org)'s reference graph db implementation.
+> It is not persistent so no changes will be preserved between restarts.
 
 ### Prerequisites
 
 - [General Setup](general.md) has been completed.
 - If not using the default corpus have the `.graphml` corpus ready at
   `<corpus-loc>`.
-- If using default corpus have SSH keys or credentials for
-  `git.isis.vanderbilt.edu`.
+- If using the default corpus have SSH keys or credentials for
+  `git.isis.vanderbilt.edu` set up.
 
 ### Install Dependencies
 
-Install utilities like wget and rsync.
+> Install utilities like wget and rsync.
 
-- Open an admin powershell to `<repo-root>`:
-    - Run: `pdm run setup-win install.graph-deps`
+- Open an admin powershell to `<repo-root>`.
+- Install dependencies:
+  ```bash
+  pdm run setup-win install.graph-deps
+  ```
 - Reboot the machine.
 
 ### Install GraphML Corpus
 
-**Option 1**: Download default from athens-uav-workflows
+> We need to install the GraphML corpus to a default location so future setup
+> steps can find it.
 
-- In admin powershell at `<repo-root>`.
-- Download athens-uav-workflows repo and get `all_schema_uam.graphml`
-    - Run: `pdm run craidl corpus.download`
-    - Follow prompts, enter git.isis.vanderbilt.edu credentials if needed.
-- Install corpus to default location.
-    - Run: `pdm run craidl corpus.install`
-    - Default parameters will use downloaded corpus.
+#### **Option 1**: Download default from athens-uav-workflows
 
-**Option 2**: Install from provided file
+- Open an admin powershell at `<repo-root>`.
+- Automatically download athens-uav-workflows repo and get
+  `all_schema_uam.graphml`:
+  ```bash
+  pdm run craidl corpus.download
+  ```
 
-- In admin powershell at `<repo-root>`.
-- Install user provided corpus from `<corpus-loc>`.
-    - Run: `pdm run craidl corpus.install --corpus=<corpus-loc>`
+- Follow prompts, entering in `git.isis.vanderbilt.edu` credentials if needed.
+- Install corpus to default location:
+  ```bash
+  pdm run craidl corpus.install
+  ```
 
-### Configure Corpus Server
+#### **Option 2**: Install corpus from user provided file
 
-- In admin powershell at `<repo-root>`.
-- Craidl settings file:
-    - Examine loaded config with `pdm run suam-config print --config=craidl -r`
-    - Server will use `stub_server.host` and `stub_server.port` by default.
-    - Change `stub_server.host` to `0.0.0.0` if you aren't just using this
-      DB locally.
-- Install and configure corpus DB
-    - Run: `pdm run craidl stub-server.configure`
-    - Will use configured host, port, and graphml corpus.
+- Open admin powershell to `<repo-root>`.
+- Place your corpus on the machine at `<corpus-loc>`.
+- Install user provided corpus from `<corpus-loc>`:
+  ```bash
+  pdm run craidl corpus.install --corpus=<corpus-loc>
+  ```
 
-### Open Required Ports
+### Configure Corpus DB Server
+
+> The config file at `<config-dir>/craidl.conf.yaml` stores information for
+> running SimpleUAM's stub corpus database.
+> Those settings are then used to configure the stub server.
+
+- Open admin powershell to `<repo-root>`.
+- *(Optional)* View currently loaded config file:
+  ```bash
+  pdm run suam-config print --config=craidl -r
+  ```
+  The fields under `stub_server.host` and `stub_server.port` determine how the
+  corpus is served.
+
+- *(Optional)* If serving the graph to other machines then update the
+  `stub_server.host` config property.
+    - Set `stub_server.host` to `0.0.0.0`.
+    - See the [config file guide](../usage/configuration.md) for more detailed
+      instructions and information.
+
+- Install and configure corpus DB:
+  ```bash
+  pdm run craidl stub-server.configure
+  ```
+  In the absence of any arguments this uses the configured host, port, and
+  graphml corpus from `<corpus-dir>/craid.conf.yaml`.
+
+### Open Required Ports *(Optional)*
+
+> Open the relevant ports up so that non-local worker nodes can
+> connect to the stub database.
+>
+> We do not recommend non-local connections to a stub corpus database.
 
 !!! Note
-    If you only intend to use the stub database with local workers and clients.
-    then you don't need to open ports up.
+    If you only intend to connect to a local worker node
+    then you don't need to open any ports up.
 
-Open the relevant ports up so workers can connect:
+#### **Option 1:** Open only port 8182.
 
-- Open up port `<corpus-db-port>` (default: 8182).
-    - Instructions will likely be setup specific.
-- **(Optional)** If on Windows Server 2019 you can disable the firewall completely.
+The instructions for this are too configuration specific for us to provide.
 
-    !!! warning
-        This is not secure at all. Do not do this if the license
-        server is at all accessible from public or untrusted computers.
+#### **Option 2:** Disable license server firewalls entirely.
 
-        Run: `pdm run setup-win license-server.disable-firewall`
+We can't provide general instructions for this step but if you're using
+Windows Server 2019 you can use one of our scripts.
 
-### Run Corpus Server
+!!! warning
+    This is not secure at all. Do not do this if the license
+    server is at all accessible from public or untrusted computers.
 
-- Once configured open admin powershell at `<repo-root>`.
-- Run the graph server as a process.
-    - Run: `pdm run craidl stub-server.run`
-    - Note that this isn't a service, the server will stop if you close the
-      terminal.
+- Disable the Windows Server 2019 firewall:
+  ```bash
+  pdm run setup-win license-server.disable-firewall
+  ```
+
+**Note:** This might work with other versions of Windows but that hasn't been
+tested.
 
 ### Preserve Settings
 
-If you're connecting from a different machine.
+> If you're connecting from a different machine.
 
 - Keep this machine's IP as: `<corpus-db-ip>`
 - Keep the database's open port as: `<corpus-db-port>` (default: 8182)
+
+### Next Steps
+
+**See the section on [using Craidl](../usage/Craidl) for information on
+how to run and use this server...**
 
 ## **Option 2:** Run a full corpus database.
 
@@ -95,7 +135,7 @@ alternate options, so this is up to you.
 
 ### Preserve Settings
 
-If you're connecting from a different machine.
+> If you're connecting from a different machine.
 
 - Keep this machine's IP as: `<corpus-db-ip>`
 - Keep the database's open port as: `<corpus-db-port>` (default: 8182)

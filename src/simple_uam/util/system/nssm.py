@@ -9,7 +9,9 @@ import textwrap
 import shutil
 from urllib.parse import urlparse
 import re
-from typing import Optional, Union
+import platform
+from attrs import define, field
+from typing import Optional, Union, List, Dict
 
 from .backup import archive_files
 from ..config.service_config import ServiceConfig
@@ -23,6 +25,13 @@ def _escape(self, arg):
     Escapes input string for arg.
     """
     return arg # Assuming popen takes care of this for us right now.
+
+def _exe_convert(val):
+    if Path(val).is_absolute():
+        pass
+    elif shutil.which(val):
+        val = shutil.which(val)
+    return Path(val)
 
 @define
 class NssmService():
@@ -44,23 +53,29 @@ class NssmService():
     config : ServiceConfig = field()
     """ The user modifiable configuration settings for the service. """
 
+    cwd : Path = field(
+        converter=[Path, Path.resolve],
+    )
+
+    """ The working dir when running the service. """
+
     exe : Path = field(
-        converter=[Path, Path.resolve, str, shutil.which, Path],
+        converter=_exe_convert,
     )
     """ The path to the app executable or the exe name. """
 
     @exe.validator
-    def _exe_valid(self, attr, val):
-        if not val:
-            raise RuntimeError("Could not find executable for service.")
+    def _exe_validator(self, attr, val):
+        if platform.system != 'Windows':
+            return
+        elif val.is_absolute() and val.exists():
+            pass
+        elif (cwd / val).exists():
+            pass
+        else:
+            raise RuntimeError(f"Could not find executable for {str(val)}")
 
-
-    cwd : Path = field(
-        converter=[Path, Path.resolve],
-    )
-    """ The working dir when running the service. """
-
-    args : Optional[str] = field(
+    args : Union[str,List[str],None] = field(
         default=None,
     )
     """

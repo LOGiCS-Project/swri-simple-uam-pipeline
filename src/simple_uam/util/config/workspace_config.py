@@ -3,14 +3,14 @@ from typing import List
 from pathlib import Path
 
 @define
-class RecordsConfig():
+class ResultsConfig():
     """
-    Dataclass for options concerning the generation of transaction records.
+    Dataclass for options concerning the generation of transaction results.
     """
 
     max_count : int = -1
     """
-    Number of transactio records to save, with the oldest deleted first.
+    Number of transactio results to save, with the oldest deleted first.
     Negative values mean transactions will never be deleted.
     Zero means that transactions won't be saved at all
     (and produced only lazily)
@@ -18,13 +18,13 @@ class RecordsConfig():
 
     min_staletime : int = 60 * 60 # 1hr in seconds
     """
-    Number of seconds to keep a transaction record after its last access.
-    Lots of non-stale records can lead to keeping more than max_count.
+    Number of seconds to keep a transaction result after its last access.
+    Lots of non-stale results can lead to keeping more than max_count.
     """
 
     metadata_file : str = "metadata.json"
     """
-    The file within each record that stores metadata.
+    The file within each result that stores metadata.
     """
 
     log_file : str = "log.json"
@@ -59,11 +59,11 @@ class WorkspaceConfig():
     locks_subdir : str = "workspace_locks"
     """ Subdir of workspaces_dir where the various lockfiles are kept. """
 
-    records_dir : str = "${workspaces_dir}/records"
-    """ Dir for cached transaction records. """
+    results_dir : str = "${workspaces_dir}/results"
+    """ Dir for cached transaction results. """
 
-    records : RecordsConfig = RecordsConfig()
-    """ Options concerning records. """
+    results : ResultsConfig = ResultsConfig()
+    """ Options concerning results. """
 
     max_workspaces : int = 4
     """ The maximum number of workspaces operating simultaneously """
@@ -76,9 +76,9 @@ class WorkspaceConfig():
     See rsync's '--exclude' argument for more info.
     """
 
-    record_exclude : List[str] = ['.git']
+    result_exclude : List[str] = ['.git']
     """
-    File patterns to not include in a session's record archive.
+    File patterns to not include in a session's result archive.
     Effectively specified relative to the current workspace dir, as such all
     patterns should be relative.
 
@@ -128,31 +128,31 @@ class WorkspaceConfig():
             return Path(self.workspaces_path / self.assets_subdir).resolve()
 
     @property
-    def records_path(self):
-        """ Absolute form of records directory. """
+    def results_path(self):
+        """ Absolute form of results directory. """
 
-        if Path(self.records_dir).is_absolute():
-            return Path(self.records_dir).resolve()
+        if Path(self.results_dir).is_absolute():
+            return Path(self.results_dir).resolve()
         else:
-            return Path(self.workspaces_path / self.records_dir).resolve()
+            return Path(self.workspaces_path / self.results_dir).resolve()
 
     @property
-    def records_lockdir(self):
+    def results_lockdir(self):
         """
         The lockfile for the reference directory.
 
-        Unlike the other lockfiles this is kept in the records directory.
-        This allows multiple computers to share a records dir by,
+        Unlike the other lockfiles this is kept in the results directory.
+        This allows multiple computers to share a results dir by,
         for instance, keeping it on a shared drive.
         """
 
-        return self.records_path / 'locks'
+        return self.results_path / 'locks'
 
     @property
-    def records_lockfile(self):
+    def results_lockfile(self):
         """ The lockfile for the reference directory. """
 
-        return self.records_lockdir / "records.lock"
+        return self.results_lockdir / "results.lock"
 
     def validate_workspace_subdir_num(self, num : int):
         """ Validate whether a particular worker subdir can exist. """
@@ -228,7 +228,7 @@ class WorkspaceConfig():
         return paths
 
     @property
-    def record_exclude_from_paths(self):
+    def result_exclude_from_paths(self):
         """
         self.exclude_from with all absolute Paths.
         """

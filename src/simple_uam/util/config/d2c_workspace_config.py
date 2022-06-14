@@ -4,7 +4,7 @@ from .manager import Config
 from .path_config import PathConfig
 from .craidl_config import CraidlConfig
 from typing import List
-from .workspace_config import RecordsConfig, WorkspaceConfig
+from .workspace_config import ResultsConfig, WorkspaceConfig
 
 @define
 class D2CWorkspaceConfig(WorkspaceConfig):
@@ -13,8 +13,8 @@ class D2CWorkspaceConfig(WorkspaceConfig):
     As described here: https://omegaconf.readthedocs.io/en/2.1_branch/structured_config.html
 
     Most defaults are set in WorkspaceConfig but they can be overridden here.
-    Likewise for RecordsConfig, just inherit from that class and set the
-    default for `records` to your new class.
+    Likewise for ResultsConfig, just inherit from that class and set the
+    default for `results` to your new class.
     """
 
     workspaces_dir : str = field(
@@ -35,9 +35,9 @@ class D2CWorkspaceConfig(WorkspaceConfig):
 
     exclude_from : List[str] = []
 
-    record_exclude : List[str] = ['.git']
+    result_exclude : List[str] = ['.git']
 
-    record_exclude_from : List[str] = []
+    result_exclude_from : List[str] = []
 
     # craidl : CraidlConfig = field(
     #     default=SI("${craidl:}")

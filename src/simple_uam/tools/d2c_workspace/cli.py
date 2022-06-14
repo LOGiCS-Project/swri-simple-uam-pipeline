@@ -14,7 +14,7 @@
 from typing import List, Optional
 from simple_uam.util.invoke import Collection, InvokeProg, task
 from simple_uam.util.logging import get_logger
-from . import worker, service
+from . import tasks, env, manage
 
 log = get_logger(__name__)
 
@@ -30,10 +30,29 @@ def main(args: Optional[List[str]] = None) -> int:
     Returns:
         An exit code.
     """
+    setup_ns = Collection()
+    setup_ns.add_task(env.mkdirs, "dirs")
+    setup_ns.add_task(env.creoson_server, "creoson_server")
+    setup_ns.add_task(env.direct2cad, "uam_direct2cad")
+    setup_ns.add_task(env.setup_reference, "reference_workspace")
 
-    namespace = Collection()
-    namespace.add_task(worker.run, 'run')
-    namespace.add_collection(service, 'service')
+    manage_ns = Collection()
+    manage_ns.add_task(manage.delete_locks, "delete_locks")
+    manage_ns.add_task(manage.prune_results, "prune_results")
+    manage_ns.add_task(manage.workspaces_dir, "workspaces_dir")
+    manage_ns.add_task(manage.cache_dir, "cache_dir")
+    manage_ns.add_task(manage.results_dir, "results_dir")
+
+    tasks_ns = Collection()
+    tasks_ns.add_task(tasks.start_creo, "start_creo")
+    tasks_ns.add_task(tasks.gen_info_files, "gen_info_files")
+    tasks_ns.add_task(tasks.process_design, "process_design")
+
+    namespace = Collection(
+    )
+    namespace.add_collection(setup_ns, 'setup')
+    namespace.add_collection(manage_ns, 'manage')
+    namespace.add_collection(tasks_ns, 'tasks')
 
     # Setup the invoke program runner class
     program = InvokeProg(

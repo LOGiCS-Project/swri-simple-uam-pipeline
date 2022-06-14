@@ -197,8 +197,8 @@ pdm run suam-config print --all
     reference_subdir: reference_workspace
     assets_subdir: assets
     locks_subdir: workspace_locks
-    records_dir: ${workspaces_dir}/records
-    records:
+    results_dir: ${workspaces_dir}/results
+    results:
       max_count: -1
       min_staletime: 3600
       metadata_file: metadata.json
@@ -209,9 +209,9 @@ pdm run suam-config print --all
     exclude:
     - .git
     exclude_from: []
-    record_exclude:
+    result_exclude:
     - .git
-    record_exclude_from: []
+    result_exclude_from: []
 
     ### d2c_worker.conf.yaml ###
 
@@ -294,8 +294,8 @@ resolved, add the `--resolved` flag.
     reference_subdir: reference_workspace
     assets_subdir: assets
     locks_subdir: workspace_locks
-    records_dir: /usr/share/budgie-desktop/SimpleUAM/d2c_workspaces/records
-    records:
+    results_dir: /usr/share/budgie-desktop/SimpleUAM/d2c_workspaces/results
+    results:
       max_count: -1
       min_staletime: 3600
       metadata_file: metadata.json
@@ -306,9 +306,9 @@ resolved, add the `--resolved` flag.
     exclude:
     - .git
     exclude_from: []
-    record_exclude:
+    result_exclude:
     - .git
-    record_exclude_from: []
+    result_exclude_from: []
 
     ### d2c_worker.conf.yaml ###
 
@@ -338,6 +338,59 @@ the appropriate locations. Run the following for more info:
 pdm run suam-config write --help
 ```
 
+Config files can be partial and do not need to define every possible key.
+Keys that are missing will just use their default values.
+
+??? example "Overriding Configuration Fields."
+    Consider the following defaults for `example.conf.yaml`:
+    ```yaml
+    ### example.conf.yaml defaults ###
+    subsection:
+        subfield-1: 'default'
+        subfield-2: 'default'
+    field-1: 'default'
+    field-2: 'default'
+    ```
+    With the following `example.conf.yaml` actually on disk:
+    ```yaml
+    ### example.conf.yaml defaults ###
+    subsection:
+        subfield-2: 'modified'
+    field-1: 'modifed'
+    ```
+    The final loaded values for `example.conf.yaml` as seen by the application
+    would be:
+    ```yaml
+    ### example.conf.yaml defaults ###
+    subsection:
+        subfield-1: 'default'
+        subfield-2: 'modified'
+    field-1: 'modified'
+    field-2: 'default'
+    ```
+
+When describing keys in a config file, we'll use dot notation.
+
+??? example "Config File Dot Notation"
+    Consider the following config file:
+    ```yaml
+    subsection:
+        subfield-1: 'sub-1'
+        subfield-2: 'sub-2'
+    field-1: 'fld-1'
+    field-2: 'fld-2'
+    ```
+    Then `field-1` would have value `'fld-1'` and `subsection.subfield-1` would
+    have value `'sub-1'`
+
+    Likewise, setting `foo` to `3` and `bar.buzz` to `4` would leave you
+    with the following file:
+    ```yaml
+    foo: 3
+    bar:
+        buzz: 4
+    ```
+
 **Further details are [here](../usage/config.md)...**
 
 ## Placeholder Conventions
@@ -350,7 +403,6 @@ information.
 We recommend keeping a file open for this.
 
 ??? example "Placeholder file from partway through AWS setup."
-
     ```yaml
     aws-vpc: suam-project1
     aws-vpc-id: vpc-0c2ca2caaf403057f

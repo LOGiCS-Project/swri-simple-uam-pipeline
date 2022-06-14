@@ -86,8 +86,8 @@ def gen_info_files(ctx,
 
     if not Config[D2CWorkerConfig].backend.enabled:
         log.warning(
-            "No result backend provided. Please examine the records archives "\
-            "for the generated results.")
+            "No result backend provided. Please examine the result archive "\
+            "directory for the generated results.")
         return None
 
     log.info(
@@ -117,7 +117,7 @@ def process_design(ctx,
                    output=None):
     """
     Runs the direct2cad pipeline on the input design files, producing output
-    metadata and a records archive with all the generated files.
+    metadata and a result archive with all the generated files.
 
     Arguments:
       input: The design file to read in.
@@ -178,8 +178,8 @@ def process_design(ctx,
 
     if not Config[D2CWorkerConfig].backend.enabled:
         log.warning(
-            "No result backend provided. Please examine the records archives "\
-            "for the generated results.")
+            "No result backend provided. Please examine the result archive "\
+            "directory for the generated results.")
         return None
 
     log.info(

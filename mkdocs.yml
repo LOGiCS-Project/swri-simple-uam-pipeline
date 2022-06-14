@@ -19,6 +19,7 @@ nav:
       - Corpus Database: setup/graph.md
       - Static Corpus: setup/corpus.md
       - Worker Node: setup/worker.md
+      - Client Node: setup/client.md
     - Usage:
       - Configuration: usage/config.md
       - Craidl: usage/craidl.md

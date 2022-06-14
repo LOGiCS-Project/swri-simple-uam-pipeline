@@ -21,7 +21,7 @@ manager = D2CManager()
 @task
 def delete_locks(ctx,
                  skip_reference=False,
-                 skip_records=False):
+                 skip_results=False):
     """
     Forcefully deletes all the locks for direct2cad workspaces.
     Only use this when no workspaces are operational, otherwise sessions in a
@@ -29,20 +29,20 @@ def delete_locks(ctx,
 
     Arguments:
         skip_reference: If true, skip deleting the reference lockfile.
-        skip_records: If true, skip deleting the records lock.
+        skip_results: If true, skip deleting the results lock.
     """
 
     manager.delete_locks(
         skip_reference=skip_reference,
-        skip_records=skip_records,
+        skip_results=skip_results,
     )
 
 @task
-def prune_records(ctx):
+def prune_results(ctx):
     """
-    Deletes the oldest files in the records dir if there are too many.
+    Deletes the oldest files in the results dir if there are too many.
     """
-    manager.prune_records()
+    manager.prune_results()
 
 @task
 def workspaces_dir(ctx):
@@ -61,9 +61,9 @@ def cache_dir(ctx):
     print(str(Path(manager.config.cache_dir)))
 
 @task
-def records_dir(ctx):
+def results_dir(ctx):
     """
-    Prints the directory where session records are kept.
+    Prints the directory where session results are kept.
     """
 
-    print(str(manager.config.records_path))
+    print(str(manager.config.results_path))

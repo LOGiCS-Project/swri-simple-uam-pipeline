@@ -50,7 +50,7 @@ class Workspace():
     )
     """
     The metadata for this session, will be stored in metadata.json in the
-    record archive.
+    result archive.
 
     Can be set at init, or modified before session start. Changes to this
     persist between sessions.
@@ -110,8 +110,8 @@ class Workspace():
         init=False,
     )
     """
-    The temporary directory the record archive is written to before it's
-    moved into the records directory.
+    The temporary directory the result archive is written to before it's
+    moved into the results directory.
     """
 
     def start(self) -> Session:
@@ -148,7 +148,7 @@ class Workspace():
             self.active_workspace = lock_tuple[0]
             self.active_lock = lock_tuple[1]
 
-            # create temp_dir & temp_records dir name
+            # create temp_dir & temp_results dir name
             self.active_temp_dir = tempfile.TemporaryDirectory()
             uniq_str = ''.join(random.choices(
                 string.ascii_lowercase + string.digits, k=10))
@@ -163,11 +163,11 @@ class Workspace():
                 number=self.active_workspace,
                 work_dir=self.config.workspace_path(self.active_workspace),
                 init_exclude_patterns=self.config.exclude,
-                record_exclude_patterns=self.config.record_exclude,
+                result_exclude_patterns=self.config.result_exclude,
                 result_archive=temp_archive,
                 metadata=metadata,
                 name=self.name,
-                metadata_file=Path(self.config.records.metadata_file),
+                metadata_file=Path(self.config.results.metadata_file),
             )
             self.active_session.reset_workspace(
                 progress=True,
@@ -199,14 +199,14 @@ class Workspace():
             raise RuntimeError("Trying to finish session without an active session.")
         try:
 
-            if self.config.records.max_count != 0:
+            if self.config.results.max_count != 0:
 
-                # Generate the records archive
+                # Generate the results archive
                 self.active_session.write_metadata()
-                self.active_session.generate_record_archive()
+                self.active_session.generate_result_archive()
 
-                # Move it to the manager's records directory
-                self.active_session.result_archive = self.manager.add_record(
+                # Move it to the manager's results directory
+                self.active_session.result_archive = self.manager.add_result(
                     archive=self.active_session.result_archive,
                     prefix=self.name,
                     copy=False,

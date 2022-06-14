@@ -2,7 +2,7 @@ from attrs import define, field
 from omegaconf import SI
 from .manager import Config
 from .path_config import PathConfig
-from .workspace_config import RecordsConfig, WorkspaceConfig
+from .workspace_config import ResultsConfig, WorkspaceConfig
 from .service_config import ServiceConfig
 from typing import Optional
 

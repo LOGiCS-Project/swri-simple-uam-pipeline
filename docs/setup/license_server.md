@@ -7,63 +7,92 @@ However if you need to access the VM through RDP a floating license is required.
 ### Prerequisites
 
 - [General Setup](general.md) has been completed.
-- You must be okay using [chocolatey](https://chocolatey.org/) as your package
-  manager.
 - The IP of this machine is saved as: `<license-server-ip>`
 
 ### Get License File
 
-Get the host-id and license file.
+> Get the Host ID and License File.
 
-- Open an admin powershell to `<repo-root>`:
-    - Run: `pdm run setup-win mac-address`
-    - The result is the `<host-id>` for your license.
-- Get the Creo floating license for `<host-id>`.
-    - Place the license file somewhere accessible on the machine.
+- Open an admin powershell to `<repo-root>`.
+- Get the Host ID / mac address for this machine:
+  ```bash
+  pdm run setup-win mac-address
+  ```
+- Save the result as `<license-host-id>`.
+- Get the Creo floating license for `<license-host-id>`.
+- Place the license file at `<license-file>`, somewhere on this machine.
 
 ### Install Dependencies
 
-Install utilities like wget and rsync.
+> Install utilities like wget and rsync.
 
-- Open an admin powershell to `<repo-root>`:
-    - Run: `pdm run setup-win install.license-deps`
+- Open an admin powershell to `<repo-root>`.
+- Install necessary dependencies:
+  ```bash
+  pdm run setup-win install.license-deps
+  ```
 
 ### Install Flexnet Server
 
-Install license server software.
+> Flexnet server is one of the options for hosting the license server and has
+> been reasonably easy to use.
 
-- Open an admin powershell to `<repo-root>`:
-    - Run: `pdm run setup-win license-server.flexnet`
+- Open an admin powershell to `<repo-root>`.
+- Download and run the installer:
+  ```bash
+  pdm run setup-win license-server.flexnet
+  ```
+
 - Wait for installer to download and hit enter when prompted.
-- Follow install prompts until done.
+- Follow GUI installer's prompts until done, including providing `<license-file>`
+  when asked for it.
 
 ### Open Required Ports
 
+> Open the relevant ports up so instances of Creo on the worker nodes can
+> connect.
+
 !!! Note
-    If you only intend to use Creo locally with a license server
-    then you don't need to open ports up.
+    If you only intend to use Creo locally, on the same machine as the license
+    server then you don't need to open any ports up.
 
-Open the relevant ports up so workers can connect:
+#### **Option 1:** Open only port 7788.
 
-- Open up port 7788 (or whatever port the server is configured to use).
-    - Instructions will likely be setup specific.
-- **(Optional)** If on Windows Server 2019 you can disable the firewall completely.
+The instructions for this are too configuration specific for us to provide.
 
-    !!! warning
-        This is not secure at all. Do not do this if the license
-        server is at all accessible from public or untrusted computers.
+#### **Option 2:** Disable license server firewalls entirely.
 
-        Run: `pdm run setup-win license-server.disable-firewall`
+We can't provide general instructions for this step but if you're using
+Windows Server 2019 you can use one of our scripts.
 
-### Configure Server
+!!! warning
+    This is not secure at all. Do not do this if the license
+    server is at all accessible from public or untrusted computers.
 
-- Open: Start Menu -> PTC -> Flexnet Admin Web Interface
-    - Open the administration page:
-        - **Default User:** admin
-        - **Default Pass:** admin
-    - Change the password:
-        - **Old Pass:** admin
-        - **New Pass:** `<flexnet-password>`
-    - Click: Administration -> Server Configuration -> Start Server
+- Disable the Windows Server 2019 firewall:
+  ```bash
+  pdm run setup-win license-server.disable-firewall
+  ```
 
-The server should automatically start on boot.
+**Note:** This might work with other versions of Windows but that hasn't been
+tested.
+
+### Configure and Start Server
+
+> Configure the server with a new admin password and start it.
+
+- Open the web interface:
+    - Start Menu -> PTC -> Flexnet Admin Web Interface
+
+- Open the administration page:
+    - **Default User:** admin
+    - **Default Pass:** admin
+
+- Change the password:
+    - **Old Pass:** admin
+    - **New Pass:** `<flexnet-password>`
+
+- Start the server:
+    - Administration -> Server Configuration -> Start Server
+
+The server should now automatically start on boot.
