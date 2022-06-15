@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#general-node-setup" class="md-skip">
+        <a href="#general-machine-setup" class="md-skip">
           Skip to content
         </a>
       
@@ -444,6 +444,13 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    Prerequisites
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#install-chocolatey-and-minimal-deps" class="md-nav__link">
     Install Chocolatey and Minimal Deps
   </a>
@@ -451,9 +458,29 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#get-this-repo" class="md-nav__link">
-    Get This Repo
+  <a href="#download-simpleuam" class="md-nav__link">
+    Download SimpleUAM
   </a>
+  
+    <nav class="md-nav" aria-label="Download SimpleUAM">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#option-1-clone-from-github-http" class="md-nav__link">
+    Option 1: Clone from Github (HTTP):
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-2-clone-from-github-ssh" class="md-nav__link">
+    Option 2: Clone from Github (SSH):
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -465,8 +492,29 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#optional-install-quality-of-life-packages" class="md-nav__link">
-    (Optional) Install Quality of Life Packages
+  <a href="#get-configuration-directory" class="md-nav__link">
+    Get Configuration Directory
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#install-quality-of-life-packages-optional" class="md-nav__link">
+    Install Quality of Life Packages (Optional)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#setup-file-sharing-optional" class="md-nav__link">
+    Setup File Sharing (Optional)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#install-ssh-keys-for-gitisisvanderbiltedu-optional" class="md-nav__link">
+    Install SSH keys for git.isis.vanderbilt.edu (Optional)
   </a>
   
 </li>
@@ -522,7 +570,21 @@
   
     <li class="md-nav__item">
       <a href="../graph/" class="md-nav__link">
-        Graph Server
+        Corpus Database
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../corpus/" class="md-nav__link">
+        Static Corpus
       </a>
     </li>
   
@@ -537,6 +599,20 @@
     <li class="md-nav__item">
       <a href="../worker/" class="md-nav__link">
         Worker Node
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../client/" class="md-nav__link">
+        Client Node
       </a>
     </li>
   
@@ -626,6 +702,20 @@
     <li class="md-nav__item">
       <a href="../../usage/workers/" class="md-nav__link">
         Workers
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usage/clients/" class="md-nav__link">
+        Clients
       </a>
     </li>
   
@@ -1159,7 +1249,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../reference/simple_uam/tools/d2c_worker/">d2c_worker</a>
+          <a href="../../reference/simple_uam/tools/d2c_client/">d2c_client</a>
           
             <label for="__nav_2_1_3_3">
               <span class="md-nav__icon md-icon"></span>
@@ -1167,10 +1257,10 @@
           
         </div>
       
-      <nav class="md-nav" aria-label="d2c_worker" data-md-level="4">
+      <nav class="md-nav" aria-label="d2c_client" data-md-level="4">
         <label class="md-nav__title" for="__nav_2_1_3_3">
           <span class="md-nav__icon md-icon"></span>
-          d2c_worker
+          d2c_client
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -1180,7 +1270,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/simple_uam/tools/d2c_worker/cli/" class="md-nav__link">
+      <a href="../../reference/simple_uam/tools/d2c_client/cli/" class="md-nav__link">
         cli
       </a>
     </li>
@@ -1194,7 +1284,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/simple_uam/tools/d2c_worker/tasks/" class="md-nav__link">
+      <a href="../../reference/simple_uam/tools/d2c_client/tasks/" class="md-nav__link">
         tasks
       </a>
     </li>
@@ -1226,7 +1316,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../reference/simple_uam/tools/d2c_workspace/">d2c_workspace</a>
+          <a href="../../reference/simple_uam/tools/d2c_worker/">d2c_worker</a>
           
             <label for="__nav_2_1_3_4">
               <span class="md-nav__icon md-icon"></span>
@@ -1234,8 +1324,89 @@
           
         </div>
       
-      <nav class="md-nav" aria-label="d2c_workspace" data-md-level="4">
+      <nav class="md-nav" aria-label="d2c_worker" data-md-level="4">
         <label class="md-nav__title" for="__nav_2_1_3_4">
+          <span class="md-nav__icon md-icon"></span>
+          d2c_worker
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/simple_uam/tools/d2c_worker/cli/" class="md-nav__link">
+        cli
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/simple_uam/tools/d2c_worker/service/" class="md-nav__link">
+        service
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/simple_uam/tools/d2c_worker/worker/" class="md-nav__link">
+        worker
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1_3_5" type="checkbox" id="__nav_2_1_3_5" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../reference/simple_uam/tools/d2c_workspace/">d2c_workspace</a>
+          
+            <label for="__nav_2_1_3_5">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="d2c_workspace" data-md-level="4">
+        <label class="md-nav__title" for="__nav_2_1_3_5">
           <span class="md-nav__icon md-icon"></span>
           d2c_workspace
         </label>
@@ -1313,7 +1484,7 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1_3_5" type="checkbox" id="__nav_2_1_3_5" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1_3_6" type="checkbox" id="__nav_2_1_3_6" >
       
       
       
@@ -1323,14 +1494,14 @@
         <div class="md-nav__link md-nav__link--index ">
           <a href="../../reference/simple_uam/tools/dev_util/">dev_util</a>
           
-            <label for="__nav_2_1_3_5">
+            <label for="__nav_2_1_3_6">
               <span class="md-nav__icon md-icon"></span>
             </label>
           
         </div>
       
       <nav class="md-nav" aria-label="dev_util" data-md-level="4">
-        <label class="md-nav__title" for="__nav_2_1_3_5">
+        <label class="md-nav__title" for="__nav_2_1_3_6">
           <span class="md-nav__icon md-icon"></span>
           dev_util
         </label>
@@ -1380,7 +1551,7 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1_3_6" type="checkbox" id="__nav_2_1_3_6" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1_3_7" type="checkbox" id="__nav_2_1_3_7" >
       
       
       
@@ -1390,14 +1561,14 @@
         <div class="md-nav__link md-nav__link--index ">
           <a href="../../reference/simple_uam/tools/setup_lin/">setup_lin</a>
           
-            <label for="__nav_2_1_3_6">
+            <label for="__nav_2_1_3_7">
               <span class="md-nav__icon md-icon"></span>
             </label>
           
         </div>
       
       <nav class="md-nav" aria-label="setup_lin" data-md-level="4">
-        <label class="md-nav__title" for="__nav_2_1_3_6">
+        <label class="md-nav__title" for="__nav_2_1_3_7">
           <span class="md-nav__icon md-icon"></span>
           setup_lin
         </label>
@@ -1475,7 +1646,7 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1_3_7" type="checkbox" id="__nav_2_1_3_7" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1_3_8" type="checkbox" id="__nav_2_1_3_8" >
       
       
       
@@ -1485,14 +1656,14 @@
         <div class="md-nav__link md-nav__link--index ">
           <a href="../../reference/simple_uam/tools/setup_win/">setup_win</a>
           
-            <label for="__nav_2_1_3_7">
+            <label for="__nav_2_1_3_8">
               <span class="md-nav__icon md-icon"></span>
             </label>
           
         </div>
       
       <nav class="md-nav" aria-label="setup_win" data-md-level="4">
-        <label class="md-nav__title" for="__nav_2_1_3_7">
+        <label class="md-nav__title" for="__nav_2_1_3_8">
           <span class="md-nav__icon md-icon"></span>
           setup_win
         </label>
@@ -1778,6 +1949,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../../reference/simple_uam/util/config/service_config/" class="md-nav__link">
+        service_config
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../reference/simple_uam/util/config/tasks/" class="md-nav__link">
         tasks
       </a>
@@ -1981,6 +2166,20 @@
     <li class="md-nav__item">
       <a href="../../reference/simple_uam/util/system/git/" class="md-nav__link">
         git
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/simple_uam/util/system/nssm/" class="md-nav__link">
+        nssm
       </a>
     </li>
   
@@ -2246,6 +2445,13 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    Prerequisites
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#install-chocolatey-and-minimal-deps" class="md-nav__link">
     Install Chocolatey and Minimal Deps
   </a>
@@ -2253,9 +2459,29 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#get-this-repo" class="md-nav__link">
-    Get This Repo
+  <a href="#download-simpleuam" class="md-nav__link">
+    Download SimpleUAM
   </a>
+  
+    <nav class="md-nav" aria-label="Download SimpleUAM">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#option-1-clone-from-github-http" class="md-nav__link">
+    Option 1: Clone from Github (HTTP):
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-2-clone-from-github-ssh" class="md-nav__link">
+    Option 2: Clone from Github (SSH):
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -2267,8 +2493,29 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#optional-install-quality-of-life-packages" class="md-nav__link">
-    (Optional) Install Quality of Life Packages
+  <a href="#get-configuration-directory" class="md-nav__link">
+    Get Configuration Directory
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#install-quality-of-life-packages-optional" class="md-nav__link">
+    Install Quality of Life Packages (Optional)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#setup-file-sharing-optional" class="md-nav__link">
+    Setup File Sharing (Optional)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#install-ssh-keys-for-gitisisvanderbiltedu-optional" class="md-nav__link">
+    Install SSH keys for git.isis.vanderbilt.edu (Optional)
   </a>
   
 </li>
@@ -2298,59 +2545,109 @@
 
 
 
-<h1 id="general-node-setup">General Node Setup<a class="headerlink" href="#general-node-setup" title="Permanent link">&para;</a></h1>
-<p>This is setup that needs to be done for multiple types of nodes.</p>
+<h1 id="general-machine-setup">General Machine Setup<a class="headerlink" href="#general-machine-setup" title="Permanent link">&para;</a></h1>
+<p>This is setup that needs to be done for multiple types of machines.</p>
+<h3 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h3>
 <ul>
-<li>Windows only</li>
-<li>uses choco (mandatory!)</li>
-<li>setup env</li>
-</ul>
-<h3 id="install-chocolatey-and-minimal-deps">Install Chocolatey and Minimal Deps<a class="headerlink" href="#install-chocolatey-and-minimal-deps" title="Permanent link">&para;</a></h3>
-<p>This downloads a minimal install script for chocolatey, git, and python.
-This step is idempotent and will just do nothing if these are all installed.</p>
-<ul>
-<li>Open admin powershell and run:<ul>
-<li><code>iwr -Uri https://raw.githubusercontent.com/LOGiCS-Project/swri-simple-uam-pipeline/main/data/setup/bootstrap_win.ps1 | iex</code></li>
+<li>This machine must be running Windows.<ul>
+<li>If you're using a Linux machine skip to the setup page of whatever
+  component type it's meant to host.</li>
 </ul>
 </li>
-<li>Close this powershell terminal and open new ones for future steps.</li>
+<li>You must be okay using <a href="https://chocolatey.org/">chocolatey</a> as your package
+  manager.</li>
 </ul>
-<h3 id="get-this-repo">Get This Repo<a class="headerlink" href="#get-this-repo" title="Permanent link">&para;</a></h3>
+<h3 id="install-chocolatey-and-minimal-deps">Install Chocolatey and Minimal Deps<a class="headerlink" href="#install-chocolatey-and-minimal-deps" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>This downloads a minimal install script for chocolatey, git, and python.
+This step is idempotent and will just do nothing if these are all installed.</p>
+</blockquote>
+<ul>
+<li>
+<p>Open admin powershell and run:
+  <div class="highlight"><pre><span></span><code>iwr -Uri https://raw.githubusercontent.com/LOGiCS-Project/swri-simple-uam-pipeline/main/data/setup/bootstrap_win.ps1 <span class="p">|</span> iex
+</code></pre></div></p>
+</li>
+<li>
+<p>Close this powershell terminal and open new ones for future steps.</p>
+</li>
+</ul>
+<h3 id="download-simpleuam">Download SimpleUAM<a class="headerlink" href="#download-simpleuam" title="Permanent link">&para;</a></h3>
+<blockquote>
 <p>Get this repo onto the machine somehow, cloning is the default method.
 If you have a shared drive, placing the repo there will allow local development
 without constant pushing and pulling.</p>
+</blockquote>
 <ul>
-<li><strong>Option 1:</strong> Clone from Github (HTTP):<ul>
-<li><code>git clone https://github.com/LOGiCS-Project/swri-simple-uam-pipeline.git</code></li>
+<li>Save the repo's final location as <code>&lt;repo-root&gt;</code>.</li>
 </ul>
-</li>
-<li><strong>Option 2:</strong> Clone from Github (SSH):<ul>
-<li><code>git clone git@github.com:LOGiCS-Project/swri-simple-uam-pipeline.git</code></li>
-</ul>
-</li>
-</ul>
-<p>From here <code>&lt;repo-root&gt;</code> will refer to the repo's location.</p>
+<h4 id="option-1-clone-from-github-http"><strong>Option 1:</strong> Clone from Github (HTTP):<a class="headerlink" href="#option-1-clone-from-github-http" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>git clone https://github.com/LOGiCS-Project/swri-simple-uam-pipeline.git &lt;repo-root&gt;
+</code></pre></div>
+<h4 id="option-2-clone-from-github-ssh"><strong>Option 2:</strong> Clone from Github (SSH):<a class="headerlink" href="#option-2-clone-from-github-ssh" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>git clone git@github.com:LOGiCS-Project/swri-simple-uam-pipeline.git &lt;repo-root&gt;
+</code></pre></div>
 <h3 id="initialize-setup-package">Initialize Setup Package<a class="headerlink" href="#initialize-setup-package" title="Permanent link">&para;</a></h3>
+<blockquote>
 <p>Initialize pdm and packages for worker setup.</p>
+</blockquote>
 <ul>
-<li>Navigate an admin powershell to <code>&lt;repo_root&gt;</code></li>
-<li>Setup sub-package pdm environment:<ul>
-<li>Run: <code>pdm install -d</code></li>
+<li>Navigate an admin powershell to <code>&lt;repo_root&gt;</code>.</li>
+<li>Setup PDM environment for this repo:
+  <div class="highlight"><pre><span></span><code>pdm install -d
+</code></pre></div></li>
+<li>Test whether setup script was installed:
+  <div class="highlight"><pre><span></span><code>pdm run setup-win --help
+</code></pre></div>
+  Result should be a help message showing all of <code>setup-win</code>'s flags and
+  subcommands.</li>
 </ul>
+<h3 id="get-configuration-directory">Get Configuration Directory<a class="headerlink" href="#get-configuration-directory" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>The configuration directory holds <code>*.conf.yaml</code> files that determine how
+many aspects of a running SimpleUAM system operate.</p>
+</blockquote>
+<ul>
+<li>Navigate an admin powershell to <code>&lt;repo_root&gt;</code>.</li>
+<li>
+<p>Print config directory:
+  <div class="highlight"><pre><span></span><code>pdm run suam-config dir
+</code></pre></div></p>
 </li>
-<li>Test whether setup script was installed:<ul>
-<li>Run: <code>pdm run setup-win --help</code></li>
-</ul>
+<li>
+<p>Save result as <code>&lt;config-dir&gt;</code>.</p>
 </li>
 </ul>
-<h3 id="optional-install-quality-of-life-packages"><em>(Optional)</em> Install Quality of Life Packages<a class="headerlink" href="#optional-install-quality-of-life-packages" title="Permanent link">&para;</a></h3>
+<h3 id="install-quality-of-life-packages-optional">Install Quality of Life Packages <em>(Optional)</em><a class="headerlink" href="#install-quality-of-life-packages-optional" title="Permanent link">&para;</a></h3>
+<blockquote>
 <p>This installs Firefox, Notepad++, Tess, and other applications that make working
 on a new windows install more bearable.</p>
+</blockquote>
 <ul>
-<li>Navigate an admin powershell to <code>&lt;repo_root&gt;</code><ul>
-<li>Run: <code>pdm run setup-win install.qol-deps</code></li>
+<li>Navigate an admin powershell to <code>&lt;repo_root&gt;</code>.</li>
+<li>Install the packages:
+  <div class="highlight"><pre><span></span><code>pdm run setup-win install.qol-deps
+</code></pre></div></li>
 </ul>
-</li>
+<h3 id="setup-file-sharing-optional">Setup File Sharing <em>(Optional)</em><a class="headerlink" href="#setup-file-sharing-optional" title="Permanent link">&para;</a></h3>
+<p>If you intend to share files (e.g. results) between workers and clients then
+set that up now, if you haven't done so already.</p>
+<p>If using AWS the instructions for the FSx file share take care of this.</p>
+<p>Otherwise shared directory and file server configurations are too varied for us
+to provide precise instructions.
+The only real requirement is that worker nodes see the shared file storage as
+a normal directory.</p>
+<ul>
+<li>Save the shared results directory as <code>&lt;results-dir&gt;</code>.</li>
+</ul>
+<h3 id="install-ssh-keys-for-gitisisvanderbiltedu-optional">Install SSH keys for <code>git.isis.vanderbilt.edu</code> <em>(Optional)</em><a class="headerlink" href="#install-ssh-keys-for-gitisisvanderbiltedu-optional" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>SSH access to Isis, while not strictly necessary, will make future install
+steps easier and more secure.</p>
+</blockquote>
+<ul>
+<li>Follow the instructions <a href="https://docs.gitlab.com/ee/user/ssh.html">here</a> to
+  set up ssh key based access to the isis server.</li>
 </ul>
 <h3 id="further-setup">Further Setup<a class="headerlink" href="#further-setup" title="Permanent link">&para;</a></h3>
 <p>Once this setup is complete you can continue to one or more of the following
@@ -2358,7 +2655,8 @@ steps.
 All of the following nodes can coexist on a single windows instance.</p>
 <p><strong>Continue to <a href="../license_server/">Creo License Server Setup</a>...</strong><br/>
 <strong>Or to <a href="../broker/">Message Broker Setup</a>...</strong><br/>
-<strong>Or to <a href="../graph/">Graph Server Setup</a>...</strong><br/>
+<strong>Or to <a href="../graph/">Corpus DB Setup</a>...</strong><br/>
+<strong>Or to <a href="../corpus/">Static Corpus Setup</a>...</strong><br/>
 <strong>Or to <a href="../worker/">Worker Node Setup</a>...</strong></p>
 
               

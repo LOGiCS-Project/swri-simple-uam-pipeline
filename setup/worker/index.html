@@ -453,7 +453,21 @@
   
     <li class="md-nav__item">
       <a href="../graph/" class="md-nav__link">
-        Graph Server
+        Corpus Database
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../corpus/" class="md-nav__link">
+        Static Corpus
       </a>
     </li>
   
@@ -500,8 +514,22 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    Prerequisites
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#install-dependencies" class="md-nav__link">
     Install Dependencies
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#get-license-information" class="md-nav__link">
+    Get License Information
   </a>
   
 </li>
@@ -520,10 +548,107 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#configure-corpus-settings" class="md-nav__link">
+    Configure Corpus Settings
+  </a>
+  
+    <nav class="md-nav" aria-label="Configure Corpus Settings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#option-1-using-a-static-corpus" class="md-nav__link">
+    Option 1: Using a static corpus.
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-2-using-a-remote-corpus-db" class="md-nav__link">
+    Option 2: Using a remote corpus DB.
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configure-results-dir" class="md-nav__link">
+    Configure Results Dir
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#initialize-reference-workspace" class="md-nav__link">
+    Initialize Reference Workspace
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configure-broker-settings" class="md-nav__link">
+    Configure Broker Settings
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#run-the-worker-node-as-a-process-optional" class="md-nav__link">
+    Run the Worker Node as a Process (Optional)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configure-the-worker-node-to-auto-start-on-boot-optional" class="md-nav__link">
+    Configure the Worker Node to Auto-Start on Boot (Optional)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#set-up-the-worker-node-service" class="md-nav__link">
+    Set up the Worker Node Service
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#start-the-worker-node-service-optional" class="md-nav__link">
+    Start the Worker Node Service (Optional)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next-steps" class="md-nav__link">
+    Next Steps
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
       
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../client/" class="md-nav__link">
+        Client Node
+      </a>
     </li>
   
 
@@ -612,6 +737,20 @@
     <li class="md-nav__item">
       <a href="../../usage/workers/" class="md-nav__link">
         Workers
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usage/clients/" class="md-nav__link">
+        Clients
       </a>
     </li>
   
@@ -1145,7 +1284,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../reference/simple_uam/tools/d2c_worker/">d2c_worker</a>
+          <a href="../../reference/simple_uam/tools/d2c_client/">d2c_client</a>
           
             <label for="__nav_2_1_3_3">
               <span class="md-nav__icon md-icon"></span>
@@ -1153,10 +1292,10 @@
           
         </div>
       
-      <nav class="md-nav" aria-label="d2c_worker" data-md-level="4">
+      <nav class="md-nav" aria-label="d2c_client" data-md-level="4">
         <label class="md-nav__title" for="__nav_2_1_3_3">
           <span class="md-nav__icon md-icon"></span>
-          d2c_worker
+          d2c_client
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -1166,7 +1305,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/simple_uam/tools/d2c_worker/cli/" class="md-nav__link">
+      <a href="../../reference/simple_uam/tools/d2c_client/cli/" class="md-nav__link">
         cli
       </a>
     </li>
@@ -1180,7 +1319,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/simple_uam/tools/d2c_worker/tasks/" class="md-nav__link">
+      <a href="../../reference/simple_uam/tools/d2c_client/tasks/" class="md-nav__link">
         tasks
       </a>
     </li>
@@ -1212,7 +1351,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../reference/simple_uam/tools/d2c_workspace/">d2c_workspace</a>
+          <a href="../../reference/simple_uam/tools/d2c_worker/">d2c_worker</a>
           
             <label for="__nav_2_1_3_4">
               <span class="md-nav__icon md-icon"></span>
@@ -1220,8 +1359,89 @@
           
         </div>
       
-      <nav class="md-nav" aria-label="d2c_workspace" data-md-level="4">
+      <nav class="md-nav" aria-label="d2c_worker" data-md-level="4">
         <label class="md-nav__title" for="__nav_2_1_3_4">
+          <span class="md-nav__icon md-icon"></span>
+          d2c_worker
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/simple_uam/tools/d2c_worker/cli/" class="md-nav__link">
+        cli
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/simple_uam/tools/d2c_worker/service/" class="md-nav__link">
+        service
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/simple_uam/tools/d2c_worker/worker/" class="md-nav__link">
+        worker
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1_3_5" type="checkbox" id="__nav_2_1_3_5" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../reference/simple_uam/tools/d2c_workspace/">d2c_workspace</a>
+          
+            <label for="__nav_2_1_3_5">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="d2c_workspace" data-md-level="4">
+        <label class="md-nav__title" for="__nav_2_1_3_5">
           <span class="md-nav__icon md-icon"></span>
           d2c_workspace
         </label>
@@ -1299,7 +1519,7 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1_3_5" type="checkbox" id="__nav_2_1_3_5" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1_3_6" type="checkbox" id="__nav_2_1_3_6" >
       
       
       
@@ -1309,14 +1529,14 @@
         <div class="md-nav__link md-nav__link--index ">
           <a href="../../reference/simple_uam/tools/dev_util/">dev_util</a>
           
-            <label for="__nav_2_1_3_5">
+            <label for="__nav_2_1_3_6">
               <span class="md-nav__icon md-icon"></span>
             </label>
           
         </div>
       
       <nav class="md-nav" aria-label="dev_util" data-md-level="4">
-        <label class="md-nav__title" for="__nav_2_1_3_5">
+        <label class="md-nav__title" for="__nav_2_1_3_6">
           <span class="md-nav__icon md-icon"></span>
           dev_util
         </label>
@@ -1366,7 +1586,7 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1_3_6" type="checkbox" id="__nav_2_1_3_6" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1_3_7" type="checkbox" id="__nav_2_1_3_7" >
       
       
       
@@ -1376,14 +1596,14 @@
         <div class="md-nav__link md-nav__link--index ">
           <a href="../../reference/simple_uam/tools/setup_lin/">setup_lin</a>
           
-            <label for="__nav_2_1_3_6">
+            <label for="__nav_2_1_3_7">
               <span class="md-nav__icon md-icon"></span>
             </label>
           
         </div>
       
       <nav class="md-nav" aria-label="setup_lin" data-md-level="4">
-        <label class="md-nav__title" for="__nav_2_1_3_6">
+        <label class="md-nav__title" for="__nav_2_1_3_7">
           <span class="md-nav__icon md-icon"></span>
           setup_lin
         </label>
@@ -1461,7 +1681,7 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1_3_7" type="checkbox" id="__nav_2_1_3_7" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1_3_8" type="checkbox" id="__nav_2_1_3_8" >
       
       
       
@@ -1471,14 +1691,14 @@
         <div class="md-nav__link md-nav__link--index ">
           <a href="../../reference/simple_uam/tools/setup_win/">setup_win</a>
           
-            <label for="__nav_2_1_3_7">
+            <label for="__nav_2_1_3_8">
               <span class="md-nav__icon md-icon"></span>
             </label>
           
         </div>
       
       <nav class="md-nav" aria-label="setup_win" data-md-level="4">
-        <label class="md-nav__title" for="__nav_2_1_3_7">
+        <label class="md-nav__title" for="__nav_2_1_3_8">
           <span class="md-nav__icon md-icon"></span>
           setup_win
         </label>
@@ -1764,6 +1984,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../../reference/simple_uam/util/config/service_config/" class="md-nav__link">
+        service_config
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../reference/simple_uam/util/config/tasks/" class="md-nav__link">
         tasks
       </a>
@@ -1967,6 +2201,20 @@
     <li class="md-nav__item">
       <a href="../../reference/simple_uam/util/system/git/" class="md-nav__link">
         git
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/simple_uam/util/system/nssm/" class="md-nav__link">
+        nssm
       </a>
     </li>
   
@@ -2232,8 +2480,22 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    Prerequisites
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#install-dependencies" class="md-nav__link">
     Install Dependencies
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#get-license-information" class="md-nav__link">
+    Get License Information
   </a>
   
 </li>
@@ -2248,6 +2510,89 @@
         <li class="md-nav__item">
   <a href="#install-creopyson" class="md-nav__link">
     Install Creopyson
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configure-corpus-settings" class="md-nav__link">
+    Configure Corpus Settings
+  </a>
+  
+    <nav class="md-nav" aria-label="Configure Corpus Settings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#option-1-using-a-static-corpus" class="md-nav__link">
+    Option 1: Using a static corpus.
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-2-using-a-remote-corpus-db" class="md-nav__link">
+    Option 2: Using a remote corpus DB.
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configure-results-dir" class="md-nav__link">
+    Configure Results Dir
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#initialize-reference-workspace" class="md-nav__link">
+    Initialize Reference Workspace
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configure-broker-settings" class="md-nav__link">
+    Configure Broker Settings
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#run-the-worker-node-as-a-process-optional" class="md-nav__link">
+    Run the Worker Node as a Process (Optional)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configure-the-worker-node-to-auto-start-on-boot-optional" class="md-nav__link">
+    Configure the Worker Node to Auto-Start on Boot (Optional)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#set-up-the-worker-node-service" class="md-nav__link">
+    Set up the Worker Node Service
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#start-the-worker-node-service-optional" class="md-nav__link">
+    Start the Worker Node Service (Optional)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next-steps" class="md-nav__link">
+    Next Steps
   </a>
   
 </li>
@@ -2273,61 +2618,225 @@
 <h1 id="worker-node-setup">Worker Node Setup<a class="headerlink" href="#worker-node-setup" title="Permanent link">&para;</a></h1>
 <p>A worker can analyze designs on behalf of clients and requires access to a
 license server and a broker for most tasks.</p>
-<p>Ensure you have a <code>&lt;license-server-ip&gt;</code>, <code>&lt;broker-ip&gt;</code>, and <code>&lt;broker-port&gt;</code>.</p>
-<p>Ensure you've completed the steps in <a href="../general/">General Setup</a> already.</p>
+<h3 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h3>
+<ul>
+<li><a href="../general/">General Setup</a> has been completed.</li>
+<li>SSH keys or credentials for <code>git.isis.vanderbilt.edu</code></li>
+<li>A broker running at <code>&lt;broker-ip&gt;</code> and <code>&lt;broker-port&gt;</code></li>
+<li>Access to a corpus:<ul>
+<li><strong>Either:</strong> Via a <a href="../graph/">corpus DB</a> at <code>&lt;corpus-db-ip&gt;</code> on port <code>&lt;corpus-db-port&gt;</code></li>
+<li><strong>Or:</strong> A static corpus installed as described <a href="../corpus/">here</a>.</li>
+</ul>
+</li>
+<li>Have a results directory set up at <code>&lt;results-dir&gt;</code>.</li>
+</ul>
 <h3 id="install-dependencies">Install Dependencies<a class="headerlink" href="#install-dependencies" title="Permanent link">&para;</a></h3>
+<blockquote>
 <p>Install utilities like wget and rsync.</p>
+</blockquote>
 <ul>
-<li>Open an admin powershell to <code>&lt;repo-root&gt;</code>:<ul>
-<li>Run: <code>pdm run setup-win install.worker-deps</code></li>
+<li>Open an admin powershell to <code>&lt;repo-root&gt;</code>.</li>
+<li>Install dependencies:
+  <div class="highlight"><pre><span></span><code>pdm run setup-win install.worker-deps
+</code></pre></div></li>
 </ul>
-</li>
-</ul>
-<h3 id="install-creo">Install Creo<a class="headerlink" href="#install-creo" title="Permanent link">&para;</a></h3>
-<p>Get license information, optionally installing the license server locally.</p>
+<h3 id="get-license-information">Get License Information<a class="headerlink" href="#get-license-information" title="Permanent link">&para;</a></h3>
+<p><strong>Option 1:</strong> License Server</p>
 <ul>
-<li>Have your license information ready:<ul>
-<li>Get your mac address (for generating licenses):<ul>
-<li>Run: <code>pdm run setup-win mac-address</code></li>
+<li>Have a license server running at <code>&lt;license-server-ip&gt;</code> on port <code>&lt;license-server-port&gt;</code>.</li>
 </ul>
-</li>
+<p><strong>Option 2:</strong> Static Creo License</p>
+<ul>
+<li>Open an admin powershell to <code>&lt;repo-root&gt;</code>.</li>
+<li>Get your mac address (for generating licenses):
+  <div class="highlight"><pre><span></span><code>pdm run setup-win mac-address
+</code></pre></div></li>
 <li>If using a local license, have the license file for the above mac
   address downloaded somewhere convenient.</li>
-<li>If using a license server, have <code>&lt;license-server-ip&gt;</code> at hand.</li>
 </ul>
-</li>
-</ul>
+<h3 id="install-creo">Install Creo<a class="headerlink" href="#install-creo" title="Permanent link">&para;</a></h3>
+<blockquote>
 <p>Downloads and installs PTC Creo 5.6.</p>
+</blockquote>
 <ul>
-<li>Open an admin powershell to <code>&lt;repo-root&gt;</code>:</li>
-<li>Run: <code>pdm run setup-win worker.creo</code></li>
+<li>Open an admin powershell to <code>&lt;repo-root&gt;</code>.</li>
+<li>Download and run installer:
+  <div class="highlight"><pre><span></span><code>pdm run setup-win worker.creo
+</code></pre></div></li>
 <li>Read instructions in terminal and hit enter when ready.</li>
 <li>Follow installer prompts until done.</li>
 </ul>
+<blockquote>
 <p>Fix some minor usability issues.</p>
+</blockquote>
 <ul>
 <li>If on Windows Server 2019 you can disable the IE Enhanced Security popups
-  that open whenever Creo starts.<ul>
-<li>Run: <code>pdm run setup worker.disable-ieesc</code></li>
-</ul>
-</li>
+  that open whenever Creo starts.
+  <div class="highlight"><pre><span></span><code>pdm run setup-win worker.disable-ieesc
+</code></pre></div></li>
 </ul>
 <h3 id="install-creopyson">Install Creopyson<a class="headerlink" href="#install-creopyson" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>Creopyson provides a python interface to Creo.</p>
+</blockquote>
 <ul>
-<li>Prepare to connect to git.isis.vanderbilt.edu:<ul>
-<li>Install SSH keys for git.isis.vanderbilt.edu</li>
-<li><strong>Or</strong> have credentials ready for prompt.</li>
+<li>Prepare to connect to <code>git.isis.vanderbilt.edu</code>.<ul>
+<li><strong>Either:</strong> Install SSH keys for <code>git.isis.vanderbilt.edu</code>.</li>
+<li><strong>Or:</strong> have credentials ready for prompt.</li>
 </ul>
 </li>
-<li>Open an admin powershell to <code>&lt;repo-root&gt;</code>:<ul>
-<li>Run: <code>pdm run setup-win worker.creopyson</code></li>
+<li>Open an admin powershell to <code>&lt;repo-root&gt;</code>.</li>
+<li>Download creopyson repository and install via pip:
+    <div class="highlight"><pre><span></span><code>pdm run setup-win worker.creopyson
+</code></pre></div></li>
 <li>Follow prompts.</li>
 </ul>
-</li>
+<h3 id="configure-corpus-settings">Configure Corpus Settings<a class="headerlink" href="#configure-corpus-settings" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>Performing various analysis tasks requires access to either a Corpus DB
+or a local static corpus.
+The config file at <code>&lt;config-dir&gt;/craidl.conf.yaml</code> specifies which of these
+use and how the connection is configured.</p>
+</blockquote>
+<ul>
+<li>Open admin powershell to <code>&lt;repo-root&gt;</code>.</li>
+<li><em>(Optional)</em> View currently loaded config file:
+  <div class="highlight"><pre><span></span><code>pdm run suam-config print --config<span class="o">=</span>craidl -r
+</code></pre></div></li>
 </ul>
-<p><strong>Configure component corpus <a href="../../usage/craidl/">here</a>...</strong><br/>
-<strong>Configure and use local analysis pipeline <a href="../../usage/workspaces/">here</a>...</strong><br/>
-<strong>Configure and use remote analysis pipeline <a href="../../usage/workers/">here</a>...</strong></p>
+<h4 id="option-1-using-a-static-corpus"><strong>Option 1:</strong> Using a static corpus.<a class="headerlink" href="#option-1-using-a-static-corpus" title="Permanent link">&para;</a></h4>
+<ul>
+<li>No changes should be needed to config files.</li>
+</ul>
+<h4 id="option-2-using-a-remote-corpus-db"><strong>Option 2:</strong> Using a remote corpus DB.<a class="headerlink" href="#option-2-using-a-remote-corpus-db" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Update <code>&lt;config-dir&gt;/craidl.md</code>:<ul>
+<li>Set <code>use_static_corpus</code> to <code>False</code>.</li>
+<li>Set <code>server_host</code> to <code>&lt;corpus-db-host</code>.</li>
+<li>Set <code>server_port</code> to <code>&lt;corpus-db-port&gt;</code>.</li>
+</ul>
+</li>
+<li>See the <a href="../../usage/config/">config file guide</a> for more detailed
+  instructions and information.</li>
+</ul>
+<p><strong>Further details on using a static or database corpus can be found
+in this <a href="../../usage/craidl/">section</a>...</strong></p>
+<h3 id="configure-results-dir">Configure Results Dir<a class="headerlink" href="#configure-results-dir" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>The results directory needs to be configured to point at the appropriate
+directory.</p>
+</blockquote>
+<ul>
+<li>Open admin powershell to <code>&lt;repo-root&gt;</code>.</li>
+<li><em>(Optional)</em> View currently loaded config file:
+  <div class="highlight"><pre><span></span><code>pdm run suam-config print --config<span class="o">=</span>d2c_workspace -r
+</code></pre></div></li>
+<li>Update the config at <code>&lt;config-dir&gt;/d2c_workspace.conf.yaml</code>:<ul>
+<li>Set <code>results_dir</code> to <code>&lt;results-dir&gt;</code>.</li>
+</ul>
+</li>
+<li>See the <a href="../../usage/config/">config file guide</a> for more detailed
+  instructions and information.</li>
+</ul>
+<p><strong>Further details on results storage and local worker node operations are
+in <a href="../../usage/workspaces/">this page</a>...</strong></p>
+<h3 id="initialize-reference-workspace">Initialize Reference Workspace<a class="headerlink" href="#initialize-reference-workspace" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>Each worker needs a pristine copy of the workspace in which designs can be
+analyzed.
+This reference workspace will be copied, via rsync for efficiency, whenever
+the worker performs a new analysis.
+The results archives are also constructed by gathering all the files which
+have been changed after an analysis when compared to the reference directory.</p>
+</blockquote>
+<ul>
+<li>Open admin powershell at <code>&lt;repo-root&gt;</code>.</li>
+<li>Set up the reference workspace:
+  <div class="highlight"><pre><span></span><code>pdm run d2c-workspace setup.reference-workspace
+</code></pre></div></li>
+</ul>
+<p><strong>For further details on workspace configuration, operation, and running analyses
+locally see <a href="../../usage/workspaces/">this page</a>...</strong></p>
+<h3 id="configure-broker-settings">Configure Broker Settings<a class="headerlink" href="#configure-broker-settings" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>The worker process itself needs to be configured with how to connect to a
+message broker.</p>
+</blockquote>
+<ul>
+<li>Open admin powershell to <code>&lt;repo-root&gt;</code>.</li>
+<li><em>(Optional)</em> View currently loaded config file:
+  <div class="highlight"><pre><span></span><code>pdm run suam-config print --config<span class="o">=</span>d2c_worker -r
+</code></pre></div></li>
+<li>Update the config at <code>&lt;config-dir&gt;/d2c_worker.conf.yaml</code>:<ul>
+<li>Set <code>broker.protocol</code> to <code>"amqp"</code> if using RabbitMQ or <code>"redis"</code> if
+  using Redis.</li>
+<li>Set <code>broker.host</code> to <code>&lt;broker-ip&gt;</code>.</li>
+<li>Set <code>broker.port</code> to <code>&lt;broker-port&gt;</code>.</li>
+<li>If using Redis, set <code>broker.db</code> to <code>&lt;broker-db&gt;</code></li>
+</ul>
+</li>
+<li>See the <a href="../../usage/config/">config file guide</a> for more detailed
+  instructions and information.</li>
+</ul>
+<p><strong>Further details on configuring the worker's backend are
+<a href="../../usage/workers/">here</a>...</strong></p>
+<h3 id="run-the-worker-node-as-a-process-optional">Run the Worker Node as a Process <em>(Optional)</em><a class="headerlink" href="#run-the-worker-node-as-a-process-optional" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>You can run the worker node as a process to verify all the above settings
+function as intended.</p>
+</blockquote>
+<ul>
+<li>Open admin powershell to <code>&lt;repo-root&gt;</code>.</li>
+<li>Run the SimpleUAM worker node:
+  <div class="highlight"><pre><span></span><code>pdm run d2c-worker run
+</code></pre></div></li>
+</ul>
+<h3 id="configure-the-worker-node-to-auto-start-on-boot-optional">Configure the Worker Node to Auto-Start on Boot <em>(Optional)</em><a class="headerlink" href="#configure-the-worker-node-to-auto-start-on-boot-optional" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>The worker node service needs to configured, in particular whether it should
+automatically start on boot.</p>
+</blockquote>
+<ul>
+<li>Open admin powershell to <code>&lt;repo-root&gt;</code>.</li>
+<li><em>(Optional)</em> View currently loaded config file:
+  <div class="highlight"><pre><span></span><code>pdm run suam-config print --config<span class="o">=</span>d2c_worker -r
+</code></pre></div></li>
+<li>Edit the config at <code>&lt;config-dir&gt;/d2c_worker.conf.yaml</code>:<ul>
+<li>Set <code>service.auto_start</code> to <code>True</code></li>
+</ul>
+</li>
+<li>See the <a href="../../usage/config/">config file guide</a> for more detailed
+  instructions and information.</li>
+</ul>
+<p><strong>Further details on configuring the worker as a service are
+<a href="../../usage/workers/">here</a>...</strong></p>
+<h3 id="set-up-the-worker-node-service">Set up the Worker Node Service<a class="headerlink" href="#set-up-the-worker-node-service" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>We use <a href="https://nssm.cc">Non-Sucking Service Manager</a> to manage the worker
+node service, and that requires some setup.</p>
+</blockquote>
+<ul>
+<li>Open admin powershell to <code>&lt;repo-root&gt;</code>.</li>
+<li>Install the SimpleUAM worker service:
+  <div class="highlight"><pre><span></span><code>pdm run d2c-worker service.install
+</code></pre></div></li>
+</ul>
+<h3 id="start-the-worker-node-service-optional">Start the Worker Node Service <em>(Optional)</em><a class="headerlink" href="#start-the-worker-node-service-optional" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>The worker node service can start immediately but we recommend holding off
+until you've verified configurations while running the node as a process.</p>
+</blockquote>
+<ul>
+<li>Open admin powershell to <code>&lt;repo-root&gt;</code>.</li>
+<li>Install the SimpleUAM worker service:
+  <div class="highlight"><pre><span></span><code>pdm run d2c-worker service.start
+</code></pre></div></li>
+</ul>
+<p><strong>Further details on running the worker as a service are <a href="../../usage/workers/">here</a>...</strong></p>
+<h3 id="next-steps">Next Steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h3>
+<p><strong>View information on corpus use <a href="../../usage/craidl/">here</a>...</strong><br/>
+<strong>View information on local task processing <a href="../../usage/workspaces/">here</a>...</strong><br/>
+<strong>View information on remote task processing <a href="../../usage/workers/">here</a>...</strong><br/></p>
 
               
             </article>
@@ -2348,7 +2857,7 @@ license server and a broker for most tasks.</p>
     <nav class="md-footer__inner md-grid" aria-label="Footer" >
       
         
-        <a href="../graph/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Graph Server" rel="prev">
+        <a href="../corpus/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Static Corpus" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
           </div>
@@ -2357,20 +2866,20 @@ license server and a broker for most tasks.</p>
               <span class="md-footer__direction">
                 Previous
               </span>
-              Graph Server
+              Static Corpus
             </div>
           </div>
         </a>
       
       
         
-        <a href="../../usage/config/" class="md-footer__link md-footer__link--next" aria-label="Next: Configuration" rel="next">
+        <a href="../client/" class="md-footer__link md-footer__link--next" aria-label="Next: Client Node" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              Configuration
+              Client Node
             </div>
           </div>
           <div class="md-footer__button md-icon">

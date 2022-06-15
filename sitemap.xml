@@ -2,457 +2,497 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/contributing/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/license/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>None</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/craidl/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/craidl/info_files/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/craidl/corpus/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/craidl/corpus/abstract/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/craidl/corpus/get_corpus/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/craidl/corpus/gremlin/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/craidl/corpus/static/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/direct2cad/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/direct2cad/actors/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/direct2cad/manager/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/direct2cad/session/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/direct2cad/workspace/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/tools/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/tools/config_mgr/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/tools/config_mgr/cli/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/tools/craidl/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/tools/craidl/cli/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/tools/craidl/examples/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/tools/craidl/stub_server/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/tools/craidl/tasks/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/tools/d2c_client/</loc>
+         <lastmod>2022-06-15</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/tools/d2c_client/cli/</loc>
+         <lastmod>2022-06-15</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/tools/d2c_client/tasks/</loc>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/tools/d2c_worker/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/tools/d2c_worker/cli/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/tools/d2c_worker/tasks/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/tools/d2c_worker/service/</loc>
+         <lastmod>2022-06-15</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/tools/d2c_worker/worker/</loc>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/tools/d2c_workspace/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/tools/d2c_workspace/cli/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/tools/d2c_workspace/env/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/tools/d2c_workspace/manage/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/tools/d2c_workspace/tasks/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/tools/dev_util/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/tools/dev_util/cli/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/tools/dev_util/tasks/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/tools/setup_lin/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/tools/setup_lin/broker/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/tools/setup_lin/cli/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/tools/setup_lin/license_server/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/tools/setup_lin/shared/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/tools/setup_win/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/tools/setup_win/broker/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/tools/setup_win/choco/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/tools/setup_win/cli/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/tools/setup_win/graph_server/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/tools/setup_win/helpers/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/tools/setup_win/license_server/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/tools/setup_win/shared/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/tools/setup_win/worker/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/util/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/util/config/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/util/config/craidl_config/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/util/config/d2c_worker_config/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/util/config/d2c_workspace_config/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/util/config/lin_setup_config/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/util/config/manager/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/util/config/path_config/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/util/config/service_config/</loc>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/util/config/tasks/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/util/config/win_setup_config/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/util/config/workspace_config/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/util/invoke/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/util/invoke/program/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/util/logging/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/util/logging/logger/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/util/system/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/util/system/backup/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/util/system/git/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/util/system/nssm/</loc>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/util/system/pip/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/util/system/rsync/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/util/system/windows/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/worker/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/worker/broker/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/worker/run_worker/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/workspace/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/workspace/manager/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/workspace/session/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/reference/simple_uam/workspace/workspace/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/setup/aws-instance/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/setup/aws-network/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/setup/broker/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/setup/client/</loc>
+         <lastmod>2022-06-15</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/setup/corpus/</loc>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/setup/general/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/setup/graph/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/setup/intro/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/setup/license_server/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/setup/worker/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/usage/clients/</loc>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/usage/config/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/usage/craidl/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/usage/workers/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/usage/workspaces/</loc>
-         <lastmod>2022-06-13</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipleline/coverage/</loc>
-         <lastmod>2022-06-13</lastmod>
+         <lastmod>2022-06-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>

@@ -472,19 +472,33 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#recommended-run-rabbitmq-on-a-linux-machine" class="md-nav__link">
-    (Recommended) Run RabbitMQ on a Linux Machine
+  <a href="#option-1-run-rabbitmq-on-a-linux-machine-recommended" class="md-nav__link">
+    Option 1: Run RabbitMQ on a Linux Machine (Recommended)
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#alternate-run-rabbitmq-as-a-windows-service" class="md-nav__link">
-    (Alternate) Run RabbitMQ as a Windows Service
+  <a href="#option-2-run-redis-on-a-linux-machine" class="md-nav__link">
+    Option 2: Run Redis on a Linux Machine
   </a>
   
-    <nav class="md-nav" aria-label="(Alternate) Run RabbitMQ as a Windows Service">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#option-3-run-rabbitmq-as-a-windows-service" class="md-nav__link">
+    Option 3: Run RabbitMQ as a Windows Service
+  </a>
+  
+    <nav class="md-nav" aria-label="Option 3: Run RabbitMQ as a Windows Service">
       <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    Prerequisites
+  </a>
+  
+</li>
         
           <li class="md-nav__item">
   <a href="#install-dependencies" class="md-nav__link">
@@ -497,6 +511,26 @@
   <a href="#open-required-ports" class="md-nav__link">
     Open Required Ports
   </a>
+  
+    <nav class="md-nav" aria-label="Open Required Ports">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#option-1-open-only-broker-port-default-5672" class="md-nav__link">
+    Option 1: Open only &lt;broker-port&gt;. (Default: 5672)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-2-disable-broker-firewalls-entirely" class="md-nav__link">
+    Option 2: Disable broker firewalls entirely.
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -535,7 +569,21 @@
   
     <li class="md-nav__item">
       <a href="../graph/" class="md-nav__link">
-        Graph Server
+        Corpus Database
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../corpus/" class="md-nav__link">
+        Static Corpus
       </a>
     </li>
   
@@ -550,6 +598,20 @@
     <li class="md-nav__item">
       <a href="../worker/" class="md-nav__link">
         Worker Node
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../client/" class="md-nav__link">
+        Client Node
       </a>
     </li>
   
@@ -639,6 +701,20 @@
     <li class="md-nav__item">
       <a href="../../usage/workers/" class="md-nav__link">
         Workers
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usage/clients/" class="md-nav__link">
+        Clients
       </a>
     </li>
   
@@ -1172,7 +1248,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../reference/simple_uam/tools/d2c_worker/">d2c_worker</a>
+          <a href="../../reference/simple_uam/tools/d2c_client/">d2c_client</a>
           
             <label for="__nav_2_1_3_3">
               <span class="md-nav__icon md-icon"></span>
@@ -1180,10 +1256,10 @@
           
         </div>
       
-      <nav class="md-nav" aria-label="d2c_worker" data-md-level="4">
+      <nav class="md-nav" aria-label="d2c_client" data-md-level="4">
         <label class="md-nav__title" for="__nav_2_1_3_3">
           <span class="md-nav__icon md-icon"></span>
-          d2c_worker
+          d2c_client
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -1193,7 +1269,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/simple_uam/tools/d2c_worker/cli/" class="md-nav__link">
+      <a href="../../reference/simple_uam/tools/d2c_client/cli/" class="md-nav__link">
         cli
       </a>
     </li>
@@ -1207,7 +1283,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/simple_uam/tools/d2c_worker/tasks/" class="md-nav__link">
+      <a href="../../reference/simple_uam/tools/d2c_client/tasks/" class="md-nav__link">
         tasks
       </a>
     </li>
@@ -1239,7 +1315,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../reference/simple_uam/tools/d2c_workspace/">d2c_workspace</a>
+          <a href="../../reference/simple_uam/tools/d2c_worker/">d2c_worker</a>
           
             <label for="__nav_2_1_3_4">
               <span class="md-nav__icon md-icon"></span>
@@ -1247,8 +1323,89 @@
           
         </div>
       
-      <nav class="md-nav" aria-label="d2c_workspace" data-md-level="4">
+      <nav class="md-nav" aria-label="d2c_worker" data-md-level="4">
         <label class="md-nav__title" for="__nav_2_1_3_4">
+          <span class="md-nav__icon md-icon"></span>
+          d2c_worker
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/simple_uam/tools/d2c_worker/cli/" class="md-nav__link">
+        cli
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/simple_uam/tools/d2c_worker/service/" class="md-nav__link">
+        service
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/simple_uam/tools/d2c_worker/worker/" class="md-nav__link">
+        worker
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1_3_5" type="checkbox" id="__nav_2_1_3_5" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../reference/simple_uam/tools/d2c_workspace/">d2c_workspace</a>
+          
+            <label for="__nav_2_1_3_5">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="d2c_workspace" data-md-level="4">
+        <label class="md-nav__title" for="__nav_2_1_3_5">
           <span class="md-nav__icon md-icon"></span>
           d2c_workspace
         </label>
@@ -1326,7 +1483,7 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1_3_5" type="checkbox" id="__nav_2_1_3_5" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1_3_6" type="checkbox" id="__nav_2_1_3_6" >
       
       
       
@@ -1336,14 +1493,14 @@
         <div class="md-nav__link md-nav__link--index ">
           <a href="../../reference/simple_uam/tools/dev_util/">dev_util</a>
           
-            <label for="__nav_2_1_3_5">
+            <label for="__nav_2_1_3_6">
               <span class="md-nav__icon md-icon"></span>
             </label>
           
         </div>
       
       <nav class="md-nav" aria-label="dev_util" data-md-level="4">
-        <label class="md-nav__title" for="__nav_2_1_3_5">
+        <label class="md-nav__title" for="__nav_2_1_3_6">
           <span class="md-nav__icon md-icon"></span>
           dev_util
         </label>
@@ -1393,7 +1550,7 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1_3_6" type="checkbox" id="__nav_2_1_3_6" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1_3_7" type="checkbox" id="__nav_2_1_3_7" >
       
       
       
@@ -1403,14 +1560,14 @@
         <div class="md-nav__link md-nav__link--index ">
           <a href="../../reference/simple_uam/tools/setup_lin/">setup_lin</a>
           
-            <label for="__nav_2_1_3_6">
+            <label for="__nav_2_1_3_7">
               <span class="md-nav__icon md-icon"></span>
             </label>
           
         </div>
       
       <nav class="md-nav" aria-label="setup_lin" data-md-level="4">
-        <label class="md-nav__title" for="__nav_2_1_3_6">
+        <label class="md-nav__title" for="__nav_2_1_3_7">
           <span class="md-nav__icon md-icon"></span>
           setup_lin
         </label>
@@ -1488,7 +1645,7 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1_3_7" type="checkbox" id="__nav_2_1_3_7" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1_3_8" type="checkbox" id="__nav_2_1_3_8" >
       
       
       
@@ -1498,14 +1655,14 @@
         <div class="md-nav__link md-nav__link--index ">
           <a href="../../reference/simple_uam/tools/setup_win/">setup_win</a>
           
-            <label for="__nav_2_1_3_7">
+            <label for="__nav_2_1_3_8">
               <span class="md-nav__icon md-icon"></span>
             </label>
           
         </div>
       
       <nav class="md-nav" aria-label="setup_win" data-md-level="4">
-        <label class="md-nav__title" for="__nav_2_1_3_7">
+        <label class="md-nav__title" for="__nav_2_1_3_8">
           <span class="md-nav__icon md-icon"></span>
           setup_win
         </label>
@@ -1791,6 +1948,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../../reference/simple_uam/util/config/service_config/" class="md-nav__link">
+        service_config
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../reference/simple_uam/util/config/tasks/" class="md-nav__link">
         tasks
       </a>
@@ -1994,6 +2165,20 @@
     <li class="md-nav__item">
       <a href="../../reference/simple_uam/util/system/git/" class="md-nav__link">
         git
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/simple_uam/util/system/nssm/" class="md-nav__link">
+        nssm
       </a>
     </li>
   
@@ -2259,19 +2444,33 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#recommended-run-rabbitmq-on-a-linux-machine" class="md-nav__link">
-    (Recommended) Run RabbitMQ on a Linux Machine
+  <a href="#option-1-run-rabbitmq-on-a-linux-machine-recommended" class="md-nav__link">
+    Option 1: Run RabbitMQ on a Linux Machine (Recommended)
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#alternate-run-rabbitmq-as-a-windows-service" class="md-nav__link">
-    (Alternate) Run RabbitMQ as a Windows Service
+  <a href="#option-2-run-redis-on-a-linux-machine" class="md-nav__link">
+    Option 2: Run Redis on a Linux Machine
   </a>
   
-    <nav class="md-nav" aria-label="(Alternate) Run RabbitMQ as a Windows Service">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#option-3-run-rabbitmq-as-a-windows-service" class="md-nav__link">
+    Option 3: Run RabbitMQ as a Windows Service
+  </a>
+  
+    <nav class="md-nav" aria-label="Option 3: Run RabbitMQ as a Windows Service">
       <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    Prerequisites
+  </a>
+  
+</li>
         
           <li class="md-nav__item">
   <a href="#install-dependencies" class="md-nav__link">
@@ -2284,6 +2483,26 @@
   <a href="#open-required-ports" class="md-nav__link">
     Open Required Ports
   </a>
+  
+    <nav class="md-nav" aria-label="Open Required Ports">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#option-1-open-only-broker-port-default-5672" class="md-nav__link">
+    Option 1: Open only &lt;broker-port&gt;. (Default: 5672)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-2-disable-broker-firewalls-entirely" class="md-nav__link">
+    Option 2: Disable broker firewalls entirely.
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -2329,47 +2548,79 @@
 queue.
 The standard message broker is <a href="https://www.rabbitmq.com/">RabbitMQ</a> with
 the default settings.</p>
-<h2 id="recommended-run-rabbitmq-on-a-linux-machine"><em>(Recommended)</em> Run RabbitMQ on a Linux Machine<a class="headerlink" href="#recommended-run-rabbitmq-on-a-linux-machine" title="Permanent link">&para;</a></h2>
+<h2 id="option-1-run-rabbitmq-on-a-linux-machine-recommended"><strong>Option 1:</strong> Run RabbitMQ on a Linux Machine <em>(Recommended)</em><a class="headerlink" href="#option-1-run-rabbitmq-on-a-linux-machine-recommended" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>RabbitMQ is a backendless message broker that's sufficient if you're okay
+with clients not being notified when the analysis result
+is complete. (It will just appear in the results directory.)</p>
+</blockquote>
 <ul>
-<li>Follow the instructions <a href="https://www.rabbitmq.com/download.html">here</a> to
-  set up RabbitMQ.<ul>
-<li>Keep this machine's IP as: <code>&lt;broker-ip&gt;</code></li>
-<li>Keep rabbitmq's open port as: <code>&lt;broker-port&gt;</code> (default: 5672)</li>
-</ul>
-</li>
-</ul>
-<h2 id="alternate-run-rabbitmq-as-a-windows-service"><em>(Alternate)</em> Run RabbitMQ as a Windows Service<a class="headerlink" href="#alternate-run-rabbitmq-as-a-windows-service" title="Permanent link">&para;</a></h2>
-<p>Ensure you've completed the steps in <a href="../general/">General Setup</a> already.</p>
-<h3 id="install-dependencies">Install Dependencies<a class="headerlink" href="#install-dependencies" title="Permanent link">&para;</a></h3>
-<p>Install utilities and rabbitmq.</p>
-<ul>
-<li>Open an admin powershell to <code>&lt;repo-root&gt;</code>:<ul>
-<li>Run: <code>pdm run setup-win install.broker-deps</code></li>
-</ul>
-</li>
-</ul>
-<h3 id="open-required-ports">Open Required Ports<a class="headerlink" href="#open-required-ports" title="Permanent link">&para;</a></h3>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>If you only intend to use rabbitmq with local workers and clients.
-then you don't need to open ports up.</p>
-</div>
-<p>Open the relevant ports up so workers can connect:</p>
-<ul>
-<li>Open up port <code>&lt;broker-port&gt;</code> (default: 5672).<ul>
-<li>Instructions will likely be setup specific.</li>
-</ul>
+<li>
+<p>Follow the instructions <a href="https://www.rabbitmq.com/download.html">here</a> to
+  set up RabbitMQ.</p>
 </li>
 <li>
-<p><strong>(Optional)</strong> If on Windows Server 2019 you can disable the firewall completely.</p>
+<p>Save this machine's IP as: <code>&lt;broker-ip&gt;</code></p>
+</li>
+<li>Save rabbitmq's open port as: <code>&lt;broker-port&gt;</code> (default: 5672)</li>
+</ul>
+<h2 id="option-2-run-redis-on-a-linux-machine"><strong>Option 2:</strong> Run Redis on a Linux Machine<a class="headerlink" href="#option-2-run-redis-on-a-linux-machine" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>Redis can be configured as a response backend as well as a message broker.
+This means that clients can get notified when an analysis is complete.</p>
+</blockquote>
+<p>We have not tried to get this running so don't have install instructions.</p>
+<ul>
+<li>Save this machine's IP as: <code>&lt;broker-ip&gt;</code></li>
+<li>Save redis's open port as: <code>&lt;broker-port&gt;</code> (default: 6379)</li>
+<li>Save the redis database you're using as: <code>&lt;broker-db&gt;</code> (default: "0")</li>
+</ul>
+<h2 id="option-3-run-rabbitmq-as-a-windows-service"><strong>Option 3:</strong> Run RabbitMQ as a Windows Service<a class="headerlink" href="#option-3-run-rabbitmq-as-a-windows-service" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>This runs RabbitMQ as a windows service and is fine for development or
+production setups.</p>
+</blockquote>
+<h3 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h3>
+<ul>
+<li><a href="../general/">General Setup</a> has been completed.</li>
+</ul>
+<h3 id="install-dependencies">Install Dependencies<a class="headerlink" href="#install-dependencies" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>Install utilities and RabbitMQ</p>
+</blockquote>
+<ul>
+<li>Open an admin powershell to <code>&lt;repo-root&gt;</code>.</li>
+<li>Install dependency packages:
+  <div class="highlight"><pre><span></span><code>pdm run setup-win install.broker-deps
+</code></pre></div></li>
+</ul>
+<h3 id="open-required-ports">Open Required Ports<a class="headerlink" href="#open-required-ports" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>Open the relevant ports up so worker and client nodes can connect to the
+broker.</p>
+</blockquote>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you only intend to use the broker with workers and clients on the same
+machine then you don't need to open ports.</p>
+</div>
+<h4 id="option-1-open-only-broker-port-default-5672"><strong>Option 1:</strong> Open only <code>&lt;broker-port&gt;</code>. (Default: 5672)<a class="headerlink" href="#option-1-open-only-broker-port-default-5672" title="Permanent link">&para;</a></h4>
+<p>The instructions for this are too configuration specific for us to provide.</p>
+<h4 id="option-2-disable-broker-firewalls-entirely"><strong>Option 2:</strong> Disable broker firewalls entirely.<a class="headerlink" href="#option-2-disable-broker-firewalls-entirely" title="Permanent link">&para;</a></h4>
+<p>We can't provide general instructions for this step but if you're using
+Windows Server 2019 you can use one of our scripts.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>This is not secure at all. Do not do this if the license
 server is at all accessible from public or untrusted computers.</p>
-<p>Run: <code>pdm run setup-win license-server.disable-firewall</code></p>
 </div>
-</li>
+<ul>
+<li>Disable the Windows Server 2019 firewall:
+  <div class="highlight"><pre><span></span><code>pdm run setup-win license-server.disable-firewall
+</code></pre></div></li>
 </ul>
+<p><strong>Note:</strong> This might work with other versions of Windows but that hasn't been
+tested.</p>
 <h3 id="preserve-settings">Preserve Settings<a class="headerlink" href="#preserve-settings" title="Permanent link">&para;</a></h3>
 <ul>
 <li>Keep this machine's IP as: <code>&lt;broker-ip&gt;</code></li>
@@ -2377,7 +2628,10 @@ server is at all accessible from public or untrusted computers.</p>
 </ul>
 <h3 id="start-rabbitmq-service">Start RabbitMQ Service<a class="headerlink" href="#start-rabbitmq-service" title="Permanent link">&para;</a></h3>
 <ul>
-<li>Click: Start Menu -&gt; RabbitMQ Server -&gt; RabbitMQ Service Start</li>
+<li>Start the RabbitMQ service:<ul>
+<li>Start Menu -&gt; RabbitMQ Server -&gt; RabbitMQ Service Start</li>
+</ul>
+</li>
 </ul>
 <p>The server should automatically start on boot.</p>
 
@@ -2416,13 +2670,13 @@ server is at all accessible from public or untrusted computers.</p>
       
       
         
-        <a href="../graph/" class="md-footer__link md-footer__link--next" aria-label="Next: Graph Server" rel="next">
+        <a href="../graph/" class="md-footer__link md-footer__link--next" aria-label="Next: Corpus Database" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              Graph Server
+              Corpus Database
             </div>
           </div>
           <div class="md-footer__button md-icon">

@@ -17,7 +17,7 @@
     
     
       
-        <title>Graph Server - Simple UAM Pipleline</title>
+        <title>Corpus Database - Simple UAM Pipleline</title>
       
     
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#graph-server-setup" class="md-skip">
+        <a href="#corpus-database-setup" class="md-skip">
           Skip to content
         </a>
       
@@ -109,7 +109,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Graph Server
+              Corpus Database
             
           </span>
         </div>
@@ -462,12 +462,12 @@
       
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
-          Graph Server
+          Corpus Database
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
-        Graph Server
+        Corpus Database
       </a>
       
         
@@ -486,9 +486,124 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#option-1-running-a-local-stub-server-recommended" class="md-nav__link">
+    Option 1: Running a Local Stub Server (Recommended)
+  </a>
+  
+    <nav class="md-nav" aria-label="Option 1: Running a Local Stub Server (Recommended)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    Prerequisites
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#install-dependencies" class="md-nav__link">
     Install Dependencies
   </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#install-graphml-corpus" class="md-nav__link">
+    Install GraphML Corpus
+  </a>
+  
+    <nav class="md-nav" aria-label="Install GraphML Corpus">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#option-1-download-default-from-athens-uav-workflows" class="md-nav__link">
+    Option 1: Download default from athens-uav-workflows
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-2-install-corpus-from-user-provided-file" class="md-nav__link">
+    Option 2: Install corpus from user provided file
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configure-corpus-db-server" class="md-nav__link">
+    Configure Corpus DB Server
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#open-required-ports-optional" class="md-nav__link">
+    Open Required Ports (Optional)
+  </a>
+  
+    <nav class="md-nav" aria-label="Open Required Ports (Optional)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#option-1-open-only-port-8182" class="md-nav__link">
+    Option 1: Open only port 8182.
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-2-disable-license-server-firewalls-entirely" class="md-nav__link">
+    Option 2: Disable license server firewalls entirely.
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#preserve-settings" class="md-nav__link">
+    Preserve Settings
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#next-steps" class="md-nav__link">
+    Next Steps
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#option-2-run-a-full-corpus-database" class="md-nav__link">
+    Option 2: Run a full corpus database.
+  </a>
+  
+    <nav class="md-nav" aria-label="Option 2: Run a full corpus database.">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#preserve-settings_1" class="md-nav__link">
+    Preserve Settings
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -507,8 +622,36 @@
   
   
     <li class="md-nav__item">
+      <a href="../corpus/" class="md-nav__link">
+        Static Corpus
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../worker/" class="md-nav__link">
         Worker Node
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../client/" class="md-nav__link">
+        Client Node
       </a>
     </li>
   
@@ -598,6 +741,20 @@
     <li class="md-nav__item">
       <a href="../../usage/workers/" class="md-nav__link">
         Workers
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usage/clients/" class="md-nav__link">
+        Clients
       </a>
     </li>
   
@@ -1131,7 +1288,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../reference/simple_uam/tools/d2c_worker/">d2c_worker</a>
+          <a href="../../reference/simple_uam/tools/d2c_client/">d2c_client</a>
           
             <label for="__nav_2_1_3_3">
               <span class="md-nav__icon md-icon"></span>
@@ -1139,10 +1296,10 @@
           
         </div>
       
-      <nav class="md-nav" aria-label="d2c_worker" data-md-level="4">
+      <nav class="md-nav" aria-label="d2c_client" data-md-level="4">
         <label class="md-nav__title" for="__nav_2_1_3_3">
           <span class="md-nav__icon md-icon"></span>
-          d2c_worker
+          d2c_client
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -1152,7 +1309,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/simple_uam/tools/d2c_worker/cli/" class="md-nav__link">
+      <a href="../../reference/simple_uam/tools/d2c_client/cli/" class="md-nav__link">
         cli
       </a>
     </li>
@@ -1166,7 +1323,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/simple_uam/tools/d2c_worker/tasks/" class="md-nav__link">
+      <a href="../../reference/simple_uam/tools/d2c_client/tasks/" class="md-nav__link">
         tasks
       </a>
     </li>
@@ -1198,7 +1355,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../reference/simple_uam/tools/d2c_workspace/">d2c_workspace</a>
+          <a href="../../reference/simple_uam/tools/d2c_worker/">d2c_worker</a>
           
             <label for="__nav_2_1_3_4">
               <span class="md-nav__icon md-icon"></span>
@@ -1206,8 +1363,89 @@
           
         </div>
       
-      <nav class="md-nav" aria-label="d2c_workspace" data-md-level="4">
+      <nav class="md-nav" aria-label="d2c_worker" data-md-level="4">
         <label class="md-nav__title" for="__nav_2_1_3_4">
+          <span class="md-nav__icon md-icon"></span>
+          d2c_worker
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/simple_uam/tools/d2c_worker/cli/" class="md-nav__link">
+        cli
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/simple_uam/tools/d2c_worker/service/" class="md-nav__link">
+        service
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/simple_uam/tools/d2c_worker/worker/" class="md-nav__link">
+        worker
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1_3_5" type="checkbox" id="__nav_2_1_3_5" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../reference/simple_uam/tools/d2c_workspace/">d2c_workspace</a>
+          
+            <label for="__nav_2_1_3_5">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="d2c_workspace" data-md-level="4">
+        <label class="md-nav__title" for="__nav_2_1_3_5">
           <span class="md-nav__icon md-icon"></span>
           d2c_workspace
         </label>
@@ -1285,7 +1523,7 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1_3_5" type="checkbox" id="__nav_2_1_3_5" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1_3_6" type="checkbox" id="__nav_2_1_3_6" >
       
       
       
@@ -1295,14 +1533,14 @@
         <div class="md-nav__link md-nav__link--index ">
           <a href="../../reference/simple_uam/tools/dev_util/">dev_util</a>
           
-            <label for="__nav_2_1_3_5">
+            <label for="__nav_2_1_3_6">
               <span class="md-nav__icon md-icon"></span>
             </label>
           
         </div>
       
       <nav class="md-nav" aria-label="dev_util" data-md-level="4">
-        <label class="md-nav__title" for="__nav_2_1_3_5">
+        <label class="md-nav__title" for="__nav_2_1_3_6">
           <span class="md-nav__icon md-icon"></span>
           dev_util
         </label>
@@ -1352,7 +1590,7 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1_3_6" type="checkbox" id="__nav_2_1_3_6" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1_3_7" type="checkbox" id="__nav_2_1_3_7" >
       
       
       
@@ -1362,14 +1600,14 @@
         <div class="md-nav__link md-nav__link--index ">
           <a href="../../reference/simple_uam/tools/setup_lin/">setup_lin</a>
           
-            <label for="__nav_2_1_3_6">
+            <label for="__nav_2_1_3_7">
               <span class="md-nav__icon md-icon"></span>
             </label>
           
         </div>
       
       <nav class="md-nav" aria-label="setup_lin" data-md-level="4">
-        <label class="md-nav__title" for="__nav_2_1_3_6">
+        <label class="md-nav__title" for="__nav_2_1_3_7">
           <span class="md-nav__icon md-icon"></span>
           setup_lin
         </label>
@@ -1447,7 +1685,7 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1_3_7" type="checkbox" id="__nav_2_1_3_7" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1_3_8" type="checkbox" id="__nav_2_1_3_8" >
       
       
       
@@ -1457,14 +1695,14 @@
         <div class="md-nav__link md-nav__link--index ">
           <a href="../../reference/simple_uam/tools/setup_win/">setup_win</a>
           
-            <label for="__nav_2_1_3_7">
+            <label for="__nav_2_1_3_8">
               <span class="md-nav__icon md-icon"></span>
             </label>
           
         </div>
       
       <nav class="md-nav" aria-label="setup_win" data-md-level="4">
-        <label class="md-nav__title" for="__nav_2_1_3_7">
+        <label class="md-nav__title" for="__nav_2_1_3_8">
           <span class="md-nav__icon md-icon"></span>
           setup_win
         </label>
@@ -1750,6 +1988,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../../reference/simple_uam/util/config/service_config/" class="md-nav__link">
+        service_config
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../reference/simple_uam/util/config/tasks/" class="md-nav__link">
         tasks
       </a>
@@ -1953,6 +2205,20 @@
     <li class="md-nav__item">
       <a href="../../reference/simple_uam/util/system/git/" class="md-nav__link">
         git
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/simple_uam/util/system/nssm/" class="md-nav__link">
+        nssm
       </a>
     </li>
   
@@ -2218,9 +2484,124 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#option-1-running-a-local-stub-server-recommended" class="md-nav__link">
+    Option 1: Running a Local Stub Server (Recommended)
+  </a>
+  
+    <nav class="md-nav" aria-label="Option 1: Running a Local Stub Server (Recommended)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    Prerequisites
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#install-dependencies" class="md-nav__link">
     Install Dependencies
   </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#install-graphml-corpus" class="md-nav__link">
+    Install GraphML Corpus
+  </a>
+  
+    <nav class="md-nav" aria-label="Install GraphML Corpus">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#option-1-download-default-from-athens-uav-workflows" class="md-nav__link">
+    Option 1: Download default from athens-uav-workflows
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-2-install-corpus-from-user-provided-file" class="md-nav__link">
+    Option 2: Install corpus from user provided file
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configure-corpus-db-server" class="md-nav__link">
+    Configure Corpus DB Server
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#open-required-ports-optional" class="md-nav__link">
+    Open Required Ports (Optional)
+  </a>
+  
+    <nav class="md-nav" aria-label="Open Required Ports (Optional)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#option-1-open-only-port-8182" class="md-nav__link">
+    Option 1: Open only port 8182.
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-2-disable-license-server-firewalls-entirely" class="md-nav__link">
+    Option 2: Disable license server firewalls entirely.
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#preserve-settings" class="md-nav__link">
+    Preserve Settings
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#next-steps" class="md-nav__link">
+    Next Steps
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#option-2-run-a-full-corpus-database" class="md-nav__link">
+    Option 2: Run a full corpus database.
+  </a>
+  
+    <nav class="md-nav" aria-label="Option 2: Run a full corpus database.">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#preserve-settings_1" class="md-nav__link">
+    Preserve Settings
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -2242,24 +2623,145 @@
 
 
 
-<h1 id="graph-server-setup">Graph Server Setup<a class="headerlink" href="#graph-server-setup" title="Permanent link">&para;</a></h1>
+<h1 id="corpus-database-setup">Corpus Database Setup<a class="headerlink" href="#corpus-database-setup" title="Permanent link">&para;</a></h1>
 <p>SWRi distributes their corpus of design data as a graph database that needs to
 be queried for various tasks.</p>
-<p>SimpleUAM provides utilities for running a <em>non-persistent</em> server for this
-data using <a href="https://tinkerpop.apache.org">TinkerPop</a>'s reference implementation.
-This implementation isn't meant to be performant and should only be used to
-temporarily serialize the corpus into a sensible format.</p>
-<p>Ensure you've completed the steps in <a href="../general/">General Setup</a> already.</p>
-<h3 id="install-dependencies">Install Dependencies<a class="headerlink" href="#install-dependencies" title="Permanent link">&para;</a></h3>
-<p>Install utilities like wget and rsync.</p>
+<h2 id="option-1-running-a-local-stub-server-recommended"><strong>Option 1:</strong> Running a Local Stub Server <em>(Recommended)</em><a class="headerlink" href="#option-1-running-a-local-stub-server-recommended" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>This is a local, minimal version of a corpus DB that uses
+<a href="https://tinkerpop.apache.org">TinkerPop</a>'s reference graph db implementation.
+It is not persistent so no changes will be preserved between restarts.</p>
+</blockquote>
+<h3 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h3>
 <ul>
-<li>Open an admin powershell to <code>&lt;repo-root&gt;</code>:<ul>
-<li>Run: <code>pdm run setup-win install.graph-deps</code></li>
+<li><a href="../general/">General Setup</a> has been completed.</li>
+<li>If not using the default corpus have the <code>.graphml</code> corpus ready at
+  <code>&lt;corpus-loc&gt;</code>.</li>
+<li>If using the default corpus have SSH keys or credentials for
+  <code>git.isis.vanderbilt.edu</code> set up.</li>
 </ul>
-</li>
+<h3 id="install-dependencies">Install Dependencies<a class="headerlink" href="#install-dependencies" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>Install utilities like wget and rsync.</p>
+</blockquote>
+<ul>
+<li>Open an admin powershell to <code>&lt;repo-root&gt;</code>.</li>
+<li>Install dependencies:
+  <div class="highlight"><pre><span></span><code>pdm run setup-win install.graph-deps
+</code></pre></div></li>
 <li>Reboot the machine.</li>
 </ul>
-<p><strong>Instructions on configuration and use are <a href="../../usage/craidl/">here</a>...</strong></p>
+<h3 id="install-graphml-corpus">Install GraphML Corpus<a class="headerlink" href="#install-graphml-corpus" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>We need to install the GraphML corpus to a default location so future setup
+steps can find it.</p>
+</blockquote>
+<h4 id="option-1-download-default-from-athens-uav-workflows"><strong>Option 1</strong>: Download default from athens-uav-workflows<a class="headerlink" href="#option-1-download-default-from-athens-uav-workflows" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Open an admin powershell at <code>&lt;repo-root&gt;</code>.</li>
+<li>
+<p>Automatically download athens-uav-workflows repo and get
+  <code>all_schema_uam.graphml</code>:
+  <div class="highlight"><pre><span></span><code>pdm run craidl corpus.download
+</code></pre></div></p>
+</li>
+<li>
+<p>Follow prompts, entering in <code>git.isis.vanderbilt.edu</code> credentials if needed.</p>
+</li>
+<li>Install corpus to default location:
+  <div class="highlight"><pre><span></span><code>pdm run craidl corpus.install
+</code></pre></div></li>
+</ul>
+<h4 id="option-2-install-corpus-from-user-provided-file"><strong>Option 2</strong>: Install corpus from user provided file<a class="headerlink" href="#option-2-install-corpus-from-user-provided-file" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Open admin powershell to <code>&lt;repo-root&gt;</code>.</li>
+<li>Place your corpus on the machine at <code>&lt;corpus-loc&gt;</code>.</li>
+<li>Install user provided corpus from <code>&lt;corpus-loc&gt;</code>:
+  <div class="highlight"><pre><span></span><code>pdm run craidl corpus.install --corpus<span class="o">=</span>&lt;corpus-loc&gt;
+</code></pre></div></li>
+</ul>
+<h3 id="configure-corpus-db-server">Configure Corpus DB Server<a class="headerlink" href="#configure-corpus-db-server" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>The config file at <code>&lt;config-dir&gt;/craidl.conf.yaml</code> stores information for
+running SimpleUAM's stub corpus database.
+Those settings are then used to configure the stub server.</p>
+</blockquote>
+<ul>
+<li>Open admin powershell to <code>&lt;repo-root&gt;</code>.</li>
+<li>
+<p><em>(Optional)</em> View currently loaded config file:
+  <div class="highlight"><pre><span></span><code>pdm run suam-config print --config<span class="o">=</span>craidl -r
+</code></pre></div>
+  The fields under <code>stub_server.host</code> and <code>stub_server.port</code> determine how the
+  corpus is served.</p>
+</li>
+<li>
+<p><em>(Optional)</em> If serving the graph to other machines then update the
+  <code>stub_server.host</code> config property.</p>
+<ul>
+<li>Set <code>stub_server.host</code> to <code>0.0.0.0</code>.</li>
+<li>See the <a href="../../usage/config/">config file guide</a> for more detailed
+  instructions and information.</li>
+</ul>
+</li>
+<li>
+<p>Install and configure corpus DB:
+  <div class="highlight"><pre><span></span><code>pdm run craidl stub-server.configure
+</code></pre></div>
+  In the absence of any arguments this uses the configured host, port, and
+  graphml corpus from <code>&lt;corpus-dir&gt;/craid.conf.yaml</code>.</p>
+</li>
+</ul>
+<h3 id="open-required-ports-optional">Open Required Ports <em>(Optional)</em><a class="headerlink" href="#open-required-ports-optional" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>Open the relevant ports up so that non-local worker nodes can
+connect to the stub database.</p>
+<p>We do not recommend non-local connections to a stub corpus database.</p>
+</blockquote>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you only intend to connect to a local worker node
+then you don't need to open any ports up.</p>
+</div>
+<h4 id="option-1-open-only-port-8182"><strong>Option 1:</strong> Open only port 8182.<a class="headerlink" href="#option-1-open-only-port-8182" title="Permanent link">&para;</a></h4>
+<p>The instructions for this are too configuration specific for us to provide.</p>
+<h4 id="option-2-disable-license-server-firewalls-entirely"><strong>Option 2:</strong> Disable license server firewalls entirely.<a class="headerlink" href="#option-2-disable-license-server-firewalls-entirely" title="Permanent link">&para;</a></h4>
+<p>We can't provide general instructions for this step but if you're using
+Windows Server 2019 you can use one of our scripts.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This is not secure at all. Do not do this if the license
+server is at all accessible from public or untrusted computers.</p>
+</div>
+<ul>
+<li>Disable the Windows Server 2019 firewall:
+  <div class="highlight"><pre><span></span><code>pdm run setup-win license-server.disable-firewall
+</code></pre></div></li>
+</ul>
+<p><strong>Note:</strong> This might work with other versions of Windows but that hasn't been
+tested.</p>
+<h3 id="preserve-settings">Preserve Settings<a class="headerlink" href="#preserve-settings" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>If you're connecting from a different machine.</p>
+</blockquote>
+<ul>
+<li>Keep this machine's IP as: <code>&lt;corpus-db-ip&gt;</code></li>
+<li>Keep the database's open port as: <code>&lt;corpus-db-port&gt;</code> (default: 8182)</li>
+</ul>
+<h3 id="next-steps">Next Steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h3>
+<p><strong>See the section on <a href="../usage/Craidl">using Craidl</a> for information on
+how to run and use this server...</strong></p>
+<h2 id="option-2-run-a-full-corpus-database"><strong>Option 2:</strong> Run a full corpus database.<a class="headerlink" href="#option-2-run-a-full-corpus-database" title="Permanent link">&para;</a></h2>
+<p>We try to avoid using the SWRi provided graph database and haven't explored
+alternate options, so this is up to you.</p>
+<h3 id="preserve-settings_1">Preserve Settings<a class="headerlink" href="#preserve-settings_1" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>If you're connecting from a different machine.</p>
+</blockquote>
+<ul>
+<li>Keep this machine's IP as: <code>&lt;corpus-db-ip&gt;</code></li>
+<li>Keep the database's open port as: <code>&lt;corpus-db-port&gt;</code> (default: 8182)</li>
+</ul>
 
               
             </article>
@@ -2296,13 +2798,13 @@ temporarily serialize the corpus into a sensible format.</p>
       
       
         
-        <a href="../worker/" class="md-footer__link md-footer__link--next" aria-label="Next: Worker Node" rel="next">
+        <a href="../corpus/" class="md-footer__link md-footer__link--next" aria-label="Next: Static Corpus" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              Worker Node
+              Static Corpus
             </div>
           </div>
           <div class="md-footer__button md-icon">
