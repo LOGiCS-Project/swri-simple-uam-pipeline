@@ -18,35 +18,6 @@ import subprocess
 
 log = get_logger(__name__)
 
-@task(incrementable=['verbose'])
-def run(ctx,
-        processes=0,
-        threads=0,
-        verbose=0):
-    """
-    Runs the worker node compute process. This will pull tasks from the broker
-    and perform them.
-
-    Arguments:
-      processes: Number of simultaneous worker processes.
-      threads: Number of threads per worker process.
-      verbose: Verbosity of output.
-    """
-
-    if processes <= 0:
-        processes = Config[D2CWorkerConfig].max_processes
-
-    if threads <= 0:
-        threads = Config[D2CWorkerConfig].max_threads
-
-    return run_worker_node(
-        modules=[__name__],
-        processes=processes,
-        threads=threads,
-        shutdown_timeout=Config[D2CWorkerConfig].shutdown_timeout,
-        skip_logging=Config[D2CWorkerConfig].skip_logging,
-    )
-
 @task
 def gen_info_files(ctx,
                  input='design_swri.json',
@@ -115,8 +86,8 @@ def gen_info_files(ctx,
 
     if not Config[D2CWorkerConfig].backend.enabled:
         log.warning(
-            "No result backend provided. Please examine the records archives "\
-            "for the generated results.")
+            "No result backend provided. Please examine the result archive "\
+            "directory for the generated results.")
         return None
 
     log.info(
@@ -146,7 +117,7 @@ def process_design(ctx,
                    output=None):
     """
     Runs the direct2cad pipeline on the input design files, producing output
-    metadata and a records archive with all the generated files.
+    metadata and a result archive with all the generated files.
 
     Arguments:
       input: The design file to read in.
@@ -207,8 +178,8 @@ def process_design(ctx,
 
     if not Config[D2CWorkerConfig].backend.enabled:
         log.warning(
-            "No result backend provided. Please examine the records archives "\
-            "for the generated results.")
+            "No result backend provided. Please examine the result archive "\
+            "directory for the generated results.")
         return None
 
     log.info(

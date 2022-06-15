@@ -1,5 +1,38 @@
 # Direct2Cad Worker
 
+- Worker runs as a service and listens for tasks from msg broker.
+    - When task arrives uses the D2C Workspaces code to run the analysis and
+      produce a result archive.
+- Talk about broker vs backend.
+    - Broker gets message from client to worker.
+    - Backend gets notification of completion from worker to client. (Really
+      just tells you the name of the zip file from a particular request.)
+    - RabbitMQ: Broker only
+    - Redis: Both Broker and Backend
+- Supports running worker node as normal process:
+    - Normal Process: `pdm run d2c-worker run`
+- Supports running worker node as a service managed by NSSM. The commands do the
+  obvious things.
+    - `pdm run d2c-worker service.install`
+    - `pdm run d2c-worker service.uninstall`
+    - `pdm run d2c-worker service.configure` : Converts config file settings to
+      NSSM settings.
+    - `pdm run d2c-worker service.start`
+    - `pdm run d2c-worker service.stop`
+    - `pdm run d2c-worker service.restart`
+    - `pdm run d2c-worker service.status`
+- Talk about config file `d2c_worker.conf.yaml` and fields:
+    - Broker config
+    - Backend config
+    - Worker Node Opts
+    - Service config
+
+??? todo "reqs"
+    - Workers:
+        - Configuring broker and backend
+        - Configure use as service
+        - Remote task processing
+
 A worker will listen for tasks from a message broker and then run those tasks.
 
 ### Configure Worker Settings
@@ -26,94 +59,3 @@ Actually run the worker process.
 
 Note that this is a process not a service. If it shuts down it needs to be
 restarted.
-
-### Making a Client Request via Command Line
-
-A client needs to have a broker configured in its `<config-dir>/d2c_worker.conf.yaml`
-just like the worker node.
-
-By default it can only send requests to workers and it won't receive any
-response back. If both the worker and client have an enabled and configured
-backend then the client will receive metadata which includes the name of the
-archive file generated in response to the original request.
-
-The client doesn't need any of the other setup of a worker node past having
-this repo available and the proper configuration.
-All of this works on Linux and OS X, not just Windows.
-
-Send a `gen_info_files` request using the command line interface:
-
-```bash
-PS D:\simple-uam> pdm run d2c-worker gen-info-files --help
-Usage: pdm run d2c-worker [--core-opts] gen-info-files [--options] [other tasks here ...]
-
-Docstring:
-  Will write the design info files in the specified
-  workspace, and create a new result archive with only the newly written data.
-  The workspace will be reset on the next run.
-
-  Arguments:
-    input: The design file to read in.
-    metadata: The json-format metadata file to include with the query.
-      Should be a dictionary.
-    output: File to write output session metadata to, prints to stdout if
-      not specified.
-
-Options:
-  -i STRING, --input=STRING
-  -m STRING, --metadata=STRING
-  -o STRING, --output=STRING
-```
-
-Send a `process_design` request using the command line interface:
-
-```bash
-PS D:\simple-uam> pdm run d2c-worker process-design --help
-Usage: pdm run d2c-worker [--core-opts] process-design [--options] [other tasks here ...]
-
-Docstring:
-  Runs the direct2cad pipeline on the input design files, producing output
-  metadata and a records archive with all the generated files.
-
-  Arguments:
-    input: The design file to read in.
-    metadata: The json-format metadata file to include with the query.
-      Should be a dictionary.
-    output: File to write output session metadata to, prints to stdout if
-      not specified.
-
-Options:
-  -i STRING, --input=STRING
-  -m STRING, --metadata=STRING
-  -o STRING, --output=STRING
-```
-
-### Making a Client Request in Python
-
-The configuration requirements are identical to the command-line case.
-
-Sending a request requires:
-
-  - SimpleUAM and `dramatiq` as dependencies.
-  - `design` as a JSON-serializable python object.
-  - Optional `metadata` a JSON-serializable python dictionary.
-
-A basic example:
-
-```python
-from simple_uam import direct2cad
-from simple_uam.util.config import Config, D2CWorkerConfig
-
-design = your_code_here()
-metadata = your_code_here()
-
-msg = direct2cad.process_design.send(design, metadata=metadata)
-
-# Only works if we have a configured and enabled backend to cache results.
-if Config[D2CWorkerConfig].backend.enabled:
-    result = msg.get_result(block=True,timeout=600000)
-    print(result)
-```
-
-The core task processing is handled by [`dramatiq`](https://dramatiq.io),
-and their docs can help with any advanced use.

@@ -106,7 +106,7 @@ class Session():
     )
     """
     The metadata for this session, will be stored in metadata.json in the
-    record archive.
+    result archive.
 
     Will be initialized by the Workspace.
     """
@@ -116,7 +116,7 @@ class Session():
         kw_only=True,
     )
     """
-    The file in the workdir (and eventually in the records archive) that stores
+    The file in the workdir (and eventually in the results archive) that stores
     the current metadata.
     """
 
@@ -125,7 +125,7 @@ class Session():
         kw_only=True,
     )
     """
-    The file in the workdir (and eventually in the records archive) that stores
+    The file in the workdir (and eventually in the results archive) that stores
     logs.
     """
 
@@ -145,15 +145,15 @@ class Session():
     def _init_exclude_pats_def(self):
         return [".git"]
 
-    record_exclude_patterns : List[str] = field(
+    result_exclude_patterns : List[str] = field(
         kw_only=True,
     )
     """
-    Patterns to exclude from workspace record archive.
+    Patterns to exclude from workspace result archive.
     """
 
-    @record_exclude_patterns.default
-    def _record_exclude_pats_def(self):
+    @result_exclude_patterns.default
+    def _result_exclude_pats_def(self):
         return [".git"]
 
     old_work_dir : Optional[Path] = field(
@@ -400,9 +400,9 @@ class Session():
             json.dump(self.metadata, out_file, indent="  ")
 
     @session_op
-    def generate_record_archive(self):
+    def generate_result_archive(self):
         """
-        Creates the record archive from the current working directory as it
+        Creates the result archive from the current working directory as it
         is.
         """
 
@@ -410,11 +410,11 @@ class Session():
             ref=str(self.reference_dir),
             src=str(self.work_dir),
             out=str(self.result_archive),
-            exclude_from=[str(f) for f in self.record_exclude_files],
+            exclude_from=[str(f) for f in self.result_exclude_files],
         )
 
         log.info(
-            "Generating record archive for session.",
+            "Generating result archive for session.",
             workspace=self.number,
             **rsync_args,
         )

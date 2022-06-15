@@ -38,10 +38,10 @@ def main(args: Optional[List[str]] = None) -> int:
 
     manage_ns = Collection()
     manage_ns.add_task(manage.delete_locks, "delete_locks")
-    manage_ns.add_task(manage.prune_records, "prune_records")
+    manage_ns.add_task(manage.prune_results, "prune_results")
     manage_ns.add_task(manage.workspaces_dir, "workspaces_dir")
     manage_ns.add_task(manage.cache_dir, "cache_dir")
-    manage_ns.add_task(manage.records_dir, "records_dir")
+    manage_ns.add_task(manage.results_dir, "results_dir")
 
     tasks_ns = Collection()
     tasks_ns.add_task(tasks.start_creo, "start_creo")

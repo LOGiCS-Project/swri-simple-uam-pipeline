@@ -100,7 +100,7 @@ def process_design(ctx,
                    output=None):
     """
     Runs the direct2cad pipeline on the input design files, producing output
-    metadata and a records archive with all the generated files.
+    metadata and a results archive with all the generated files.
 
     Arguments:
       design: The design file to read in.

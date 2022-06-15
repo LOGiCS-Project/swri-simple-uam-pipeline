@@ -34,7 +34,10 @@ AWS account.
 
 ## Virtual Private Cloud
 
-Creates public and private subnets that your servers can live in.
+> This creates a private network where your servers can live isolated from the
+> internet yet able to communicate with each other.
+
+### Create public and private subnets
 
 - Open the VPC console's [Create VPC page](https://us-east-1.console.aws.amazon.com/vpc/home?region=us-east-1#CreateVpc:).
     - VPC Settings:
@@ -56,7 +59,7 @@ Creates public and private subnets that your servers can live in.
         - **Enable DNS Hostnames**: Yes (check box)
         - **Enable DNS Resolution**: Yes (check box)
 
-Locate and save useful information about the VPC.
+### Save useful information
 
 - Click "Create VPC". Once the process bar is done click "View VPC".
     - Keep track of the VPC ID as: `<aws-vpc-id>`
@@ -72,7 +75,7 @@ Locate and save useful information about the VPC.
         - It should be named *"`<aws-vpc>`-subnet-private1-..."*.
         - Keep track of "Subnet ID" as: `<aws-private-subnet>`
 
-Open up the internal firewall rules for easier setup.
+### Open up the internal firewall
 
 - Open the "Security Groups" page of the VPC console.
     - Find the subnet whose "VPC ID" is `<aws-vpc-id>`.
@@ -89,17 +92,17 @@ Open up the internal firewall rules for easier setup.
 
 ## AWS VPN Connection
 
-Sets up keys and a VPN connection so your local computer can directly
-communicate with instances and services on the private subnet.
+> Sets up keys and a VPN connection so your local computer can directly
+> communicate with instances and services on the private subnet.
 
-Create keys for VPN access.
+### Create keys for VPN access
 
 - Create sever and client certs:
     - Follow the instructions [here](https://docs.aws.amazon.com/vpn/latest/clientvpn-admin/client-authentication.html#mutual).
     - Keep track of:
-        - `server.crt` as: `<aws-server-cert>`
+        - `server.crt` as: `<aws-server-crt>`
         - `server.key` as: `<aws-server-key>`
-        - `client1.domain.tld.crt` as: `<aws-client-cert>`
+        - `client1.domain.tld.crt` as: `<aws-client-crt>`
         - `client1.domain.tld.key` as: `<aws-client-key>`
 - Import the certs to ACM:
     - Follow the instructions [here](https://docs.aws.amazon.com/acm/latest/userguide/import-certificate-api-cli.html).
@@ -111,11 +114,11 @@ Create keys for VPN access.
         - Keep track of "Identifier" as: `<aws-client-cert-id>`
         - Keep track of "ARN" as: `<aws-client-cert-arn>`
 
-Create the VPN interface.
+### Create the VPN interface
 
 - Follow the instructions [here](https://docs.aws.amazon.com/vpn/latest/clientvpn-admin/cvpn-getting-started.html).
     - Step 2:
-        - **Name**: `<aws-vpn>`
+        - **Name**: `<aws-cvpn>`
         - **Client IPV4 CIDR**: 10.10.0.0/22
         - **Server Cert ARN**: `<aws-server-cert-arn>`
         - **Authentication Option**: Mutual
@@ -130,6 +133,7 @@ Create the VPN interface.
             - **Enable Self-Service**: yes
             - **Session Timeout**: 24h
             - **Enable Client Logic Banner**: No
+        - Save the Client VPN ID as `<aws-cvpn-id>`
     - Step 3: Client VPN Assoc
         - **VPC**: `<aws-vpc-id>`
         - **Subnet**: `<aws-private-subnet>`
@@ -141,14 +145,101 @@ Create the VPN interface.
         - **Route Dest**: 0.0.0.0/0
         - **Target Subnet**: `<aws-private-subnet>`
     - Step 6: No changes
-    - Step 7: No changes
+    - Step 7: Skip this step
+    - Step 8: Skip this step
+
+### Create Client VPN Config File
+
+> This is the file users will import in order to connect to the above
+> VPN interface. Instructions taken from [here](https://docs.aws.amazon.com/vpn/latest/clientvpn-admin/cvpn-getting-started.html#cvpn-getting-started-config)
+> and [here](https://docs.aws.amazon.com/vpn/latest/clientvpn-admin/cvpn-working-endpoint-export.html).
+
+- Open the Amazon VPC console at https://console.aws.amazon.com/vpc/
+- In the navigation pane, choose "Client VPN Endpoints".
+- Choose `<aws-cvpn-id>` and click "Download Client Configuration".
+    - Save this as `<aws-cvpn-config>`.
+- Open `<aws-cvpn-config>` in a text editor.
+    - Prepend a random subdomain to the ClientVPN DNS entry
+        - The line should start with `remote cvpn-endpoint-`.
+        - When finished it should begin `remote awrogr.cvpn-endpoint-` with the
+          rest remaining the same and `awrogr` replaced with some random
+          string of your own.
+    - After the line that begins `verb 3` insert the following:
+      ```xml
+      <ca>
+      </ca>
+
+      <cert>
+      </cert>
+
+      <key>
+      </key>
+      ```
+    - Take the ceritificate from `<aws-server-crt>` and place it between
+      the `<ca>` tags.
+        - This is the section of the file between the `BEGIN CERTIFICATE` and
+          `END CERTIFICATE` bars **including the bars themselves**.
+    - Take the certificate from `<aws-client-crt>` and place it between the
+      `<cert>` tags.
+    - Take the private key from `<aws-client-key>` and place it between the
+      `<key>` tags.
+        - This is the section of the file between the `BEGIN PRIVATE KEY` and
+          `END PRIVATE KEY` bars **including the bars themselves**.
+    - Save the modified file.
+- Distribute the `<aws-cvpn-config>` to your intended users.
+
+??? example "Sample `<aws-cvpn-config>` after above modifications."
+
+    The actual contents of the certificates have been replaced with `...`.
+
+    ```
+    client
+    dev tun
+    proto udp
+    remote asdf.cvpn-endpoint-0011abcabcabcabc1.prod.clientvpn.eu-west-2.amazonaws.com 443
+    remote-random-hostname
+    resolv-retry infinite
+    nobind
+    remote-cert-tls server
+    cipher AES-256-GCM
+    verb 3
+
+    <ca>
+    -----BEGIN CERTIFICATE-----
+    ...
+    -----END CERTIFICATE-----
+    </ca>
+
+    <cert>
+    -----BEGIN CERTIFICATE-----
+    ...
+    -----END CERTIFICATE-----
+    </cert>
+
+    <key>
+    -----BEGIN PRIVATE KEY-----
+    ...
+    -----END PRIVATE KEY-----
+    </key>
+
+    reneg-sec 0
+    ```
+
+### Connect to the VPN
+
+> These instructions apply to your users as well as long as you provide them
+> access to the `<aws-cvpn-config>` file.
+
+- **Linux:** [Instructions](https://docs.aws.amazon.com/vpn/latest/clientvpn-user/linux.html)
+- **MacOS:** [Instructions](https://docs.aws.amazon.com/vpn/latest/clientvpn-user/macos.html)
+- **Windows:** [Instructions](https://docs.aws.amazon.com/vpn/latest/clientvpn-user/windows.html)
 
 ## FSx Shared Drive
 
-Create a shared drive that you can mount on both your local machine and worker nodes.
-This drive is both a convenient shared mount for development work, using your
-local setup to edit server code, and a place for multiple workers to stash
-results.
+> Create a shared drive that you can mount on both your local machine and worker nodes.
+> This drive is both a convenient shared mount for development work, using your
+> local setup to edit server code, and a place for multiple workers to stash
+> results.
 
 - Go to the [FSx File System console](https://console.aws.amazon.com/fsx/home?region=us-east-1#file-systems).
     - Click "Create File System":
@@ -195,7 +286,9 @@ results.
 
 ## Create an EC2 Keypair
 
-Create a keypair for connecting to AWS instances.
+> This keypair is needed to connect to various EC2 instances in the VPC.
+
+#### Create a keypair for connecting to AWS instances.
 
 - Open the EC2 console to the "Key pairs" page and click "Create key pair".
     - **Name**: `<ec2-keypair>`

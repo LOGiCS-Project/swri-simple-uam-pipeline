@@ -179,15 +179,25 @@ class ConfigData:
         """
 
         # Normalize path argument.
+
         if path == None and write_all:
             path = self.load_path
         elif path == None and not write_all:
             path = list(self.load_path[-1:])
 
+        paths=None
         if isinstance(path, list):
-            path = [Path(f) for f in path]
+            paths = [Path(f) for f in path]
         else:
-            path = [Path(f)]
+            paths = [Path(f)]
+
+        path = list()
+        for p in paths:
+            if p.exists() and p.is_dir():
+                path.append(p / conf_file)
+            else:
+                path.append(p)
+
 
         # Organize data to write
         conf = OmegaConf.create()
@@ -415,6 +425,7 @@ class Config(object):
         comment: bool = True,
         fields: Optional[List[str]] = None,
         data: Optional[Any] = None,
+        out_dir: Union[str,Path,None] = None,
     ):
         """
         Writes a sample config out to the filesystem.
@@ -433,6 +444,7 @@ class Config(object):
             Ignored if data is provided.
           data (default=None): Data to write to config, if not the currently
             loaded configuration. In some format that can be written to yaml.
+          out_dir (default=None): directory to write output to if provided.
         """
         return cls()._write_configs(
             configs=configs,
@@ -442,6 +454,7 @@ class Config(object):
             comment=comment,
             fields=fields,
             data=data,
+            out_dir=out_dir,
         )
 
     def _write_configs(
@@ -453,6 +466,7 @@ class Config(object):
         comment: bool = True,
         fields: Optional[List[str]] = None,
         data: Optional[Any] = None,
+        out_dir: Union[str,Path,None] = None,
     ):
         """
         Writes a sample config out to the filesystem.
@@ -471,6 +485,7 @@ class Config(object):
             Ignored if data is provided.
           data (default=None): Data to write to config, if not the currently
             loaded configuration. In some format that can be written to yaml.
+          out_dir (default=None): directory to write output to if provided.
         """
         conf_types = None
         if configs == None:
@@ -478,13 +493,20 @@ class Config(object):
         else:
             conf_types = [self.config_types[self._get_config_class(config)] for config in configs]
 
+        path=None
+        if out_dir:
+            path=Path(out_dir)
+            path.mkdir(parents=True, exist_ok=True)
+
         for conf_type in conf_types:
             conf_type.write_config(
+                path=path,
                 write_all=write_all,
                 overwrite=overwrite,
                 comment=comment,
                 fields=fields,
                 data=data,
+                # out_dir=out_dir,
             )
 
     @classmethod

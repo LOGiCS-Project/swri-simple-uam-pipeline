@@ -2,14 +2,14 @@
 
 This section of the guide will cover:
 
-  - Creating the various EC2 instances needed for each node or combination of
-    nodes.
+  - Creating the various EC2 instances needed for each component or combination of
+    component.
 
 ## Provisioning an Instance
 
-Setup an EC2 instance for running various nodes.
-This only covers the various windows nodes that SimpleUAM currently supports
-and needs to be repeated for each node.
+> Setup an EC2 instance for running various components.
+> This only covers the various windows nodes that SimpleUAM currently supports
+> and needs to be repeated for each node.
 
 - Under the EC2 Console click "Launch an Instance".
 
@@ -57,42 +57,47 @@ and needs to be repeated for each node.
         - **Advanced Details:**
             - **Elastic GPU:** eg1.medium
 
-    ??? note "Corpus Server Minimum Requirements"
+        This can get CPU bound, so it might make sense to bump it up.
 
-        The corpus server provided with SimpleUAM is a minimal stub that
-        can run on a worker node alongside a worker.
+    ??? note "Corpus DB Minimum Requirements"
 
-        A proper corpus server should probably be run on a linux instance
-        in this VPC but setting that up is beyond the current scope of
-        this library.
+        **Option 1:** If you need a read-only corpus DB itermittently for
+        generating a static corpus, we reccomend just running the stub DB on a
+        worker temporarily.
 
-        If you must run the stub server is a persistant manner, then the
-        worker node minimum requirements are a decent starting point. Maybe
-        bump up the CPU a bit since it does tend to get saturated when the
-        stub is being queried a lot.
+        **Option 2:** If you need a corpus DB for an alternate analysis
+        pipeline and are fine with a non-persistent corpus then use a
+        stub DB on a worker.
+
+        **Option 3:** If you need a corpus that is persistent, shared between
+        multiple workers, or needs to be performant then you should set up
+        janus-graph on a linux machine.
+
+        This is outside the scope of this guide and you should try to follow
+        SWRI's instructions.
 
     ??? note "Message Broker Minimum Requirements"
 
-        We haven't tested the message broker enough to have good minimum
-        requirements, but it can ride sidecar with a worker node.
+        **Option 1:** If you want a non-backendless broker or one that's not
+        wasting your money set up a linux instance and skip to the section
+        on [message broker setup](broker.md). I'm not sure what minimum
+        requirements make sense.
 
-        That said running a broker on windows for more than development work is
-        not a great idea.
-        Both supported brokers, rabbitmq and redis, are used out of the box
-        with default settings.
-        They both have much stronger linux support than windows support and
-        they'll be more performant when running on an OS that's actually good.
+        **Option 2:** If you want a backendless message broker for intermittent
+        testing or development work then install it sidecar with a worker node.
 
-        If you're running a broker in production just stick
-        [rabbitmq](https://www.rabbitmq.com/download.html) or
-        [redis](https://redis.io/download/) on linux instance.
+        **Option 3:** If you want a backendless broker and are fine with lower
+        performance the specifications for a worker node on a windows machine
+        be fine.
 
 - Find the instance you just created with "Name" `<instance.name>`.
     - Save the "Instance ID" as: `<instance.id>`
 
 ## Connect to an Instance
 
-Get remote desktop connection information for the instance.
+> Use the remote desktop protocol to connect to the instance.
+
+#### Get RDP Connection Information
 
 - Select the instance on your EC2 Dashboard
 - Hit the Connect Button
@@ -109,8 +114,10 @@ Get remote desktop connection information for the instance.
         - Click "Decrypt Password"
         - Save to `<instance.rdp-pass>`
 
-Connect to the instance via rdp:
+#### Connect Via RDP
 
+- Make sure your local machine is connected to the VPN set up previously,
+  otherwise none of the provided IPs will correctly resolve.
 - Via Preferred RDP client (e.g. [Remmina](htps://remmina.org)):
     - **Import:** `<instance.rdp-file>`
     - **IP:** `<instance.ip>`
@@ -119,7 +126,8 @@ Connect to the instance via rdp:
 
 ## Mount Shared FSx Drive
 
-AWS specific instance setup.
+> The AWS specific instructions are largely the same as the standard windows
+> NFS ones, but they need certain server features to be enabled first.
 
 - Add NFS client: [Instructions](https://computingforgeeks.com/install-and-configure-nfs-client-on-windows-10-server-2019/)
 - Setup The Automount of drive: [Instructions](https://docs.aws.amazon.com/fsx/latest/WindowsGuide/using-file-shares.html#map-share-windows)

@@ -1,5 +1,45 @@
 # Direct2Cad Workspace
 
+- Workspace is wrapper around d2c that provides a consistent environment for
+  SWRi's scripts to run in.
+    - Consistent env is defined in terms of a reference workspace which is
+      static and defines the initial condition for any operation.
+- You can have a "session" within a workspace with this broad flow:
+    - Workspace is reset (restored to same file state as reference workspace)
+    - Arbitrary python code, console commands, etc.. are run
+        - Cad pipeline, writing info to file, etc...
+    - Session Metadata, Logs, Errors are written to files in the workspace
+      directory.
+    - We compare this workspace to the reference and pack any files that changed
+      (incl. the metadata and logs) into a zip file.
+    - The zip file contains the results of the session and is placed in a shared
+      folder.
+- We provide 3 sessions:
+    - `tasks.start-creo`: Will start Creo on the worker. Exists for debug
+      purposes. Other sessions that need Creo running can start it themselves.
+    - `tasks.gen-info-files`: Will generate info files using the configs in
+      `d2c_workspace.conf.yaml` and package them in a records archive.
+        - This uses the same core operation as `craidl` and requires that be
+          set up.
+    - `tasks.process-design`: Runs the direct2cad pipeline on the provided
+      design and generates a record archive with the result.
+        - This uses the same core operation as `craidl` and requires that be
+          set up.
+- The reference workspace:
+    - setup w/ `pdm run d2c-workspace setup.reference-workspace`. Mostly
+      takes care of itself.
+- General Workspace Management w/ `pdm run d2c-workspace <subcommand>`:
+    - `manage.cache-dir`: Prints cache dir
+    - `manage.workspaces-dir`: Print the root workspaces directory. By default
+      contains the reference workspaces, lock files, and live workspaces.
+    - `manage.results-dir`: Print the directory where results will be stored
+      given current config.
+    - `manage.delete-locks`: Deletes all extant locks for workspace management,
+      used to clear stale ones.
+    - `manage.prune-results` : Deletes any results the are to old **and** over
+      the configured limit. (default is no limit)
+- Go over config file?
+
 A workspace is an environment (i.e. folder) set up so that SWRi's direct2cad
 pipeline can run within it.
 
@@ -11,12 +51,6 @@ You can run these sessions locally through code or console commands.
 
 There are 3 provided sessions:
 
-- `tasks.start-creo`: Will start Creo on the worker. Exists for debug
-  purposes. Other sessions that need Creo running can start it themselves.
-- `tasks.gen-info-files`: Will generate info files using the configs in
-  `d2c_workspace.conf.yaml` and package them in a records archive.
-- `tasks.process-design`: Runs the direct2cad pipeline on the provided
-  design and generates a record archive with the result.
 
 These tasks only function on a worker node set up as [here](../setup/worker.md).
 

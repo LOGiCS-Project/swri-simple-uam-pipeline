@@ -55,7 +55,7 @@ class PathConfig:
     @property
     def log_dir(self):
         """ Log Storage Directory. """
-        return Path(self.config_directory)
+        return Path(self.log_directory)
 
     @property
     def work_dir(self):

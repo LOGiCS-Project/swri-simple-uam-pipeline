@@ -1,5 +1,25 @@
 # Craidl Tools
 
+- Modified from code privded by sri.
+- Exists to support a single step needed by direct2cad analysis pipeline
+    - gen_info_file
+- has infra for
+    - downloading and installing a graphml corpus
+    - keeping track of a component information corpus
+    - keeping track of an example design corpus
+        - setup, sri download, and cleanup
+    - generating a static corpus from a running corpus db
+    - using either a corpus db to a static corpus to
+      generate the info files for a design.
+        - command line args
+- Also config file breakdown?
+
+??? todo "reqs"
+    - Craidl:
+        - Run and use CorpusDB stub server
+        - Use the generated static corpus
+        - Using / generating either type of corpus
+
 - Tools can use graph server corpus or static file for 'gen_info_files'
 - Specify which through config files (`craidl.conf.yaml`)
 - Server:

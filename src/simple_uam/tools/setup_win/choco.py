@@ -33,6 +33,7 @@ choco_exe_map = {
     'wget': 'wget.exe',
     'python3': 'python.exe',
     'tortoisegit': 'TortoiseGitMerge.exe', # not really a CLI app but it's a test
+    'nssm': 'nssm.exe',
 }
 
 @task

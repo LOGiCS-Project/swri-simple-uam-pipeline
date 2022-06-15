@@ -11,7 +11,7 @@ from datetime import datetime
 import heapq
 
 from simple_uam.util.config.workspace_config import \
-    RecordsConfig, WorkspaceConfig
+    ResultsConfig, WorkspaceConfig
 from simple_uam.util.logging import get_logger
 from simple_uam.util.invoke import task
 from simple_uam.util.config import Config
@@ -38,14 +38,14 @@ class WorkspaceManager():
 
         return FileLock(self.config.reference_lockfile)
 
-    def records_lock(self) -> FileLock:
+    def results_lock(self) -> FileLock:
         """
-        Lockfile for the records storage directory.
+        Lockfile for the results storage directory.
 
         Note: We provide new locks on every request due to reentrancy issues.
               Multiple threads sharing the same lock isn't the behavior we want.
         """
-        return FileLock(self.config.records_lockfile)
+        return FileLock(self.config.results_lockfile)
 
     def workspace_lock(self, num : int) -> FileLock:
         """
@@ -93,8 +93,8 @@ class WorkspaceManager():
             self.config.locks_path,
             self.config.reference_path,
             self.config.assets_path,
-            self.config.records_path,
-            self.config.records_lockdir,
+            self.config.results_path,
+            self.config.results_lockdir,
             *self.config.workspace_paths,
         ]
 
@@ -103,13 +103,13 @@ class WorkspaceManager():
 
     def delete_locks(self,
                      skip_reference=False,
-                     skip_records=False):
+                     skip_results=False):
         """
         Deletes all the locks that this WorkspaceManager can interact with.
 
         Arguments:
            skip_reference: If true, skip deleting the reference lockfile.
-           skip_records: If true, skip deleting the records lock.
+           skip_results: If true, skip deleting the results lock.
         """
 
         lockfiles = [
@@ -118,34 +118,34 @@ class WorkspaceManager():
 
         if not skip_reference:
             lockfiles.append(self.config.reference_lockfile)
-        if not skip_records:
-            lockfiles.append(self.config.records_lockfile)
+        if not skip_results:
+            lockfiles.append(self.config.results_lockfile)
 
         for lf in lockfiles:
             lf.unlink(missing_ok=True)
 
-    def add_record(self,
+    def add_result(self,
                    archive : Union[str,Path],
                    prefix : Optional[str] = None,
                    suffix : Optional[str] = None,
                    copy : bool = True,
     ) -> Optional[Path]:
         """
-        Adds an archive to the record directory.
+        Adds an archive to the result directory.
 
         Arguments:
-           archive: The file to be moved into the record dir.
+           archive: The file to be moved into the result dir.
            prefix: The prefix to the final file name.
            suffix: The file extension to use.
            copy: copy the file if true, otherwise move.
 
         Returns:
-           The path to the resulting file in records dir, none if
-           no record was saved.
+           The path to the resulting file in results dir, none if
+           no result was saved.
         """
 
-        # No records to save, don't bother.
-        if self.config.records.max_count == 0:
+        # No results to save, don't bother.
+        if self.config.results.max_count == 0:
             return None
 
         # Normalize and validate input
@@ -178,53 +178,53 @@ class WorkspaceManager():
                 shutil.copy2(archive, target)
                 archive = target
 
-            # Move temp_file to records dir (no lock needed)
-            out_path = self.config.records_path / out_file
+            # Move temp_file to results dir (no lock needed)
+            out_path = self.config.results_path / out_file
             shutil.move(archive, out_path)
 
             # Return the resulting filepath
             return out_path
 
-    def prune_records(self):
+    def prune_results(self):
         """
-        Deletes the oldest files in the records dir if there are too many.
+        Deletes the oldest files in the results dir if there are too many.
         """
 
-        # Never pruning records, don't bother.
-        if self.config.records.max_count < 0:
+        # Never pruning results, don't bother.
+        if self.config.results.max_count < 0:
             return
 
-        # Gather records that are old enough to prune.
+        # Gather results that are old enough to prune.
         now = datetime.now()
-        records = list()
-        total_records = 0
-        for record in self.config.records_path.iterdir():
-            if record.is_file():
-                total_records += 1
-                access_time = datime.from_timestamp(record.stat().st_atime)
+        results = list()
+        total_results = 0
+        for result in self.config.results_path.iterdir():
+            if result.is_file():
+                total_results += 1
+                access_time = datime.from_timestamp(result.stat().st_atime)
                 staletime = (now - access_time).total_seconds()
-                if staletime > self.config.records.min_staletime:
-                    records.append(tuple(staletime,record))
+                if staletime > self.config.results.min_staletime:
+                    results.append(tuple(staletime,result))
 
         # Short circuit if there's nothing to prune
-        surplus_records = total_records - self.config.records.max_count
-        if surplus_records <= 0:
+        surplus_results = total_results - self.config.results.max_count
+        if surplus_results <= 0:
             return
 
         # Gather the oldest.
-        records = heapq.nlargest(
-            surplus_records,
-            records,
+        results = heapq.nlargest(
+            surplus_results,
+            results,
             key=lambda t: t[0],
         )
 
         try:
             # Presumably someone else is also pruning if there's a lock,
             # Just let them do the work, and move on.
-            with self.records_lock().acquire(blocking=False):
-                for record in records:
-                    # If a record got deleted before this point, that's fine.
-                    records.unlink(missing_ok=True)
+            with self.results_lock().acquire(blocking=False):
+                for result in results:
+                    # If a result got deleted before this point, that's fine.
+                    results.unlink(missing_ok=True)
         except Timeout:
             pass
 

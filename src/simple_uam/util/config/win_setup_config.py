@@ -28,9 +28,10 @@ class WinSetupConfig():
     """
 
     worker_dep_packages : List[str] = [
-        # 'openjdk11',
+        'openjdk11',
         # 'openmodelica',
         'rsync',
+        'nssm',
     ]
     """
     Chocolatey packages needed for a windows worker node.
@@ -56,6 +57,7 @@ class WinSetupConfig():
 
     graph_dep_packages : List[str] = [
         'openjdk11',
+        'nssm',
     ]
     """
     Chocolatey packages needed for a windows graph server node.

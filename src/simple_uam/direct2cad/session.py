@@ -1,7 +1,7 @@
 
 from simple_uam.workspace.session import Session, session_op
 from simple_uam.util.logging import get_logger
-from simple_uam.util.config import Config, D2CWorkspaceConfig
+from simple_uam.util.config import Config, D2CWorkspaceConfig, CraidlConfig
 from simple_uam.craidl.corpus import GremlinCorpus, StaticCorpus, get_corpus
 from simple_uam.craidl.info_files import DesignInfoFiles
 from attrs import define,field
@@ -82,7 +82,7 @@ class D2CSession(Session):
         )
 
         corpus = get_corpus(
-            config=Config[D2CWorkspaceConfig].craidl
+            config=Config[CraidlConfig]
         )
 
         log.info(
