@@ -21,7 +21,7 @@
     - `pdm run d2c-worker service.stop`
     - `pdm run d2c-worker service.restart`
     - `pdm run d2c-worker service.status`
-- Talk about config file and fields.
+- Talk about config file `d2c_worker.conf.yaml` and fields:
     - Broker config
     - Backend config
     - Worker Node Opts

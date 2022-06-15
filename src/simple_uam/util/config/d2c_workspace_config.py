@@ -31,6 +31,14 @@ class D2CWorkspaceConfig(WorkspaceConfig):
     Dir for cached data.
     """
 
+    max_workspaces : int = 1
+    """
+    The maximum number of workspaces operating simultaneously.
+
+    Direct2Cad currently only supports one instance of Creo at a time per
+    machine.
+    """
+
     exclude : List[str] = ['.git']
 
     exclude_from : List[str] = []

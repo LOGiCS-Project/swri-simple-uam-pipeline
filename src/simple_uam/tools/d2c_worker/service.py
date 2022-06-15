@@ -34,9 +34,12 @@ def install(ctx):
     worker_service.install()
 
 @task
-def uninstall(ctx):
+def uninstall(ctx, confirm=True):
     """
     Uninstalls the SimpleUAM Worker service with NSSM.
+
+    Arguments:
+      confirm: Require a GUI confirmation box before uninstalling.
     """
     worker_service.uninstall()
 
@@ -74,3 +77,10 @@ def status(ctx):
     Prints the status of the SimpleUAM Worker service.
     """
     return worker_service.restart()
+
+@task
+def gui_edit(ctx):
+    """
+    Opens the NSSM GUI service editor.
+    """
+    return worker_service.gui_edit()

@@ -85,6 +85,8 @@ creo_installer = GUIInstaller(
 
           See this link for more detailed instructions: http://simplifiedlogic.com/how-to-install-jlink-for-creo
 
+          Note: The installer hangs for a moment when you confirm, give it a few seconds.
+
         - Consider disabling all the diagnostic reporting.
     """,
 )
@@ -192,7 +194,7 @@ creopyson_repo = "https://git.isis.vanderbilt.edu/SwRI/creoson/creopyson.git"
 
 creopyson_branch = "main"
 
-@task(pre=[call(choco.install, pkg=['python3','pip'])])
+@task(pre=[call(choco.install, pkg=['python3'])])
 def creopyson(ctx, prompt=True, quiet=False, verbose=False):
     """
     Clones/updates the creopyson repository and installs the python library

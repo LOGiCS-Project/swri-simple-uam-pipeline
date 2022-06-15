@@ -7,9 +7,9 @@ This section of the guide will cover:
 
 ## Provisioning an Instance
 
-Setup an EC2 instance for running various component.
-This only covers the various windows nodes that SimpleUAM currently supports
-and needs to be repeated for each node.
+> Setup an EC2 instance for running various components.
+> This only covers the various windows nodes that SimpleUAM currently supports
+> and needs to be repeated for each node.
 
 - Under the EC2 Console click "Launch an Instance".
 
@@ -95,7 +95,9 @@ and needs to be repeated for each node.
 
 ## Connect to an Instance
 
-Get remote desktop connection information for the instance.
+> Use the remote desktop protocol to connect to the instance.
+
+#### Get RDP Connection Information
 
 - Select the instance on your EC2 Dashboard
 - Hit the Connect Button
@@ -112,8 +114,10 @@ Get remote desktop connection information for the instance.
         - Click "Decrypt Password"
         - Save to `<instance.rdp-pass>`
 
-Connect to the instance via rdp:
+#### Connect Via RDP
 
+- Make sure your local machine is connected to the VPN set up previously,
+  otherwise none of the provided IPs will correctly resolve.
 - Via Preferred RDP client (e.g. [Remmina](htps://remmina.org)):
     - **Import:** `<instance.rdp-file>`
     - **IP:** `<instance.ip>`
@@ -122,7 +126,8 @@ Connect to the instance via rdp:
 
 ## Mount Shared FSx Drive
 
-AWS specific instance setup.
+> The AWS specific instructions are largely the same as the standard windows
+> NFS ones, but they need certain server features to be enabled first.
 
 - Add NFS client: [Instructions](https://computingforgeeks.com/install-and-configure-nfs-client-on-windows-10-server-2019/)
 - Setup The Automount of drive: [Instructions](https://docs.aws.amazon.com/fsx/latest/WindowsGuide/using-file-shares.html#map-share-windows)

@@ -93,3 +93,10 @@ class ServiceConfig():
     """
     Do we run this app in a visible console.
     """
+
+    interactive : bool = field(
+        default=False,
+    )
+    """
+    Is this a standalone service or one which can interact the desktop?
+    """

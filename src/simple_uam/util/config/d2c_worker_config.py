@@ -98,7 +98,7 @@ class D2CWorkerConfig():
     Default is the number of workspaces on the machine.
     """
 
-    max_threads : int = 1
+    max_threads : int =  1
     """
     Max number of threads per process.
     Default is 1.
@@ -116,8 +116,8 @@ class D2CWorkerConfig():
 
     service : ServiceConfig = field(
         default = ServiceConfig(
-            stdout_file = SI("${path:log_directory}/d2c/stdout.log"),
-            stderr_file = SI("${path:log_directory}/d2c/stderr.log"),
+            stdout_file = SI("${path:log_directory}/d2c_worker/stdout.log"),
+            stderr_file = SI("${path:log_directory}/d2c_worker/stderr.log"),
         )
     )
     """

@@ -56,7 +56,7 @@ license server and a broker for most tasks.
 - If on Windows Server 2019 you can disable the IE Enhanced Security popups
   that open whenever Creo starts.
   ```bash
-  pdm run setup worker.disable-ieesc
+  pdm run setup-win worker.disable-ieesc
   ```
 
 ### Install Creopyson

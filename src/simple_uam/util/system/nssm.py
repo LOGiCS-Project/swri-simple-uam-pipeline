@@ -20,10 +20,12 @@ from ..logging import get_logger
 log = get_logger(__name__)
 
 
-def _escape(self, arg):
+def _escape(arg):
     """
     Escapes input string for arg.
     """
+    if not isinstance(arg,str):
+        arg = str(arg)
     return arg # Assuming popen takes care of this for us right now.
 
 def _exe_convert(val):
@@ -66,7 +68,7 @@ class NssmService():
 
     @exe.validator
     def _exe_validator(self, attr, val):
-        if platform.system != 'Windows':
+        if platform.system() != 'Windows':
             return
             raise RuntimeError("NSSM service managment is Windows only.")
         elif val.is_absolute() and val.exists():
@@ -102,7 +104,7 @@ class NssmService():
     """
 
     app_stop_console_delay : int = field(
-        default=3000,
+        default=30000,
     )
     """
     Delay after attempting Control-C stop in ms.
@@ -110,7 +112,7 @@ class NssmService():
     """
 
     app_stop_window_delay : int = field(
-        default=3000,
+        default=30000,
     )
     """
     Delay after attempting window close stop in ms.
@@ -118,7 +120,7 @@ class NssmService():
     """
 
     app_stop_thread_delay : int = field(
-        default=3000,
+        default=30000,
     )
     """
     Delay after attempting thread kill stop in ms.
@@ -129,37 +131,53 @@ class NssmService():
         """
         Install the service.
         """
-        if platform.system != 'Windows':
+        if platform.system() != 'Windows':
             raise RuntimeError("NSSM service managment is Windows only.")
 
         subprocess.run(
-            ['nssm', 'install', self.service_name],
+            ['nssm', 'install', self.service_name, str(self.exe)],
         )
         self.configure()
 
-    def uninstall(self):
+    def uninstall(self,confirm=True):
         """
         Uninstall the service.
+
+        Arguments:
+          confirm: show a GUI confirmation dialog.
         """
-        if platform.system != 'Windows':
+        if platform.system() != 'Windows':
+            raise RuntimeError("NSSM service managment is Windows only.")
+
+        conf_arg = ['confirm'] if confirm else []
+        subprocess.run(
+            ['nssm', 'remove', self.service_name, *conf_arg],
+        )
+
+    def gui_edit(self):
+        """
+        Opens the NSSM GUI editor.
+        """
+        if platform.system() != 'Windows':
             raise RuntimeError("NSSM service managment is Windows only.")
         subprocess.run(
-            ['nssm', 'remove', self.service_name],
+            ['nssm', 'edit', self.service_name],
         )
 
     def configure(self):
         """
         Configures all the service parameters.
         """
-        if platform.system != 'Windows':
+        if platform.system() != 'Windows':
             raise RuntimeError("NSSM service managment is Windows only.")
+
         assignments = {
             "Application":str(self.exe),
             "AppDirectory":str(self.cwd),
             "AppParameters":self.args,
             "DisplayName":self.display_name,
             "Description":self.description,
-            "Start":'SERVICE_AUTO_START' if self.config.auto_start else None,
+            "Start": 'SERVICE_AUTO_START' if self.config.auto_start else 'SERVICE_DEMAND_START',
             "ObjectName":self.account,
             "AppPriority":f"{self.config.priority}_PRIORITY_CLASS",
             "AppNoConsole":'0' if self.config.console else '1',
@@ -173,30 +191,31 @@ class NssmService():
             "AppRotateFiles":'1' if self.config.rotate_io else '0',
             "AppStdout": str(Path(self.config.stdout_file).resolve()),
             "AppStderr":  str(Path(self.config.stderr_file).resolve()),
+            "Type": 'SERVICE_INTERACTIVE_PROCESS' if self.config.interactive else 'SERVICE_WIN32_OWN_PROCESS',
         }
 
         for key, val in assignments.items():
+            args = None
             if val == None:
-                subprocess.run(
-                    ['nssm', 'reset', self.service_name, key],
-                )
+                args = ['nssm.exe', 'reset', self.service_name, key]
             else:
                 args=None
-
                 if isinstance(val,list):
                     args = [_escape(a) for a in val]
                 else:
                     args = [_escape(val)]
-
-                subprocess.run(
-                    ['nssm', 'set', self.service_name, key, *args],
-                )
+                args = ['nssm.exe', 'set', self.service_name, key, *args]
+            log.info(
+                "Updating NSSM Config.",
+                args=args,
+            )
+            subprocess.run(args)
 
     def start(self):
         """
         Start the service.
         """
-        if platform.system != 'Windows':
+        if platform.system() != 'Windows':
             raise RuntimeError("NSSM service managment is Windows only.")
 
         if self.config.redirect_io:
@@ -213,7 +232,7 @@ class NssmService():
         """
         Stop the service.
         """
-        if platform.system != 'Windows':
+        if platform.system() != 'Windows':
             raise RuntimeError("NSSM service managment is Windows only.")
 
         subprocess.run(
@@ -224,7 +243,7 @@ class NssmService():
         """
         Restart the service.
         """
-        if platform.system != 'Windows':
+        if platform.system() != 'Windows':
             raise RuntimeError("NSSM service managment is Windows only.")
 
         subprocess.run(
@@ -235,7 +254,7 @@ class NssmService():
         """
         Get service status.
         """
-        if platform.system != 'Windows':
+        if platform.system() != 'Windows':
             raise RuntimeError("NSSM service managment is Windows only.")
 
         process = subprocess.run(
