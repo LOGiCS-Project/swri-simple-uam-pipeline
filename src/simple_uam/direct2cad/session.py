@@ -2,6 +2,7 @@
 from simple_uam.workspace.session import Session, session_op
 from simple_uam.util.logging import get_logger
 from simple_uam.util.config import Config, D2CWorkspaceConfig, CraidlConfig
+from simple_uam.util.system import backup_file
 from simple_uam.craidl.corpus import GremlinCorpus, StaticCorpus, get_corpus
 from simple_uam.craidl.info_files import DesignInfoFiles
 from attrs import define,field
@@ -109,14 +110,24 @@ class D2CSession(Session):
 
         self.start_creo()
 
+
+        stdout_file = self.work_dir / 'buildCad.stdout'
+        stderr_file = self.work_dir / 'buildCad.stderr'
+
+        backup_file(stdout_file, self.work_dir, delete=True, missing_ok=True)
+        backup_file(stderr_file, self.work_dir, delete=True, missing_ok=True)
+
         log.info(
             "Starting buildcad.py",
             workspace=self.number,
         )
 
-        self.run(
-            ["python", "buildcad.py"]
-        )
+        with stdout_file.open('w') as so, stderr_file.open('w') as se:
+            self.run(
+                ["python", "buildcad.py"],
+                stdout=so,
+                stderr=se,
+            )
 
     @session_op
     def process_design(self, design):

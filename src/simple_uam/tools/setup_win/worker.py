@@ -2,7 +2,7 @@ from pathlib import Path
 
 import shutil
 from simple_uam.util.invoke import task, call
-from simple_uam.util.config import Config, PathConfig, WinSetupConfig
+from simple_uam.util.config import Config, PathConfig, WinSetupConfig, AuthConfig
 from simple_uam.util.logging import get_logger
 from simple_uam.util.system import Git, Pip
 
@@ -213,6 +213,8 @@ def creopyson(ctx, prompt=True, quiet=False, verbose=False):
         deploy_dir = creopyson_dir,
         branch = creopyson_branch,
         password_prompt = prompt,
+        remote_user = Config[AuthConfig].isis_user,
+        remote_pass = Config[AuthConfig].isis_token,
         quiet = quiet,
         verbose = verbose,
         mkdir = True

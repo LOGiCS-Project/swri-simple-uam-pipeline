@@ -4,7 +4,7 @@ Various setup and development tasks for SimpleUAM Utility Modules.
 
 import shutil
 from simple_uam.util.invoke import task, call
-from simple_uam.util.config import Config, PathConfig, CraidlConfig
+from simple_uam.util.config import Config, PathConfig, CraidlConfig, AuthConfig
 from simple_uam.util.logging import get_logger
 from simple_uam.util.system import Git
 
@@ -201,6 +201,8 @@ def download_examples(ctx,  prompt=True, quiet=False, verbose=False):
     git_args = dict(
         repo_uri = trinity_craidl_repo,
         deploy_dir = str(trinity_craidl_dir),
+        remote_user = Config[AuthConfig].isis_user,
+        remote_pass = Config[AuthConfig].isis_token,
         branch = trinity_craidl_branch,
         password_prompt = prompt,
         quiet = quiet,

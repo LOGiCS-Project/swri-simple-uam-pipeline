@@ -120,6 +120,11 @@ class Session():
     the current metadata.
     """
 
+    @metadata_file.validator
+    def _meta_file_valid(self, attr, val):
+        if val.is_absolute():
+            raise RuntimeError("The metadata file must be specified relative to the workdir.")
+
     log_file : Path = field(
         default=Path("log.json"),
         kw_only=True,
@@ -128,11 +133,6 @@ class Session():
     The file in the workdir (and eventually in the results archive) that stores
     logs.
     """
-
-    @metadata_file.validator
-    def _meta_file_valid(self, attr, val):
-        if val.is_absolute():
-            raise RuntimeError("The metadata file must be specified relative to the workdir.")
 
     init_exclude_patterns : List[str] = field(
         kw_only=True,
@@ -379,7 +379,6 @@ class Session():
 
         return info
 
-
     @session_op
     def write_metadata(self):
         """
@@ -410,7 +409,7 @@ class Session():
             ref=str(self.reference_dir),
             src=str(self.work_dir),
             out=str(self.result_archive),
-            exclude_from=[str(f) for f in self.result_exclude_files],
+            exclude=self.result_exclude_patterns,
         )
 
         log.info(

@@ -10,20 +10,21 @@
     - RabbitMQ: Broker only
     - Redis: Both Broker and Backend
 - Supports running worker node as normal process:
-    - Normal Process: `pdm run d2c-worker run`
+    - Normal Process: `pdm run suam-worker run`
 - Supports running worker node as a service managed by NSSM. The commands do the
   obvious things.
-    - `pdm run d2c-worker service.install`
-    - `pdm run d2c-worker service.uninstall`
-    - `pdm run d2c-worker service.configure` : Converts config file settings to
+    - `pdm run suam-worker service.install`
+    - `pdm run suam-worker service.uninstall`
+    - `pdm run suam-worker service.configure` : Converts config file settings to
       NSSM settings.
-    - `pdm run d2c-worker service.start`
-    - `pdm run d2c-worker service.stop`
-    - `pdm run d2c-worker service.restart`
-    - `pdm run d2c-worker service.status`
-- Talk about config file `d2c_worker.conf.yaml` and fields:
+    - `pdm run suam-worker service.start`
+    - `pdm run suam-worker service.stop`
+    - `pdm run suam-worker service.restart`
+    - `pdm run suam-worker service.status`
+- Talk about config file `broker.conf.yaml` and fields:
     - Broker config
     - Backend config
+- Talk about config file `d2c_worker.conf.yaml` and fields:
     - Worker Node Opts
     - Service config
 
@@ -37,7 +38,9 @@ A worker will listen for tasks from a message broker and then run those tasks.
 
 ### Configure Worker Settings
 
-- Configure the message broker and other settings in
+- Configure the message broker settings in
+  `<config-dir>/broker.conf.yaml`.
+- Configure the settings in
   `<config-dir>/d2c_worker.conf.yaml`.
 - Examine loaded config with `pdm run suam-config print --config=d2c_worker -r`
 
@@ -55,7 +58,7 @@ in must have been set up as [here](../setup/worker.md).
 Actually run the worker process.
 
 - In admin powershell at `<repo-root>`.
-    - Run: `pdm run d2c-worker worker.run`
+    - Run: `pdm run suam-worker worker.run`
 
 Note that this is a process not a service. If it shuts down it needs to be
 restarted.

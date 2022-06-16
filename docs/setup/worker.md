@@ -6,7 +6,7 @@ license server and a broker for most tasks.
 ### Prerequisites
 
 - [General Setup](general.md) has been completed.
-- SSH keys or credentials for `git.isis.vanderbilt.edu`
+- Auth tokens, SSH keys, or credentials for `git.isis.vanderbilt.edu`
 - A broker running at `<broker-ip>` and `<broker-port>`
 - Access to a corpus:
     - **Either:** Via a [corpus DB](graph.md) at `<corpus-db-ip>` on port `<corpus-db-port>`
@@ -64,7 +64,8 @@ license server and a broker for most tasks.
 > Creopyson provides a python interface to Creo.
 
 - Prepare to connect to `git.isis.vanderbilt.edu`.
-    - **Either:** Install SSH keys for `git.isis.vanderbilt.edu`.
+    - **Either:** Install auth tokens as in [General Setup](general.md).
+    - **Or:** Install SSH keys for `git.isis.vanderbilt.edu`.
     - **Or:** have credentials ready for prompt.
 - Open an admin powershell to `<repo-root>`.
 - Download creopyson repository and install via pip:
@@ -146,14 +147,14 @@ locally see [this page](../usage/workspaces.md)...**
 - Open admin powershell to `<repo-root>`.
 - *(Optional)* View currently loaded config file:
   ```bash
-  pdm run suam-config print --config=d2c_worker -r
+  pdm run suam-config print --config=broker -r
   ```
-- Update the config at `<config-dir>/d2c_worker.conf.yaml`:
-    - Set `broker.protocol` to `"amqp"` if using RabbitMQ or `"redis"` if
+- Update the config at `<config-dir>/broker.conf.yaml`:
+    - Set `protocol` to `"amqp"` if using RabbitMQ or `"redis"` if
       using Redis.
-    - Set `broker.host` to `<broker-ip>`.
-    - Set `broker.port` to `<broker-port>`.
-    - If using Redis, set `broker.db` to `<broker-db>`
+    - Set `host` to `<broker-ip>`.
+    - Set `port` to `<broker-port>`.
+    - If using Redis, set `db` to `<broker-db>`
 - See the [config file guide](../usage/config.md) for more detailed
   instructions and information.
 
@@ -168,7 +169,7 @@ locally see [this page](../usage/workspaces.md)...**
 - Open admin powershell to `<repo-root>`.
 - Run the SimpleUAM worker node:
   ```bash
-  pdm run d2c-worker run
+  pdm run suam-worker run
   ```
 
 ### Configure the Worker Node to Auto-Start on Boot *(Optional)*
@@ -197,7 +198,7 @@ locally see [this page](../usage/workspaces.md)...**
 - Open admin powershell to `<repo-root>`.
 - Install the SimpleUAM worker service:
   ```bash
-  pdm run d2c-worker service.install
+  pdm run suam-worker service.install
   ```
 
 ### Start the Worker Node Service *(Optional)*
@@ -208,7 +209,7 @@ locally see [this page](../usage/workspaces.md)...**
 - Open admin powershell to `<repo-root>`.
 - Install the SimpleUAM worker service:
   ```bash
-  pdm run d2c-worker service.start
+  pdm run suam-worker service.start
   ```
 
 **Further details on running the worker as a service are [here](../usage/workers.md)...**

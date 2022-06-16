@@ -14,7 +14,7 @@
 from typing import List, Optional
 from simple_uam.util.invoke import Collection, InvokeProg, task
 from simple_uam.util.logging import get_logger
-from . import tasks
+from . import direct2cad
 
 log = get_logger(__name__)
 
@@ -31,12 +31,10 @@ def main(args: Optional[List[str]] = None) -> int:
         An exit code.
     """
 
-    namespace = Collection(
-        tasks.process_design,
-        tasks.gen_info_files,
-    )
+    namespace = Collection()
+    namespace.add_collection(direct2cad, 'direct2cad')
 
-    # Setup the invoke program runner class
+        # Setup the invoke program runner class
     program = InvokeProg(
         namespace=namespace,
         version="0.1.0",

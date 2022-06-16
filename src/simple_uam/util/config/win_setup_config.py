@@ -40,6 +40,7 @@ class WinSetupConfig():
     worker_pip_packages : List[str] = [
         # Direct2Cad
         'psutil',
+        'parea',
         # 'creopyson', # Need to use the creopyson from the swri repo
         'numpy',
         # Craidl

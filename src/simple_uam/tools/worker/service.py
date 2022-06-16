@@ -23,7 +23,7 @@ worker_service = NssmService(
     config=Config[D2CWorkerConfig].service,
     exe="pdm",
     cwd=Config[PathConfig].repo_dir,
-    args=['run','d2c-worker','run']
+    args=['run','suam-worker','run']
 )
 
 @task

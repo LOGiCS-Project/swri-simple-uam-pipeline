@@ -4,20 +4,31 @@ import subprocess
 import textwrap
 from copy import copy
 from pathlib import Path
-from typing import List, Optional
+from typing import List, Optional, Dict
+from urllib.parse import urlencode
 
 from ..logging import get_logger
 
 log = get_logger(__name__)
 
-def download_file(uri: Path, output: Path):
+def download_file(uri: Path,
+                  output: Path,
+                  params: Optional[Dict[str,str]] = None):
     """
     Downloads a file from the uri to a given location.
 
     Arguments:
       uri: The address to download from.
       output: The file_path to download to.
+      params: query parameters (e.g. "?foo=bar&fizz=buzz") to be included
+        in the uri. If the value is None, then the entire pair is dropped.
+        Mainly useful for passing in credentials if they exist.
     """
+
+    params = {key:val for key, val in params.items() if val != None}
+
+    if len(params) > 0:
+        uri += "?" + urlencode(params)
 
     log.info(
         "Downloading file from web",
@@ -31,7 +42,6 @@ def download_file(uri: Path, output: Path):
         "--show-progress",
         "--no-check-certificate"
     ])
-
 
 def verify_file(input: Path, md5: str):
     """

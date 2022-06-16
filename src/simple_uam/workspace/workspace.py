@@ -244,7 +244,7 @@ class Workspace():
         session.enter_workdir()
         return session
 
-    def __exit__(self, exp_type, exp_val, exp_traceback):
+    def __exit__(self, exc_type, exc_val, exc_traceback):
         self.active_session.log_exception(
             exc_type=exc_type,
             exc_val=exc_val,

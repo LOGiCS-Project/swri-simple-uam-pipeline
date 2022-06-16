@@ -3,9 +3,10 @@ from simple_uam.workspace.manager import WorkspaceManager
 from simple_uam.craidl.corpus import get_corpus
 from simple_uam.util.logging import get_logger
 from simple_uam.util.system import Git, Rsync, configure_file, backup_file
-from simple_uam.util.system.windows import unpack_file
+from simple_uam.util.system.windows import unpack_file, run_gui_exe
 from attrs import define, frozen, field
 import tempfile
+from typing import Optional
 import shutil
 from pathlib import Path
 
@@ -32,17 +33,32 @@ class D2CManager(WorkspaceManager):
         init=False,
     )
 
+    creoson_setup_exe : str = field(
+        default="CreosonSetup.exe",
+        init=False,
+    )
+
     def init_ref_dir(self,
                      reference_dir : Path,
                      assets_dir : Path,
                      direct2cad_repo : Path,
-                     creoson_server_zip : Path):
+                     creoson_server_zip : Path,
+                     setvars_file : Optional[Path]):
         """
         This function should be overloaded by a child class with a task
         specific setup operation.
 
         Sets up the reference directory that workspaces are copied from.
-        Should only be called by
+        Should only be called by the appropriate task which downloads
+        the direct2cad repo and creoson server.
+
+        Arguments:
+          reference_dir: The reference directory
+          assets_dir: The static assets directory
+          direct2cad_repo: The direct2cad repo
+          creoson_server_zip: Zip w/ creoson server
+          setvars_file: The setvars.bat file to put in the creoson server dir.
+            If none will start the creoson server gui.
         """
 
         rsync_args = dict(
@@ -76,13 +92,48 @@ class D2CManager(WorkspaceManager):
             exist_ok=True,
         )
 
+        if creoson_ref_dir.exists():
+            log.info(
+                "Found existing creoson server dir, deleting.",
+                creoson_dir=str(creoson_ref_dir),
+            )
+            shutil.rmtree(creoson_ref_dir,ignore_errors=True)
+
         log.info(
             "Unpacking creoson server zip into reference dir.",
             creoson_zip = str(creoson_server_zip),
             creoson_dir = str(creoson_ref_dir),
         )
 
-        with tempfile.TemporaryDirectory() as temp_dir:
-            unpack_file(creoson_server_zip, temp_dir)
-            creoson_unpack_dir = Path(temp_dir) / self.creoson_unpack_folder
-            shutil.move(creoson_unpack_dir, creoson_ref_dir)
+        creoson_ref_dir.mkdir(parents=True, exist_ok=True)
+        unpack_file(creoson_server_zip, creoson_ref_dir)
+
+        setvars_bat = creoson_ref_dir / 'setvars.bat'
+
+        if setvars_file:
+            setvars_file = Path(setvars_file)
+            log.info(
+                "Copying provided setvars.bat into reference dir.",
+                input=str(setvars_file),
+                output=str(setvars_bat),
+            )
+            shutil.copy2(setvars_file, setvars_bat)
+        else:
+            log.info(
+                "No setvars.bat provided, running GUI to generate.",
+            )
+            run_gui_exe(
+                creoson_ref_dir / self.creoson_setup_exe,
+                notes="""
+                ### Setting Up Creoson Server ###
+
+                  - Step 1: Use the Creo 5.0.6.0 Common Files folder
+
+                    > C:\Program Files\PTC\Creo 5.0.6.0\Common Files
+
+                  - Step 2: Don't Change Port (Default: 9056)
+
+                  - Final Step: Start and Stop the server before closing app.
+                """,
+                wait=True,
+            )

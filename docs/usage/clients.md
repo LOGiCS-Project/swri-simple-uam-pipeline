@@ -11,7 +11,7 @@
         !!! example "Command Line:"
 
             ```bash
-            pdm run d2c-client gen-info-files -i design_swri.json
+            pdm run suam-client direct2cad.gen-info-files -i design_swri.json
             ```
 
         !!! example "Python:"
@@ -26,7 +26,7 @@
         !!! example "Command Line:"
 
             ```bash
-            pdm run d2c-client process-design -i design_swri.json
+            pdm run suam-client direct2cad.process-design -i design_swri.json
             ```
 
         !!! example "Python:"
@@ -35,7 +35,7 @@
             msg = direct2cad.process_design.send(design)
             ```
 
-- Talk about config file `d2c_worker.conf.yaml` and fields:
+- Talk about config file `broker.conf.yaml` and fields:
     - Broker config
     - Backend config
 
@@ -62,8 +62,8 @@ All of this works on Linux and OS X, not just Windows.
 Send a `gen_info_files` request using the command line interface:
 
 ```bash
-PS D:\simple-uam> pdm run d2c-worker gen-info-files --help
-Usage: pdm run d2c-worker [--core-opts] gen-info-files [--options] [other tasks here ...]
+PS D:\simple-uam> pdm run suam-worker direct2cad.gen-info-files --help
+Usage: pdm run suam-worker [--core-opts] direct2cad.gen-info-files [--options] [other tasks here ...]
 
 Docstring:
   Will write the design info files in the specified
@@ -86,8 +86,8 @@ Options:
 Send a `process_design` request using the command line interface:
 
 ```bash
-PS D:\simple-uam> pdm run d2c-worker process-design --help
-Usage: pdm run d2c-worker [--core-opts] process-design [--options] [other tasks here ...]
+PS D:\simple-uam> pdm run suam-worker direct2cad.process-design --help
+Usage: pdm run suam-worker [--core-opts] direct2cad.process-design [--options] [other tasks here ...]
 
 Docstring:
   Runs the direct2cad pipeline on the input design files, producing output
@@ -120,7 +120,7 @@ A basic example:
 
 ```python
 from simple_uam import direct2cad
-from simple_uam.util.config import Config, D2CWorkerConfig
+from simple_uam.util.config import Config, BrokerConfig
 
 design = your_code_here()
 metadata = your_code_here()
@@ -128,7 +128,7 @@ metadata = your_code_here()
 msg = direct2cad.process_design.send(design, metadata=metadata)
 
 # Only works if we have a configured and enabled backend to cache results.
-if Config[D2CWorkerConfig].backend.enabled:
+if Config[BrokerConfig].backend.enabled:
     result = msg.get_result(block=True,timeout=600000)
     print(result)
 ```

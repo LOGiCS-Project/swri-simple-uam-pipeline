@@ -47,8 +47,8 @@ Discussions = "https://github.com/LOGiCS-Project/swri-simple-uam-pipleline/discu
 suam-config = "simple_uam.tools.config_mgr.cli:main"
 craidl = "simple_uam.tools.craidl.cli:main"
 d2c-workspace = "simple_uam.tools.d2c_workspace.cli:main"
-d2c-worker = "simple_uam.tools.d2c_worker.cli:main"
-d2c-client = "simple_uam.tools.d2c_client.cli:main"
+suam-worker = "simple_uam.tools.worker.cli:main"
+suam-client = "simple_uam.tools.client.cli:main"
 
 [tool.pdm]
 version = {use_scm = true}
