@@ -182,12 +182,18 @@ def direct2cad(ctx,  prompt=True, quiet=False, verbose=False):
 
     Git.clone_or_pull(**git_args)
 
+setvars_file = Config[PathConfig].repo_data_dir / 'creoson' / 'setvars.bat'
+
 @task(mkdirs, creoson_server, direct2cad)
-def setup_reference(ctx):
+def setup_reference(ctx, creoson_gui = False):
     """
     Will set up the reference directory if needed.
 
     Note: Will delete the contents of the reference directory!
+
+    Arguments:
+      creoson_gui: Use the creoson_server gui to setup ports instead of just
+        copying file from SimpleUAM's data.
     """
 
     log.info(
@@ -198,4 +204,5 @@ def setup_reference(ctx):
     manager.setup_reference_dir(
         direct2cad_repo=direct2cad_dir,
         creoson_server_zip=creoson_server_zip,
+        setvars_file=None if creoson_gui else setvars_file,
     )
