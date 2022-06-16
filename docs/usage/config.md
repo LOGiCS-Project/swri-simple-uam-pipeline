@@ -60,10 +60,12 @@ manage configuration information.
     - Most important field is `results_dir` which controls where the analysis
       results are placed when completed. **Most people will need to make this
       point to their shared directory.**
-- `d2c_worker.conf.yaml` : Controls connections to the message broker and how
-  the worker nodes run.
-    - The `broker` and `backend` sections tell both the worker and client how
-      to connect to the message broker. **Most people will need to edit these.**
+- `broker.conf.yaml` : Controls connections to the message broker.
+    - Root properties tell where to connect to the broker.  **Most people will
+      need to edit these.**
+    - The `backend` section tells both the worker and client how
+      to connect to the backend.
+- `d2c_worker.conf.yaml` : Controls how the worker nodes run.
     - The `service` section determines how the worker node will run as a service.
         - The `auto_start` subfield controls whether the service is configured
           resume on reboot.

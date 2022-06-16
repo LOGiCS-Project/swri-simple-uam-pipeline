@@ -4,7 +4,7 @@ Various setup and development tasks for SimpleUAM Utility Modules.
 
 import shutil
 from simple_uam.util.invoke import task, call
-from simple_uam.util.config import Config, PathConfig, D2CWorkerConfig
+from simple_uam.util.config import Config, PathConfig, BrokerConfig
 from simple_uam.util.logging import get_logger
 
 from simple_uam.worker.run_worker import run_worker_node
@@ -84,7 +84,7 @@ def gen_info_files(ctx,
         **msg.options,
     )
 
-    if not Config[D2CWorkerConfig].backend.enabled:
+    if not Config[BrokerConfig].backend.enabled:
         log.warning(
             "No result backend provided. Please examine the result archive "\
             "directory for the generated results.")
@@ -176,7 +176,7 @@ def process_design(ctx,
         **msg.options,
     )
 
-    if not Config[D2CWorkerConfig].backend.enabled:
+    if not Config[BrokerConfig].backend.enabled:
         log.warning(
             "No result backend provided. Please examine the result archive "\
             "directory for the generated results.")

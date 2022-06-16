@@ -1,5 +1,5 @@
 
-from simple_uam.util.config import Config, PathConfig, D2CWorkerConfig
+from simple_uam.util.config import Config, PathConfig, BrokerConfig
 from simple_uam.util.logging import get_logger
 from urllib.parse import urlparse
 from pathlib import Path
@@ -21,7 +21,7 @@ def default_broker():
     Creates a new broker as specified by the config files
     """
 
-    url = Config[D2CWorkerConfig].broker.url
+    url = Config[BrokerConfig].url
 
     parsed = urlparse(url)
 
@@ -46,10 +46,10 @@ def default_broker():
 
     ### Setup Results Backend ###
 
-    if Config[D2CWorkerConfig].backend.enabled:
+    if Config[BrokerConfig].backend.enabled:
 
         backend = RedisBackend(
-            url=Config[D2CWorkerConfig].backend.url
+            url=Config[BrokerConfig].backend.url
         )
 
         broker.add_middleware(Results(backend=backend))

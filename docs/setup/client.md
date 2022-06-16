@@ -61,9 +61,9 @@ git clone git@github.com:LOGiCS-Project/swri-simple-uam-pipeline.git <repo-root>
   ```
 - Test whether setup script was installed:
   ```bash
-  pdm run d2c-client --help
+  pdm run suam-client --help
   ```
-  Result should be a help message showing all of `d2c-client`'s flags and
+  Result should be a help message showing all of `suam-client`'s flags and
   subcommands.
 
 ### Get Configuration Directory
@@ -88,14 +88,14 @@ git clone git@github.com:LOGiCS-Project/swri-simple-uam-pipeline.git <repo-root>
 - Open a shell to `<repo-root>`.
 - *(Optional)* View currently loaded config file:
   ```bash
-  pdm run suam-config print --config=d2c_worker -r
+  pdm run suam-config print --config=broker -r
   ```
-- Update the config at `<config-dir>/d2c_worker.conf.yaml`:
-    - Set `broker.protocol` to `"amqp"` if using RabbitMQ or `"redis"` if
+- Update the config at `<config-dir>/broker.conf.yaml`:
+    - Set `protocol` to `"amqp"` if using RabbitMQ or `"redis"` if
       using Redis.
-    - Set `broker.host` to `<broker-ip>`.
-    - Set `broker.port` to `<broker-port>`.
-    - If using Redis, set `broker.db` to `<broker-db>`
+    - Set `host` to `<broker-ip>`.
+    - Set `port` to `<broker-port>`.
+    - If using Redis, set `db` to `<broker-db>`
 - See the [config file guide](../usage/config.md) for more detailed
   instructions and information.
 
@@ -113,7 +113,7 @@ git clone git@github.com:LOGiCS-Project/swri-simple-uam-pipeline.git <repo-root>
 - Open a shell to `<repo-root>`.
 - Test generating design info files:
   ```bash
-  pdm run d2c-client gen-info-files --input=<design-file>
+  pdm run suam-client direct2cad.gen-info-files --input=<design-file>
   ```
   A worker should pick up this task and run it, eventually placing an archive
   in the `<results-dir>` with the generated info files.

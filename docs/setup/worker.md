@@ -147,14 +147,14 @@ locally see [this page](../usage/workspaces.md)...**
 - Open admin powershell to `<repo-root>`.
 - *(Optional)* View currently loaded config file:
   ```bash
-  pdm run suam-config print --config=d2c_worker -r
+  pdm run suam-config print --config=broker -r
   ```
-- Update the config at `<config-dir>/d2c_worker.conf.yaml`:
-    - Set `broker.protocol` to `"amqp"` if using RabbitMQ or `"redis"` if
+- Update the config at `<config-dir>/broker.conf.yaml`:
+    - Set `protocol` to `"amqp"` if using RabbitMQ or `"redis"` if
       using Redis.
-    - Set `broker.host` to `<broker-ip>`.
-    - Set `broker.port` to `<broker-port>`.
-    - If using Redis, set `broker.db` to `<broker-db>`
+    - Set `host` to `<broker-ip>`.
+    - Set `port` to `<broker-port>`.
+    - If using Redis, set `db` to `<broker-db>`
 - See the [config file guide](../usage/config.md) for more detailed
   instructions and information.
 
@@ -169,7 +169,7 @@ locally see [this page](../usage/workspaces.md)...**
 - Open admin powershell to `<repo-root>`.
 - Run the SimpleUAM worker node:
   ```bash
-  pdm run d2c-worker run
+  pdm run suam-worker run
   ```
 
 ### Configure the Worker Node to Auto-Start on Boot *(Optional)*
@@ -198,7 +198,7 @@ locally see [this page](../usage/workspaces.md)...**
 - Open admin powershell to `<repo-root>`.
 - Install the SimpleUAM worker service:
   ```bash
-  pdm run d2c-worker service.install
+  pdm run suam-worker service.install
   ```
 
 ### Start the Worker Node Service *(Optional)*
@@ -209,7 +209,7 @@ locally see [this page](../usage/workspaces.md)...**
 - Open admin powershell to `<repo-root>`.
 - Install the SimpleUAM worker service:
   ```bash
-  pdm run d2c-worker service.start
+  pdm run suam-worker service.start
   ```
 
 **Further details on running the worker as a service are [here](../usage/workers.md)...**
