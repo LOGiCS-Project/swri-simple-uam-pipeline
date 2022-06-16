@@ -8,7 +8,7 @@ can access the same brokers and results directory as the workers.
 
 ### Prerequisites
 
-- SSH keys or credentials for `git.isis.vanderbilt.edu`.
+- An installed auth token, SSH keys or credentials for `git.isis.vanderbilt.edu`.
 - A broker running at `<broker-ip>` and `<broker-port>`.
 - The following installed software:
     - Git

@@ -14,7 +14,7 @@ be queried for various tasks.
 - [General Setup](general.md) has been completed.
 - If not using the default corpus have the `.graphml` corpus ready at
   `<corpus-loc>`.
-- If using the default corpus have SSH keys or credentials for
+- If using the default corpus have an auth token, SSH keys, or credentials for
   `git.isis.vanderbilt.edu` set up.
 
 ### Install Dependencies

@@ -1,4 +1,5 @@
 from .path_config import PathConfig
+from .auth_config import AuthConfig
 from .manager import Config
 from .win_setup_config import WinSetupConfig
 # from .lin_setup_config import LinSetupConfig # noqa
@@ -14,6 +15,7 @@ __all__: List[str] = [
     'SI',
     'II',
     'Config',
+    'AuthConfig',
     'PathConfig',
     'WinSetupConfig',
     # 'LinSetupConfig', # No need for this yet

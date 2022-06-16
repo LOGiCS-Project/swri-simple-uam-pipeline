@@ -97,10 +97,42 @@ a normal directory.
 
 - Save the shared results directory as `<results-dir>`.
 
+### Install an API token for `git.isis.vanderbilt.edu` *(Optional)*
+
+> We can use an API token to automate some repository and file accesses using
+> Isis that would otherwise require manual authentication.
+
+#### Create a Personal Access Token
+
+- Log into https://git.isis.vanderbilt.edu .
+- Save your isis username as `<isis-user>`.
+- Go to User Settings -> [Access Tokens](https://git.isis.vanderbilt.edu/-/profile/personal_access_tokens) .
+    - **Token Name:** `<isis-token-name>`
+    - **Expiration Date:** 2050-01-01
+    - Select Scopes:
+        - **`read_api`:** Check
+        - **`read_repository`:** Check
+        - All other others should be unchecked.
+- Click "Create Personal Access Token".
+- Save "Your new personal access token" as `<isis-token>`.
+
+#### Configure SimpleUAM to use your token
+
+- Open `<config-dir>/auth.conf.yaml` in a text editor.
+- Set the `isis_user` field to `<isis-user>`
+- Set the `isis_token` field to `<isis-token>`
+
+??? example "Sample `auth.conf.yaml`"
+    ```yaml
+    isis_user: myIsisUsername
+    isis_token: 'glpat-ASDsd79adAkslafo21GO'
+    ```
+
 ### Install SSH keys for `git.isis.vanderbilt.edu` *(Optional)*
 
 > SSH access to Isis, while not strictly necessary, will make future install
 > steps easier and more secure.
+> This doesn't do anything if an API token is already provided.
 
 - Follow the instructions [here](https://docs.gitlab.com/ee/user/ssh.html) to
   set up ssh key based access to the isis server.
