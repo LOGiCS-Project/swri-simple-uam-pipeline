@@ -175,6 +175,7 @@ locally see [this page](../usage/workspaces.md)...**
     - Set `host` to `<broker-ip>`.
     - Set `port` to `<broker-port>`.
     - If using Redis, set `db` to `<broker-db>`
+    - If you have a `<broker-url>` set `url` to that instead.
 - See the [config file guide](../usage/config.md) for more detailed
   instructions and information.
 

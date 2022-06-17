@@ -130,6 +130,3 @@ The server should automatically start on boot.
     - Under "Connections" find "Endpoints".
     - Save the URL under "AMQP" as `<broker-url>`.
         - Example: `amqps://b-8f2b68ab-3d0f-4a64-a2bf-24418ebf52d5.mq.us-east-1.amazonaws.com:5671`
-    - Elsewhere, instead of modifying `<config-dir>/broker.conf.yaml` to add
-      a `host` and `port`:
-        - Set the `url` field to `<broker-url>`.
