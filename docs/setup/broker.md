@@ -88,3 +88,27 @@ tested.
     - Start Menu -> RabbitMQ Server -> RabbitMQ Service Start
 
 The server should automatically start on boot.
+
+## **Option 4:** Use AmazonMQ on AWS as a broker
+
+> Amazon MQ seems fine for use with SimpleUAM, though we've only performed
+> cursory testing.
+
+### Prerequisites
+
+-
+
+- Go to the [Amazon MQ console](https://console.aws.amazon.com/amazon-mq/) on AWS.
+- Click "Create brokers":
+    - Step 1 - **Broker engine types:** RabbitMQ
+    - Step 2 - **Select deployment mode:** Single Instance Broker
+    - Step 3 - Configure Settings:
+        - **Broker Name:** `<aws-broker-name>`
+        - **Broker Instance Type:** mq.t3.micro (or bigger, though you probably won't need it)
+        - RabbitMQ access:
+            - **Username:** `<aws-broker-user>`
+            - **Password:** `<aws-broker-pass>`
+        - Additional Settings:
+            - **Access Type:** Private Access
+            - **VPC and Subnets:** Select Existing VPC
+                - **VPC:** `<aws-vpc>`
