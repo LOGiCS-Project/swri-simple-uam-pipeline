@@ -590,6 +590,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#test-the-worker-node-optional" class="md-nav__link">
+    Test the Worker Node (Optional)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#configure-broker-settings" class="md-nav__link">
     Configure Broker Settings
   </a>
@@ -2584,6 +2591,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#test-the-worker-node-optional" class="md-nav__link">
+    Test the Worker Node (Optional)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#configure-broker-settings" class="md-nav__link">
     Configure Broker Settings
   </a>
@@ -2786,6 +2800,25 @@ have been changed after an analysis when compared to the reference directory.</p
 </ul>
 <p><strong>For further details on workspace configuration, operation, and running analyses
 locally see <a href="../../usage/workspaces/">this page</a>...</strong></p>
+<h3 id="test-the-worker-node-optional">Test the Worker Node <em>(Optional)</em><a class="headerlink" href="#test-the-worker-node-optional" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>Run a simple test task, generating the info files for a design, in order to
+test the worker node's configuration.</p>
+</blockquote>
+<ul>
+<li>Have a valid design file (usually <code>design_swri.json</code>) at <code>&lt;design-file&gt;</code>.</li>
+<li>Open a shell to <code>&lt;repo-root&gt;</code>.</li>
+<li>Test generating design info files:
+  <div class="highlight"><pre><span></span><code>pdm run d2c-workspace tasks.gen-info-files --input<span class="o">=</span>&lt;design-file&gt;
+</code></pre></div>
+  When finished this should place an archive in the <code>&lt;results-dir&gt;</code> with the
+  generated info files.</li>
+<li>Test generating processing designs:
+  <div class="highlight"><pre><span></span><code>pdm run d2c-workspace tasks.process-design --input<span class="o">=</span>&lt;design-file&gt;
+</code></pre></div>
+  When finished this should place an archive in the <code>&lt;results-dir&gt;</code> with the
+  processed design.</li>
+</ul>
 <h3 id="configure-broker-settings">Configure Broker Settings<a class="headerlink" href="#configure-broker-settings" title="Permanent link">&para;</a></h3>
 <blockquote>
 <p>The worker process itself needs to be configured with how to connect to a
@@ -2802,6 +2835,7 @@ message broker.</p>
 <li>Set <code>host</code> to <code>&lt;broker-ip&gt;</code>.</li>
 <li>Set <code>port</code> to <code>&lt;broker-port&gt;</code>.</li>
 <li>If using Redis, set <code>db</code> to <code>&lt;broker-db&gt;</code></li>
+<li>If you have a <code>&lt;broker-url&gt;</code> set <code>url</code> to that instead.</li>
 </ul>
 </li>
 <li>See the <a href="../../usage/config/">config file guide</a> for more detailed

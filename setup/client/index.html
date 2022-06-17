@@ -2635,6 +2635,7 @@ use the same config file.</p>
 <li>Set <code>host</code> to <code>&lt;broker-ip&gt;</code>.</li>
 <li>Set <code>port</code> to <code>&lt;broker-port&gt;</code>.</li>
 <li>If using Redis, set <code>db</code> to <code>&lt;broker-db&gt;</code></li>
+<li>If you have a <code>&lt;broker-url&gt;</code> set <code>url</code> to that instead.</li>
 </ul>
 </li>
 <li>See the <a href="../../usage/config/">config file guide</a> for more detailed
@@ -2657,6 +2658,11 @@ test the client node's configuration.</p>
 </code></pre></div>
   A worker should pick up this task and run it, eventually placing an archive
   in the <code>&lt;results-dir&gt;</code> with the generated info files.</li>
+<li>Test generating processing designs:
+  <div class="highlight"><pre><span></span><code>pdm run suam-client direct2cad.process-design --input<span class="o">=</span>&lt;design-file&gt;
+</code></pre></div>
+  A worker should pick up this task and run it, eventually placing an archive
+  in the <code>&lt;results-dir&gt;</code> with the generated results.</li>
 </ul>
 <p><strong>Information on how to run a fill analysis pipeline, through either a
 CLI or Python code, can be found <a href="../../usage/clients/">here</a>...</strong></p>

@@ -553,6 +553,40 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#option-4-use-amazonmq-on-aws-as-a-broker" class="md-nav__link">
+    Option 4: Use AmazonMQ on AWS as a broker
+  </a>
+  
+    <nav class="md-nav" aria-label="Option 4: Use AmazonMQ on AWS as a broker">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prerequisites_1" class="md-nav__link">
+    Prerequisites
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-the-amazon-mq-broker" class="md-nav__link">
+    Create the Amazon MQ Broker
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#preserve-settings_1" class="md-nav__link">
+    Preserve Settings
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2553,6 +2587,40 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#option-4-use-amazonmq-on-aws-as-a-broker" class="md-nav__link">
+    Option 4: Use AmazonMQ on AWS as a broker
+  </a>
+  
+    <nav class="md-nav" aria-label="Option 4: Use AmazonMQ on AWS as a broker">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prerequisites_1" class="md-nav__link">
+    Prerequisites
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-the-amazon-mq-broker" class="md-nav__link">
+    Create the Amazon MQ Broker
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#preserve-settings_1" class="md-nav__link">
+    Preserve Settings
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2662,6 +2730,68 @@ tested.</p>
 </li>
 </ul>
 <p>The server should automatically start on boot.</p>
+<h2 id="option-4-use-amazonmq-on-aws-as-a-broker"><strong>Option 4:</strong> Use AmazonMQ on AWS as a broker<a class="headerlink" href="#option-4-use-amazonmq-on-aws-as-a-broker" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>Amazon MQ seems fine for use with SimpleUAM, though we've only performed
+cursory testing.</p>
+</blockquote>
+<h3 id="prerequisites_1">Prerequisites<a class="headerlink" href="#prerequisites_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li>An AWS VPC at <code>&lt;aws-vpc&gt;</code> with a private subnet at <code>&lt;aws-private-subnet&gt;</code>.</li>
+</ul>
+<h3 id="create-the-amazon-mq-broker">Create the Amazon MQ Broker<a class="headerlink" href="#create-the-amazon-mq-broker" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Go to the <a href="https://console.aws.amazon.com/amazon-mq/">Amazon MQ console</a> on AWS.</li>
+<li>Click "Create brokers":<ul>
+<li>Step 1:<ul>
+<li><strong>Broker engine types:</strong> RabbitMQ</li>
+</ul>
+</li>
+<li>Step 2:<ul>
+<li><strong>Select deployment mode:</strong> Single Instance Broker</li>
+</ul>
+</li>
+<li>Step 3:<ul>
+<li><strong>Broker Name:</strong> <code>&lt;aws-broker-name&gt;</code></li>
+<li><strong>Broker Instance Type:</strong> mq.t3.micro (or bigger, though you probably won't need it)</li>
+<li>RabbitMQ access:<ul>
+<li><strong>Username:</strong> <code>&lt;aws-broker-user&gt;</code></li>
+<li><strong>Password:</strong> <code>&lt;aws-broker-pass&gt;</code></li>
+</ul>
+</li>
+<li>Additional Settings:<ul>
+<li><strong>Access Type:</strong> Private Access</li>
+<li><strong>VPC and Subnets:</strong> Select Existing VPC<ul>
+<li><strong>VPC:</strong> <code>&lt;aws-vpc&gt;</code></li>
+<li><strong>Subnet:</strong> <code>&lt;aws-private-subnet&gt;</code></li>
+</ul>
+</li>
+<li><strong>Security Groups:</strong> Select Existing SG w/ <code>&lt;aws-default-sg&gt;</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Step 4:<ul>
+<li>Check settings</li>
+<li>Click "Create Broker"</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Wait ~20 minutes for the broker to be created.</li>
+</ul>
+<h3 id="preserve-settings_1">Preserve Settings<a class="headerlink" href="#preserve-settings_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Go to the <a href="https://console.aws.amazon.com/amazon-mq/">Amazon MQ console</a> on AWS.</li>
+<li>Under "Brokers" find <code>&lt;aws-broker-name&gt;</code> and click.<ul>
+<li>Under "Connections" find "Endpoints".</li>
+<li>Save the URL under "AMQP" as <code>&lt;broker-url&gt;</code>.<ul>
+<li>Example: <code>amqps://b-8f2b68ab-3d0f-4a64-a2bf-24418ebf52d5.mq.us-east-1.amazonaws.com:5671</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
 
               
             </article>

@@ -2640,7 +2640,7 @@
 
     <span class="c1">### Setup Broker ###</span>
 
-    <span class="k">if</span> <span class="n">parsed</span><span class="o">.</span><span class="n">scheme</span> <span class="o">==</span> <span class="s1">&#39;amqp&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="s1">&#39;amqp&#39;</span> <span class="ow">in</span> <span class="n">parsed</span><span class="o">.</span><span class="n">scheme</span><span class="p">:</span>
         <span class="n">broker</span> <span class="o">=</span> <span class="n">RabbitmqBroker</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">parsed</span><span class="o">.</span><span class="n">scheme</span> <span class="o">==</span> <span class="s1">&#39;redis&#39;</span><span class="p">:</span>
         <span class="n">broker</span> <span class="o">=</span> <span class="n">RedisBroker</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">)</span>
