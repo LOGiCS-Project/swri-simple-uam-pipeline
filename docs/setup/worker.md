@@ -139,6 +139,26 @@ in [this page](../usage/workspaces.md)...**
 **For further details on workspace configuration, operation, and running analyses
 locally see [this page](../usage/workspaces.md)...**
 
+### Test the Worker Node *(Optional)*
+
+> Run a simple test task, generating the info files for a design, in order to
+> test the worker node's configuration.
+
+- Have a valid design file (usually `design_swri.json`) at `<design-file>`.
+- Open a shell to `<repo-root>`.
+- Test generating design info files:
+  ```bash
+  pdm run d2c-workspace tasks.gen-info-files --input=<design-file>
+  ```
+  When finished this should place an archive in the `<results-dir>` with the
+  generated info files.
+- Test generating processing designs:
+  ```bash
+  pdm run d2c-workspace tasks.process-design --input=<design-file>
+  ```
+  When finished this should place an archive in the `<results-dir>` with the
+  processed design.
+
 ### Configure Broker Settings
 
 > The worker process itself needs to be configured with how to connect to a
@@ -155,6 +175,7 @@ locally see [this page](../usage/workspaces.md)...**
     - Set `host` to `<broker-ip>`.
     - Set `port` to `<broker-port>`.
     - If using Redis, set `db` to `<broker-db>`
+    - If you have a `<broker-url>` set `url` to that instead.
 - See the [config file guide](../usage/config.md) for more detailed
   instructions and information.
 

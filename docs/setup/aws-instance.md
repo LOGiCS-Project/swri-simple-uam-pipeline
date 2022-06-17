@@ -79,7 +79,7 @@ This section of the guide will cover:
     ??? note "Message Broker Minimum Requirements"
 
         **Option 1:** If you want a non-backendless broker or one that's not
-        wasting your money set up a linux instance and skip to the section
+        wasting your money, set up a linux instance and skip to the section
         on [message broker setup](broker.md). I'm not sure what minimum
         requirements make sense.
 
@@ -89,6 +89,9 @@ This section of the guide will cover:
         **Option 3:** If you want a backendless broker and are fine with lower
         performance the specifications for a worker node on a windows machine
         be fine.
+
+        **Option 4:** An Amazon MQ node might work well, there are tentative
+        instructions in the section on [message broker setup](broker.md).
 
 - Find the instance you just created with "Name" `<instance.name>`.
     - Save the "Instance ID" as: `<instance.id>`

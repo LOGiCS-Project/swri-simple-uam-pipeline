@@ -29,7 +29,7 @@ def default_broker():
 
     ### Setup Broker ###
 
-    if parsed.scheme == 'amqp':
+    if 'amqp' in parsed.scheme:
         broker = RabbitmqBroker(url=url)
     elif parsed.scheme == 'redis':
         broker = RedisBroker(url=url)

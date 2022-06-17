@@ -96,6 +96,7 @@ git clone git@github.com:LOGiCS-Project/swri-simple-uam-pipeline.git <repo-root>
     - Set `host` to `<broker-ip>`.
     - Set `port` to `<broker-port>`.
     - If using Redis, set `db` to `<broker-db>`
+    - If you have a `<broker-url>` set `url` to that instead.
 - See the [config file guide](../usage/config.md) for more detailed
   instructions and information.
 
@@ -117,6 +118,13 @@ git clone git@github.com:LOGiCS-Project/swri-simple-uam-pipeline.git <repo-root>
   ```
   A worker should pick up this task and run it, eventually placing an archive
   in the `<results-dir>` with the generated info files.
+- Test generating processing designs:
+  ```bash
+  pdm run suam-client direct2cad.process-design --input=<design-file>
+  ```
+  A worker should pick up this task and run it, eventually placing an archive
+  in the `<results-dir>` with the generated results.
+
 
 **Information on how to run a fill analysis pipeline, through either a
 CLI or Python code, can be found [here](../usage/clients.md)...**
