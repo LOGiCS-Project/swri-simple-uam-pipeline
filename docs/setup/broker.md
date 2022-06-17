@@ -96,13 +96,17 @@ The server should automatically start on boot.
 
 ### Prerequisites
 
--
+- An AWS VPC at `<aws-vpc>` with a private subnet at `<aws-private-subnet>`.
+
+### Create the Amazon MQ Broker
 
 - Go to the [Amazon MQ console](https://console.aws.amazon.com/amazon-mq/) on AWS.
 - Click "Create brokers":
-    - Step 1 - **Broker engine types:** RabbitMQ
-    - Step 2 - **Select deployment mode:** Single Instance Broker
-    - Step 3 - Configure Settings:
+    - Step 1:
+        - **Broker engine types:** RabbitMQ
+    - Step 2:
+        - **Select deployment mode:** Single Instance Broker
+    - Step 3:
         - **Broker Name:** `<aws-broker-name>`
         - **Broker Instance Type:** mq.t3.micro (or bigger, though you probably won't need it)
         - RabbitMQ access:
@@ -112,3 +116,20 @@ The server should automatically start on boot.
             - **Access Type:** Private Access
             - **VPC and Subnets:** Select Existing VPC
                 - **VPC:** `<aws-vpc>`
+                - **Subnet:** `<aws-private-subnet>`
+            - **Security Groups:** Select Existing SG w/ `<aws-default-sg>`
+    - Step 4:
+        - Check settings
+        - Click "Create Broker"
+- Wait ~20 minutes for the broker to be created.
+
+### Preserve Settings
+
+- Go to the [Amazon MQ console](https://console.aws.amazon.com/amazon-mq/) on AWS.
+- Under "Brokers" find `<aws-broker-name>` and click.
+    - Under "Connections" find "Endpoints".
+    - Save the URL under "AMQP" as `<broker-url>`.
+        - Example: `amqps://b-8f2b68ab-3d0f-4a64-a2bf-24418ebf52d5.mq.us-east-1.amazonaws.com:5671`
+    - Elsewhere, instead of modifying `<config-dir>/broker.conf.yaml` to add
+      a `host` and `port`:
+        - Set the `url` field to `<broker-url>`.
