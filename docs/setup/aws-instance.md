@@ -76,6 +76,9 @@ This section of the guide will cover:
         This is outside the scope of this guide and you should try to follow
         SWRI's instructions.
 
+        **Option 4:** AWS's [Neptune DB](https://docs.aws.amazon.com/neptune)
+        seems like a viable option, though the details are up to you to sort.
+
     ??? note "Message Broker Minimum Requirements"
 
         **Option 1:** If you want a non-backendless broker or one that's not

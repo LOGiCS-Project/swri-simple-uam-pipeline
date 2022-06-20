@@ -49,6 +49,8 @@
       the configured limit. (default is no limit)
 - Go over config file?
 
+!!! warning "Section Incomplete"
+
 A workspace is an environment (i.e. folder) set up so that SWRi's direct2cad
 pipeline can run within it.
 
