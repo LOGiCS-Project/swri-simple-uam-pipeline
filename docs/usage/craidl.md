@@ -1,5 +1,7 @@
 # Craidl Tools
 
+!!! warning "Section Incomplete"
+
 - Modified from code privded by sri.
 - Exists to support a single step needed by direct2cad analysis pipeline
     - gen_info_file
@@ -13,6 +15,8 @@
       generate the info files for a design.
         - command line args
 - Also config file breakdown?
+
+!!! error "Below Info Out of Date"
 
 ??? todo "reqs"
     - Craidl:

@@ -1,5 +1,7 @@
 # SimpleUAM Client Nodes
 
+!!! warning "Section Incomplete"
+
 - Client sends out requests to message broker for analysis
     - Watches shared file directory for results.
     - If backend set up then maybe gets notified.
@@ -38,6 +40,8 @@
 - Talk about config file `broker.conf.yaml` and fields:
     - Broker config
     - Backend config
+
+!!! error "Below Info Out of Date"
 
 ??? todo "reqs"
     - Clients:

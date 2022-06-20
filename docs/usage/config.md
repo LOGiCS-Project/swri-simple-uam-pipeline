@@ -1,5 +1,7 @@
 # SimpleUAM Configuration System
 
+!!! warning "Section Incomplete"
+
 SimpleUAM uses an internal configuration system based on
 [OmegaConf](omegaconf.readthedocs.io/).
 It reads YAML files in a platform specific directory for settings that are

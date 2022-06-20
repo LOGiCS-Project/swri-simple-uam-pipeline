@@ -37,11 +37,11 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://LOGiCS-Project.github.io/swri-simple-uam-pipleline"
-Documentation = "https://LOGiCS-Project.github.io/swri-simple-uam-pipleline"
+Homepage = "https://LOGiCS-Project.github.io/swri-simple-uam-pipeline"
+Documentation = "https://LOGiCS-Project.github.io/swri-simple-uam-pipeline"
 Repository = "https://github.com/LOGiCS-Project/swri-simple-uam-pipeline/"
-Issues = "https://github.com/LOGiCS-Project/swri-simple-uam-pipleline/issues"
-Discussions = "https://github.com/LOGiCS-Project/swri-simple-uam-pipleline/discussions"
+Issues = "https://github.com/LOGiCS-Project/swri-simple-uam-pipeline/issues"
+Discussions = "https://github.com/LOGiCS-Project/swri-simple-uam-pipeline/discussions"
 
 [project.scripts]
 suam-config = "simple_uam.tools.config_mgr.cli:main"
