@@ -1,8 +1,8 @@
-site_name: "Simple UAM Pipleline"
+site_name: "Simple UAM Pipeline"
 site_description: "A set of libraries and wrappers around the SWRi athens-uav project.  "
-site_url: "https://LOGiCS-Project.github.io/swri-simple-uam-pipleline"
-repo_url: "https://github.com/LOGiCS-Project/swri-simple-uam-pipleline"
-repo_name: "LOGiCS-Project/swri-simple-uam-pipleline"
+site_url: "https://LOGiCS-Project.github.io/swri-simple-uam-pipeline"
+repo_url: "https://github.com/LOGiCS-Project/swri-simple-uam-pipeline"
+repo_name: "LOGiCS-Project/swri-simple-uam-pipeline"
 site_dir: "site"
 watch: [README.md, CONTRIBUTING.md]
 

@@ -1,5 +1,7 @@
 # Direct2Cad Worker
 
+!!! warning "Section Incomplete"
+
 - Worker runs as a service and listens for tasks from msg broker.
     - When task arrives uses the D2C Workspaces code to run the analysis and
       produce a result archive.
@@ -28,7 +30,7 @@
     - Worker Node Opts
     - Service config
 
-!!! warning "Section Incomplete"
+!!! error "Below Info Out of Date"
 
 ??? todo "reqs"
     - Workers:

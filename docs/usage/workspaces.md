@@ -1,5 +1,7 @@
 # Direct2Cad Workspace
 
+!!! warning "Section Incomplete"
+
 - Workspace is wrapper around d2c that provides a consistent environment for
   SWRi's scripts to run in.
     - Consistent env is defined in terms of a reference workspace which is
@@ -49,7 +51,7 @@
       the configured limit. (default is no limit)
 - Go over config file?
 
-!!! warning "Section Incomplete"
+!!! error "Below Info Out of Date"
 
 A workspace is an environment (i.e. folder) set up so that SWRi's direct2cad
 pipeline can run within it.
