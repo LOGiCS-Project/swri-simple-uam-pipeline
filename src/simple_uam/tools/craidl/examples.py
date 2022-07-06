@@ -4,7 +4,8 @@ Various setup and development tasks for SimpleUAM Utility Modules.
 
 import shutil
 from simple_uam.util.invoke import task, call
-from simple_uam.util.config import Config, PathConfig, CraidlConfig, AuthConfig
+from simple_uam.util.config import Config, PathConfig, CraidlConfig, \
+    AuthConfig, CorpusConfig
 from simple_uam.util.logging import get_logger
 from simple_uam.util.system import Git
 
@@ -180,11 +181,11 @@ def add_examples(ctx, input, name=None, skip=False):
 
 trinity_craidl_dir = Config[PathConfig].cache_dir / 'trinity_craidl'
 
-trinity_craidl_repo = "https://git.isis.vanderbilt.edu/SwRI/ta1/sri-ta1/trinity-craidl.git"
+trinity_craidl_repo = Config[CorpusConfig].trinity.repo
 
-trinity_craidl_branch = "main"
+trinity_craidl_branch = Config[CorpusConfig].trinity.branch
 
-trinity_craidl_examples = trinity_craidl_dir / 'examples'
+trinity_craidl_examples = trinity_craidl_dir / Config[CorpusConfig].trinity.examples_dir
 
 @task
 def download_examples(ctx,  prompt=True, quiet=False, verbose=False):

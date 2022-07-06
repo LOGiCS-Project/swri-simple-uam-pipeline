@@ -71,3 +71,7 @@ manage configuration information.
     - The `service` section determines how the worker node will run as a service.
         - The `auto_start` subfield controls whether the service is configured
           resume on reboot.
+- `corpus.conf.yaml` : Specifies the various repo URLs and branches used in a
+  given deployment of SimpleUAM.
+    - Use refspecs to get a repeatable, static deployment.
+    - Should be the same across all worker nodes.

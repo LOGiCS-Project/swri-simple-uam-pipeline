@@ -4,7 +4,8 @@ Various setup and development tasks for SimpleUAM Utility Modules.
 
 import shutil
 from simple_uam.util.invoke import task, call
-from simple_uam.util.config import Config, PathConfig, D2CWorkspaceConfig, AuthConfig
+from simple_uam.util.config import Config, PathConfig, D2CWorkspaceConfig, \
+    AuthConfig, CorpusConfig
 from simple_uam.util.logging import get_logger
 from simple_uam.util.system import Git
 from simple_uam.util.system.windows import download_file
@@ -32,10 +33,10 @@ def mkdirs(ctx):
     manager.init_dirs()
 
 creoson_server_dir = Path(Config[D2CWorkspaceConfig].cache_dir) / 'creoson_server'
-creoson_server_api_endpoint = "https://git.isis.vanderbilt.edu/api/v4/projects/499/jobs/3827/artifacts/out/CreosonServerWithSetup-2.8.0-win64.zip"
-creoson_server_manual_uri = "https://git.isis.vanderbilt.edu/SwRI/creoson/creoson-server/-/jobs/artifacts/main/raw/out/CreosonServerWithSetup-2.8.0-win64.zip?job=build-job"
-creoson_server_repo = "https://git.isis.vanderbilt.edu/SwRI/creoson/creoson-server.git"
-creoson_server_branch = 'dchee-jars'
+creoson_server_api_endpoint = Config[CorpusConfig].creoson_server.api
+creoson_server_manual_uri = Config[CorpusConfig].creoson_server.manual
+# creoson_server_repo = "https://git.isis.vanderbilt.edu/SwRI/creoson/creoson-server.git"
+# creoson_server_branch = 'dchee-jars'
 creoson_server_zip = creoson_server_dir / "CreosonServerWithSetup-2.8.0-win64.zip"
 
 @task
@@ -149,8 +150,8 @@ def creoson_server(ctx,
     # Git.clone_or_pull(**git_args)
 
 direct2cad_dir = Path(Config[D2CWorkspaceConfig].cache_dir) / 'direct2cad'
-direct2cad_repo = "https://git.isis.vanderbilt.edu/SwRI/uam_direct2cad.git"
-direct2cad_branch = 'main'
+direct2cad_repo = Config[CorpusConfig].direct2cad.repo
+direct2cad_branch = Config[CorpusConfig].direct2cad.branch
 
 @task
 def direct2cad(ctx,  prompt=True, quiet=False, verbose=False):
