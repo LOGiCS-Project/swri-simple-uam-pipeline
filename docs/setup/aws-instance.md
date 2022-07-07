@@ -21,16 +21,16 @@ This section of the guide will cover:
         - **Name:** `<instance.name>`
         - **Application and OS Images:** Quick Start -> Windows
             - Microsoft Windows Server 2019 Base
-        - **Instance Type:** t1.micro
+        - **Instance Type:** t2.micro
             - 1x vCPU
-            - 0.6gb Memory
-        - **Key Pair:** `<ec2-keypair>`
+            - 1gb Memory
+        - **Key Pair:** `<ec2-keypair.name>`
         - **Network Settings:**
-            - **VPC:** `<aws-vpc>`
-            - **Subnet:** `<aws-private-subnet>`
+            - **VPC:** `<aws-vpc.id>`
+            - **Subnet:** `<aws-private-subnet.id>`
             - **Auto-assign Public IP:** Disable
             - **Firewall:** Select existing security group
-            - **Common Security Groups:** `<aws-security-group>`
+            - **Common Security Groups:** `<aws-default-sg.id>`
             - **Advanced Network Configuration:** None
         - **Configure Storage:** 1x 30gb gp2
 
@@ -45,15 +45,15 @@ This section of the guide will cover:
         - **Instance Type:** t2.large
             - 2x vCPU
             - 8gb Memory
-        - **Key Pair:** `<ec2-keypair>`
+        - **Key Pair:** `<ec2-keypair.name>`
         - **Network Settings:**
-            - **VPC:** `<aws-vpc>`
-            - **Subnet:** `<aws-private-subnet>`
+            - **VPC:** `<aws-vpc.id>`
+            - **Subnet:** `<aws-private-subnet.id>`
             - **Auto-assign Public IP:** Disable
             - **Firewall:** Select existing security group
-            - **Common Security Groups:** `<aws-security-group>`
+            - **Common Security Groups:** `<aws-default-sg.id>`
             - **Advanced Network Configuration:** None
-        - **Configure Storage:** 1x 1000gb gp2
+        - **Configure Storage:** 1x 200gb gp2
         - **Advanced Details:**
             - **Elastic GPU:** eg1.medium
 
@@ -93,8 +93,11 @@ This section of the guide will cover:
         performance the specifications for a worker node on a windows machine
         be fine.
 
-        **Option 4:** An Amazon MQ node might work well, there are tentative
+        **Option 4:** An AmazonMQ node might work well, there are tentative
         instructions in the section on [message broker setup](broker.md).
+
+        **Option 5:** An Amazon MemoryDB for Redis node might work well, there
+        are tentative instructions in the section on [message broker setup](broker.md).
 
 - Find the instance you just created with "Name" `<instance.name>`.
     - Save the "Instance ID" as: `<instance.id>`
@@ -113,22 +116,22 @@ This section of the guide will cover:
     - **Username:** `<instance.user>`
     - **RDP File:**
         - Click "Download remote desktop file"
-        - Save to `<instance.rdp-file>`
+        - Save to `<instance.rdp.file>`
     - **Password:**
         - Click "Get Password"
-        - Upload `<ec2-keypair-pem>`
+        - Upload `<ec2-keypair.pem>`
         - Click "Decrypt Password"
-        - Save to `<instance.rdp-pass>`
+        - Save to `<instance.rdp.pass>`
 
 #### Connect Via RDP
 
 - Make sure your local machine is connected to the VPN set up previously,
   otherwise none of the provided IPs will correctly resolve.
 - Via Preferred RDP client (e.g. [Remmina](htps://remmina.org)):
-    - **Import:** `<instance.rdp-file>`
+    - **Import:** `<instance.rdp.file>`
     - **IP:** `<instance.ip>`
     - **Username:** `<instance.user>`
-    - **Password:** `<instance.rdp-pass>`
+    - **Password:** `<instance.rdp.pass>`
 
 ## Mount Shared FSx Drive
 
@@ -138,8 +141,8 @@ This section of the guide will cover:
 - Add NFS client: [Instructions](https://computingforgeeks.com/install-and-configure-nfs-client-on-windows-10-server-2019/)
 - Setup The Automount of drive: [Instructions](https://docs.aws.amazon.com/fsx/latest/WindowsGuide/using-file-shares.html#map-share-windows)
     - Open File Explorer and click "Network" and "Map Network Drive":
-      - **Drive**: `<fsx-drive-letter>`
-      - **Folder**: `\\<aws-fsx-ip>\fsx\`
+      - **Drive**: `<aws-fsx.drive-letter>` (e.g. "`D:`" or "`F:`")
+      - **Folder**: `\\<aws-fsx.ip>\fsx\`
       - **Reconnect At Login**: Yes
 
 **Continue to [General Setup](general.md)...**

@@ -2,7 +2,6 @@ from .path_config import PathConfig
 from .auth_config import AuthConfig
 from .manager import Config
 from .win_setup_config import WinSetupConfig
-# from .lin_setup_config import LinSetupConfig # noqa
 from .craidl_config import CraidlConfig
 from .corpus_config import CorpusConfig
 from .broker_config import BrokerConfig
@@ -21,7 +20,6 @@ __all__: List[str] = [
     'PathConfig',
     'WinSetupConfig',
     'CorpusConfig',
-    # 'LinSetupConfig', # No need for this yet
     'CraidlConfig',
     'BrokerConfig',
     'D2CWorkspaceConfig',

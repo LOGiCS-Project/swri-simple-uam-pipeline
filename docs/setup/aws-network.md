@@ -289,25 +289,30 @@ AWS account.
 ### Option 1: Use Amazon FSx for OpenZFS
 
 - Go to the [FSx File System console](https://console.aws.amazon.com/fsx/home#file-systems).
-    - Click "Create File System":
+    - Click [Create File System](https://console.aws.amazon.com/fsx/home#file-system-create):
         - **Select file system type**: OpenZFS
         - **Creation Method**: Standard create
         - File System Details:
             - **File system name**: `<aws-fsx.name>`
             - **SSD Storage capacity**: more than 50gb
+            - **Provisioned SSD IOPS**: Automatic
+            - **Throughput Capacity**: Recommended
         - Network and Security:
             - **VPC**: `<aws-vpc.name>`
             - **VPC Security Groups**: `<vpc-default-sg.name>`
             - **Subnet**: `<aws-private-subnet.name>`
+        - Encryption:
+            - **Encryption Key**: aws/fsx (default)
         - Root Volume Configuration:
-            - **Data compression type**: none
+            - **Data compression type**: No Compression
             - NFS Exports:
                 - **Client Address:** *
                 - **NFS Options:** rw,no_auth_nlm,all_squash,anonuid=0,anongid=0,crossmnt
+            - **Record Size**: Default
         - Click "Next" then "Create File System"
-    - Open the "file systems" page on the FSx console and select `<aws-fsx-name>`:
-        - Keep track of "File System ID" as: `<aws-fsx-id>`
-        - Open its "Network Interface" and save its "IPv4 address" as: `<aws-fsx-ip>`
+    - Open the [file systems page on the FSx console](https://console.aws.amazon.com/fsx/home#file-systems) and select `<aws-fsx.name>`:
+        - Keep track of "File System ID" as: `<aws-fsx.id>`
+        - Open "Network Interface" and save"IPv4 address" as: `<aws-fsx.ip>`
 
 ??? info "Unix Mount Instructions"
 
@@ -331,58 +336,18 @@ AWS account.
 
     Run: `mount \\<aws-fsx-ip>\fsx\ <drive-letter>`
 
-### Option 2: Use Amazon FSx for NetApp ONTAP
-
-- Go to the [FSx File System console](https://console.aws.amazon.com/fsx/home?region=us-east-1#file-systems).
-    - Click "Create File System":
-        - **Select file system type**: NetApp ONTAP
-        - **Creation Method**: Standard create
-        - File System Details:
-            - **File system name**: `<aws-fsx.name>`
-            - **SSD Storage capacity**: more than 1024gb
-            - **Provisioned SSD IOPS**: Automatic
-            - **Throughput Capacity**: Recommended
-        - Network and Security:
-            - **VPC**: `<aws-vpc.name>`
-            - **VPC Security Groups**: `<vpc-default-sg.name>`
-            - **Subnet**: `<aws-private-subnet.name>`
-        - Security & Encryption:
-            - **Encryption Key**: aws/fsx (default)
-            - **File system administrative password**: Specify a Password
-                - **Password**: `<aws-fsx.pass>`
-                - **Confirm Password**: `<aws-fsx.pass>`
-        - Default Storage VM Configuration:
-            - **Storage Virtual Machine Name**: `<aws-fsx.svm.name>`
-            - **SVM administrative password**: Specify a Password
-                - **Password**: `<aws-fsx.svm.pass>`
-                - **Confirm Password**: `<aws-fsx.svm.pass>`
-            - **Active Directory**: Do not join an Active Directory
-        - Default Volume Configuration:
-            - **Volume Name**: `<aws-fsx.volume.name>`
-
-
-<!--         - Root Volume Configuration: -->
-<!--             - **Data compression type**: none -->
-<!--             - NFS Exports: -->
-<!--                 - **Client Address:** * -->
-<!--                 - **NFS Options:** rw,no_auth_nlm,all_squash,anonuid=0,anongid=0,crossmnt -->
-<!--         - Click "Next" then "Create File System" -->
-<!--     - Open the "file systems" page on the FSx console and select `<aws-fsx-name>`: -->
-<!--         - Keep track of "File System ID" as: `<aws-fsx-id>` -->
-<!--         - Open its "Network Interface" and save its "IPv4 address" as: `<aws-fsx-ip>` -->
-
-
 ## Create an EC2 Keypair
 
 > This keypair is needed to connect to various EC2 instances in the VPC.
 
 #### Create a keypair for connecting to AWS instances.
 
-- Open the EC2 console to the "Key pairs" page and click "Create key pair".
-    - **Name**: `<ec2-keypair>`
+- Open the EC2 console to the [Key pairs page](https://console.aws.amazon.com/ec2/v2/home#KeyPairs:) and click
+  "[Create key pair](https://console.aws.amazon.com/ec2/v2/home#CreateKeyPair:)".
+    - **Name**: `<ec2-keypair.name>`
     - **Key Pair Type**: RSA
     - **Private Key Format**: .pem
     - Click "Create Key Pair"
-- When prompted save the *"`<ec2-keypair>`.pem"* file as: `<ec2-keypair-pem>`
+- When prompted save the *"`<ec2-keypair.name>`.pem"* file as: `<ec2-keypair.pem>`
 
 **Continue to [AWS Instance Setup](aws-instance.md)...**

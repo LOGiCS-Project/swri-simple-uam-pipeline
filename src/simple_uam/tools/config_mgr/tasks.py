@@ -1,8 +1,8 @@
 from omegaconf import OmegaConf, read_write
 
-from .manager import Config
-from ..invoke import task
-from ..logging import get_logger
+from simple_uam.util.config.manager import Config
+from simple_uam.util.invoke import task
+from simple_uam.util.logging import get_logger
 
 log = get_logger(__name__)
 

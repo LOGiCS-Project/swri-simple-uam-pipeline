@@ -14,8 +14,8 @@ the default settings.
 - Follow the instructions [here](https://www.rabbitmq.com/download.html) to
   set up RabbitMQ.
 
-- Save this machine's IP as: `<broker-ip>`
-- Save rabbitmq's open port as: `<broker-port>` (default: 5672)
+- Save this machine's IP as: `<broker.ip>`
+- Save rabbitmq's open port as: `<broker.port>` (default: 5672)
 
 ## **Option 2:** Run Redis on a Linux Machine
 
@@ -24,9 +24,9 @@ the default settings.
 
 We have not tried to get this running so don't have install instructions.
 
-- Save this machine's IP as: `<broker-ip>`
-- Save redis's open port as: `<broker-port>` (default: 6379)
-- Save the redis database you're using as: `<broker-db>` (default: "0")
+- Save this machine's IP as: `<broker.ip>`
+- Save redis's open port as: `<broker.port>` (default: 6379)
+- Save the redis database you're using as: `<broker.db>` (default: "0")
 
 ## **Option 3:** Run RabbitMQ as a Windows Service
 
@@ -56,7 +56,7 @@ We have not tried to get this running so don't have install instructions.
     If you only intend to use the broker with workers and clients on the same
     machine then you don't need to open ports.
 
-#### **Option 1:** Open only `<broker-port>`. (Default: 5672)
+#### **Option 1:** Open only `<broker.port>`. (Default: 5672)
 
 The instructions for this are too configuration specific for us to provide.
 
@@ -79,8 +79,8 @@ tested.
 
 ### Preserve Settings
 
-- Keep this machine's IP as: `<broker-ip>`
-- Keep rabbitmq's open port as: `<broker-port>` (default: 5672)
+- Keep this machine's IP as: `<broker.ip>`
+- Keep rabbitmq's open port as: `<broker.port>` (default: 5672)
 
 ### Start RabbitMQ Service
 
@@ -107,11 +107,11 @@ The server should automatically start on boot.
     - Step 2:
         - **Select deployment mode:** Single Instance Broker
     - Step 3:
-        - **Broker Name:** `<aws-broker-name>`
+        - **Broker Name:** `<aws-broker.name>`
         - **Broker Instance Type:** mq.t3.micro (or bigger, though you probably won't need it)
         - RabbitMQ access:
-            - **Username:** `<aws-broker-user>`
-            - **Password:** `<aws-broker-pass>`
+            - **Username:** `<aws-broker.user>`
+            - **Password:** `<aws-broker.pass>`
         - Additional Settings:
             - **Access Type:** Private Access
             - **VPC and Subnets:** Select Existing VPC
@@ -126,7 +126,52 @@ The server should automatically start on boot.
 ### Preserve Settings
 
 - Go to the [Amazon MQ console](https://console.aws.amazon.com/amazon-mq/) on AWS.
-- Under "Brokers" find `<aws-broker-name>` and click.
+- Under "Brokers" find `<aws-broker.name>` and click.
     - Under "Connections" find "Endpoints".
-    - Save the URL under "AMQP" as `<broker-url>`.
+    - Save the URL under "AMQP" as `<broker.url>`.
         - Example: `amqps://b-8f2b68ab-3d0f-4a64-a2bf-24418ebf52d5.mq.us-east-1.amazonaws.com:5671`
+
+## **Option 5:** Use Amazon MemoryDB on AWS as a broker
+
+> Amazon MemoryDB seems fine for use with SimpleUAM, though we've only performed
+> cursory testing.
+>
+> This should allow for more advanced features like return messages when compared to RabbitMQ based
+> brokers.
+
+### Prerequisites
+
+- An AWS VPC at `<aws-vpc>` with a private subnet at `<aws-private-subnet>`.
+
+### Create Amazon MemoryDB Broker
+
+- Go to the [MemoryDB dashboard](https://console.aws.amazon.com/memorydb/home#/dashboard?getStarted=expand).
+- Click "[Create Cluster](https://console.aws.amazon.com/memorydb/home#/clusters/create)":
+    - Step 1: Cluster Settings
+        - Choose Cluster Creation Method:
+            - **Configuration type**: Create new cluster
+        - Cluster Info:
+            - **Name**: `<aws-broker.name>`
+        - Subnet Groups:
+            - **Subnet Groups**: Create new subnet group
+            - **Name**: `<aws-private-subnet.group.name>`
+            - **VPC ID**: `<aws-vpc.id>`
+            - **Selected Subnets**: `<aws-private-subnet.id>`
+        - Cluster Settings:
+            - **Node Type**: db.t4g.small or db.t4g.medium
+                - Larger won't be useful unless you have 50+ worker nodes running simultaneously.
+            - **Number of Shards**: 1
+            - **Replicas per Shard**: 0
+    - Step 2: Advanced Settings
+        - Security:
+            - **Selected Security Groups**: `<aws-default-sg.id>`
+            - **Encryption Key**: Default key
+            - **Encryption in transit**: No encryption
+    - Click "Create"
+- Go to the [MemoryDB Clusters List](https://console.aws.amazon.com/memorydb/home#/clusters).
+    - Click the entry for `<aws-broker.name>`.
+    - Wait ~20m for the cluster to finish being created.
+    - Save "Cluster endpoint" as: `<aws-broker.endpoint>`
+    - Prepend "`redis://`" to `<aws-broker.endpoint>` and save as: `<broker.url>`
+        - This should look like "`redis://*.*.clustercfg.memorydb.*.amazonaws.com:6379`"
+          with "`*`" taken as wildcards.

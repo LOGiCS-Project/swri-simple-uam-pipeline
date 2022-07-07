@@ -23,23 +23,6 @@ def choco_pkgs(ctx):
 
     log.info("Finished Installing Dependency Packages")
 
-@task
-def disable_firewall(ctx):
-    """
-    Disable the Windows Server firewall. (ONLY USE ON PRIVATE NETWORK)
-
-    This disables the firewall for all port and connections. Do not use this
-    if the license server can be accessed by any untrusted devices.
-    """
-
-
-    log.info(
-        "Disabling Windows Firewall.",
-    )
-
-    installed = subprocess.run([
-        'NetSh', 'Advfirewall', 'set', 'allprofiles', 'state', 'off'])
-
 flexnet_installer = GUIInstaller(
     installed_path="C:\\Program Files\PTC\FLEXnet Admin License Server",
     path = 'flexnetadmin64_11.7.1.0.zip',

@@ -62,3 +62,20 @@ def clear_cache(ctx):
         print("Please enter 'y' or 'N', skipping deletion.")
     else:
         shutil.rmtree(installer_cache_path)
+
+@task
+def disable_firewall(ctx):
+    """
+    Disable the Windows Server firewall. (ONLY USE ON PRIVATE NETWORK)
+
+    This disables the firewall for all port and connections. Do not use this
+    if the license server can be accessed by any untrusted devices.
+    """
+
+
+    log.info(
+        "Disabling Windows Firewall.",
+    )
+
+    installed = subprocess.run([
+        'NetSh', 'Advfirewall', 'set', 'allprofiles', 'state', 'off'])
