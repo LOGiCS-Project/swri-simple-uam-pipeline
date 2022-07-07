@@ -258,7 +258,7 @@ class ConfigData:
 
         input_loc = Path(input).resolve()
 
-        config_loc = list(self.load_path[-1:])
+        config_loc = Path(self.load_path[-1])
         config_dir = config_loc.parent
 
         if not input_loc.exists():
@@ -278,8 +278,10 @@ class ConfigData:
                 backup_file(config_loc, delete=True)
 
         if symlink:
+            print(f"Creating symlink from '{str(config_loc)}' to '{str(input_loc)}'")
             config_loc.symlink_to(input_loc)
         else:
+            print(f"Copying file from '{str(input_loc)}' to '{str(config_loc)}'")
             shutil.copy2(input_loc, config_loc)
 
 T = TypeVar("T")
@@ -823,12 +825,11 @@ class Config(object):
         if isinstance(inputs, list):
             inputs = [Path(l) for l in inputs]
         else:
-            inp = Path(inputs)
-            if inp.is_dir():
-                ignore_misses = True
-                inputs = list(inp.iterdir())
-            else:
-                inputs = [inp]
+            inputs = [Path(inputs)]
+
+        if len(inputs) == 1 and inputs[0].is_dir():
+            ignore_misses = True
+            inputs = list(inputs[0].iterdir())
 
         if len(inputs) == 0 and not ignore_misses:
             raise RuntimeError("Did not provide any conf files to install")
