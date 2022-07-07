@@ -11,13 +11,13 @@ manage configuration information.
 
 !!! Info "All commands are run in `<repo-root>`."
 
-## Configuration Files
+## Configuration File Format {#format}
 
 - All SimpleUAM configuration files are in [YAML](https://yaml.org/).
 - We support OmegaConf's [variable interpolation](https://omegaconf.readthedocs.io/en/2.1_branch/usage.html#variable-interpolation)
   to allow referencing values in one config file from another.
 
-## Configuration Semantics
+## Configuration Semantics {#semantics}
 
 - There is a single opinionated config directory where config files
   should be located.
@@ -28,7 +28,7 @@ manage configuration information.
 - Interpolation Keys for each config file are specified at init, and can be used
   to retrieve values.
 
-## Using `suam-config`
+## Using the `suam-config` CLI {#cli}
 
 - `pdm run suam-config dir` : Print config directory
 - `pdm run suam-config list-files` : Lists valid config files in dir
@@ -39,8 +39,11 @@ manage configuration information.
     - Will default to placing fully commented out configs in the default
       configuration directory.
       User can uncomment and edit as needed.
+- `pdm run suam-config install`: Allows for quick install of existing config
+   files into the correct directory, either as symlinks or by simply copying
+   them over.
 
-## Existing Configuration Files
+## Existing Configuration Files {#files}
 
 - `paths.conf.yaml` : Defaults paths for cache, logs, data, etc..
     - Used by other config defaults a lot.

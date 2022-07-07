@@ -59,7 +59,6 @@ def list_files(ctx):
     for f in Config.config_files():
         print(f)
 
-
 @task(name="print", iterable=['config'])
 def print_config(ctx, config, resolved=False, all=False):
     """
@@ -133,4 +132,43 @@ def write(ctx,
         overwrite=overwrite,
         comment=comment,
         out_dir=output,
+    )
+
+@task(
+    iterable=["input"],
+)
+def install(ctx,
+            input,
+            symlink=True,
+            overwrite=False,
+            mkdir=True
+):
+    """
+    Will install a set of config files into the default location.
+    By default it will create symlinks in the config dir that point to the
+    provided arguments.
+
+    Files are disambiguated by name, so input filenames should match their
+    expected names in the config dir.
+
+    Arguments:
+      input: One or more files to symlink/copy into config dir.
+        A single directory as input can be used as shorthand for all the
+        appropriately named files within it.
+      symlink (default=True): Do we create a symlink pointing to the input
+        file or simply copy the input into the config dir?
+      overwrite (default=False): Do we overwrite existing files (creating
+        backups as needed)? Otherwise, skip existing config files.
+      mkdir (default=True): Do we create the config directories if needed?
+    """
+
+    # Normalize arg for call
+    if input == []:
+        raise RuntimeError("Must provide at least one input config.")
+
+    Config.install_configs(
+        inputs=input,
+        symlink=symlink,
+        overwrite=overwrite,
+        mkdir=mkdir,
     )

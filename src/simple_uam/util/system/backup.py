@@ -42,10 +42,10 @@ def backup_file(
 
         count = 1
         time_str = datetime.now().strftime("%Y-%m-%d")
-        bak_file = backup_dir.with_name(f"{file_path.name}.{time_str}.bak")
+        bak_file = backup_dir / f"{file_path.name}.{time_str}.bak"
 
         while bak_file.exists():
-            bak_file = backup_dir.with_name(f"{file_path.name}.{time_str}.{count}.bak")
+            bak_file = backup_dir / f"{file_path.name}.{time_str}.{count}.bak"
             count += 1
 
         backup_dir.mkdir(parents=True, exist_ok=True)
