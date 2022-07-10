@@ -55,7 +55,7 @@ Details are left to the user.
 - Navigate an admin powershell to `<repo_root>`.
 - Setup PDM environment for this repo:
   ```bash
-  pdm install -d
+  pdm install
   ```
 - Test whether setup script was installed:
   ```bash

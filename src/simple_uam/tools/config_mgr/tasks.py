@@ -21,7 +21,7 @@ def dir(ctx, all=False):
         print(str(Config().config_dirs[-1]))
 
 @task
-def file(ctx, config, all=False):
+def file(ctx, config=None, all=False):
     """
     Prints the terminal file examined when loading a particular config.
 
@@ -29,7 +29,9 @@ def file(ctx, config, all=False):
         config: the file to examine
         all: Print all the files examined in load order (highest priority last).
     """
-    if all:
+    if not config:
+        raise RuntimeError("No config file identifier provided.")
+    elif all:
         for p in Config().load_path(config):
             print(str(p))
     else:
@@ -60,7 +62,7 @@ def list_files(ctx):
         print(f)
 
 @task(name="print", iterable=['config'])
-def print_config(ctx, config, resolved=False, all=False):
+def print_config(ctx, config=None, resolved=False, all=False):
     """
     Prints the currently loaded config data for a given class to STDOUT
 

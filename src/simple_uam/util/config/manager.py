@@ -273,6 +273,8 @@ class ConfigData:
             if not overwrite:
                 raise RuntimeError(f"Config file {str(config_loc)} already exists.")
             elif config_loc.is_symlink():
+                target = config_loc.resolve()
+                print(f"Removing pre-existing symlink from {str(config_loc)} to {str(target)}.")
                 config_loc.unlink()
             else:
                 backup_file(config_loc, delete=True)
@@ -392,17 +394,18 @@ class Config(object):
         Returns the chain of config_dirs to load.
         """
 
-        current_dir = Path(PathConfig().config_dir)
+        current_dir = Path(PathConfig().config_dir).resolve()
         conf_dirs = [current_dir]
         path_conf = current_dir / PATHCONFIG_FILE_NAME
 
         while current_dir and path_conf.is_file():
             conf = OmegaConf.load(path_conf)
-            current_dir = OmegaConf.select(conf, "config_directory")
-            if current_dir:
-                current_dir = Path(current_dir)
-                conf_dirs.append(current_dir)
-                path_conf = current_dir / PATHCONFIG_FILE_NAME
+            new_dir = OmegaConf.select(conf, "config_directory")
+            new_dir = Path(current_dir).resolve()
+            if new_dir and new_dir != current_dir:
+                conf_dirs.append(new_dir)
+                path_conf = new_dir / PATHCONFIG_FILE_NAME
+            current_dir = new_dir
 
         return conf_dirs
 

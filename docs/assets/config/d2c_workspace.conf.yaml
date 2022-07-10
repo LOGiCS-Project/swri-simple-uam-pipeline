@@ -1,0 +1,21 @@
+### d2c_workspace.conf.yaml ###
+
+workspace_subdir_pattern: workspace_{}
+reference_subdir: reference_workspace
+assets_subdir: assets
+locks_subdir: workspace_locks
+results_dir: ${workspaces_dir}/results
+results:
+  max_count: -1
+  min_staletime: 3600
+  metadata_file: metadata.json
+  log_file: log.json
+workspaces_dir: ${path:work_directory}/d2c_workspaces
+cache_dir: ${path:cache_directory}/d2c_workspaces
+max_workspaces: 1
+exclude:
+- .git
+result_exclude:
+- .git
+- workingdir/*.prt
+

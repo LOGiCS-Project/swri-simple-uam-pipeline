@@ -4,12 +4,12 @@ This sets up a floating Creo license that worker nodes can use.
 A machine or VM with direct access can use a node-locked Creo license instead.
 However if you need to access the VM through RDP a floating license is required.
 
-### Prerequisites
+### Prerequisites {#prereqs}
 
 - [General Setup](general.md) has been completed.
-- The IP of this machine is saved as: `<license-server-ip>`
+- The IP of this machine is saved as: `<license-server.ip>`
 
-### Get License File
+### Get License File {#license}
 
 > Get the Host ID and License File.
 
@@ -18,9 +18,9 @@ However if you need to access the VM through RDP a floating license is required.
   ```bash
   pdm run setup-win mac-address
   ```
-- Save the result as `<license-host-id>`.
-- Get the Creo floating license for `<license-host-id>`.
-- Place the license file at `<license-file>`, somewhere on this machine.
+- Save the result as `<license.host-id>`.
+- Get the Creo floating license for `<license.host-id>`.
+- Place the license file at `<license.file>`, somewhere on this machine.
 
 ### Install Dependencies
 

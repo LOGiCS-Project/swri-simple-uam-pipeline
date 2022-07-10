@@ -1,0 +1,15 @@
+### broker.conf.yaml ###
+
+protocol: amqp
+host: 127.0.0.1
+port: 5672
+db: ''
+url: ${.protocol}://${.host}:${.port}${.db}
+backend:
+  enabled: false
+  protocol: redis
+  host: 127.0.0.1
+  port: 6379
+  db: /0
+  url: ${.protocol}://${.host}:${.port}${.db}
+
