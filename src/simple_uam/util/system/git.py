@@ -235,5 +235,5 @@ class Git():
         if co_cmd: # Checkout a particular branch after fetch or submod
             subprocess.run(
                 co_cmd,
-                cwd = work_dir,
+                cwd = deploy_dir,
             )

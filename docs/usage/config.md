@@ -796,7 +796,7 @@ confirmations or other information to a backend.
   Due to limitations with Creoson the only supported number is `1`.
 - **`max_threads`**: The number of threads, per-process, on which to run
   direct2cad tasks.
-      The only currently supported value is `1`.
+  The only currently supported value is `1`.
 - **`shutdown_timeout`**: How long to wait for a worker to shutdown in
   milliseconds.
 - **`skip_logging`**: Do we preserve the logs that dramatiq produces?

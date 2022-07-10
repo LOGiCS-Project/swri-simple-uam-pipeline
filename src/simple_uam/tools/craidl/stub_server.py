@@ -42,7 +42,7 @@ def download_corpus(ctx,  prompt=True, quiet=False, verbose=False):
         remote_user = Config[AuthConfig].isis_user,
         remote_pass = Config[AuthConfig].isis_token,
         branch = uav_workflows_branch,
-        password_prompt = prompt,
+        password_prompt = prompt and not Config[AuthConfig].isis_token,
         quiet = quiet,
         verbose = verbose,
         mkdir = True
@@ -124,6 +124,14 @@ def install_corpus(ctx, corpus=None, skip=False, yes=False):
     )
 
     shutil.copy2(corpus, target)
+
+@task
+def corpus_loc(ctx):
+    """
+    Prints the currently configured corpus location.
+    """
+
+    print(str(Path(Config[CraidlConfig].stub_server.graphml_corpus)))
 
 gremlin_server_uri = "https://downloads.apache.org/tinkerpop/3.6.0/apache-tinkerpop-gremlin-server-3.6.0-bin.zip"
 

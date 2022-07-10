@@ -25,6 +25,9 @@ def download_file(uri: Path,
         Mainly useful for passing in credentials if they exist.
     """
 
+    if not params:
+        params = dict()
+
     params = {key:val for key, val in params.items() if val != None}
 
     if len(params) > 0:

@@ -1,5 +1,43 @@
 # Craidl Tools
 
+The craidl module and CLI tool are designed to support generating a info
+files for a design from SRI's compressed representation.
+These info files are an expanded version of a design that pulls in specific
+component information from the corpus so that SWRi's direct2cad pipeline can
+process it.
+The core of this is based on work by SRI, albeit heavily modified for a number
+of reasons.
+
+As implemented the Craidl module in SimpleUAM has a few major components/concepts:
+
+- **Corpus**: This is the SWRi provided `.graphml` file that contains
+  information on components and designs within the current challenge problem.
+- **Stub Server**: A small graph server that can serve the corpus to tools which
+  expect to access it via Gremlin graph queries.
+- **Static Corpus**: This is component information from the corpus extracted into
+  a much smaller, more efficient, distributable form.
+- **Examples**: This is a list of designs, in SRI's design representation, that
+  can serve as a pool of seeds or examples for testing.
+  This should probably be called the 'static design corpus' or something.
+
+The basic install procedure can be found [here](../../setup/graph.md).
+This page covers other things.
+
+## Updating Craidl {#update}
+
+When the corpus or various config files change you'll need to propagate those
+changes to the stub-server.
+
+The easiest way to do this is to go through the install instructions again.
+The operations are all functionally idempotent and make backups of things they
+would overwrite.
+
+Note that `corpus.install` must be run to update the active corpus before
+running `stub-server.configure` which copies that corpus to the appropriate
+location for the stub server.
+
+## Working With Examples {#examples}
+
 !!! warning "Section Incomplete"
 
 - Modified from code privded by sri.
