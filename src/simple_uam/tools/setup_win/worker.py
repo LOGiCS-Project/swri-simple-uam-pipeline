@@ -2,7 +2,8 @@ from pathlib import Path
 
 import shutil
 from simple_uam.util.invoke import task, call
-from simple_uam.util.config import Config, PathConfig, WinSetupConfig, AuthConfig
+from simple_uam.util.config import Config, PathConfig, WinSetupConfig, \
+    AuthConfig, CorpusConfig
 from simple_uam.util.logging import get_logger
 from simple_uam.util.system import Git, Pip
 
@@ -190,9 +191,9 @@ def disable_ieesc(ctx):
 creopyson_dir = Config[PathConfig].work_dir / 'creopyson'
 """ Directory with creopyson repo. """
 
-creopyson_repo = "https://git.isis.vanderbilt.edu/SwRI/creoson/creopyson.git"
+creopyson_repo = Config[CorpusConfig].creopyson.repo
 
-creopyson_branch = "main"
+creopyson_branch = Config[CorpusConfig].creopyson.branch
 
 @task(pre=[call(choco.install, pkg=['python3'])])
 def creopyson(ctx, prompt=True, quiet=False, verbose=False):

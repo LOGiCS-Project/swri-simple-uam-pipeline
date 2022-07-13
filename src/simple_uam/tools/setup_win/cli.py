@@ -37,6 +37,7 @@ def main(args: Optional[List[str]] = None) -> int:
     namespace = Collection(
         shared.mac_address,
         shared.clear_cache,
+        shared.disable_firewall,
     )
 
     # Collect all choco install tasks

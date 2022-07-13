@@ -1,5 +1,7 @@
 --8<-- "README.md"
 
+**And [the Github Repo](https://github.com/LOGiCS-Project/swri-simple-uam-pipeline/) for the source code, issues, etc...**
+
 ## Organization
 
 <figure markdown>

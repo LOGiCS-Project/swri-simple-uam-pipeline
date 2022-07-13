@@ -13,9 +13,8 @@
 
 from typing import List, Optional
 
-import simple_uam.util.config.tasks
-from simple_uam.util.config import PathConfig, Config, WinSetupConfig, \
-    D2CWorkspaceConfig, D2CWorkerConfig, CraidlConfig # noqa
+from . import tasks
+from simple_uam.util.config import *
 from simple_uam.util.invoke import Collection, InvokeProg, task
 from simple_uam.util.logging import get_logger
 
@@ -36,7 +35,7 @@ def main(args: Optional[List[str]] = None) -> int:
 
     # Setup the invoke program runner class
     program = InvokeProg(
-        namespace=Collection.from_module(simple_uam.util.config.tasks),
+        namespace=Collection.from_module(tasks),
         version="0.1.0",
     )
 

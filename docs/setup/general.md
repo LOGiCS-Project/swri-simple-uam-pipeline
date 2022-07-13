@@ -2,7 +2,7 @@
 
 This is setup that needs to be done for multiple types of machines.
 
-### Prerequisites
+## Prerequisites {#prereqs}
 
 - This machine must be running Windows.
     - If you're using a Linux machine skip to the setup page of whatever
@@ -10,7 +10,7 @@ This is setup that needs to be done for multiple types of machines.
 - You must be okay using [chocolatey](https://chocolatey.org/) as your package
   manager.
 
-### Install Chocolatey and Minimal Deps
+## Install Chocolatey and Minimal Deps {#install-choco}
 
 > This downloads a minimal install script for chocolatey, git, and python.
 > This step is idempotent and will just do nothing if these are all installed.
@@ -22,35 +22,40 @@ This is setup that needs to be done for multiple types of machines.
 
 - Close this powershell terminal and open new ones for future steps.
 
-### Download SimpleUAM
+## Download SimpleUAM {#suam}
 
 > Get this repo onto the machine somehow, cloning is the default method.
 > If you have a shared drive, placing the repo there will allow local development
 > without constant pushing and pulling.
 
+- Save the repo's final location as: `<repo-root>`
 
-- Save the repo's final location as `<repo-root>`.
+#### **Option 1**: Clone From Github (HTTP): {#suam-github-http}
 
-#### **Option 1:** Clone from Github (HTTP):
+- Clone from Github via HTTP, replacing `<repo-root>` in the following command:
+  ```bash
+  git clone https://github.com/LOGiCS-Project/swri-simple-uam-pipeline.git <repo-root>
+  ```
 
-```bash
-git clone https://github.com/LOGiCS-Project/swri-simple-uam-pipeline.git <repo-root>
-```
+#### **Option 2**: Clone From Github (SSH): {#suam-github-ssh}
 
-#### **Option 2:** Clone from Github (SSH):
+- Clone from Github via SSH, replacing `<repo-root>` in the following command:
+  ```bash
+  git clone git@github.com:LOGiCS-Project/swri-simple-uam-pipeline.git <repo-root>
+  ```
 
-```bash
-git clone git@github.com:LOGiCS-Project/swri-simple-uam-pipeline.git <repo-root>
-```
+#### **Option 3**: Retrieve From Other Source {#suam-other}
 
-### Initialize Setup Package
+Details are left to the user.
+
+## Initialize Setup Package {#setup}
 
 > Initialize pdm and packages for worker setup.
 
 - Navigate an admin powershell to `<repo_root>`.
 - Setup PDM environment for this repo:
   ```bash
-  pdm install -d
+  pdm install
   ```
 - Test whether setup script was installed:
   ```bash
@@ -59,7 +64,7 @@ git clone git@github.com:LOGiCS-Project/swri-simple-uam-pipeline.git <repo-root>
   Result should be a help message showing all of `setup-win`'s flags and
   subcommands.
 
-### Get Configuration Directory
+## Get Configuration Directory {#conf-dir}
 
 > The configuration directory holds `*.conf.yaml` files that determine how
 > many aspects of a running SimpleUAM system operate.
@@ -69,10 +74,9 @@ git clone git@github.com:LOGiCS-Project/swri-simple-uam-pipeline.git <repo-root>
   ```bash
   pdm run suam-config dir
   ```
-
 - Save result as `<config-dir>`.
 
-### Install Quality of Life Packages *(Optional)*
+## Install Quality of Life Packages *(Optional)* {#qol}
 
 > This installs Firefox, Notepad++, Tess, and other applications that make working
 > on a new windows install more bearable.
@@ -82,8 +86,15 @@ git clone git@github.com:LOGiCS-Project/swri-simple-uam-pipeline.git <repo-root>
   ```bash
   pdm run setup-win install.qol-deps
   ```
+- Close this powershell terminal and open new ones for future steps.
 
-### Setup File Sharing *(Optional)*
+!!! Info ""
+    One of the default QoL packages, [Tess](https://tessapp.dev/), is
+    significantly nicer to use than the native powershell terminal.
+    Consider using it to create an admin powershell instead of the OS-provided
+    terminal.
+
+## Setup File Sharing *(Optional)* {#nfs}
 
 If you intend to share files (e.g. results) between workers and clients then
 set that up now, if you haven't done so already.
@@ -97,38 +108,43 @@ a normal directory.
 
 - Save the shared results directory as `<results-dir>`.
 
-### Install an API token for `git.isis.vanderbilt.edu` *(Optional)*
+## Set up Isis Authentication {#isis}
+
+> Various private resources are on git.isis.vanderbilt.edu.
+> So that they aren't made available to the public SimpleUAM will retrieve any
+> non-public information using credentials you provide.
+
+### **Option 1**: Install an API token for `git.isis.vanderbilt.edu` *(Recommended)* {#isis-token}
 
 > We can use an API token to automate some repository and file accesses using
 > Isis that would otherwise require manual authentication.
 
-#### Create a Personal Access Token
+#### Create a Personal Access Token {#isis-token-create}
 
 - Log into https://git.isis.vanderbilt.edu .
-- Save your isis username as `<isis-user>`.
-- Go to User Settings -> [Access Tokens](https://git.isis.vanderbilt.edu/-/profile/personal_access_tokens) .
-    - **Token Name:** `<isis-token-name>`
-    - **Expiration Date:** 2050-01-01
+- Save your isis username as: `<isis-auth.user>`
+- Go to "User Settings" -> "[Access Tokens](https://git.isis.vanderbilt.edu/-/profile/personal_access_tokens)".
+    - **Token Name**: `<isis-auth.token-name>`
+    - **Expiration Date**: 2100-01-01
     - Select Scopes:
-        - **`read_api`:** Check
-        - **`read_repository`:** Check
+        - **`read_api`**: Check
+        - **`read_repository`**: Check
         - All other others should be unchecked.
 - Click "Create Personal Access Token".
-- Save "Your new personal access token" as `<isis-token>`.
+- Save "Your new personal access token" as: `<isis-auth.token>`
 
-#### Configure SimpleUAM to use your token
+#### Configure SimpleUAM to use your token {#isis-token-config}
 
 - Open `<config-dir>/auth.conf.yaml` in a text editor.
-- Set the `isis_user` field to `<isis-user>`
-- Set the `isis_token` field to `<isis-token>`
+    - Set the `isis_user` field to `<isis-auth.user>`
+    - Set the `isis_token` field to `<isis-auth.token>`
 
-??? example "Sample `auth.conf.yaml`"
-    ```yaml
-    isis_user: myIsisUsername
-    isis_token: 'glpat-ASDsd79adAkslafo21GO'
-    ```
+    ??? example "Sample `auth.conf.yaml`"
+        ```yaml
+        --8<-- "docs/assets/config/auth.conf.yaml"
+        ```
 
-### Install SSH keys for `git.isis.vanderbilt.edu` *(Optional)*
+### **Option 2**: Install SSH keys for `git.isis.vanderbilt.edu` {#isis-ssh}
 
 > SSH access to Isis, while not strictly necessary, will make future install
 > steps easier and more secure.
@@ -137,7 +153,12 @@ a normal directory.
 - Follow the instructions [here](https://docs.gitlab.com/ee/user/ssh.html) to
   set up ssh key based access to the isis server.
 
-### Further Setup
+### **Option 3**: Skip Authentication {#isis-skip}
+
+> If you skip authentication here you will prompted for passwords when
+> cloning repositories and asked to manually download files when needed.
+
+## Next Steps {#next}
 
 Once this setup is complete you can continue to one or more of the following
 steps.

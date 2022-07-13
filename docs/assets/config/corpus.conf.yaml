@@ -1,0 +1,20 @@
+### corpus.conf.yaml ###
+
+trinity:
+  repo: https://git.isis.vanderbilt.edu/SwRI/ta1/sri-ta1/trinity-craidl.git
+  branch: main
+  examples_dir: examples
+graphml_corpus:
+  repo: https://git.isis.vanderbilt.edu/SwRI/athens-uav-workflows.git
+  branch: uam_corpus
+  graphml_file: ExportedGraphML/all_schema_uam.graphml
+creopyson:
+  repo: https://git.isis.vanderbilt.edu/SwRI/creoson/creopyson.git
+  branch: main
+creoson_server:
+  api: https://git.isis.vanderbilt.edu/api/v4/projects/499/jobs/3827/artifacts/out/CreosonServerWithSetup-2.8.0-win64.zip
+  manual: https://git.isis.vanderbilt.edu/SwRI/creoson/creoson-server/-/jobs/artifacts/main/raw/out/CreosonServerWithSetup-2.8.0-win64.zip?job=build-job
+direct2cad:
+  repo: https://git.isis.vanderbilt.edu/SwRI/uam_direct2cad.git
+  branch: main
+

@@ -51,6 +51,7 @@ def main(args: Optional[List[str]] = None) -> int:
     corpus_ns = Collection()
     corpus_ns.add_task(stub_server.download_corpus , 'download')
     corpus_ns.add_task(stub_server.install_corpus, 'install')
+    corpus_ns.add_task(stub_server.corpus_loc, 'loc')
 
     static_corpus_ns = Collection()
     static_corpus_ns.add_task(tasks.copy_static_corpus, 'copy')

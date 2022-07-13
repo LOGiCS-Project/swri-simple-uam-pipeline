@@ -4,7 +4,8 @@ Various setup and development tasks for SimpleUAM Utility Modules.
 
 import shutil
 from simple_uam.util.invoke import task, call
-from simple_uam.util.config import Config, PathConfig, CraidlConfig, AuthConfig
+from simple_uam.util.config import Config, PathConfig, CraidlConfig, \
+    AuthConfig, CorpusConfig
 from simple_uam.util.logging import get_logger
 from simple_uam.util.system import Git, configure_file, backup_file
 from simple_uam.util.system.windows import download_file, verify_file, unpack_file, \
@@ -17,11 +18,11 @@ log = get_logger(__name__)
 
 uav_workflows_dir = Path(Config[CraidlConfig].stub_server.cache_dir) / 'uav_workflows'
 
-uav_workflows_repo = "https://git.isis.vanderbilt.edu/SwRI/athens-uav-workflows.git"
+uav_workflows_repo = Config[CorpusConfig].graphml_corpus.repo
 
-uav_workflows_branch = "uam_corpus"
+uav_workflows_branch = Config[CorpusConfig].graphml_corpus.branch
 
-uav_workflows_corpus = uav_workflows_dir / 'ExportedGraphML' / 'all_schema_uam.graphml'
+uav_workflows_corpus = uav_workflows_dir / Config[CorpusConfig].graphml_corpus.graphml_file
 
 @task
 def download_corpus(ctx,  prompt=True, quiet=False, verbose=False):
@@ -41,7 +42,7 @@ def download_corpus(ctx,  prompt=True, quiet=False, verbose=False):
         remote_user = Config[AuthConfig].isis_user,
         remote_pass = Config[AuthConfig].isis_token,
         branch = uav_workflows_branch,
-        password_prompt = prompt,
+        password_prompt = prompt and not Config[AuthConfig].isis_token,
         quiet = quiet,
         verbose = verbose,
         mkdir = True
@@ -123,6 +124,14 @@ def install_corpus(ctx, corpus=None, skip=False, yes=False):
     )
 
     shutil.copy2(corpus, target)
+
+@task
+def corpus_loc(ctx):
+    """
+    Prints the currently configured corpus location.
+    """
+
+    print(str(Path(Config[CraidlConfig].stub_server.graphml_corpus)))
 
 gremlin_server_uri = "https://downloads.apache.org/tinkerpop/3.6.0/apache-tinkerpop-gremlin-server-3.6.0-bin.zip"
 

@@ -69,6 +69,8 @@ class Git():
 
         repo_uri = urlparse(repo_uri)
 
+        co_cmd = None
+
         if not remote_name:
             remote_name = repo_uri.netloc
         if not repo_name:
@@ -123,18 +125,25 @@ class Git():
                 op_name = "Cloning"
                 git_cmd.append("clone")
                 if recursive: git_cmd.append("--recurse-submodules")
+                if branch:
+                    git_cmd.append("--branch")
+                    git_cmd.append(branch)
         else:
             if not is_submodule and run_pull:
                 op_name = "Pulling"
-                git_cmd.append("pull")
-                branch=None
+                git_cmd.append("fetch")
+                git_cmd.append("--all")
                 if recursive: git_cmd.append("--recurse-submodules")
+                if branch:
+                    co_cmd = ['git','checkout',branch]
             elif is_submodule:
                 op_name = "Updating Submodule"
                 git_cmd.append("submodule")
                 git_cmd.append("update")
                 git_cmd.append("--init")
                 if recursive: git_cmd.append("--recursive")
+                if branch:
+                    co_cmd = ['git','set-branch','--branch',branch]
             else:
                 log.exception(
                     "Cannot clone when deploy directory exists.",
@@ -146,9 +155,6 @@ class Git():
         if quiet: git_cmd.append("--quiet")
         if progress: git_cmd.append("--progress")
         if verbose: git_cmd.append("--verbose")
-        if branch:
-            git_cmd.append("--branch")
-            git_cmd.append(branch)
 
         ### Prompt for password ###
 
@@ -223,5 +229,11 @@ class Git():
         else:
             subprocess.run(
                 git_cmd,
+                cwd = deploy_dir,
+            )
+
+        if co_cmd: # Checkout a particular branch after fetch or submod
+            subprocess.run(
+                co_cmd,
                 cwd = deploy_dir,
             )

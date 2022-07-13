@@ -1,8 +1,8 @@
 from omegaconf import OmegaConf, read_write
 
-from .manager import Config
-from ..invoke import task
-from ..logging import get_logger
+from simple_uam.util.config.manager import Config
+from simple_uam.util.invoke import task
+from simple_uam.util.logging import get_logger
 
 log = get_logger(__name__)
 
@@ -21,7 +21,7 @@ def dir(ctx, all=False):
         print(str(Config().config_dirs[-1]))
 
 @task
-def file(ctx, config, all=False):
+def file(ctx, config=None, all=False):
     """
     Prints the terminal file examined when loading a particular config.
 
@@ -29,7 +29,9 @@ def file(ctx, config, all=False):
         config: the file to examine
         all: Print all the files examined in load order (highest priority last).
     """
-    if all:
+    if not config:
+        raise RuntimeError("No config file identifier provided.")
+    elif all:
         for p in Config().load_path(config):
             print(str(p))
     else:
@@ -59,9 +61,8 @@ def list_files(ctx):
     for f in Config.config_files():
         print(f)
 
-
 @task(name="print", iterable=['config'])
-def print_config(ctx, config, resolved=False, all=False):
+def print_config(ctx, config=None, resolved=False, all=False):
     """
     Prints the currently loaded config data for a given class to STDOUT
 
@@ -133,4 +134,43 @@ def write(ctx,
         overwrite=overwrite,
         comment=comment,
         out_dir=output,
+    )
+
+@task(
+    iterable=["input"],
+)
+def install(ctx,
+            input,
+            symlink=True,
+            overwrite=False,
+            mkdir=True
+):
+    """
+    Will install a set of config files into the default location.
+    By default it will create symlinks in the config dir that point to the
+    provided arguments.
+
+    Files are disambiguated by name, so input filenames should match their
+    expected names in the config dir.
+
+    Arguments:
+      input: One or more files to symlink/copy into config dir.
+        A single directory as input can be used as shorthand for all the
+        appropriately named files within it.
+      symlink (default=True): Do we create a symlink pointing to the input
+        file or simply copy the input into the config dir?
+      overwrite (default=False): Do we overwrite existing files (creating
+        backups as needed)? Otherwise, skip existing config files.
+      mkdir (default=True): Do we create the config directories if needed?
+    """
+
+    # Normalize arg for call
+    if input == []:
+        raise RuntimeError("Must provide at least one input config.")
+
+    Config.install_configs(
+        inputs=input,
+        symlink=symlink,
+        overwrite=overwrite,
+        mkdir=mkdir,
     )

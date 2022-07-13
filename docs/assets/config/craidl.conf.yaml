@@ -1,0 +1,28 @@
+### craidl.conf.yaml ###
+
+example_dir: ${path:data_directory}/craidl_examples
+stub_server:
+  cache_dir: ${path:cache_directory}/corpus_stub_cache
+  server_dir: ${path:data_directory}/corpus_stub_server
+  graphml_corpus: ${path:data_directory}/corpus_stub.graphml
+  host: localhost
+  port: 8182
+  read_only: false
+  service:
+    priority: NORMAL
+    exit_action: Restart
+    restart_throttle: 5000
+    restart_delay: 1000
+    redirect_io: false
+    stdout_file: ${path:log_directory}/craidl_stub_db/stdout.log
+    stderr_file: ${path:log_directory}/craidl_stub_db/stderr.log
+    rotate_io: true
+    auto_start: false
+    console: true
+    interactive: false
+server_host: localhost
+server_port: ${stub_server.port}
+static_corpus: ${path:data_directory}/corpus_static_dump.json
+static_corpus_cache: ${path:cache_directory}/static_corpus_cache
+use_static_corpus: true
+

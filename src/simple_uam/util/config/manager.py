@@ -1,5 +1,6 @@
 import argparse
 import functools
+import shutil
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Type, TypeVar, Union
 
@@ -233,6 +234,57 @@ class ConfigData:
             if not f.exists():
                 f.write_text(yaml)
 
+    def install_config(
+            self,
+            input : Union[Path,str],
+            symlink: bool = True,
+            overwrite : bool = False,
+            mkdir : bool = True,
+    ):
+        """
+        Installs a given configuration file to the appropriate location.
+        By default creates a symlink from the target file to the current
+        terminal config_dir.
+
+        Arguments:
+          input: Filename of the input config.
+          symlink: If true, the default, make a link from the config file
+            location to the provided input.
+            If false, copy the file over.
+          overwrite: If true will overwrite any existing file.
+          mkdir (default =True): Create directories for config files if needed.
+            If false will fail with warning when directory is missing.
+        """
+
+        input_loc = Path(input).resolve()
+
+        config_loc = Path(self.load_path[-1])
+        config_dir = config_loc.parent
+
+        if not input_loc.exists():
+            raise RuntimeError(f"No file at {str(input_loc)}")
+
+        if mkdir:
+            config_dir.mkdir(parents=True, exist_ok=True)
+        elif not config_dir.exists() or not config_dir.is_dir():
+            raise RuntimeError(f"No config dir at {str(config_dir)}")
+
+        if config_loc.exists():
+            if not overwrite:
+                raise RuntimeError(f"Config file {str(config_loc)} already exists.")
+            elif config_loc.is_symlink():
+                target = config_loc.resolve()
+                print(f"Removing pre-existing symlink from {str(config_loc)} to {str(target)}.")
+                config_loc.unlink()
+            else:
+                backup_file(config_loc, delete=True)
+
+        if symlink:
+            print(f"Creating symlink from '{str(config_loc)}' to '{str(input_loc)}'")
+            config_loc.symlink_to(input_loc)
+        else:
+            print(f"Copying file from '{str(input_loc)}' to '{str(config_loc)}'")
+            shutil.copy2(input_loc, config_loc)
 
 T = TypeVar("T")
 
@@ -342,17 +394,18 @@ class Config(object):
         Returns the chain of config_dirs to load.
         """
 
-        current_dir = Path(PathConfig().config_dir)
+        current_dir = Path(PathConfig().config_dir).resolve()
         conf_dirs = [current_dir]
         path_conf = current_dir / PATHCONFIG_FILE_NAME
 
         while current_dir and path_conf.is_file():
             conf = OmegaConf.load(path_conf)
-            current_dir = OmegaConf.select(conf, "config_directory")
-            if current_dir:
-                current_dir = Path(current_dir)
-                conf_dirs.append(current_dir)
-                path_conf = current_dir / PATHCONFIG_FILE_NAME
+            new_dir = OmegaConf.select(conf, "config_directory")
+            new_dir = Path(current_dir).resolve()
+            if new_dir and new_dir != current_dir:
+                conf_dirs.append(new_dir)
+                path_conf = new_dir / PATHCONFIG_FILE_NAME
+            current_dir = new_dir
 
         return conf_dirs
 
@@ -591,6 +644,14 @@ class Config(object):
         return data_cls
 
     @classmethod
+    def _has_config_class(cls, key: Union[str,Type]) -> bool:
+        try:
+            cls._get_config_class(key)
+            return True
+        except RuntimeError as err:
+            return False
+
+    @classmethod
     def get(cls, key: Union[str, Type[T]]) -> T:
         """
         Retrieves an OmegaConf object for the associated dataclass type.
@@ -712,3 +773,97 @@ class Config(object):
                 help="The mode in which this is being run, e.g. 'local', 'remote', or 'production'.",
             ),
         ]
+
+    @classmethod
+    def install_configs(
+            cls,
+            inputs : Union[List[Union[Path,str]],Path,str],
+            key : Optional[str] = None,
+            symlink: bool = True,
+            overwrite : bool = False,
+            mkdir : bool = True,
+    ):
+        """
+        Installs a set of configuration files to the current config directory.
+        This uses the filenames to determine which config file goes where.
+
+        Arguments:
+          inputs: One of the following:
+            - A single directory containing multiple config files to copy over
+            - A single config file
+            - A list of config files to copy over.
+          key: If inputs is a single config file, this can be provided to
+            override the filename based lookup.
+          symlink: If true, the default, make a link from the config file
+            location to the provided input.
+            If false, copy the file over.
+          overwrite: If true will overwrite any existing file.
+          mkdir (default =True): Create directories for config files if needed.
+            If false will fail with warning when directory is missing.
+        """
+
+        return cls()._install_configs(
+            inputs=inputs,
+            key=key,
+            symlink=symlink,
+            overwrite=overwrite,
+            mkdir=mkdir,
+        )
+
+    def _install_configs(
+            self,
+            inputs : Union[List[Union[Path,str]],Path,str],
+            key : Optional[str] = None,
+            symlink: bool = True,
+            overwrite : bool = False,
+            mkdir : bool = True,
+    ):
+        """
+        See `install_configs` for details.
+        """
+
+        # Ignore files that don't have a match.
+        ignore_misses = False
+
+        if isinstance(inputs, list):
+            inputs = [Path(l) for l in inputs]
+        else:
+            inputs = [Path(inputs)]
+
+        if len(inputs) == 1 and inputs[0].is_dir():
+            ignore_misses = True
+            inputs = list(inputs[0].iterdir())
+
+        if len(inputs) == 0 and not ignore_misses:
+            raise RuntimeError("Did not provide any conf files to install")
+
+        confs : Dict[Type, Path] = dict()
+
+        if key and len(inputs) == 1:
+            confs[self._get_config_class(key)] = inputs[0]
+        elif key:
+            raise RuntimeError("Provided key with more than one conf file")
+        else:
+            for f in inputs:
+                key = f.name
+                if self._has_config_class(key):
+                    conf_class = self._get_config_class(key)
+                    if conf_class in confs:
+                        raise RuntimeError(
+                            f"Multiple installable files for '{key}' found.")
+                    else:
+                        confs[conf_class] = f
+                elif not ignore_misses:
+                    raise RuntimeError(
+                        f"Could not find config class for '{str(f)}'")
+
+        if len(confs) == 0:
+            raise RuntimeError("No installable config files found.")
+
+        for conf_class, in_file in confs.items():
+            self.config_types[conf_class].install_config(
+                input = in_file,
+                symlink=symlink,
+                overwrite=overwrite,
+                mkdir=mkdir,
+            )

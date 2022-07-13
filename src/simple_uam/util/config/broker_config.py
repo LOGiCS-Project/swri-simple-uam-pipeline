@@ -30,12 +30,12 @@ class BackendConfig():
     The broker's port.
     """
 
-    db : str = "0"
+    db : str = "/0"
     """
     The database (on redis).
     """
 
-    url : str = '${.protocol}://${.host}:${.port}/${.db}'
+    url : str = '${.protocol}://${.host}:${.port}${.db}'
     """
     The url to connect to for the backend.
     Note that this supersedes all the finer grade connection parameters if

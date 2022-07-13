@@ -18,26 +18,59 @@ requests for distribution to worker nodes as they become available.
 The results of those analyses, packaged as zip files, should then be made
 available to the clients as they're completed.
 
-In order to form a complete SimpleUAM service some core requirements need to be met:
+The key components of a SimpleUAM deployment are:
 
-- There needs to be a configured, running worker node to run analyses.
-- Each worker node needs to have a Creo license, either through a node-locked
-  license or a connection to a Creo license server.
-- Each worker node needs to have access to an engineering corpus, either through
-  a graph database holding all the data or through a static corpus file which
-  has the same information.
-- Each worker has to have access to results storage, a folder
-  on the local file system or a network drive, where zip files with results
-  from each analysis will be placed.
-- There must be a message broker which workers can connect to in order to
-  retrieve open analysis requests.
-- Client nodes should be able to access the results store to get the
-  archives with the analysis results.
+- **Client Nodes**: These make requests to analyze designs and retrieve analysis
+  results once they finish.
+  Client nodes will usually be running some optimization or search process.
+- **Message Brokers**: These gather analysis requests from client nodes and
+  distribute them to free worker nodes.
+- **Worker Nodes**: These will perform analyses on designs and store the results
+  somewhere accessible to the clients.
+- **License Management**: Each worker node needs Creo to perform analysis, and
+  a license for Creo must be made available somehow.
+    - **License Server**: These can provide licenses to a number of worker nodes
+      at once if provided with a floating license.
+    - **Node-Locked Creo License**: This is a worker-specific, static license
+      file that can be placed on a worker.
+- **Component Corpus**: A corpus of component information that every
+  worker needs in order to analyze designs.
+    - **Corpus DB**: A graph database that the worker can use to look up
+      component information.
+    - **Static Corpus**: A static file containing a dump of the component corpus
+      which is placed on each worker node.
+- **Results Storage**: A file system, accessible to both worker nodes and
+  clients, where analysis results (in individual zip files) are placed.
+- **Results Backends**: These notify client nodes when their analysis requests
+  are completed and where the output is in Results Storage.
 
-With those requirements met, a client node can then send requests to the message
-broker and watch the results store for their completed analyses.
+In order to form a complete SimpleUAM deployment some core requirements need to
+be met:
 
-## Choosing a Service Topology
+- There must be one, and only one, message broker.
+    - The broker must be accessible over the network to all worker and client nodes.
+- There needs to be at least one configured, running worker node to run analyses.
+    - Each worker node needs to have a Creo license, either through a
+      node-locked license or a connection to a Creo license server.
+    - Each worker node needs to have access to a component corpus, either through
+      an initialized corpus DB or a static corpus file.
+- There must be a results storage accessible to all the worker and client nodes.
+    - The results storage should be a directory where workers can place files
+      which are then made accessible to all the clients,
+    - Generally these are network file share or some local folders with
+      automatic synchronization mechanism like rsync+cron or Dropbox.
+- In order for clients to receive analysis completion notifications there must
+  be a single, unique results backend.
+    - This backend must be accessible over the network to all worker nodes and
+      any client that wants to receive notifications.
+    - Note that a results backend is optional and simply polling the results
+      storage is perfectly viable.
+
+With a SimpleUAM deployment meeting those requirements, a client nodes can
+offload analysis jobs to a pool of workers though simple python and command
+line interfaces.
+
+## Choosing a Service Topology {#topology}
 
 It's possible to distribute SimpleUAM components between multiple machines
 in numerous ways that meet the given requirements.
@@ -56,13 +89,15 @@ This development setup has a local machine and a single worker.
 The local machine is set up so it can run a SimpleUAM client and so that any
 code shared with a worker node can be edited in whatever manner the user is
 comfortable with.
-The worker node then has all the other necessary components of the service,
-including broker, license, and corpus.
+The worker node, running in a VM, then has all the other necessary components of
+the service, including broker, license, and corpus.
 
 The structure is a broad guideline and can be tweaked as needed.
 For instance, if you're running windows you can just run all the components on
 your local machine and use a stub message broker that will run analysis requests
 as blocking calls.
+Alternately, the worker node can be running on a server somewhere with a NFS
+shared drive acting as the shared folder.
 
 <figure markdown>
   ![Project Components](../assets/production-setup.png)
@@ -71,15 +106,25 @@ as blocking calls.
 
 The production service has significantly more going on.
 There are one or more clients producing analysis requests, multiple workers
-processing them, a Creo license server, a message broker, and a results
-server.
+processing them, a Creo license server, a message broker, a results backend,
+and results storage.
+
+This setup can scale relatively easily while providing features like completion
+notifications.
+In fact this is the intended topology for the AWS instructions, with clients
+either accessing the other components via a VPN or simply running directly
+on the cloud.
 
 Other topologies are also viable, for instance running a central graph database
 for all the workers to share instead of relying on a local, static corpus.
 
-The important part is knowing what components you want on each machine.
+The **most important part** of choosing a service topology is knowing what
+component(s) are going to be running on each individual server or VM.
+Given that one can just go through the instructions for each component on
+a machine in sequence, repeating that process for each machine in the
+deployment.
 
-## Command Line Interfaces
+## Command Line Interfaces {#cli}
 
 All the command line scripts SimpleUAM provides are made using
 [Invoke](https://www.pyinvoke.org/) and evaluated within a
@@ -115,7 +160,7 @@ pdm run <command> <sub-command> --help
 
 These help messages are worth checking for available options and notes.
 
-## Configuration
+## Configuration {#config}
 
 SimpleUAM uses an internal configuration system based on
 [OmegaConf](omegaconf.readthedocs.io/).
@@ -123,6 +168,8 @@ It reads YAML files in a platform specific directory for settings that are
 used throughout the system.
 While you can find a more detailed breakdown of the system [here](../usage/config.md),
 this is a quick overview.
+
+### Configuration File Directory {#config-dir}
 
 Once the SimpleUAM project is installed (in [General Setup](general.md)) you
 can run the following command to find the config file directory:
@@ -135,6 +182,8 @@ Files placed there will be loaded when most SimpleUAM code is started up.
 The configuration is immutable for the runtime of a program and changes will
 require a restart to register.
 
+### Configuration State {#config-state}
+
 You can get a printout of the current configuration state with the following:
 
 ```bash
@@ -144,94 +193,7 @@ pdm run suam-config print --all
 ??? example "Sample Output of `pdm run suam-config print --all`"
 
     ```yaml
-    ### paths.conf.yaml ###
-
-    config_directory: /etc/xdg/xdg-budgie-desktop/SimpleUAM/config
-    cache_directory: /usr/share/budgie-desktop/SimpleUAM/cache
-    log_directory: /home/rkr/.cache/SimpleUAM/log
-    work_directory: /usr/share/budgie-desktop/SimpleUAM
-    data_directory: /usr/share/budgie-desktop/SimpleUAM/data
-
-    ### win_setup.conf.yaml ###
-
-    global_dep_packages:
-    - checksum
-    - wget
-    - 7zip
-    broker_dep_packages:
-    - rabbitmq
-    worker_dep_packages:
-    - rsync
-    worker_pip_packages:
-    - psutil
-    - numpy
-    license_dep_packages: []
-    graph_dep_packages:
-    - openjdk11
-    qol_packages:
-    - firefox
-    - notepadplusplus
-    - foxitreader
-    - tess
-    - freecad
-
-    ### craidl.conf.yaml ###
-
-    example_dir: ${path:data_directory}/craidl_examples
-    stub_server:
-      cache_dir: ${path:cache_directory}/corpus_stub_cache
-      server_dir: ${path:data_directory}/corpus_stub_server
-      graphml_corpus: ${path:data_directory}/corpus_stub.graphml
-      host: localhost
-      port: 8182
-      read_only: false
-    server_host: ${stub_server.host}
-    server_port: ${stub_server.port}
-    static_corpus: ${path:data_directory}/corpus_static_dump.json
-    static_corpus_cache: ${path:cache_directory}/static_corpus_cache
-    use_static_corpus: true
-
-    ### d2c_workspace.conf.yaml ###
-
-    workspace_subdir_pattern: workspace_{}
-    reference_subdir: reference_workspace
-    assets_subdir: assets
-    locks_subdir: workspace_locks
-    results_dir: ${workspaces_dir}/results
-    results:
-      max_count: -1
-      min_staletime: 3600
-      metadata_file: metadata.json
-      log_file: log.json
-    max_workspaces: 4
-    workspaces_dir: ${path:work_directory}/d2c_workspaces
-    cache_dir: ${path:cache_directory}/d2c_workspaces
-    exclude:
-    - .git
-    exclude_from: []
-    result_exclude:
-    - .git
-    result_exclude_from: []
-
-    ### d2c_worker.conf.yaml ###
-
-    broker:
-      protocol: amqp
-      host: 127.0.0.1
-      port: 5672
-      db: ''
-      url: ${.protocol}://${.host}:${.port}${.db}
-    backend:
-      enabled: false
-      protocol: redis
-      host: 127.0.0.1
-      port: 6379
-      db: '0'
-      url: ${.protocol}://${.host}:${.port}/${.db}
-    max_processes: ${d2c_workspace:max_workspaces}
-    max_threads: 1
-    shutdown_timeout: 600000
-    skip_logging: false
+    --8<-- "docs/assets/config/print_all.conf.yaml"
     ```
 
 If you want to see the full expanded version of the configs, with
@@ -241,102 +203,32 @@ resolved, add the `--resolved` flag.
 ??? example "Sample Output of `pdm run suam-config print --all --resolved`"
 
     ```yaml
-    ### paths.conf.yaml ###
-
-    config_directory: /etc/xdg/xdg-budgie-desktop/SimpleUAM/config
-    cache_directory: /usr/share/budgie-desktop/SimpleUAM/cache
-    log_directory: /home/rkr/.cache/SimpleUAM/log
-    work_directory: /usr/share/budgie-desktop/SimpleUAM
-    data_directory: /usr/share/budgie-desktop/SimpleUAM/data
-
-    ### win_setup.conf.yaml ###
-
-    global_dep_packages:
-    - checksum
-    - wget
-    - 7zip
-    broker_dep_packages:
-    - rabbitmq
-    worker_dep_packages:
-    - rsync
-    worker_pip_packages:
-    - psutil
-    - numpy
-    license_dep_packages: []
-    graph_dep_packages:
-    - openjdk11
-    qol_packages:
-    - firefox
-    - notepadplusplus
-    - foxitreader
-    - tess
-    - freecad
-
-    ### craidl.conf.yaml ###
-
-    example_dir: /usr/share/budgie-desktop/SimpleUAM/data/craidl_examples
-    stub_server:
-      cache_dir: /usr/share/budgie-desktop/SimpleUAM/cache/corpus_stub_cache
-      server_dir: /usr/share/budgie-desktop/SimpleUAM/data/corpus_stub_server
-      graphml_corpus: /usr/share/budgie-desktop/SimpleUAM/data/corpus_stub.graphml
-      host: localhost
-      port: 8182
-      read_only: false
-    server_host: localhost
-    server_port: 8182
-    static_corpus: /usr/share/budgie-desktop/SimpleUAM/data/corpus_static_dump.json
-    static_corpus_cache: /usr/share/budgie-desktop/SimpleUAM/cache/static_corpus_cache
-    use_static_corpus: true
-
-    ### d2c_workspace.conf.yaml ###
-
-    workspace_subdir_pattern: workspace_{}
-    reference_subdir: reference_workspace
-    assets_subdir: assets
-    locks_subdir: workspace_locks
-    results_dir: /usr/share/budgie-desktop/SimpleUAM/d2c_workspaces/results
-    results:
-      max_count: -1
-      min_staletime: 3600
-      metadata_file: metadata.json
-      log_file: log.json
-    max_workspaces: 4
-    workspaces_dir: /usr/share/budgie-desktop/SimpleUAM/d2c_workspaces
-    cache_dir: /usr/share/budgie-desktop/SimpleUAM/cache/d2c_workspaces
-    exclude:
-    - .git
-    exclude_from: []
-    result_exclude:
-    - .git
-    result_exclude_from: []
-
-    ### d2c_worker.conf.yaml ###
-
-    broker:
-      protocol: amqp
-      host: 127.0.0.1
-      port: 5672
-      db: ''
-      url: amqp://127.0.0.1:5672
-    backend:
-      enabled: false
-      protocol: redis
-      host: 127.0.0.1
-      port: 6379
-      db: '0'
-      url: redis://127.0.0.1:6379/0
-    max_processes: 4
-    max_threads: 1
-    shutdown_timeout: 600000
-    skip_logging: false
+    --8<-- "docs/assets/config/print_all_resolved.conf.yaml"
     ```
 
+### Generating Stub Config Files {#config-write}
+
 You can also use the `write` subcommand to write sample config files out to
-the appropriate locations. Run the following for more info:
+the appropriate locations.
+Run the following for more info:
 
 ```bash
 pdm run suam-config write --help
 ```
+
+### Installing Config Files {#config-install}
+
+The `install` subcommand will symlink or copy config files from another
+location into the configuration directory for you.
+This is useful if you want to share config files between worker nodes or
+rapidly update a deployment.
+Run the following for more info:
+
+```bash
+pdm run suam-config install --help
+```
+
+### Config File Format {#config-format}
 
 Config files can be partial and do not need to define every possible key.
 Keys that are missing will just use their default values.
@@ -393,25 +285,38 @@ When describing keys in a config file, we'll use dot notation.
 
 **Further details are [here](../usage/config.md)...**
 
-## Placeholder Conventions
+## Placeholder Conventions {#placeholder}
 
 Throughout these install instructions, but especially in the AWS setup,
-we use placeholders like `<this-one>` to represent user provided information
-or things that might be needed later.
+we use placeholders like `<this-one>` to represent values that will be useful
+later or which you, the user, should provide.
+In either case, this information should be saved somewhere for future reference.
+
 This guide tries to proactive about asking you to save potentially useful
 information.
 We recommend keeping a file open for this.
 
-??? example "Placeholder file from partway through AWS setup."
+??? example "Example placeholder file from partway through AWS setup."
     ```yaml
-    aws-vpc: suam-project1
-    aws-vpc-id: vpc-0c2ca2caaf403057f
-    aws-elastic-ip: 44.206.27.84
-    aws-public-subnet: subnet-0cfe362170f73830d
-    aws-private-subnet: subnet-0a94695b5b8b8c9c2
-    aws-default-sg: sg-03e11656feb78ca14
-    aws-cert-id: 856062a4-b146-4c58-893c-72205a6c47ee
-    aws-cert-arn: arn:aws:acm:us-east-1:689242578769:certificate/856062a4-b146-4c58-893c-72205a6c47ee
+    aws-vpc:
+      prefix: example
+      name: example-vpc
+      id: vpc-XXXXXXXXXXXXXXXXX
+
+    aws-public-subnet:
+      name: example-public1-XX-XXXX-XX
+      id: subnet-XXXXXXXXXXXXXXXXX
+
+    aws-private-subnet:
+      name: example-private1-XX-XXXX-XX
+      id: subnet-XXXXXXXXXXXXXXXXX
+      group:
+        name: example-private-group
+
+    aws-elastic-ip:
+      name: example-eip-XX-XXXX-XX
+      addr: 0.0.0.0
+      id: eipassoc-XXXXXXXXXXXXXXXXX
     ```
 
 We never use this information programmatically, so use whatever format you want,
@@ -419,7 +324,7 @@ but it does make it easier to keep track of what you're doing during install.
 This is particularly important if you are setting up multiple machines and
 don't want to waste time.
 
-## AWS Network Setup
+## AWS Network Setup {#setup-aws-net}
 
 If you are using AWS you can start with our instructions for setting up a
 virtual private cloud (VPC).
@@ -428,7 +333,7 @@ for access to that private subnet.
 
 - **[AWS (Network) Setup](aws-network.md)**
 
-## Machine Setup
+## Machine Setup {#setup-machine}
 
 Installation for each machine requires following the other pages in this section
 in order, skipping any that aren't relevant and always including general setup.
@@ -438,11 +343,12 @@ message broker, before the worker nodes.
 - **[AWS (Instance) Setup](aws-instance.md)**
 - **[General Setup](general.md)** *(Required)*
 - **[Creo License Server](license_server.md)**
-- **[Message Broker](broker.md)**
-- **[Engineering Corpus](corpus.md)**
+- **[Message Broker & Results Backend](broker.md)**
+- **[Corpus DB](graph.md)**
+- **[Static Corpus](corpus.md)**
 - **[Worker Node](worker.md)**
 
-Client nodes are less directly dependent on the SimpleUAM start and their
+Client nodes are less directly dependent on the SimpleUAM infrastructure and their
 setup can skip directly to the corresponding section:
 
 - **[Client Node](client.md)**
