@@ -1,0 +1,4 @@
+### auth.conf.yaml ###
+
+isis_user: myIsisUsername
+isis_token: 'glpat-XXXXXXXXXXXXXXXXXXXX'

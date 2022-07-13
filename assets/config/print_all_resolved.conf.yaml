@@ -1,0 +1,143 @@
+### paths.conf.yaml ###
+
+config_directory: /etc/xdg/xdg-budgie-desktop/SimpleUAM/config
+cache_directory: /usr/share/budgie-desktop/SimpleUAM/cache
+log_directory: /home/rkr/.cache/SimpleUAM/log
+work_directory: /usr/share/budgie-desktop/SimpleUAM
+data_directory: /usr/share/budgie-desktop/SimpleUAM/data
+
+### auth.conf.yaml ###
+
+isis_user: null
+isis_token: null
+
+### win_setup.conf.yaml ###
+
+global_dep_packages:
+- checksum
+- wget
+- 7zip
+broker_dep_packages:
+- rabbitmq
+worker_dep_packages:
+- openjdk11
+- rsync
+- nssm
+worker_pip_packages:
+- psutil
+- parea
+- numpy
+license_dep_packages: []
+graph_dep_packages:
+- openjdk11
+- nssm
+qol_packages:
+- firefox
+- notepadplusplus
+- foxitreader
+- tess
+- freecad
+
+### craidl.conf.yaml ###
+
+example_dir: /usr/share/budgie-desktop/SimpleUAM/data/craidl_examples
+stub_server:
+  cache_dir: /usr/share/budgie-desktop/SimpleUAM/cache/corpus_stub_cache
+  server_dir: /usr/share/budgie-desktop/SimpleUAM/data/corpus_stub_server
+  graphml_corpus: /usr/share/budgie-desktop/SimpleUAM/data/corpus_stub.graphml
+  host: localhost
+  port: 8182
+  read_only: false
+  service:
+    priority: NORMAL
+    exit_action: Restart
+    restart_throttle: 5000
+    restart_delay: 1000
+    redirect_io: false
+    stdout_file: /home/rkr/.cache/SimpleUAM/log/craidl_stub_db/stdout.log
+    stderr_file: /home/rkr/.cache/SimpleUAM/log/craidl_stub_db/stderr.log
+    rotate_io: true
+    auto_start: false
+    console: true
+    interactive: false
+server_host: localhost
+server_port: 8182
+static_corpus: /usr/share/budgie-desktop/SimpleUAM/data/corpus_static_dump.json
+static_corpus_cache: /usr/share/budgie-desktop/SimpleUAM/cache/static_corpus_cache
+use_static_corpus: true
+
+### corpus.conf.yaml ###
+
+trinity:
+  repo: https://git.isis.vanderbilt.edu/SwRI/ta1/sri-ta1/trinity-craidl.git
+  branch: main
+  examples_dir: examples
+graphml_corpus:
+  repo: https://git.isis.vanderbilt.edu/SwRI/athens-uav-workflows.git
+  branch: uam_corpus
+  graphml_file: ExportedGraphML/all_schema_uam.graphml
+creopyson:
+  repo: https://git.isis.vanderbilt.edu/SwRI/creoson/creopyson.git
+  branch: main
+creoson_server:
+  api: https://git.isis.vanderbilt.edu/api/v4/projects/499/jobs/3827/artifacts/out/CreosonServerWithSetup-2.8.0-win64.zip
+  manual: https://git.isis.vanderbilt.edu/SwRI/creoson/creoson-server/-/jobs/artifacts/main/raw/out/CreosonServerWithSetup-2.8.0-win64.zip?job=build-job
+direct2cad:
+  repo: https://git.isis.vanderbilt.edu/SwRI/uam_direct2cad.git
+  branch: main
+
+### d2c_workspace.conf.yaml ###
+
+workspace_subdir_pattern: workspace_{}
+reference_subdir: reference_workspace
+assets_subdir: assets
+locks_subdir: workspace_locks
+results_dir: /usr/share/budgie-desktop/SimpleUAM/d2c_workspaces/results
+results:
+  max_count: -1
+  min_staletime: 3600
+  metadata_file: metadata.json
+  log_file: log.json
+workspaces_dir: /usr/share/budgie-desktop/SimpleUAM/d2c_workspaces
+cache_dir: /usr/share/budgie-desktop/SimpleUAM/cache/d2c_workspaces
+max_workspaces: 1
+exclude:
+- .git
+result_exclude:
+- .git
+- workingdir/*.prt
+
+### broker.conf.yaml ###
+
+protocol: amqp
+host: 127.0.0.1
+port: 5672
+db: ''
+url: amqp://127.0.0.1:5672
+backend:
+  enabled: false
+  protocol: redis
+  host: 127.0.0.1
+  port: 6379
+  db: '0'
+  url: redis://127.0.0.1:6379/0
+
+### d2c_worker.conf.yaml ###
+
+max_processes: 1
+max_threads: 1
+shutdown_timeout: 600000
+skip_logging: false
+service:
+  priority: NORMAL
+  exit_action: Restart
+  restart_throttle: 5000
+  restart_delay: 1000
+  redirect_io: false
+  stdout_file: /home/rkr/.cache/SimpleUAM/log/d2c_worker/stdout.log
+  stderr_file: /home/rkr/.cache/SimpleUAM/log/d2c_worker/stderr.log
+  rotate_io: true
+  auto_start: false
+  console: true
+  interactive: false
+

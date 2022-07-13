@@ -1,0 +1,19 @@
+### d2c_worker.conf.yaml ###
+
+max_processes: ${d2c_workspace:max_workspaces}
+max_threads: 1
+shutdown_timeout: 600000
+skip_logging: false
+service:
+  priority: NORMAL
+  exit_action: Restart
+  restart_throttle: 5000
+  restart_delay: 1000
+  redirect_io: false
+  stdout_file: ${path:log_directory}/d2c_worker/stdout.log
+  stderr_file: ${path:log_directory}/d2c_worker/stderr.log
+  rotate_io: true
+  auto_start: false
+  console: true
+  interactive: false
+

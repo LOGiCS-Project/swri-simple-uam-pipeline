@@ -1,0 +1,27 @@
+### win_setup.conf.yaml ###
+
+global_dep_packages:
+- checksum
+- wget
+- 7zip
+broker_dep_packages:
+- rabbitmq
+worker_dep_packages:
+- openjdk11
+- rsync
+- nssm
+worker_pip_packages:
+- psutil
+- parea
+- numpy
+license_dep_packages: []
+graph_dep_packages:
+- openjdk11
+- nssm
+qol_packages:
+- firefox
+- notepadplusplus
+- foxitreader
+- tess
+- freecad
+
