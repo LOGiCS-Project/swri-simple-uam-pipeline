@@ -6,15 +6,15 @@ export the relevant information to a small json file and use that directly.
 This file is needed for many of the tasks that worker nodes will do and needs
 to be retrieved or generated.
 
-## **Option 1:** Use static corpus provided in repo *(Recommended)*
+## **Option 1:** Use static corpus provided in repo *(Recommended)* {#repo}
 
 This is the corpus for `all_schema_uam.graphml` generated in June '22.
 
-### Prerequisites
+### Prerequisites {#repo-prereqs}
 
 - [General Setup](general.md) has been completed.
 
-### Install Static Corpus
+### Install Static Corpus {#repo-install}
 
 - Once configured open admin powershell at `<repo-root>`.
 - Install the corpus provided with this repo:
@@ -22,16 +22,16 @@ This is the corpus for `all_schema_uam.graphml` generated in June '22.
   pdm run craidl static-corpus.copy
   ```
 
-## **Option 2:** User a user provided static corpus
+## **Option 2:** User a user provided static corpus {#copy}
 
 This will just load the user provided file into the install location.
 
-### Prerequisites
+### Prerequisites {#copy-prereqs}
 
 - [General Setup](general.md) has been completed.
 - The corpus we're installing is at `<static-corpus-loc>`.
 
-### Install Static Corpus
+### Install Static Corpus {#copy-install}
 
 - Once configured open admin powershell at `<repo-root>`.
 - Install a user provided corpus from `<static-corpus-loc>`
@@ -39,16 +39,16 @@ This will just load the user provided file into the install location.
   pdm run craidl static-corpus.copy --input=<static-corpus-loc>
   ```
 
-## **Option 3:** Generate Static Corpus from a Corpus Database
+## **Option 3:** Generate Static Corpus from a Corpus Database {#generate}
 
 This will generate a static corpus from a running graph server, using whatever
 corpus it was configured with.
 
-### Prerequisites
+### Prerequisites {#generate-prereqs}
 
 - [General Setup](general.md) has been completed.
 
-### Configure Server Settings
+### Configure Server Settings {#generate-configure}
 
 > The config file at `<config-dir>/craidl.conf.yaml` stores information for
 > connecting to a corpus DB server.
@@ -67,7 +67,7 @@ corpus it was configured with.
     - Set `server_host` to `<corpus-db-ip>`.
     - Set `server_port` to `<corpus-db-port>`.
 
-### Generate Static Corpus
+### Generate Static Corpus {#generate-run}
 
 - Ensure the server at `<corpus-db-ip>` is currently running.
 - Generate the static corpus from that server.

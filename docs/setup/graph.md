@@ -83,6 +83,18 @@ be queried for various tasks.
   In the absence of any arguments this uses the configured host, port, and
   graphml corpus from `<corpus-dir>/craid.conf.yaml`.
 
+### Run Corpus DB Server *(Optional)* {#stub-run}
+
+> This runs the corpus DB stub server as a local process.
+> Use it as needed, especially when generating a static corpus.
+
+
+- Run corpus DB:
+  ```bash
+  pdm run craidl stub-server.run
+  ```
+- Kill the process manually (usually with Ctrl-C) when finished.
+
 ### Open Required Ports *(Optional)*
 
 > Open the relevant ports up so that non-local worker nodes can

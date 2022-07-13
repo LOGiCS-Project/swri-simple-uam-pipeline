@@ -110,8 +110,8 @@ def clean_examples(ctx):
                 file = str(example),
             )
 
-@task(positional=["input"])
-def add_examples(ctx, input, name=None, skip=False):
+@task
+def add_examples(ctx, input=None, name=None, skip=False):
     """
     Adds the given example(s) to the examples dir.
 
@@ -124,6 +124,9 @@ def add_examples(ctx, input, name=None, skip=False):
       skip: skips any examples that already exist with the same name, otherwise
         overwrites them.
     """
+
+    if not input:
+        raise RuntimeError("Please specify example file or directory.")
 
     examples = dict()
     input_loc = Path(input).resolve(strict=True)
