@@ -52,7 +52,10 @@ def default_broker():
             url=Config[BrokerConfig].backend.url
         )
 
-        broker.add_middleware(Results(backend=backend))
+        broker.add_middleware(Results(
+            backend=backend,
+            store_results=True
+        ))
 
     return broker
 

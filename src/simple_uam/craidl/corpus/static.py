@@ -1,6 +1,7 @@
 from attrs import define, frozen, field
 from typing import List, Dict, Any, Iterator, Tuple, Union, Optional
 
+import shutil
 from .abstract import *
 
 from simple_uam.util.logging import get_logger
@@ -307,7 +308,7 @@ class StaticCorpus(CorpusReader):
                 "Generated complete dump, deleting cache dir.",
                 cache_dir=str(cache_dir)
             )
-            shutil.rmtree(cache_dir, ignore_error=True)
+            shutil.rmtree(cache_dir, ignore_errors=True)
 
         return rep
 

@@ -7,6 +7,7 @@ from simple_uam.craidl.corpus import GremlinCorpus, StaticCorpus, get_corpus
 from simple_uam.craidl.info_files import DesignInfoFiles
 from attrs import define,field
 from simple_uam.worker import actor
+from time import sleep
 
 import json
 from pathlib import Path
@@ -31,11 +32,22 @@ class D2CSession(Session):
             workspace=self.number,
         )
 
-        self.run(
-            ["startCreo.bat"],
-            input="y\n",
-            text=True,
+        # For some reason startCreo.bat does nothing now, so we'll just do
+        # the same thing in python.
+
+        # self.run(
+        #     ["startCreo.bat"],
+        #     input="y\n",
+        #     text=True,
+        #     )
+
+        self.run(["python", "startCreo.py"])
+        wait_time=20
+        for i in range(1, wait_time):
+            log.info(
+                f"Waiting for Creo Start {i}s / {wait_time}s"
             )
+            sleep(1)
 
     @session_op
     def write_design(self, design, out_file="design_swri.json"):

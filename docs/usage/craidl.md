@@ -20,7 +20,7 @@ As implemented the Craidl module in SimpleUAM has a few major components/concept
   can serve as a pool of seeds or examples for testing.
   This should probably be called the 'static design corpus' or something.
 
-The basic install procedure can be found [here](../../setup/graph.md).
+The basic install procedure can be found [here](../../setup/graph).
 This page covers other things.
 
 ## Updating Craidl {#update}

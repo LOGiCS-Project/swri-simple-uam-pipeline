@@ -95,3 +95,10 @@ tested.
     - Start Menu -> PTC -> Start FLEXNet Admin Service
 
 The server should now automatically start on boot.
+
+### Preserve Settings {#settings}
+
+> Keep track of connection information
+
+- Save the IP of this server as: `<license-server.ip>`
+- Save the server's port (usually 7788) as: `<license-server.port>`

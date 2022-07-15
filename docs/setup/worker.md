@@ -7,30 +7,35 @@ license server and a broker for most tasks.
 
 - [General Setup](general.md) has been completed.
 - Auth tokens, SSH keys, or credentials for `git.isis.vanderbilt.edu`
-- A broker running at `<broker-ip>` and `<broker-port>`
+- A broker running at `<broker>`.
 - Access to a corpus:
-    - **Either:** Via a [corpus DB](graph.md) at `<corpus-db-ip>` on port `<corpus-db-port>`
+    - **Either:** Via a [corpus DB](graph.md) at `<corpus-db>`.
     - **Or:** A static corpus installed as described [here](corpus.md).
 - Have a results directory set up at `<results-dir>`.
+    - Ensure that it's readable and writable by the worker.
+- Optionally have a backend running at `<backend>`.
 - Optionally have `design_swri.json` files available for testing.
     - Try using the example store as described [here](../../usage/craidl/#examples)
       if no other source is available.
 
 ### Install Dependencies {#deps}
 
-> Install utilities like wget and rsync.
+> Install utilities like wget and rsync, as well as global python packages
+> needed by creopyson and direct2cad.
 
 - Open an admin powershell to `<repo-root>`.
 - Install dependencies:
   ```bash
   pdm run setup-win install.worker-deps
   ```
+- Close powershell and open a new instance for future commands.
 
 ### Get License Information {#license}
 
 **Option 1:** License Server
 
-- Have a license server running at `<license-server-ip>` on port `<license-server-port>`.
+- Have a license server running at `<license-server.ip>` on
+  port `<license-server.port>`.
 
 **Option 2:** Static Creo License
 
@@ -39,8 +44,10 @@ license server and a broker for most tasks.
   ```bash
   pdm run setup-win mac-address
   ```
+- Save the result as `<creo-license.host-id>`.
+- Get a node-locked license for `<creo-license.host-id>`.
 - If using a local license, have the license file for the above mac
-  address downloaded somewhere convenient.
+  address downloaded to `<creo-license.file>`.
 
 ### Install Creo {#creo}
 
@@ -96,10 +103,10 @@ license server and a broker for most tasks.
 
 #### **Option 2:** Using a remote corpus DB. {#corpus-db}
 
-- Update `<config-dir>/craidl.md`:
+- Create or update `<config-dir>/craidl.md`:
     - Set `use_static_corpus` to `False`.
-    - Set `server_host` to `<corpus-db-host`.
-    - Set `server_port` to `<corpus-db-port>`.
+    - Set `server_host` to `<corpus-db,host`.
+    - Set `server_port` to `<corpus-db.port>`.
 - See the [config file guide](../usage/config.md) for more detailed
   instructions and information.
 
@@ -116,7 +123,7 @@ in this [section](../usage/craidl.md)...**
   ```bash
   pdm run suam-config print --config=d2c_workspace -r
   ```
-- Update the config at `<config-dir>/d2c_workspace.conf.yaml`:
+- Create or update the config at `<config-dir>/d2c_workspace.conf.yaml`:
     - Set `results_dir` to `<results-dir>`.
 - See the [config file guide](../usage/config.md) for more detailed
   instructions and information.
@@ -138,6 +145,7 @@ in [this page](../usage/workspaces.md)...**
   ```bash
   pdm run d2c-workspace setup.reference-workspace
   ```
+- Follow prompts.
 
 **For further details on workspace configuration, operation, and running analyses
 locally see [this page](../usage/workspaces.md)...**
@@ -172,13 +180,24 @@ locally see [this page](../usage/workspaces.md)...**
   ```bash
   pdm run suam-config print --config=broker -r
   ```
-- Update the config at `<config-dir>/broker.conf.yaml`:
-    - Set `protocol` to `"amqp"` if using RabbitMQ or `"redis"` if
-      using Redis.
-    - Set `host` to `<broker-ip>`.
-    - Set `port` to `<broker-port>`.
-    - If using Redis, set `db` to `<broker-db>`
-    - If you have a `<broker-url>` set `url` to that instead.
+- Create or update the config at `<config-dir>/broker.conf.yaml`:
+    - Set up the broker:
+        - If you have a `<broker.url>`:
+            - Set `url` to `<broker.url>`.
+        - Otherwise:
+            - Set `host` to `<broker.ip>`.
+            - Set `protocol` to `"amqp"` if using RabbitMQ or `"redis"` if
+              using Redis.
+            - Set `port` to `<broker.port>`.
+            - Set `db` to `<broker.db>` if you have one.
+    - Set up the backend, if available:
+        - Set `backend.enabled` to `true`
+        - If you have a `<backend.url>`:
+            - Set `broker.url` to `<broker.url>`
+        - Otherwise:
+            - Set `backend.host` to `<backend.ip>`.
+            - Set `backend.port` to `<broker.port>`.
+            - Set `backend.db` to `<broker.db>` if you have one.
 - See the [config file guide](../usage/config.md) for more detailed
   instructions and information.
 
@@ -191,10 +210,17 @@ locally see [this page](../usage/workspaces.md)...**
 > function as intended.
 
 - Open admin powershell to `<repo-root>`.
-- Run the SimpleUAM worker node:
+- Run the SimpleUAM worker node process:
   ```bash
   pdm run suam-worker run
   ```
+
+!!! Note ""
+    If the worker node process is running and the broker is correctly configured
+    then the worker is also a valid client.
+    This means that, if there is only one attached worker, you can run a basic
+    round trip test of the system using [the instructions for testing the
+    client node](../client/#test).
 
 ### Configure the Worker Node to Auto-Start on Boot *(Optional)* {#restart}
 
@@ -206,7 +232,7 @@ locally see [this page](../usage/workspaces.md)...**
   ```bash
   pdm run suam-config print --config=d2c_worker -r
   ```
-- Edit the config at `<config-dir>/d2c_worker.conf.yaml`:
+- Create or modify the config at `<config-dir>/d2c_worker.conf.yaml`:
     - Set `service.auto_start` to `True`
 - See the [config file guide](../usage/config.md) for more detailed
   instructions and information.

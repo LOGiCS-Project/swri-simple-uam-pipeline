@@ -6,17 +6,18 @@ nodes can process them.
 Unlike the other nodes clients can easily be of any platform as long as they
 can access the same brokers and results directory as the workers.
 
-### Prerequisites
+### Prerequisites {#prereq}
 
-- An installed auth token, SSH keys or credentials for `git.isis.vanderbilt.edu`.
-- A broker running at `<broker-ip>` and `<broker-port>`.
+- An auth token, SSH keys or credentials for `git.isis.vanderbilt.edu`.
+- A broker running at `<broker>`.
+- Optionally, a backend running at `<backend>`.
 - The following installed software:
     - Git
     - Python (>=3.9, <3.11)
 - An environment with the following Python packages:
     - [PDM](https://pdm.fming.dev/latest/)
 
-### Setup File Sharing *(Optional)*
+### Setup File Sharing *(Optional)* {#files}
 
 If you intend to share files (e.g. results) between workers and clients then
 set that up now, if you haven't done so already.
@@ -30,7 +31,7 @@ a normal directory.
 
 - Save the shared results directory as `<results-dir>`.
 
-### Download SimpleUAM
+### Download SimpleUAM {#download}
 
 > Get this repo onto the machine somehow, cloning is the default method.
 > If you have a shared drive, placing the repo there will allow local development
@@ -38,23 +39,23 @@ a normal directory.
 
 - Save the repo's final location as `<repo-root>`.
 
-#### **Option 1:** Clone from Github (HTTP):
+#### **Option 1:** Clone from Github (HTTP): {#download-github-http}
 
 ```bash
 git clone https://github.com/LOGiCS-Project/swri-simple-uam-pipeline.git <repo-root>
 ```
 
-#### **Option 2:** Clone from Github (SSH):
+#### **Option 2:** Clone from Github (SSH): {#download-github-ssh}
 
 ```bash
 git clone git@github.com:LOGiCS-Project/swri-simple-uam-pipeline.git <repo-root>
 ```
 
-### Initialize SimpleUAM Package
+### Initialize SimpleUAM Package {#init}
 
 > Initialize pdm and packages for client use.
 
-- Navigate a shell to `<repo_root>`.
+- Navigate a shell to `<repo-root>`.
 - Setup PDM environment for this repo:
   ```bash
   pdm install
@@ -64,46 +65,77 @@ git clone git@github.com:LOGiCS-Project/swri-simple-uam-pipeline.git <repo-root>
   pdm run suam-client --help
   ```
   Result should be a help message showing all of `suam-client`'s flags and
-  subcommands.
+  sub-commands.
 
-### Get Configuration Directory
+### Get Configuration Directory {#config}
 
 > The configuration directory holds `*.conf.yaml` files that determine how
 > many aspects of a running SimpleUAM system operate.
 
-- Navigate a shell to `<repo_root>`.
+- Navigate a shell to `<repo-root>`.
 - Print config directory:
   ```bash
   pdm run suam-config dir
   ```
 - Save result as `<config-dir>`.
 
-### Configure Broker Settings
+### Configure Broker Settings {#broker}
 
 > The client process needs to be configured with how to connect to a
 > message broker.
 > These options should be identical to any worker nodes which is why they
 > use the same config file.
 
-- Open a shell to `<repo-root>`.
+#### **Option 1:** Use the worker `broker.conf.yaml` {#broker-reuse}
+
+> As long as the IPs or DNS names of the broker and backend resolve to the
+> same machines as the worker, then you can reuse the `broker.conf.yaml`
+> directly.
+
+- Have the worker's `broker.conf.yaml` accessible at `<conf-loc>`.
+- Make a copy in the configuration directory:
+  ```bash
+  pdm run suam-config install --no-symlink --input=<conf-loc>
+  ```
+
+**See the [config file usage page](../../usage/config#cli-install) for other
+ways to set this up...**
+
+#### **Option 2**: Create a new configuration {#broker-new}
+
+> If visibility of the broker and backend differs from the default then
+> a client specific `broker.conf.yaml` needs to be created.
+
+- Open admin powershell to `<repo-root>`.
 - *(Optional)* View currently loaded config file:
   ```bash
   pdm run suam-config print --config=broker -r
   ```
-- Update the config at `<config-dir>/broker.conf.yaml`:
-    - Set `protocol` to `"amqp"` if using RabbitMQ or `"redis"` if
-      using Redis.
-    - Set `host` to `<broker-ip>`.
-    - Set `port` to `<broker-port>`.
-    - If using Redis, set `db` to `<broker-db>`
-    - If you have a `<broker-url>` set `url` to that instead.
-- See the [config file guide](../usage/config.md) for more detailed
+- Create or update the config at `<config-dir>/broker.conf.yaml`:
+    - Set up the broker:
+        - If you have a `<broker.url>`:
+            - Set `url` to `<broker.url>`.
+        - Otherwise:
+            - Set `host` to `<broker.ip>`.
+            - Set `protocol` to `"amqp"` if using RabbitMQ or `"redis"` if
+              using Redis.
+            - Set `port` to `<broker.port>`.
+            - Set `db` to `<broker.db>` if you have one.
+    - Set up the backend, if available:
+        - Set `backend.enabled` to `true`
+        - If you have a `<backend.url>`:
+            - Set `broker.url` to `<broker.url>`
+        - Otherwise:
+            - Set `backend.host` to `<backend.ip>`.
+            - Set `backend.port` to `<broker.port>`.
+            - Set `backend.db` to `<broker.db>` if you have one.
+- See the [config file guide](../../usage/config#files-broker) for more detailed
   instructions and information.
 
 **Further details on configuring the client's broker and backend are
 [here](../usage/clients.md)...**
 
-### Test the Client Node *(Optional)*
+### Test the Client Node *(Optional)* {#test}
 
 > Run a simple test task, generating the info files for a design, in order to
 > test the client node's configuration.

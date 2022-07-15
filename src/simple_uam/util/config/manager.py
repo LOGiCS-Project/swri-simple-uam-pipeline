@@ -190,12 +190,12 @@ class ConfigData:
         if isinstance(path, list):
             paths = [Path(f) for f in path]
         else:
-            paths = [Path(f)]
+            paths = [Path(path)]
 
         path = list()
         for p in paths:
             if p.exists() and p.is_dir():
-                path.append(p / conf_file)
+                path.append(p / self.conf_file)
             else:
                 path.append(p)
 

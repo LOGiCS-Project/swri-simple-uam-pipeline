@@ -143,7 +143,9 @@ gremlin_server_dir = Path(Config[CraidlConfig].stub_server.server_dir)
 
 gremlin_server_md5 = "EB7FC24DDC886CF38A2D972F7688C574"
 
-gremlin_server_cmd = Path('bin','gremlin-server.bat')
+gremlin_server_old_cmd = Path('bin','gremlin-server.bat')
+
+gremlin_server_cmd = Path('bin','gremlin-server-more-mem.bat')
 
 @task
 def download_server(ctx, force_download=False):
@@ -236,7 +238,7 @@ corpus_loader_data = conf_data_root / 'uam-corpus.groovy'
 corpus_loader_target = Path('scripts','uam-corpus.groovy')
 corpus_loader_path = gremlin_server_dir / corpus_loader_target
 
-corpus_data_target = Path('data', 'all_schema_uam.graphml')
+corpus_data_target = Path('data', 'all_schema.graphml')
 corpus_data_path = gremlin_server_dir / corpus_data_target
 
 @task(unpack_server)
@@ -295,6 +297,20 @@ def configure_server(ctx,
         replacements = {
             '<<CORPUS_DATA>>': corpus_data_target.as_posix(),
             '<<TRAVERSAL_STRATEGIES>>': traversal_strats,
+        },
+        exist_ok = True,
+    )
+
+    ## Server Command
+
+    old_cmd = (gremlin_server_dir / gremlin_server_old_cmd).resolve()
+    cmd = (gremlin_server_dir / gremlin_server_cmd).resolve()
+
+    configure_file(
+        old_cmd,
+        cmd,
+        replacements = {
+            "set JAVA_OPTIONS=-Xms32m -Xmx512m": "set JAVA_OPTIONS=-Xms32m -Xmx4G"
         },
         exist_ok = True,
     )

@@ -8,7 +8,7 @@ to be retrieved or generated.
 
 ## **Option 1:** Use static corpus provided in repo *(Recommended)* {#repo}
 
-This is the corpus for `all_schema_uam.graphml` generated in June '22.
+> This static corpus was generated from `all_schema.graphml` on July 15th '22.
 
 ### Prerequisites {#repo-prereqs}
 
@@ -29,7 +29,7 @@ This will just load the user provided file into the install location.
 ### Prerequisites {#copy-prereqs}
 
 - [General Setup](general.md) has been completed.
-- The corpus we're installing is at `<static-corpus-loc>`.
+- The corpus to be installed at `<static-corpus-loc>`.
 
 ### Install Static Corpus {#copy-install}
 
@@ -63,22 +63,29 @@ corpus it was configured with.
   The default options connect to a stub server running on the same machine.
 
 - *(Optional)* If you're connecting to a corpus database not running on the
-  current machine then update `<config-dir>/craidl.conf.yaml`.
-    - Set `server_host` to `<corpus-db-ip>`.
-    - Set `server_port` to `<corpus-db-port>`.
+  current machine then create or update `<config-dir>/craidl.conf.yaml`.
+    - Set `server_host` to `<corpus-db.ip>`.
+    - Set `server_port` to `<corpus-db.port>`.
 
 ### Generate Static Corpus {#generate-run}
 
-- Ensure the server at `<corpus-db-ip>` is currently running.
+- Ensure the server at `<corpus-db.ip>` is currently running.
 - Generate the static corpus from that server.
   ```bash
   pdm run craidl static-corpus.generate
   ```
 
-With default settings the corpus generation and the stub server can hang
-intermittently, so the generation command periodically saves its progress.
-Just rerun the command (with the same settings) and it will resume generating
-the corpus from the last saved cluster of components.
+!!! note ""
+    The stub server seems to hang when out of memory or CPU, halting the
+    serialization process.
+
+    To mitigate this the generation process periodically saves the serialized
+    component data and skips re-downloading saved data.
+    By default every cluster of 50 components is saved to disk.
+
+    Just rerun the command (with the same settings) and it will resume generating
+    the corpus from the last saved cluster of components.
+
 
 **See the section on [using Craidl](../usage/Craidl) for information on
 how to use the generated static corpus...**

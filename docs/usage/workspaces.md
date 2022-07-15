@@ -1,5 +1,19 @@
 # Direct2Cad Workspace
 
+A workspace is an isolated environment for SWRi's direct2cad scripts to run in.
+Various tasks will run in a workspace and have their results bundled into a
+zip file for use by clients.
+
+
+!!! TODO
+
+    - explanation of flow of session
+    - reference workspace
+    - results dir
+    - provided sessions
+    - workspace mangement
+    - creating sessions
+
 !!! warning "Section Incomplete"
 
 - Workspace is wrapper around d2c that provides a consistent environment for
@@ -101,7 +115,7 @@ Get the cache directory for these workspaces.
 Get the root directory of the reference workspace and the live workspaces.
 
 - In admin powershell at `<repo-root>`.
-    - Run: `pdm run d2c-workspace manage.cache-dir`
+    - Run: `pdm run d2c-workspace manage.workspaces-dir`
 
 Get the records directory for these workspaces. This is where the zip files with
 data from each session will go.

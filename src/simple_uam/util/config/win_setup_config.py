@@ -43,6 +43,10 @@ class WinSetupConfig():
         'parea',
         # 'creopyson', # Need to use the creopyson from the swri repo
         'numpy',
+        'trimesh',
+        'matplotlib',
+        'triangle',
+        'scipy',
         # Craidl
         # 'gremlinpython', # Handling this internally now
     ]
