@@ -180,6 +180,12 @@ class WorkspaceManager():
 
             # Move temp_file to results dir (no lock needed)
             out_path = self.config.results_path / out_file
+
+            log.info(
+                "Creating result archive.",
+                out_path=out_path,
+                tmp_dir=tmp_dir,
+            )
             shutil.move(archive, out_path)
 
             # Return the resulting filepath

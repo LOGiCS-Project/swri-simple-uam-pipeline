@@ -52,7 +52,10 @@ def default_broker():
             url=Config[BrokerConfig].backend.url
         )
 
-        broker.add_middleware(Results(backend=backend))
+        broker.add_middleware(Results(
+            backend=backend,
+            store_results=True
+        ))
 
     return broker
 
@@ -105,3 +108,10 @@ def message_metadata():
         message_id = msg.message_id,
         message_timestamp = msg.message_timestamp,
     )
+
+def has_backend():
+    """
+    Returns whether there is a backend for returning message results.
+    """
+
+    return Config[BrokerConfig].backend.enabled

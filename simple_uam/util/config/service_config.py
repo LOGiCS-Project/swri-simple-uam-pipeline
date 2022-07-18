@@ -1,5 +1,5 @@
 from attrs import define, field
-from typing import List, Dict
+from typing import List, Dict, Optional
 from pathlib import Path
 
 @define
@@ -99,4 +99,21 @@ class ServiceConfig():
     )
     """
     Is this a standalone service or one which can interact the desktop?
+    """
+
+    account : str = field(
+        default="LocalSystem",
+    )
+    """
+    The user account to run the service with.
+    See [here](https://nssm.cc/commands) under "Native parameters" and
+    "ObjectName" for more info.
+    """
+
+    password : Optional[str] = field(
+        default=None,
+    )
+    """
+    The password to the user account that runs this service.
+    None means no password is given, empty string is empty string.
     """

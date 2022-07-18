@@ -68,6 +68,8 @@ def copy_static_corpus(ctx,
         input_corpus = str(input),
         output_corpus = str(output),
     )
+
+    output.parent.mkdir(parents=True, exist_ok=True)
     shutil.copy2(input, output)
 
 corpus_cache = Config[CraidlConfig].static_corpus_cache
@@ -83,7 +85,7 @@ def gen_static_corpus(ctx,
                       backup = True,
                       cache = True,
                       cache_dir = corpus_cache,
-                      cluster_size = 100):
+                      cluster_size = 50):
     """
     Generates a static corpus from a running corpus server.
 

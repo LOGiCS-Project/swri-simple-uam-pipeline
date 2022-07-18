@@ -11,7 +11,7 @@ from structlog.types import (
 
 from io import StringIO
 from typing import Any, Iterable, Optional, TextIO, Type, Union
-from rich.console import Console
+# from rich.console import Console
 import textwrap
 import os
 import sys

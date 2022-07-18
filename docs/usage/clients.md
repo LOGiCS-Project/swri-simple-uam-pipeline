@@ -1,141 +1,96 @@
 # SimpleUAM Client Nodes
 
-!!! warning "Section Incomplete"
+Client nodes create designs in the SRI format and send those designs to a
+SimpleUAM deployment to be processed.
 
-- Client sends out requests to message broker for analysis
-    - Watches shared file directory for results.
-    - If backend set up then maybe gets notified.
-    - Must be connected to same broker as the worker nodes.
-- Two sessions:
-    - `gen_info_files` : Same as craidl and workspace versions, except ships
-      out to worker for evaluation.
+## Configuration Instructions {#config}
 
-        !!! example "Command Line:"
+See [here](../../setup/client/#broker) for instructions on how to set up a client
+node.
 
-            ```bash
-            pdm run suam-client direct2cad.gen-info-files -i design_swri.json
-            ```
+!!! todo "TODO: Details"
 
-        !!! example "Python:"
-            ```python
-            from simple_uam import direct2cad
-            msg = direct2cad.gen_info_files.send(design)
-            ```
+## Client Tasks via CLI {#CLI}
 
-    - `process design`: same ad d2c workspace version except ships out to worker
-      for eval.
+See [here](../../setup/client#test) for basic interface.
 
-        !!! example "Command Line:"
+There are two available sub-commands:
 
-            ```bash
-            pdm run suam-client direct2cad.process-design -i design_swri.json
-            ```
+- **`direct2cad.gen-info-files`**: Generates info files for a given design.
+- **`direct2cad.process-design`**: Runs Creo and FDM for a given design.
 
-        !!! example "Python:"
-            ```python
-            from simple_uam import direct2cad
-            msg = direct2cad.process_design.send(design)
-            ```
-
-- Talk about config file `broker.conf.yaml` and fields:
-    - Broker config
-    - Backend config
-
-!!! error "Below Info Out of Date"
-
-??? todo "reqs"
-    - Clients:
-        - Config broker and backend
-        - Run pipeline vie CLI
-        - Run pipeline via python
-
-### Making a Client Request via Command Line
-
-A client needs to have a broker configured in its `<config-dir>/d2c_worker.conf.yaml`
-just like the worker node.
-
-By default it can only send requests to workers and it won't receive any
-response back. If both the worker and client have an enabled and configured
-backend then the client will receive metadata which includes the name of the
-archive file generated in response to the original request.
-
-The client doesn't need any of the other setup of a worker node past having
-this repo available and the proper configuration.
-All of this works on Linux and OS X, not just Windows.
-
-Send a `gen_info_files` request using the command line interface:
+Which can be run using the `suam-client` entry point, shown with the mandatory
+arguments for the input design (`<design-file>`) and the results directory
+(`<results-dir>`):
 
 ```bash
-PS D:\simple-uam> pdm run suam-worker direct2cad.gen-info-files --help
-Usage: pdm run suam-worker [--core-opts] direct2cad.gen-info-files [--options] [other tasks here ...]
-
-Docstring:
-  Will write the design info files in the specified
-  workspace, and create a new result archive with only the newly written data.
-  The workspace will be reset on the next run.
-
-  Arguments:
-    input: The design file to read in.
-    metadata: The json-format metadata file to include with the query.
-      Should be a dictionary.
-    output: File to write output session metadata to, prints to stdout if
-      not specified.
-
-Options:
-  -i STRING, --input=STRING
-  -m STRING, --metadata=STRING
-  -o STRING, --output=STRING
+pdm run suam-client <sub-command> --design=<design-file> --results=<results-dir>
 ```
 
-Send a `process_design` request using the command line interface:
+This print some logs to stderr and the location of newly created results archive
+to stdout.
+
+**Arguments:**
+
+- **`-d <design-file>`/`--design=<design-file>`**: *(Mandatory)*
+  The design file, usually `design_swri.json`, to use as an input to the command.
+- **`-r <results-dir>`/`--results=<results-dir>`**: *(Mandatory)*
+  The results directory, as accessible to the client, where the result archives
+  will appear on completion.
+- **`-m <metadata-file>`/`--metadata=<metdata-file>`**:
+  An optional file with JSON-encoded metadata that will be included with the
+  `metadata.json` in the result archive.
+  The metadata must be a JSON dictionary so that fields like `message_info`,
+  `session_info`, and `result_archive` can be added.
+- **`-b`/`--backend`**: Force the use of a dramatiq backend to detect when a
+  sub-command has been finished by a worker.
+  Will fail if no suitable backend is enabled.
+- **`-p`/`--polling`**: For the use of polling to find completed results.
+  This watches the results directory looking for an archive with the appropriate
+  message id.
+  This method is the default when no backend is available.
+- **`-t <int>`/`--timeout=<int>`**: How long to wait, in seconds, before giving
+  up on the command.
+- **`-i <int>/`--interval=<int>`**: The interval between checks for a new result.
+  Will check using the backend if used, otherwise will scan the results directory
+  for new zip files.
+
+Use the following for additional help:
 
 ```bash
-PS D:\simple-uam> pdm run suam-worker direct2cad.process-design --help
-Usage: pdm run suam-worker [--core-opts] direct2cad.process-design [--options] [other tasks here ...]
-
-Docstring:
-  Runs the direct2cad pipeline on the input design files, producing output
-  metadata and a records archive with all the generated files.
-
-  Arguments:
-    input: The design file to read in.
-    metadata: The json-format metadata file to include with the query.
-      Should be a dictionary.
-    output: File to write output session metadata to, prints to stdout if
-      not specified.
-
-Options:
-  -i STRING, --input=STRING
-  -m STRING, --metadata=STRING
-  -o STRING, --output=STRING
+pdm run suam-client <sub-command> --help
 ```
 
-### Making a Client Request in Python
+## Client Tasks via Python Interface {#python}
 
-The configuration requirements are identical to the command-line case.
+Look at the example project [here](https://github.com/LOGiCS-Project/swri-simple-uam-example).
 
-Sending a request requires:
+!!! todo "TODO: Details"
 
-  - SimpleUAM and `dramatiq` as dependencies.
-  - `design` as a JSON-serializable python object.
-  - Optional `metadata` a JSON-serializable python dictionary.
+### Basic Tasks {#python-tasks}
 
-A basic example:
+!!! todo "TODO: Details"
 
-```python
-from simple_uam import direct2cad
-from simple_uam.util.config import Config, BrokerConfig
+### Custom Metadata {#python-metadata}
 
-design = your_code_here()
-metadata = your_code_here()
+!!! todo "TODO: Details"
 
-msg = direct2cad.process_design.send(design, metadata=metadata)
+### Waiting for results with Backends and Polling {#python-watch}
 
-# Only works if we have a configured and enabled backend to cache results.
-if Config[BrokerConfig].backend.enabled:
-    result = msg.get_result(block=True,timeout=600000)
-    print(result)
-```
+Results will appear as zip files in a results directory and there are
+two ways for a client application to find them.
 
-The core task processing is handled by [`dramatiq`](https://dramatiq.io),
-and their docs can help with any advanced use.
+- **Backend**: If a backend is configured a function can be used to see if
+  the sent task has been completed.
+- **Polling**: The process can watch the results dir for new files and check
+  their metadata to see if they correspond with the sent message.
+
+See the [example client](#example) for more details.
+
+!!! todo "TODO: Details"
+
+### Example Client {#python-example}
+
+Find an example project at [this github repo](https://github.com/LOGiCS-Project/swri-simple-uam-example).
+
+!!! todo "TODO: More thorough break down"

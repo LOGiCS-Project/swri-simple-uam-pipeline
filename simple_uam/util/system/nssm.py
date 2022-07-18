@@ -86,14 +86,23 @@ class NssmService():
     Windows quotation escapes are stupid: https://stackoverflow.com/questions/7760545/escape-double-quotes-in-parameter
     """
 
-    account : str = field(
-        default="LocalSystem",
-    )
-    """
-    The user account to run the service with.
-    See [here](https://nssm.cc/commands) under "Native parameters" and
-    "ObjectName" for more info.
-    """
+    # account : str = field(
+    #     default="LocalSystem",
+    # )
+    # """
+    # The user account to run the service with.
+    # See [here](https://nssm.cc/commands) under "Native parameters" and
+    # "ObjectName" for more info.
+    # """
+
+    # password : str = field(
+    #     default="",
+    # )
+    # """
+    # The password to the user account the service runs on.
+    # See [here](https://nssm.cc/commands) under "Native parameters" and
+    # "ObjectName" for more info.
+    # """
 
     app_stop_method_skip : int = field(
         default=0,
@@ -171,6 +180,14 @@ class NssmService():
         if platform.system() != 'Windows':
             raise RuntimeError("NSSM service managment is Windows only.")
 
+        obj_name_args = None
+        if self.config.password == "":
+            obj_name_args = [self.config.account,'""']
+        elif self.config.password == None:
+            obj_name_args = self.config.account
+        else:
+            obj_name_args = [self.config.account, self.config.password]
+
         assignments = {
             "Application":str(self.exe),
             "AppDirectory":str(self.cwd),
@@ -178,7 +195,7 @@ class NssmService():
             "DisplayName":self.display_name,
             "Description":self.description,
             "Start": 'SERVICE_AUTO_START' if self.config.auto_start else 'SERVICE_DEMAND_START',
-            "ObjectName":self.account,
+            "ObjectName":obj_name_args,
             "AppPriority":f"{self.config.priority}_PRIORITY_CLASS",
             "AppNoConsole":'0' if self.config.console else '1',
             "AppStopMethodSkip": self.app_stop_method_skip,
@@ -193,6 +210,14 @@ class NssmService():
             "AppStderr":  str(Path(self.config.stderr_file).resolve()),
             "Type": 'SERVICE_INTERACTIVE_PROCESS' if self.config.interactive else 'SERVICE_WIN32_OWN_PROCESS',
         }
+
+        log.info(
+            "Creating Log Dirs",
+            stdout =  str(Path(self.config.stdout_file).resolve()),
+            stderr =  str(Path(self.config.stderr_file).resolve()),
+        )
+        Path(self.config.stdout_file).resolve().parent.mkdir(parents=True, exist_ok=True)
+        Path(self.config.stderr_file).resolve().parent.mkdir(parents=True, exist_ok=True)
 
         for key, val in assignments.items():
             args = None

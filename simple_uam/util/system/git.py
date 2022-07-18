@@ -125,9 +125,11 @@ class Git():
                 op_name = "Cloning"
                 git_cmd.append("clone")
                 if recursive: git_cmd.append("--recurse-submodules")
+                # if branch:
+                #     git_cmd.append("--branch")
+                #     git_cmd.append(branch)
                 if branch:
-                    git_cmd.append("--branch")
-                    git_cmd.append(branch)
+                    co_cmd = ['git','checkout',branch]
         else:
             if not is_submodule and run_pull:
                 op_name = "Pulling"
@@ -222,18 +224,21 @@ class Git():
         ### Run the command ###
 
         if is_clone_op:
-            subprocess.run(
+            proc=subprocess.run(
                 [*git_cmd, repo_uri.geturl(), target_dir],
                 cwd = work_dir,
             )
+            proc.check_returncode()
         else:
-            subprocess.run(
+            proc = subprocess.run(
                 git_cmd,
                 cwd = deploy_dir,
             )
+            proc.check_returncode()
 
         if co_cmd: # Checkout a particular branch after fetch or submod
-            subprocess.run(
+            proc = subprocess.run(
                 co_cmd,
                 cwd = deploy_dir,
             )
+            proc.check_returncode()

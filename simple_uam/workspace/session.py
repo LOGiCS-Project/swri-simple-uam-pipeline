@@ -54,6 +54,7 @@ class Session():
 
     reference_dir : Path = field(
         kw_only=True,
+        converter=Path,
     )
     """ The reference directory that the work_dir is copied from. """
 
@@ -64,6 +65,7 @@ class Session():
 
     work_dir : Path = field(
         kw_only=True,
+        converter=Path,
     )
     """ The directory in which the session runs. """
 
@@ -91,7 +93,7 @@ class Session():
 
     @result_archive.setter
     def result_archive(self, val):
-        self.metadata['result_archive'] = str(val)
+        self.metadata['result_archive'] = str(val.name)
         self._result_archive = val
 
     name : str = field(

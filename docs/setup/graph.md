@@ -63,14 +63,14 @@ be queried for various tasks.
 > Those settings are then used to configure the stub server.
 
 - Open admin powershell to `<repo-root>`.
-- *(Optional)* View currently loaded config file:
+- *(Optional)* View currently loaded configuration:
   ```bash
   pdm run suam-config print --config=craidl -r
   ```
   The fields under `stub_server.host` and `stub_server.port` determine how the
   corpus is served.
 
-- *(Optional)* If serving the graph to other machines then update the
+- *(Optional)* If serving the graph to other machines then update or create the
   `stub_server.host` config property.
     - Set `stub_server.host` to `0.0.0.0`.
     - See the [config file guide](../usage/config.md) for more detailed
@@ -87,7 +87,6 @@ be queried for various tasks.
 
 > This runs the corpus DB stub server as a local process.
 > Use it as needed, especially when generating a static corpus.
-
 
 - Run corpus DB:
   ```bash

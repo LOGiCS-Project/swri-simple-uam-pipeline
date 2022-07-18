@@ -30,10 +30,10 @@ class GraphMLCorpusRepoConfig():
     repo: str = "https://git.isis.vanderbilt.edu/SwRI/athens-uav-workflows.git"
     """ Repo to clone """
 
-    branch: str = "uam_corpus"
+    branch: str = "3772de06"
     """ Branch to checkout, can be refspec. """
 
-    graphml_file: str = 'ExportedGraphML/all_schema_uam.graphml'
+    graphml_file: str = 'ExportedGraphML/all_schema.graphml'
     """ Location of corpus w/in repo """
 
 @define
@@ -45,7 +45,7 @@ class CreopysonRepoConfig():
     repo: str = "https://git.isis.vanderbilt.edu/SwRI/creoson/creopyson.git"
     """ Repo to clone """
 
-    branch: str = "main"
+    branch: str = "b9c674cd"
     """ Branch to checkout, can be refspec. """
 
 @define
@@ -69,7 +69,7 @@ class Direct2CadRepoConfig():
     repo: str = "https://git.isis.vanderbilt.edu/SwRI/uam_direct2cad.git"
     """ Repo to clone """
 
-    branch: str = "main"
+    branch: str = "923ed545"
     """ Branch to checkout, can be refspec. """
 
 @define

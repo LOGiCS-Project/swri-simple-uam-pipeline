@@ -42,9 +42,9 @@ This section of the guide will cover:
         - **Name:** `<instance.name>`
         - **Application and OS Images:** Quick Start -> Windows
             - Microsoft Windows Server 2019 Base
-        - **Instance Type:** t2.large
-            - 2x vCPU
-            - 8gb Memory
+        - **Instance Type:** t2.xlarge
+            - 4x vCPU
+            - 16gb Memory
         - **Key Pair:** `<ec2-keypair.name>`
         - **Network Settings:**
             - **VPC:** `<aws-vpc.id>`
@@ -57,8 +57,6 @@ This section of the guide will cover:
         - **Advanced Details:**
             - **Elastic GPU:** eg1.medium
 
-        This can get CPU bound, so it might make sense to bump it up.
-
     ??? note "Corpus DB Minimum Requirements"
 
         **Option 1:** If you need a read-only corpus DB itermittently for
@@ -68,6 +66,10 @@ This section of the guide will cover:
         **Option 2:** If you need a corpus DB for an alternate analysis
         pipeline and are fine with a non-persistent corpus then use a
         stub DB on a worker.
+
+        !!! note ""
+            This eats about 4gb of memory so ensure that the worker has at least
+            12 gb if the stub server will be up permanently.
 
         **Option 3:** If you need a corpus that is persistent, shared between
         multiple workers, or needs to be performant then you should set up
