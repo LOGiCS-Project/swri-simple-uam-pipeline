@@ -195,6 +195,7 @@ def run_d2c_task(task,
                  results_dir: Union[Path,str],
                  metadata_file: Union[Path,str,None],
                  timeout: int = 600,
+                 interval: int = 10,
                  backend: bool = False,
                  polling: bool = False):
     """
@@ -206,11 +207,19 @@ def run_d2c_task(task,
       results_dir: the directory in which to look for results
       metadata_file: optional metadata file to include in metadata.json
       timeout: time to keep looking for results before giving up
+      interval: interval with which to check for new results from the backend
+        or the poll the results dir for new zip files.
       backend: force use of result backend
       polling: force use of polling
     """
 
+    if not design_file:
+        raise RuntimeError("Design file argument is mandatory.")
     design_file = Path(design_file)
+
+
+    if not results_dir:
+        raise RuntimeError("Results dir argument is mandatory.")
     results_dir = Path(results_dir)
 
     # Load the design from file
@@ -240,7 +249,11 @@ def run_d2c_task(task,
     if use_backend:
 
         # We get completion notifications from the backend so use that
-        result = wait_on_result(msg, timeout=timeout)
+        result = wait_on_result(
+            msg,
+            timeout=timeout,
+            interval=interval,
+        )
         result_archive = get_result_archive_path(result, results_dir)
 
         log.info(
@@ -254,8 +267,9 @@ def run_d2c_task(task,
         # No backend, so watch for changes in the results dir
         result_archive = watch_results_dir(
             msg,
-            args.results_dir,
-            timeout=args.timeout
+            results_dir,
+            timeout=timeout,
+            interval=interval,
         )
         result = get_zip_metadata(result_archive)
 
@@ -273,6 +287,7 @@ def gen_info_files(ctx,
                    results=None,
                    metadata=None,
                    timeout=600,
+                   interval=10,
                    backend=False,
                    polling=False):
     """
@@ -286,6 +301,9 @@ def gen_info_files(ctx,
       results: Where results files are placed. (Mandatory)
       metadata: The json-format metadata file to include with the query.
         Should be a dictionary.
+      timeout: time, in seconds, to keep looking for results before giving up.
+      interval: interval, in seconds, with which to check for new results from
+        the backend or the poll the results dir for new zip files.
       backend: force use of result backend
       polling: force use of polling
     """
@@ -295,6 +313,7 @@ def gen_info_files(ctx,
         design_file=design,
         results_dir=results,
         metadata_file=metadata,
+        interval=interval,
         timeout=timeout,
         backend=backend,
         polling=polling,
@@ -308,6 +327,7 @@ def process_design(ctx,
                    results=None,
                    metadata=None,
                    timeout=600,
+                   interval=10,
                    backend=False,
                    polling=False):
     """
@@ -320,6 +340,9 @@ def process_design(ctx,
       results: Where results files are placed. (Mandatory)
       metadata: The json-format metadata file to include with the query.
         Should be a dictionary.
+      timeout: time, in seconds, to keep looking for results before giving up.
+      interval: interval, in seconds, with which to check for new results from
+        the backend or the poll the results dir for new zip files.
       backend: force use of result backend
       polling: force use of polling
     """
@@ -330,6 +353,7 @@ def process_design(ctx,
         results_dir=results,
         metadata_file=metadata,
         timeout=timeout,
+        interval=interval,
         backend=backend,
         polling=polling,
     )

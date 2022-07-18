@@ -141,18 +141,19 @@ ways to set this up...**
 > test the client node's configuration.
 
 - Have a valid design file (usually `design_swri.json`) at `<design-file>`.
+- Have the results dir available to client at `<results-dir>`
 - Have a broker running at the configured location.
 - Have at least one worker running and connected to the broker.
 - Open a shell to `<repo-root>`.
 - Test generating design info files:
   ```bash
-  pdm run suam-client direct2cad.gen-info-files --input=<design-file>
+  pdm run suam-client direct2cad.gen-info-files --design=<design-file> --results=<results-dir>
   ```
   A worker should pick up this task and run it, eventually placing an archive
   in the `<results-dir>` with the generated info files.
 - Test generating processing designs:
   ```bash
-  pdm run suam-client direct2cad.process-design --input=<design-file>
+  pdm run suam-client direct2cad.process-design --design=<design-file> --results=<results-dir>
   ```
   A worker should pick up this task and run it, eventually placing an archive
   in the `<results-dir>` with the generated results.

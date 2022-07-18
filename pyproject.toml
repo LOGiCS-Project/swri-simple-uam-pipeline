@@ -55,7 +55,6 @@ suam-client = "simple_uam.tools.client.cli:main"
 version = {use_scm = true}
 
 [tool.pdm.build]
-#package-dir = "src"
 editable-backend = "editables"
 # includes = [
 #     "data/*",
