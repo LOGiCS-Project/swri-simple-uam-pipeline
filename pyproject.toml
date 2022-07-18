@@ -34,6 +34,7 @@ dependencies = [
     "gremlinpython>=3.6.0",
     "filelock>=3.7.1",
     "dramatiq[rabbitmq,redis]>=1.13.0",
+    "platformdirs>=2.5.2",
 ]
 
 [project.urls]

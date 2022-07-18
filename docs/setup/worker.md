@@ -3,7 +3,7 @@
 A worker can analyze designs on behalf of clients and requires access to a
 license server and a broker for most tasks.
 
-### Prerequisites {#prereqs}
+## Prerequisites {#prereqs}
 
 - [General Setup](general.md) has been completed.
 - Auth tokens, SSH keys, or credentials for `git.isis.vanderbilt.edu`
@@ -18,7 +18,7 @@ license server and a broker for most tasks.
     - Try using the example store as described [here](../../usage/craidl/#examples)
       if no other source is available.
 
-### Install Dependencies {#deps}
+## Install Dependencies {#deps}
 
 > Install utilities like wget and rsync, as well as global python packages
 > needed by creopyson and direct2cad.
@@ -30,7 +30,7 @@ license server and a broker for most tasks.
   ```
 - Close powershell and open a new instance for future commands.
 
-### Get License Information {#license}
+## Get License Information {#license}
 
 **Option 1:** License Server
 
@@ -49,7 +49,7 @@ license server and a broker for most tasks.
 - If using a local license, have the license file for the above mac
   address downloaded to `<creo-license.file>`.
 
-### Install Creo {#creo}
+## Install Creo {#creo}
 
 > Downloads and installs PTC Creo 5.6.
 
@@ -69,7 +69,7 @@ license server and a broker for most tasks.
   pdm run setup-win worker.disable-ieesc
   ```
 
-### Install Creopyson {#creopyson}
+## Install Creopyson {#creopyson}
 
 > Creopyson provides a python interface to Creo.
 
@@ -84,7 +84,7 @@ license server and a broker for most tasks.
     ```
 - Follow prompts.
 
-### Configure Corpus Settings {#corpus}
+## Configure Corpus Settings {#corpus}
 
 > Performing various analysis tasks requires access to either a Corpus DB
 > or a local static corpus.
@@ -97,11 +97,11 @@ license server and a broker for most tasks.
   pdm run suam-config print --config=craidl -r
   ```
 
-#### **Option 1:** Using a static corpus. {#corpus-static}
+### **Option 1:** Using a static corpus. {#corpus-static}
 
 - No changes should be needed to config files.
 
-#### **Option 2:** Using a remote corpus DB. {#corpus-db}
+### **Option 2:** Using a remote corpus DB. {#corpus-db}
 
 - Create or update `<config-dir>/craidl.md`:
     - Set `use_static_corpus` to `False`.
@@ -113,7 +113,7 @@ license server and a broker for most tasks.
 **Further details on using a static or database corpus can be found
 in this [section](../usage/craidl.md)...**
 
-### Configure Results Dir {#results}
+## Configure Results Dir {#results}
 
 > The results directory needs to be configured to point at the appropriate
 > directory.
@@ -131,7 +131,7 @@ in this [section](../usage/craidl.md)...**
 **Further details on results storage and local worker node operations are
 in [this page](../usage/workspaces.md)...**
 
-### Initialize Reference Workspace {#reference}
+## Initialize Reference Workspace {#reference}
 
 > Each worker needs a pristine copy of the workspace in which designs can be
 > analyzed.
@@ -150,7 +150,7 @@ in [this page](../usage/workspaces.md)...**
 **For further details on workspace configuration, operation, and running analyses
 locally see [this page](../usage/workspaces.md)...**
 
-### Test the Worker Node *(Optional)* {#test}
+## Test the Worker Node *(Optional)* {#test}
 
 > Run a simple test task, generating the info files for a design, in order to
 > test the worker node's configuration.
@@ -170,7 +170,7 @@ locally see [this page](../usage/workspaces.md)...**
   When finished this should place an archive in the `<results-dir>` with the
   processed design.
 
-### Configure Broker Settings {#broker}
+## Configure Broker Settings {#broker}
 
 > The worker process itself needs to be configured with how to connect to a
 > message broker.
@@ -204,7 +204,12 @@ locally see [this page](../usage/workspaces.md)...**
 **Further details on configuring the worker's backend are
 [here](../usage/workers.md)...**
 
-### Run the Worker Node as a Process *(Optional)* {#run}
+## Run the Worker {#worker}
+
+> In order for the worker node to be able to process tasks a worker
+> must be running, either as a process or a service.
+
+### **Option 1**: Run the Worker Node as a Process {#run}
 
 > You can run the worker node as a process to verify all the above settings
 > function as intended.
@@ -222,10 +227,22 @@ locally see [this page](../usage/workspaces.md)...**
     round trip test of the system using [the instructions for testing the
     client node](../client/#test).
 
-### Configure the Worker Node to Auto-Start on Boot *(Optional)* {#restart}
+### **Option 2**: Run the Worker Node as a Service {#service}
 
-> The worker node service needs to configured, in particular whether it should
-> automatically start on boot.
+!!! Warning
+
+    Running SimpleUAM's worker as a service requires ensuring file system
+    permissions and mounted drives are available with headless accounts.
+    This is out of scope of scope of this guide and generally rather
+    annoying.
+
+    Contributions or suggestions to simplify this process would be very
+    appreciated.
+
+#### Configure the Worker Service {#service-config}
+
+> The worker node service needs to configured, in particular a user should
+> be provided that can see the mounted drive.
 
 - Open admin powershell to `<repo-root>`.
 - *(Optional)* View currently loaded config file:
@@ -233,14 +250,19 @@ locally see [this page](../usage/workspaces.md)...**
   pdm run suam-config print --config=d2c_worker -r
   ```
 - Create or modify the config at `<config-dir>/d2c_worker.conf.yaml`:
-    - Set `service.auto_start` to `True`
+    - Set `service.account` to the user you want the service to run as.
+        - The default should be fine if the `LocalSystem` user can read and write
+          to your results directory and the workspaces directory.
+    - Set `service.password` to the password of that user.
+    - *(Optional)* Make the service auto start by setting
+      `service.auto_start` to `True`
 - See the [config file guide](../usage/config.md) for more detailed
   instructions and information.
 
 **Further details on configuring the worker as a service are
 [here](../usage/workers.md)...**
 
-### Set up the Worker Node Service {#service}
+#### Set up the Worker Node Service {#service-install}
 
 > We use [Non-Sucking Service Manager](https://nssm.cc) to manage the worker
 > node service, and that requires some setup.
@@ -251,7 +273,7 @@ locally see [this page](../usage/workspaces.md)...**
   pdm run suam-worker service.install
   ```
 
-### Start the Worker Node Service *(Optional)* {#service-start}
+#### Start the Worker Node Service {#service-start}
 
 > The worker node service can start immediately but we recommend holding off
 > until you've verified configurations while running the node as a process.
@@ -264,7 +286,7 @@ locally see [this page](../usage/workspaces.md)...**
 
 **Further details on running the worker as a service are [here](../usage/workers.md)...**
 
-### Next Steps {#next}
+## Next Steps {#next}
 
 **View information on corpus use [here](../usage/craidl.md)...**<br/>
 **View information on local task processing [here](../usage/workspaces.md)...**<br/>
