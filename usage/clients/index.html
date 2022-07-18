@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://LOGiCS-Project.github.io/swri-simple-uam-pipeline/usage/clients/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.3.4">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.3.9">
     
     
       
@@ -21,7 +21,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.4a0965b7.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.1d29e8d0.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.cbb835fc.min.css">
@@ -217,15 +217,11 @@
   
 
 
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../../reference/simple_uam/" class="md-tabs__link">
-        Code Reference
-      </a>
-    </li>
-  
+  <li class="md-tabs__item">
+    <a href="../../reference/SUMMARY/" class="md-tabs__link">
+      Code Reference
+    </a>
+  </li>
 
       
         
@@ -631,16 +627,57 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#making-a-client-request-via-command-line" class="md-nav__link">
-    Making a Client Request via Command Line
+  <a href="#config" class="md-nav__link">
+    Configuration Instructions
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#making-a-client-request-in-python" class="md-nav__link">
-    Making a Client Request in Python
+  <a href="#CLI" class="md-nav__link">
+    Client Tasks via CLI
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#python" class="md-nav__link">
+    Client Tasks via Python Interface
+  </a>
+  
+    <nav class="md-nav" aria-label="Client Tasks via Python Interface">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#python-tasks" class="md-nav__link">
+    Basic Tasks
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#python-metadata" class="md-nav__link">
+    Custom Metadata
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#python-watch" class="md-nav__link">
+    Waiting for results with Backends and Polling
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#python-example" class="md-nav__link">
+    Example Client
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -687,1582 +724,10 @@
   
   
   
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
-      
-      
-      
-      
-        <label class="md-nav__link" for="__nav_2">
-          Code Reference
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <nav class="md-nav" aria-label="Code Reference" data-md-level="1">
-        <label class="md-nav__title" for="__nav_2">
-          <span class="md-nav__icon md-icon"></span>
-          Code Reference
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
-            
-              
-  
-  
-  
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1" type="checkbox" id="__nav_2_1" >
-      
-      
-      
-      
-        
-        
-        <div class="md-nav__link md-nav__link--index ">
-          <a href="../../reference/simple_uam/">simple_uam</a>
-          
-            <label for="__nav_2_1">
-              <span class="md-nav__icon md-icon"></span>
-            </label>
-          
-        </div>
-      
-      <nav class="md-nav" aria-label="simple_uam" data-md-level="2">
-        <label class="md-nav__title" for="__nav_2_1">
-          <span class="md-nav__icon md-icon"></span>
-          simple_uam
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
-            
-              
-  
-  
-  
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1_1" type="checkbox" id="__nav_2_1_1" >
-      
-      
-      
-      
-        
-        
-        <div class="md-nav__link md-nav__link--index ">
-          <a href="../../reference/simple_uam/craidl/">craidl</a>
-          
-            <label for="__nav_2_1_1">
-              <span class="md-nav__icon md-icon"></span>
-            </label>
-          
-        </div>
-      
-      <nav class="md-nav" aria-label="craidl" data-md-level="3">
-        <label class="md-nav__title" for="__nav_2_1_1">
-          <span class="md-nav__icon md-icon"></span>
-          craidl
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
-            
-              
-  
-  
-  
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1_1_1" type="checkbox" id="__nav_2_1_1_1" >
-      
-      
-      
-      
-        
-        
-        <div class="md-nav__link md-nav__link--index ">
-          <a href="../../reference/simple_uam/craidl/corpus/">corpus</a>
-          
-            <label for="__nav_2_1_1_1">
-              <span class="md-nav__icon md-icon"></span>
-            </label>
-          
-        </div>
-      
-      <nav class="md-nav" aria-label="corpus" data-md-level="4">
-        <label class="md-nav__title" for="__nav_2_1_1_1">
-          <span class="md-nav__icon md-icon"></span>
-          corpus
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
-            
-              
-  
-  
-  
     <li class="md-nav__item">
-      <a href="../../reference/simple_uam/craidl/corpus/abstract/" class="md-nav__link">
-        abstract
+      <a href="../../reference/SUMMARY/" class="md-nav__link">
+        Code Reference
       </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/craidl/corpus/get_corpus/" class="md-nav__link">
-        get_corpus
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/craidl/corpus/gremlin/" class="md-nav__link">
-        gremlin
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/craidl/corpus/static/" class="md-nav__link">
-        static
-      </a>
-    </li>
-  
-
-            
-          
-        </ul>
-      </nav>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/craidl/info_files/" class="md-nav__link">
-        info_files
-      </a>
-    </li>
-  
-
-            
-          
-        </ul>
-      </nav>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1_2" type="checkbox" id="__nav_2_1_2" >
-      
-      
-      
-      
-        
-        
-        <div class="md-nav__link md-nav__link--index ">
-          <a href="../../reference/simple_uam/direct2cad/">direct2cad</a>
-          
-            <label for="__nav_2_1_2">
-              <span class="md-nav__icon md-icon"></span>
-            </label>
-          
-        </div>
-      
-      <nav class="md-nav" aria-label="direct2cad" data-md-level="3">
-        <label class="md-nav__title" for="__nav_2_1_2">
-          <span class="md-nav__icon md-icon"></span>
-          direct2cad
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/direct2cad/actors/" class="md-nav__link">
-        actors
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/direct2cad/manager/" class="md-nav__link">
-        manager
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/direct2cad/session/" class="md-nav__link">
-        session
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/direct2cad/workspace/" class="md-nav__link">
-        workspace
-      </a>
-    </li>
-  
-
-            
-          
-        </ul>
-      </nav>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1_3" type="checkbox" id="__nav_2_1_3" >
-      
-      
-      
-      
-        
-        
-        <div class="md-nav__link md-nav__link--index ">
-          <a href="../../reference/simple_uam/tools/">tools</a>
-          
-            <label for="__nav_2_1_3">
-              <span class="md-nav__icon md-icon"></span>
-            </label>
-          
-        </div>
-      
-      <nav class="md-nav" aria-label="tools" data-md-level="3">
-        <label class="md-nav__title" for="__nav_2_1_3">
-          <span class="md-nav__icon md-icon"></span>
-          tools
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
-            
-              
-  
-  
-  
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1_3_1" type="checkbox" id="__nav_2_1_3_1" >
-      
-      
-      
-      
-        
-        
-        <div class="md-nav__link md-nav__link--index ">
-          <a href="../../reference/simple_uam/tools/client/">client</a>
-          
-            <label for="__nav_2_1_3_1">
-              <span class="md-nav__icon md-icon"></span>
-            </label>
-          
-        </div>
-      
-      <nav class="md-nav" aria-label="client" data-md-level="4">
-        <label class="md-nav__title" for="__nav_2_1_3_1">
-          <span class="md-nav__icon md-icon"></span>
-          client
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/tools/client/cli/" class="md-nav__link">
-        cli
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/tools/client/direct2cad/" class="md-nav__link">
-        direct2cad
-      </a>
-    </li>
-  
-
-            
-          
-        </ul>
-      </nav>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1_3_2" type="checkbox" id="__nav_2_1_3_2" >
-      
-      
-      
-      
-        
-        
-        <div class="md-nav__link md-nav__link--index ">
-          <a href="../../reference/simple_uam/tools/config_mgr/">config_mgr</a>
-          
-            <label for="__nav_2_1_3_2">
-              <span class="md-nav__icon md-icon"></span>
-            </label>
-          
-        </div>
-      
-      <nav class="md-nav" aria-label="config_mgr" data-md-level="4">
-        <label class="md-nav__title" for="__nav_2_1_3_2">
-          <span class="md-nav__icon md-icon"></span>
-          config_mgr
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/tools/config_mgr/cli/" class="md-nav__link">
-        cli
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/tools/config_mgr/tasks/" class="md-nav__link">
-        tasks
-      </a>
-    </li>
-  
-
-            
-          
-        </ul>
-      </nav>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1_3_3" type="checkbox" id="__nav_2_1_3_3" >
-      
-      
-      
-      
-        
-        
-        <div class="md-nav__link md-nav__link--index ">
-          <a href="../../reference/simple_uam/tools/craidl/">craidl</a>
-          
-            <label for="__nav_2_1_3_3">
-              <span class="md-nav__icon md-icon"></span>
-            </label>
-          
-        </div>
-      
-      <nav class="md-nav" aria-label="craidl" data-md-level="4">
-        <label class="md-nav__title" for="__nav_2_1_3_3">
-          <span class="md-nav__icon md-icon"></span>
-          craidl
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/tools/craidl/cli/" class="md-nav__link">
-        cli
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/tools/craidl/examples/" class="md-nav__link">
-        examples
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/tools/craidl/stub_server/" class="md-nav__link">
-        stub_server
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/tools/craidl/tasks/" class="md-nav__link">
-        tasks
-      </a>
-    </li>
-  
-
-            
-          
-        </ul>
-      </nav>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1_3_4" type="checkbox" id="__nav_2_1_3_4" >
-      
-      
-      
-      
-        
-        
-        <div class="md-nav__link md-nav__link--index ">
-          <a href="../../reference/simple_uam/tools/d2c_workspace/">d2c_workspace</a>
-          
-            <label for="__nav_2_1_3_4">
-              <span class="md-nav__icon md-icon"></span>
-            </label>
-          
-        </div>
-      
-      <nav class="md-nav" aria-label="d2c_workspace" data-md-level="4">
-        <label class="md-nav__title" for="__nav_2_1_3_4">
-          <span class="md-nav__icon md-icon"></span>
-          d2c_workspace
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/tools/d2c_workspace/cli/" class="md-nav__link">
-        cli
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/tools/d2c_workspace/env/" class="md-nav__link">
-        env
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/tools/d2c_workspace/manage/" class="md-nav__link">
-        manage
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/tools/d2c_workspace/tasks/" class="md-nav__link">
-        tasks
-      </a>
-    </li>
-  
-
-            
-          
-        </ul>
-      </nav>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1_3_5" type="checkbox" id="__nav_2_1_3_5" >
-      
-      
-      
-      
-        
-        
-        <div class="md-nav__link md-nav__link--index ">
-          <a href="../../reference/simple_uam/tools/dev_util/">dev_util</a>
-          
-            <label for="__nav_2_1_3_5">
-              <span class="md-nav__icon md-icon"></span>
-            </label>
-          
-        </div>
-      
-      <nav class="md-nav" aria-label="dev_util" data-md-level="4">
-        <label class="md-nav__title" for="__nav_2_1_3_5">
-          <span class="md-nav__icon md-icon"></span>
-          dev_util
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/tools/dev_util/cli/" class="md-nav__link">
-        cli
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/tools/dev_util/tasks/" class="md-nav__link">
-        tasks
-      </a>
-    </li>
-  
-
-            
-          
-        </ul>
-      </nav>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1_3_6" type="checkbox" id="__nav_2_1_3_6" >
-      
-      
-      
-      
-        
-        
-        <div class="md-nav__link md-nav__link--index ">
-          <a href="../../reference/simple_uam/tools/setup_win/">setup_win</a>
-          
-            <label for="__nav_2_1_3_6">
-              <span class="md-nav__icon md-icon"></span>
-            </label>
-          
-        </div>
-      
-      <nav class="md-nav" aria-label="setup_win" data-md-level="4">
-        <label class="md-nav__title" for="__nav_2_1_3_6">
-          <span class="md-nav__icon md-icon"></span>
-          setup_win
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/tools/setup_win/broker/" class="md-nav__link">
-        broker
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/tools/setup_win/choco/" class="md-nav__link">
-        choco
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/tools/setup_win/cli/" class="md-nav__link">
-        cli
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/tools/setup_win/graph_server/" class="md-nav__link">
-        graph_server
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/tools/setup_win/helpers/" class="md-nav__link">
-        helpers
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/tools/setup_win/license_server/" class="md-nav__link">
-        license_server
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/tools/setup_win/shared/" class="md-nav__link">
-        shared
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/tools/setup_win/worker/" class="md-nav__link">
-        worker
-      </a>
-    </li>
-  
-
-            
-          
-        </ul>
-      </nav>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1_3_7" type="checkbox" id="__nav_2_1_3_7" >
-      
-      
-      
-      
-        
-        
-        <div class="md-nav__link md-nav__link--index ">
-          <a href="../../reference/simple_uam/tools/worker/">worker</a>
-          
-            <label for="__nav_2_1_3_7">
-              <span class="md-nav__icon md-icon"></span>
-            </label>
-          
-        </div>
-      
-      <nav class="md-nav" aria-label="worker" data-md-level="4">
-        <label class="md-nav__title" for="__nav_2_1_3_7">
-          <span class="md-nav__icon md-icon"></span>
-          worker
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/tools/worker/cli/" class="md-nav__link">
-        cli
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/tools/worker/service/" class="md-nav__link">
-        service
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/tools/worker/worker/" class="md-nav__link">
-        worker
-      </a>
-    </li>
-  
-
-            
-          
-        </ul>
-      </nav>
-    </li>
-  
-
-            
-          
-        </ul>
-      </nav>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1_4" type="checkbox" id="__nav_2_1_4" >
-      
-      
-      
-      
-        
-        
-        <div class="md-nav__link md-nav__link--index ">
-          <a href="../../reference/simple_uam/util/">util</a>
-          
-            <label for="__nav_2_1_4">
-              <span class="md-nav__icon md-icon"></span>
-            </label>
-          
-        </div>
-      
-      <nav class="md-nav" aria-label="util" data-md-level="3">
-        <label class="md-nav__title" for="__nav_2_1_4">
-          <span class="md-nav__icon md-icon"></span>
-          util
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
-            
-              
-  
-  
-  
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1_4_1" type="checkbox" id="__nav_2_1_4_1" >
-      
-      
-      
-      
-        
-        
-        <div class="md-nav__link md-nav__link--index ">
-          <a href="../../reference/simple_uam/util/config/">config</a>
-          
-            <label for="__nav_2_1_4_1">
-              <span class="md-nav__icon md-icon"></span>
-            </label>
-          
-        </div>
-      
-      <nav class="md-nav" aria-label="config" data-md-level="4">
-        <label class="md-nav__title" for="__nav_2_1_4_1">
-          <span class="md-nav__icon md-icon"></span>
-          config
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/util/config/auth_config/" class="md-nav__link">
-        auth_config
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/util/config/broker_config/" class="md-nav__link">
-        broker_config
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/util/config/corpus_config/" class="md-nav__link">
-        corpus_config
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/util/config/craidl_config/" class="md-nav__link">
-        craidl_config
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/util/config/d2c_worker_config/" class="md-nav__link">
-        d2c_worker_config
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/util/config/d2c_workspace_config/" class="md-nav__link">
-        d2c_workspace_config
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/util/config/manager/" class="md-nav__link">
-        manager
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/util/config/path_config/" class="md-nav__link">
-        path_config
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/util/config/service_config/" class="md-nav__link">
-        service_config
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/util/config/win_setup_config/" class="md-nav__link">
-        win_setup_config
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/util/config/workspace_config/" class="md-nav__link">
-        workspace_config
-      </a>
-    </li>
-  
-
-            
-          
-        </ul>
-      </nav>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1_4_2" type="checkbox" id="__nav_2_1_4_2" >
-      
-      
-      
-      
-        
-        
-        <div class="md-nav__link md-nav__link--index ">
-          <a href="../../reference/simple_uam/util/invoke/">invoke</a>
-          
-            <label for="__nav_2_1_4_2">
-              <span class="md-nav__icon md-icon"></span>
-            </label>
-          
-        </div>
-      
-      <nav class="md-nav" aria-label="invoke" data-md-level="4">
-        <label class="md-nav__title" for="__nav_2_1_4_2">
-          <span class="md-nav__icon md-icon"></span>
-          invoke
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/util/invoke/program/" class="md-nav__link">
-        program
-      </a>
-    </li>
-  
-
-            
-          
-        </ul>
-      </nav>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1_4_3" type="checkbox" id="__nav_2_1_4_3" >
-      
-      
-      
-      
-        
-        
-        <div class="md-nav__link md-nav__link--index ">
-          <a href="../../reference/simple_uam/util/logging/">logging</a>
-          
-            <label for="__nav_2_1_4_3">
-              <span class="md-nav__icon md-icon"></span>
-            </label>
-          
-        </div>
-      
-      <nav class="md-nav" aria-label="logging" data-md-level="4">
-        <label class="md-nav__title" for="__nav_2_1_4_3">
-          <span class="md-nav__icon md-icon"></span>
-          logging
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/util/logging/logger/" class="md-nav__link">
-        logger
-      </a>
-    </li>
-  
-
-            
-          
-        </ul>
-      </nav>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1_4_4" type="checkbox" id="__nav_2_1_4_4" >
-      
-      
-      
-      
-        
-        
-        <div class="md-nav__link md-nav__link--index ">
-          <a href="../../reference/simple_uam/util/system/">system</a>
-          
-            <label for="__nav_2_1_4_4">
-              <span class="md-nav__icon md-icon"></span>
-            </label>
-          
-        </div>
-      
-      <nav class="md-nav" aria-label="system" data-md-level="4">
-        <label class="md-nav__title" for="__nav_2_1_4_4">
-          <span class="md-nav__icon md-icon"></span>
-          system
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/util/system/backup/" class="md-nav__link">
-        backup
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/util/system/git/" class="md-nav__link">
-        git
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/util/system/nssm/" class="md-nav__link">
-        nssm
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/util/system/pip/" class="md-nav__link">
-        pip
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/util/system/rsync/" class="md-nav__link">
-        rsync
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/util/system/windows/" class="md-nav__link">
-        windows
-      </a>
-    </li>
-  
-
-            
-          
-        </ul>
-      </nav>
-    </li>
-  
-
-            
-          
-        </ul>
-      </nav>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1_5" type="checkbox" id="__nav_2_1_5" >
-      
-      
-      
-      
-        
-        
-        <div class="md-nav__link md-nav__link--index ">
-          <a href="../../reference/simple_uam/worker/">worker</a>
-          
-            <label for="__nav_2_1_5">
-              <span class="md-nav__icon md-icon"></span>
-            </label>
-          
-        </div>
-      
-      <nav class="md-nav" aria-label="worker" data-md-level="3">
-        <label class="md-nav__title" for="__nav_2_1_5">
-          <span class="md-nav__icon md-icon"></span>
-          worker
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/worker/broker/" class="md-nav__link">
-        broker
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/worker/run_worker/" class="md-nav__link">
-        run_worker
-      </a>
-    </li>
-  
-
-            
-          
-        </ul>
-      </nav>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1_6" type="checkbox" id="__nav_2_1_6" >
-      
-      
-      
-      
-        
-        
-        <div class="md-nav__link md-nav__link--index ">
-          <a href="../../reference/simple_uam/workspace/">workspace</a>
-          
-            <label for="__nav_2_1_6">
-              <span class="md-nav__icon md-icon"></span>
-            </label>
-          
-        </div>
-      
-      <nav class="md-nav" aria-label="workspace" data-md-level="3">
-        <label class="md-nav__title" for="__nav_2_1_6">
-          <span class="md-nav__icon md-icon"></span>
-          workspace
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/workspace/manager/" class="md-nav__link">
-        manager
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/workspace/session/" class="md-nav__link">
-        session
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/simple_uam/workspace/workspace/" class="md-nav__link">
-        workspace
-      </a>
-    </li>
-  
-
-            
-          
-        </ul>
-      </nav>
-    </li>
-  
-
-            
-          
-        </ul>
-      </nav>
-    </li>
-  
-
-            
-          
-        </ul>
-      </nav>
     </li>
   
 
@@ -2309,16 +774,57 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#making-a-client-request-via-command-line" class="md-nav__link">
-    Making a Client Request via Command Line
+  <a href="#config" class="md-nav__link">
+    Configuration Instructions
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#making-a-client-request-in-python" class="md-nav__link">
-    Making a Client Request in Python
+  <a href="#CLI" class="md-nav__link">
+    Client Tasks via CLI
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#python" class="md-nav__link">
+    Client Tasks via Python Interface
+  </a>
+  
+    <nav class="md-nav" aria-label="Client Tasks via Python Interface">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#python-tasks" class="md-nav__link">
+    Basic Tasks
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#python-metadata" class="md-nav__link">
+    Custom Metadata
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#python-watch" class="md-nav__link">
+    Waiting for results with Backends and Polling
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#python-example" class="md-nav__link">
+    Example Client
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -2341,148 +847,87 @@
 
 
 <h1 id="simpleuam-client-nodes">SimpleUAM Client Nodes<a class="headerlink" href="#simpleuam-client-nodes" title="Permanent link">&para;</a></h1>
-<div class="admonition warning">
-<p class="admonition-title">Section Incomplete</p>
+<p>Client nodes create designs in the SRI format and send those designs to a
+SimpleUAM deployment to be processed.</p>
+<h2 id="config">Configuration Instructions<a class="headerlink" href="#config" title="Permanent link">&para;</a></h2>
+<p>See <a href="../../setup/client/#broker">here</a> for instructions on how to set up a client
+node.</p>
+<div class="admonition todo">
+<p class="admonition-title">TODO: Details</p>
 </div>
+<h2 id="CLI">Client Tasks via CLI<a class="headerlink" href="#CLI" title="Permanent link">&para;</a></h2>
+<p>See <a href="../../setup/client#test">here</a> for basic interface.</p>
+<p>There are two available sub-commands:</p>
 <ul>
-<li>Client sends out requests to message broker for analysis<ul>
-<li>Watches shared file directory for results.</li>
-<li>If backend set up then maybe gets notified.</li>
-<li>Must be connected to same broker as the worker nodes.</li>
+<li><strong><code>direct2cad.gen-info-files</code></strong>: Generates info files for a given design.</li>
+<li><strong><code>direct2cad.process-design</code></strong>: Runs Creo and FDM for a given design.</li>
 </ul>
-</li>
-<li>
-<p>Two sessions:</p>
+<p>Which can be run using the <code>suam-client</code> entry point, shown with the mandatory
+arguments for the input design (<code>&lt;design-file&gt;</code>) and the results directory
+(<code>&lt;results-dir&gt;</code>):</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pdm run suam-client &lt;sub-command&gt; --design<span class="o">=</span>&lt;design-file&gt; --results<span class="o">=</span>&lt;results-dir&gt;
+</code></pre></div>
+<p>This print some logs to stderr and the location of newly created results archive
+to stdout.</p>
+<p><strong>Arguments:</strong></p>
 <ul>
-<li>
-<p><code>gen_info_files</code> : Same as craidl and workspace versions, except ships
-  out to worker for evaluation.</p>
-<div class="admonition example">
-<p class="admonition-title">Command Line:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pdm run suam-client direct2cad.gen-info-files -i design_swri.json
-</code></pre></div>
-</div>
-<div class="admonition example">
-<p class="admonition-title">Python:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span> <span class="nn">simple_uam</span> <span class="kn">import</span> <span class="n">direct2cad</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">msg</span> <span class="o">=</span> <span class="n">direct2cad</span><span class="o">.</span><span class="n">gen_info_files</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">design</span><span class="p">)</span>
-</code></pre></div>
-</div>
-</li>
-<li>
-<p><code>process design</code>: same ad d2c workspace version except ships out to worker
-  for eval.</p>
-<div class="admonition example">
-<p class="admonition-title">Command Line:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>pdm run suam-client direct2cad.process-design -i design_swri.json
-</code></pre></div>
-</div>
-<div class="admonition example">
-<p class="admonition-title">Python:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span> <span class="nn">simple_uam</span> <span class="kn">import</span> <span class="n">direct2cad</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">msg</span> <span class="o">=</span> <span class="n">direct2cad</span><span class="o">.</span><span class="n">process_design</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">design</span><span class="p">)</span>
-</code></pre></div>
-</div>
-</li>
+<li><strong><code>-d &lt;design-file&gt;</code>/<code>--design=&lt;design-file&gt;</code></strong>: <em>(Mandatory)</em>
+  The design file, usually <code>design_swri.json</code>, to use as an input to the command.</li>
+<li><strong><code>-r &lt;results-dir&gt;</code>/<code>--results=&lt;results-dir&gt;</code></strong>: <em>(Mandatory)</em>
+  The results directory, as accessible to the client, where the result archives
+  will appear on completion.</li>
+<li><strong><code>-m &lt;metadata-file&gt;</code>/<code>--metadata=&lt;metdata-file&gt;</code></strong>:
+  An optional file with JSON-encoded metadata that will be included with the
+  <code>metadata.json</code> in the result archive.
+  The metadata must be a JSON dictionary so that fields like <code>message_info</code>,
+  <code>session_info</code>, and <code>result_archive</code> can be added.</li>
+<li><strong><code>-b</code>/<code>--backend</code></strong>: Force the use of a dramatiq backend to detect when a
+  sub-command has been finished by a worker.
+  Will fail if no suitable backend is enabled.</li>
+<li><strong><code>-p</code>/<code>--polling</code></strong>: For the use of polling to find completed results.
+  This watches the results directory looking for an archive with the appropriate
+  message id.
+  This method is the default when no backend is available.</li>
+<li><strong><code>-t &lt;int&gt;</code>/<code>--timeout=&lt;int&gt;</code></strong>: How long to wait, in seconds, before giving
+  up on the command.</li>
+<li><strong><code>-i &lt;int&gt;/</code>--interval=<int>`</strong>: The interval between checks for a new result.
+  Will check using the backend if used, otherwise will scan the results directory
+  for new zip files.</li>
 </ul>
-</li>
-<li>
-<p>Talk about config file <code>broker.conf.yaml</code> and fields:</p>
+<p>Use the following for additional help:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>pdm run suam-client &lt;sub-command&gt; --help
+</code></pre></div>
+<h2 id="python">Client Tasks via Python Interface<a class="headerlink" href="#python" title="Permanent link">&para;</a></h2>
+<p>Look at the example project <a href="https://github.com/LOGiCS-Project/swri-simple-uam-example">here</a>.</p>
+<div class="admonition todo">
+<p class="admonition-title">TODO: Details</p>
+</div>
+<h3 id="python-tasks">Basic Tasks<a class="headerlink" href="#python-tasks" title="Permanent link">&para;</a></h3>
+<div class="admonition todo">
+<p class="admonition-title">TODO: Details</p>
+</div>
+<h3 id="python-metadata">Custom Metadata<a class="headerlink" href="#python-metadata" title="Permanent link">&para;</a></h3>
+<div class="admonition todo">
+<p class="admonition-title">TODO: Details</p>
+</div>
+<h3 id="python-watch">Waiting for results with Backends and Polling<a class="headerlink" href="#python-watch" title="Permanent link">&para;</a></h3>
+<p>Results will appear as zip files in a results directory and there are
+two ways for a client application to find them.</p>
 <ul>
-<li>Broker config</li>
-<li>Backend config</li>
+<li><strong>Backend</strong>: If a backend is configured a function can be used to see if
+  the sent task has been completed.</li>
+<li><strong>Polling</strong>: The process can watch the results dir for new files and check
+  their metadata to see if they correspond with the sent message.</li>
 </ul>
-</li>
-</ul>
-<div class="admonition error">
-<p class="admonition-title">Below Info Out of Date</p>
+<p>See the <a href="#example">example client</a> for more details.</p>
+<div class="admonition todo">
+<p class="admonition-title">TODO: Details</p>
 </div>
-<details class="todo">
-<summary>reqs</summary>
-<ul>
-<li>Clients:<ul>
-<li>Config broker and backend</li>
-<li>Run pipeline vie CLI</li>
-<li>Run pipeline via python</li>
-</ul>
-</li>
-</ul>
-</details>
-<h3 id="making-a-client-request-via-command-line">Making a Client Request via Command Line<a class="headerlink" href="#making-a-client-request-via-command-line" title="Permanent link">&para;</a></h3>
-<p>A client needs to have a broker configured in its <code>&lt;config-dir&gt;/d2c_worker.conf.yaml</code>
-just like the worker node.</p>
-<p>By default it can only send requests to workers and it won't receive any
-response back. If both the worker and client have an enabled and configured
-backend then the client will receive metadata which includes the name of the
-archive file generated in response to the original request.</p>
-<p>The client doesn't need any of the other setup of a worker node past having
-this repo available and the proper configuration.
-All of this works on Linux and OS X, not just Windows.</p>
-<p>Send a <code>gen_info_files</code> request using the command line interface:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>PS D:<span class="se">\s</span>imple-uam&gt; pdm run suam-worker direct2cad.gen-info-files --help
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>Usage: pdm run suam-worker <span class="o">[</span>--core-opts<span class="o">]</span> direct2cad.gen-info-files <span class="o">[</span>--options<span class="o">]</span> <span class="o">[</span>other tasks here ...<span class="o">]</span>
-<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
-<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>Docstring:
-<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>  Will write the design info files <span class="k">in</span> the specified
-<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>  workspace, and create a new result archive with only the newly written data.
-<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>  The workspace will be reset on the next run.
-<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>
-<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>  Arguments:
-<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>    input: The design file to <span class="nb">read</span> <span class="k">in</span>.
-<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>    metadata: The json-format metadata file to include with the query.
-<a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>      Should be a dictionary.
-<a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>    output: File to write output session metadata to, prints to stdout <span class="k">if</span>
-<a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a>      not specified.
-<a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a>
-<a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a>Options:
-<a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a>  -i STRING, --input<span class="o">=</span>STRING
-<a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a>  -m STRING, --metadata<span class="o">=</span>STRING
-<a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a>  -o STRING, --output<span class="o">=</span>STRING
-</code></pre></div>
-<p>Send a <code>process_design</code> request using the command line interface:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>PS D:<span class="se">\s</span>imple-uam&gt; pdm run suam-worker direct2cad.process-design --help
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>Usage: pdm run suam-worker <span class="o">[</span>--core-opts<span class="o">]</span> direct2cad.process-design <span class="o">[</span>--options<span class="o">]</span> <span class="o">[</span>other tasks here ...<span class="o">]</span>
-<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
-<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>Docstring:
-<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>  Runs the direct2cad pipeline on the input design files, producing output
-<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>  metadata and a records archive with all the generated files.
-<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>
-<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>  Arguments:
-<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>    input: The design file to <span class="nb">read</span> <span class="k">in</span>.
-<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>    metadata: The json-format metadata file to include with the query.
-<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>      Should be a dictionary.
-<a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>    output: File to write output session metadata to, prints to stdout <span class="k">if</span>
-<a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a>      not specified.
-<a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a>
-<a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a>Options:
-<a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a>  -i STRING, --input<span class="o">=</span>STRING
-<a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a>  -m STRING, --metadata<span class="o">=</span>STRING
-<a id="__codelineno-5-18" name="__codelineno-5-18" href="#__codelineno-5-18"></a>  -o STRING, --output<span class="o">=</span>STRING
-</code></pre></div>
-<h3 id="making-a-client-request-in-python">Making a Client Request in Python<a class="headerlink" href="#making-a-client-request-in-python" title="Permanent link">&para;</a></h3>
-<p>The configuration requirements are identical to the command-line case.</p>
-<p>Sending a request requires:</p>
-<ul>
-<li>SimpleUAM and <code>dramatiq</code> as dependencies.</li>
-<li><code>design</code> as a JSON-serializable python object.</li>
-<li>Optional <code>metadata</code> a JSON-serializable python dictionary.</li>
-</ul>
-<p>A basic example:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">from</span> <span class="nn">simple_uam</span> <span class="kn">import</span> <span class="n">direct2cad</span>
-<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="kn">from</span> <span class="nn">simple_uam.util.config</span> <span class="kn">import</span> <span class="n">Config</span><span class="p">,</span> <span class="n">BrokerConfig</span>
-<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
-<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="n">design</span> <span class="o">=</span> <span class="n">your_code_here</span><span class="p">()</span>
-<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="n">metadata</span> <span class="o">=</span> <span class="n">your_code_here</span><span class="p">()</span>
-<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>
-<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="n">msg</span> <span class="o">=</span> <span class="n">direct2cad</span><span class="o">.</span><span class="n">process_design</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">design</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span><span class="p">)</span>
-<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>
-<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="c1"># Only works if we have a configured and enabled backend to cache results.</span>
-<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="k">if</span> <span class="n">Config</span><span class="p">[</span><span class="n">BrokerConfig</span><span class="p">]</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">enabled</span><span class="p">:</span>
-<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>    <span class="n">result</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">get_result</span><span class="p">(</span><span class="n">block</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">timeout</span><span class="o">=</span><span class="mi">600000</span><span class="p">)</span>
-<a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
-</code></pre></div>
-<p>The core task processing is handled by <a href="https://dramatiq.io"><code>dramatiq</code></a>,
-and their docs can help with any advanced use.</p>
+<h3 id="python-example">Example Client<a class="headerlink" href="#python-example" title="Permanent link">&para;</a></h3>
+<p>Find an example project at <a href="https://github.com/LOGiCS-Project/swri-simple-uam-example">this github repo</a>.</p>
+<div class="admonition todo">
+<p class="admonition-title">TODO: More thorough break down</p>
+</div>
 
               
             </article>
@@ -2557,10 +1002,10 @@ and their docs can help with any advanced use.</p>
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.top", "content.tabs.link"], "search": "../../assets/javascripts/workers/search.85cb4492.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.top", "content.tabs.link"], "search": "../../assets/javascripts/workers/search.b97dbffb.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.f758a944.min.js"></script>
+      <script src="../../assets/javascripts/bundle.6c7ad80a.min.js"></script>
       
     
   </body>
