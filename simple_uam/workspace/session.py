@@ -93,7 +93,7 @@ class Session():
 
     @result_archive.setter
     def result_archive(self, val):
-        self.metadata['result_archive'] = str(val)
+        self.metadata['result_archive'] = str(val.name)
         self._result_archive = val
 
     name : str = field(

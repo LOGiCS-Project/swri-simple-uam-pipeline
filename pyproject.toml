@@ -1,5 +1,5 @@
 [build-system]
-requires = ["pdm-pep517"]
+requires = ["pdm-pep517>=0.12.0"]
 build-backend = "pdm.pep517.api"
 
 [project]
@@ -53,7 +53,9 @@ suam-client = "simple_uam.tools.client.cli:main"
 
 [tool.pdm]
 version = {use_scm = true}
-package-dir = "src"
+
+[tool.pdm.build]
+#package-dir = "src"
 editable-backend = "editables"
 # includes = [
 #     "data/*",
