@@ -2635,14 +2635,14 @@ Those settings are then used to configure the stub server.</p>
 <ul>
 <li>Open admin powershell to <code>&lt;repo-root&gt;</code>.</li>
 <li>
-<p><em>(Optional)</em> View currently loaded config file:
+<p><em>(Optional)</em> View currently loaded configuration:
   <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>pdm run suam-config print --config<span class="o">=</span>craidl -r
 </code></pre></div>
   The fields under <code>stub_server.host</code> and <code>stub_server.port</code> determine how the
   corpus is served.</p>
 </li>
 <li>
-<p><em>(Optional)</em> If serving the graph to other machines then update the
+<p><em>(Optional)</em> If serving the graph to other machines then update or create the
   <code>stub_server.host</code> config property.</p>
 <ul>
 <li>Set <code>stub_server.host</code> to <code>0.0.0.0</code>.</li>

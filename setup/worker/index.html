@@ -604,30 +604,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#worker" class="md-nav__link">
+    Run the Worker
+  </a>
+  
+    <nav class="md-nav" aria-label="Run the Worker">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#run" class="md-nav__link">
-    Run the Worker Node as a Process (Optional)
+    Option 1: Run the Worker Node as a Process
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#restart" class="md-nav__link">
-    Configure the Worker Node to Auto-Start on Boot (Optional)
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
+        
+          <li class="md-nav__item">
   <a href="#service" class="md-nav__link">
+    Option 2: Run the Worker Node as a Service
+  </a>
+  
+    <nav class="md-nav" aria-label="Option 2: Run the Worker Node as a Service">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#service-config" class="md-nav__link">
+    Configure the Worker Service
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#service-install" class="md-nav__link">
     Set up the Worker Node Service
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
+        
+          <li class="md-nav__item">
   <a href="#service-start" class="md-nav__link">
-    Start the Worker Node Service (Optional)
+    Start the Worker Node Service
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -2510,30 +2536,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#worker" class="md-nav__link">
+    Run the Worker
+  </a>
+  
+    <nav class="md-nav" aria-label="Run the Worker">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#run" class="md-nav__link">
-    Run the Worker Node as a Process (Optional)
+    Option 1: Run the Worker Node as a Process
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#restart" class="md-nav__link">
-    Configure the Worker Node to Auto-Start on Boot (Optional)
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
+        
+          <li class="md-nav__item">
   <a href="#service" class="md-nav__link">
+    Option 2: Run the Worker Node as a Service
+  </a>
+  
+    <nav class="md-nav" aria-label="Option 2: Run the Worker Node as a Service">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#service-config" class="md-nav__link">
+    Configure the Worker Service
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#service-install" class="md-nav__link">
     Set up the Worker Node Service
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
+        
+          <li class="md-nav__item">
   <a href="#service-start" class="md-nav__link">
-    Start the Worker Node Service (Optional)
+    Start the Worker Node Service
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -2565,37 +2617,44 @@
 <h1 id="worker-node-setup">Worker Node Setup<a class="headerlink" href="#worker-node-setup" title="Permanent link">&para;</a></h1>
 <p>A worker can analyze designs on behalf of clients and requires access to a
 license server and a broker for most tasks.</p>
-<h3 id="prereqs">Prerequisites<a class="headerlink" href="#prereqs" title="Permanent link">&para;</a></h3>
+<h2 id="prereqs">Prerequisites<a class="headerlink" href="#prereqs" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../general/">General Setup</a> has been completed.</li>
 <li>Auth tokens, SSH keys, or credentials for <code>git.isis.vanderbilt.edu</code></li>
-<li>A broker running at <code>&lt;broker-ip&gt;</code> and <code>&lt;broker-port&gt;</code></li>
+<li>A broker running at <code>&lt;broker&gt;</code>.</li>
 <li>Access to a corpus:<ul>
-<li><strong>Either:</strong> Via a <a href="../graph/">corpus DB</a> at <code>&lt;corpus-db-ip&gt;</code> on port <code>&lt;corpus-db-port&gt;</code></li>
+<li><strong>Either:</strong> Via a <a href="../graph/">corpus DB</a> at <code>&lt;corpus-db&gt;</code>.</li>
 <li><strong>Or:</strong> A static corpus installed as described <a href="../corpus/">here</a>.</li>
 </ul>
 </li>
-<li>Have a results directory set up at <code>&lt;results-dir&gt;</code>.</li>
+<li>Have a results directory set up at <code>&lt;results-dir&gt;</code>.<ul>
+<li>Ensure that it's readable and writable by the worker.</li>
+</ul>
+</li>
+<li>Optionally have a backend running at <code>&lt;backend&gt;</code>.</li>
 <li>Optionally have <code>design_swri.json</code> files available for testing.<ul>
 <li>Try using the example store as described <a href="../../usage/craidl/#examples">here</a>
   if no other source is available.</li>
 </ul>
 </li>
 </ul>
-<h3 id="deps">Install Dependencies<a class="headerlink" href="#deps" title="Permanent link">&para;</a></h3>
+<h2 id="deps">Install Dependencies<a class="headerlink" href="#deps" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p>Install utilities like wget and rsync.</p>
+<p>Install utilities like wget and rsync, as well as global python packages
+needed by creopyson and direct2cad.</p>
 </blockquote>
 <ul>
 <li>Open an admin powershell to <code>&lt;repo-root&gt;</code>.</li>
 <li>Install dependencies:
   <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pdm run setup-win install.worker-deps
 </code></pre></div></li>
+<li>Close powershell and open a new instance for future commands.</li>
 </ul>
-<h3 id="license">Get License Information<a class="headerlink" href="#license" title="Permanent link">&para;</a></h3>
+<h2 id="license">Get License Information<a class="headerlink" href="#license" title="Permanent link">&para;</a></h2>
 <p><strong>Option 1:</strong> License Server</p>
 <ul>
-<li>Have a license server running at <code>&lt;license-server-ip&gt;</code> on port <code>&lt;license-server-port&gt;</code>.</li>
+<li>Have a license server running at <code>&lt;license-server.ip&gt;</code> on
+  port <code>&lt;license-server.port&gt;</code>.</li>
 </ul>
 <p><strong>Option 2:</strong> Static Creo License</p>
 <ul>
@@ -2603,10 +2662,12 @@ license server and a broker for most tasks.</p>
 <li>Get your mac address (for generating licenses):
   <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>pdm run setup-win mac-address
 </code></pre></div></li>
+<li>Save the result as <code>&lt;creo-license.host-id&gt;</code>.</li>
+<li>Get a node-locked license for <code>&lt;creo-license.host-id&gt;</code>.</li>
 <li>If using a local license, have the license file for the above mac
-  address downloaded somewhere convenient.</li>
+  address downloaded to <code>&lt;creo-license.file&gt;</code>.</li>
 </ul>
-<h3 id="creo">Install Creo<a class="headerlink" href="#creo" title="Permanent link">&para;</a></h3>
+<h2 id="creo">Install Creo<a class="headerlink" href="#creo" title="Permanent link">&para;</a></h2>
 <blockquote>
 <p>Downloads and installs PTC Creo 5.6.</p>
 </blockquote>
@@ -2627,7 +2688,7 @@ license server and a broker for most tasks.</p>
   <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>pdm run setup-win worker.disable-ieesc
 </code></pre></div></li>
 </ul>
-<h3 id="creopyson">Install Creopyson<a class="headerlink" href="#creopyson" title="Permanent link">&para;</a></h3>
+<h2 id="creopyson">Install Creopyson<a class="headerlink" href="#creopyson" title="Permanent link">&para;</a></h2>
 <blockquote>
 <p>Creopyson provides a python interface to Creo.</p>
 </blockquote>
@@ -2644,7 +2705,7 @@ license server and a broker for most tasks.</p>
 </code></pre></div></li>
 <li>Follow prompts.</li>
 </ul>
-<h3 id="corpus">Configure Corpus Settings<a class="headerlink" href="#corpus" title="Permanent link">&para;</a></h3>
+<h2 id="corpus">Configure Corpus Settings<a class="headerlink" href="#corpus" title="Permanent link">&para;</a></h2>
 <blockquote>
 <p>Performing various analysis tasks requires access to either a Corpus DB
 or a local static corpus.
@@ -2657,16 +2718,16 @@ use and how the connection is configured.</p>
   <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>pdm run suam-config print --config<span class="o">=</span>craidl -r
 </code></pre></div></li>
 </ul>
-<h4 id="corpus-static"><strong>Option 1:</strong> Using a static corpus.<a class="headerlink" href="#corpus-static" title="Permanent link">&para;</a></h4>
+<h3 id="corpus-static"><strong>Option 1:</strong> Using a static corpus.<a class="headerlink" href="#corpus-static" title="Permanent link">&para;</a></h3>
 <ul>
 <li>No changes should be needed to config files.</li>
 </ul>
-<h4 id="corpus-db"><strong>Option 2:</strong> Using a remote corpus DB.<a class="headerlink" href="#corpus-db" title="Permanent link">&para;</a></h4>
+<h3 id="corpus-db"><strong>Option 2:</strong> Using a remote corpus DB.<a class="headerlink" href="#corpus-db" title="Permanent link">&para;</a></h3>
 <ul>
-<li>Update <code>&lt;config-dir&gt;/craidl.md</code>:<ul>
+<li>Create or update <code>&lt;config-dir&gt;/craidl.md</code>:<ul>
 <li>Set <code>use_static_corpus</code> to <code>False</code>.</li>
-<li>Set <code>server_host</code> to <code>&lt;corpus-db-host</code>.</li>
-<li>Set <code>server_port</code> to <code>&lt;corpus-db-port&gt;</code>.</li>
+<li>Set <code>server_host</code> to <code>&lt;corpus-db,host</code>.</li>
+<li>Set <code>server_port</code> to <code>&lt;corpus-db.port&gt;</code>.</li>
 </ul>
 </li>
 <li>See the <a href="../../usage/config/">config file guide</a> for more detailed
@@ -2674,7 +2735,7 @@ use and how the connection is configured.</p>
 </ul>
 <p><strong>Further details on using a static or database corpus can be found
 in this <a href="../../usage/craidl/">section</a>...</strong></p>
-<h3 id="results">Configure Results Dir<a class="headerlink" href="#results" title="Permanent link">&para;</a></h3>
+<h2 id="results">Configure Results Dir<a class="headerlink" href="#results" title="Permanent link">&para;</a></h2>
 <blockquote>
 <p>The results directory needs to be configured to point at the appropriate
 directory.</p>
@@ -2684,7 +2745,7 @@ directory.</p>
 <li><em>(Optional)</em> View currently loaded config file:
   <div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>pdm run suam-config print --config<span class="o">=</span>d2c_workspace -r
 </code></pre></div></li>
-<li>Update the config at <code>&lt;config-dir&gt;/d2c_workspace.conf.yaml</code>:<ul>
+<li>Create or update the config at <code>&lt;config-dir&gt;/d2c_workspace.conf.yaml</code>:<ul>
 <li>Set <code>results_dir</code> to <code>&lt;results-dir&gt;</code>.</li>
 </ul>
 </li>
@@ -2693,7 +2754,7 @@ directory.</p>
 </ul>
 <p><strong>Further details on results storage and local worker node operations are
 in <a href="../../usage/workspaces/">this page</a>...</strong></p>
-<h3 id="reference">Initialize Reference Workspace<a class="headerlink" href="#reference" title="Permanent link">&para;</a></h3>
+<h2 id="reference">Initialize Reference Workspace<a class="headerlink" href="#reference" title="Permanent link">&para;</a></h2>
 <blockquote>
 <p>Each worker needs a pristine copy of the workspace in which designs can be
 analyzed.
@@ -2707,10 +2768,11 @@ have been changed after an analysis when compared to the reference directory.</p
 <li>Set up the reference workspace:
   <div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>pdm run d2c-workspace setup.reference-workspace
 </code></pre></div></li>
+<li>Follow prompts.</li>
 </ul>
 <p><strong>For further details on workspace configuration, operation, and running analyses
 locally see <a href="../../usage/workspaces/">this page</a>...</strong></p>
-<h3 id="test">Test the Worker Node <em>(Optional)</em><a class="headerlink" href="#test" title="Permanent link">&para;</a></h3>
+<h2 id="test">Test the Worker Node <em>(Optional)</em><a class="headerlink" href="#test" title="Permanent link">&para;</a></h2>
 <blockquote>
 <p>Run a simple test task, generating the info files for a design, in order to
 test the worker node's configuration.</p>
@@ -2729,7 +2791,7 @@ test the worker node's configuration.</p>
   When finished this should place an archive in the <code>&lt;results-dir&gt;</code> with the
   processed design.</li>
 </ul>
-<h3 id="broker">Configure Broker Settings<a class="headerlink" href="#broker" title="Permanent link">&para;</a></h3>
+<h2 id="broker">Configure Broker Settings<a class="headerlink" href="#broker" title="Permanent link">&para;</a></h2>
 <blockquote>
 <p>The worker process itself needs to be configured with how to connect to a
 message broker.</p>
@@ -2739,13 +2801,36 @@ message broker.</p>
 <li><em>(Optional)</em> View currently loaded config file:
   <div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>pdm run suam-config print --config<span class="o">=</span>broker -r
 </code></pre></div></li>
-<li>Update the config at <code>&lt;config-dir&gt;/broker.conf.yaml</code>:<ul>
+<li>Create or update the config at <code>&lt;config-dir&gt;/broker.conf.yaml</code>:<ul>
+<li>Set up the broker:<ul>
+<li>If you have a <code>&lt;broker.url&gt;</code>:<ul>
+<li>Set <code>url</code> to <code>&lt;broker.url&gt;</code>.</li>
+</ul>
+</li>
+<li>Otherwise:<ul>
+<li>Set <code>host</code> to <code>&lt;broker.ip&gt;</code>.</li>
 <li>Set <code>protocol</code> to <code>"amqp"</code> if using RabbitMQ or <code>"redis"</code> if
   using Redis.</li>
-<li>Set <code>host</code> to <code>&lt;broker-ip&gt;</code>.</li>
-<li>Set <code>port</code> to <code>&lt;broker-port&gt;</code>.</li>
-<li>If using Redis, set <code>db</code> to <code>&lt;broker-db&gt;</code></li>
-<li>If you have a <code>&lt;broker-url&gt;</code> set <code>url</code> to that instead.</li>
+<li>Set <code>port</code> to <code>&lt;broker.port&gt;</code>.</li>
+<li>Set <code>db</code> to <code>&lt;broker.db&gt;</code> if you have one.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Set up the backend, if available:<ul>
+<li>Set <code>backend.enabled</code> to <code>true</code></li>
+<li>If you have a <code>&lt;backend.url&gt;</code>:<ul>
+<li>Set <code>broker.url</code> to <code>&lt;broker.url&gt;</code></li>
+</ul>
+</li>
+<li>Otherwise:<ul>
+<li>Set <code>backend.host</code> to <code>&lt;backend.ip&gt;</code>.</li>
+<li>Set <code>backend.port</code> to <code>&lt;broker.port&gt;</code>.</li>
+<li>Set <code>backend.db</code> to <code>&lt;broker.db&gt;</code> if you have one.</li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 <li>See the <a href="../../usage/config/">config file guide</a> for more detailed
@@ -2753,29 +2838,58 @@ message broker.</p>
 </ul>
 <p><strong>Further details on configuring the worker's backend are
 <a href="../../usage/workers/">here</a>...</strong></p>
-<h3 id="run">Run the Worker Node as a Process <em>(Optional)</em><a class="headerlink" href="#run" title="Permanent link">&para;</a></h3>
+<h2 id="worker">Run the Worker<a class="headerlink" href="#worker" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>In order for the worker node to be able to process tasks a worker
+must be running, either as a process or a service.</p>
+</blockquote>
+<h3 id="run"><strong>Option 1</strong>: Run the Worker Node as a Process<a class="headerlink" href="#run" title="Permanent link">&para;</a></h3>
 <blockquote>
 <p>You can run the worker node as a process to verify all the above settings
 function as intended.</p>
 </blockquote>
 <ul>
 <li>Open admin powershell to <code>&lt;repo-root&gt;</code>.</li>
-<li>Run the SimpleUAM worker node:
+<li>Run the SimpleUAM worker node process:
   <div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>pdm run suam-worker run
 </code></pre></div></li>
 </ul>
-<h3 id="restart">Configure the Worker Node to Auto-Start on Boot <em>(Optional)</em><a class="headerlink" href="#restart" title="Permanent link">&para;</a></h3>
+<div class="admonition note">
+<p>If the worker node process is running and the broker is correctly configured
+then the worker is also a valid client.
+This means that, if there is only one attached worker, you can run a basic
+round trip test of the system using <a href="../client/#test">the instructions for testing the
+client node</a>.</p>
+</div>
+<h3 id="service"><strong>Option 2</strong>: Run the Worker Node as a Service<a class="headerlink" href="#service" title="Permanent link">&para;</a></h3>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Running SimpleUAM's worker as a service requires ensuring file system
+permissions and mounted drives are available with headless accounts.
+This is out of scope of scope of this guide and generally rather
+annoying.</p>
+<p>Contributions or suggestions to simplify this process would be very
+appreciated.</p>
+</div>
+<h4 id="service-config">Configure the Worker Service<a class="headerlink" href="#service-config" title="Permanent link">&para;</a></h4>
 <blockquote>
-<p>The worker node service needs to configured, in particular whether it should
-automatically start on boot.</p>
+<p>The worker node service needs to configured, in particular a user should
+be provided that can see the mounted drive.</p>
 </blockquote>
 <ul>
 <li>Open admin powershell to <code>&lt;repo-root&gt;</code>.</li>
 <li><em>(Optional)</em> View currently loaded config file:
   <div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>pdm run suam-config print --config<span class="o">=</span>d2c_worker -r
 </code></pre></div></li>
-<li>Edit the config at <code>&lt;config-dir&gt;/d2c_worker.conf.yaml</code>:<ul>
-<li>Set <code>service.auto_start</code> to <code>True</code></li>
+<li>Create or modify the config at <code>&lt;config-dir&gt;/d2c_worker.conf.yaml</code>:<ul>
+<li>Set <code>service.account</code> to the user you want the service to run as.<ul>
+<li>The default should be fine if the <code>LocalSystem</code> user can read and write
+  to your results directory and the workspaces directory.</li>
+</ul>
+</li>
+<li>Set <code>service.password</code> to the password of that user.</li>
+<li><em>(Optional)</em> Make the service auto start by setting
+  <code>service.auto_start</code> to <code>True</code></li>
 </ul>
 </li>
 <li>See the <a href="../../usage/config/">config file guide</a> for more detailed
@@ -2783,7 +2897,7 @@ automatically start on boot.</p>
 </ul>
 <p><strong>Further details on configuring the worker as a service are
 <a href="../../usage/workers/">here</a>...</strong></p>
-<h3 id="service">Set up the Worker Node Service<a class="headerlink" href="#service" title="Permanent link">&para;</a></h3>
+<h4 id="service-install">Set up the Worker Node Service<a class="headerlink" href="#service-install" title="Permanent link">&para;</a></h4>
 <blockquote>
 <p>We use <a href="https://nssm.cc">Non-Sucking Service Manager</a> to manage the worker
 node service, and that requires some setup.</p>
@@ -2794,7 +2908,7 @@ node service, and that requires some setup.</p>
   <div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>pdm run suam-worker service.install
 </code></pre></div></li>
 </ul>
-<h3 id="service-start">Start the Worker Node Service <em>(Optional)</em><a class="headerlink" href="#service-start" title="Permanent link">&para;</a></h3>
+<h4 id="service-start">Start the Worker Node Service<a class="headerlink" href="#service-start" title="Permanent link">&para;</a></h4>
 <blockquote>
 <p>The worker node service can start immediately but we recommend holding off
 until you've verified configurations while running the node as a process.</p>
@@ -2806,7 +2920,7 @@ until you've verified configurations while running the node as a process.</p>
 </code></pre></div></li>
 </ul>
 <p><strong>Further details on running the worker as a service are <a href="../../usage/workers/">here</a>...</strong></p>
-<h3 id="next">Next Steps<a class="headerlink" href="#next" title="Permanent link">&para;</a></h3>
+<h2 id="next">Next Steps<a class="headerlink" href="#next" title="Permanent link">&para;</a></h2>
 <p><strong>View information on corpus use <a href="../../usage/craidl/">here</a>...</strong><br/>
 <strong>View information on local task processing <a href="../../usage/workspaces/">here</a>...</strong><br/>
 <strong>View information on remote task processing <a href="../../usage/workers/">here</a>...</strong><br/></p>

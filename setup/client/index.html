@@ -528,21 +528,21 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#prerequisites" class="md-nav__link">
+  <a href="#prereq" class="md-nav__link">
     Prerequisites
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#setup-file-sharing-optional" class="md-nav__link">
+  <a href="#files" class="md-nav__link">
     Setup File Sharing (Optional)
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#download-simpleuam" class="md-nav__link">
+  <a href="#download" class="md-nav__link">
     Download SimpleUAM
   </a>
   
@@ -550,14 +550,14 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#option-1-clone-from-github-http" class="md-nav__link">
+  <a href="#download-github-http" class="md-nav__link">
     Option 1: Clone from Github (HTTP):
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#option-2-clone-from-github-ssh" class="md-nav__link">
+  <a href="#download-github-ssh" class="md-nav__link">
     Option 2: Clone from Github (SSH):
   </a>
   
@@ -569,28 +569,48 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#initialize-simpleuam-package" class="md-nav__link">
+  <a href="#init" class="md-nav__link">
     Initialize SimpleUAM Package
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#get-configuration-directory" class="md-nav__link">
+  <a href="#config" class="md-nav__link">
     Get Configuration Directory
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#configure-broker-settings" class="md-nav__link">
+  <a href="#broker" class="md-nav__link">
     Configure Broker Settings
   </a>
+  
+    <nav class="md-nav" aria-label="Configure Broker Settings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#broker-reuse" class="md-nav__link">
+    Option 1: Use the worker broker.conf.yaml
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#broker-new" class="md-nav__link">
+    Option 2: Create a new configuration
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#test-the-client-node-optional" class="md-nav__link">
+  <a href="#test" class="md-nav__link">
     Test the Client Node (Optional)
   </a>
   
@@ -2364,21 +2384,21 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#prerequisites" class="md-nav__link">
+  <a href="#prereq" class="md-nav__link">
     Prerequisites
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#setup-file-sharing-optional" class="md-nav__link">
+  <a href="#files" class="md-nav__link">
     Setup File Sharing (Optional)
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#download-simpleuam" class="md-nav__link">
+  <a href="#download" class="md-nav__link">
     Download SimpleUAM
   </a>
   
@@ -2386,14 +2406,14 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#option-1-clone-from-github-http" class="md-nav__link">
+  <a href="#download-github-http" class="md-nav__link">
     Option 1: Clone from Github (HTTP):
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#option-2-clone-from-github-ssh" class="md-nav__link">
+  <a href="#download-github-ssh" class="md-nav__link">
     Option 2: Clone from Github (SSH):
   </a>
   
@@ -2405,28 +2425,48 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#initialize-simpleuam-package" class="md-nav__link">
+  <a href="#init" class="md-nav__link">
     Initialize SimpleUAM Package
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#get-configuration-directory" class="md-nav__link">
+  <a href="#config" class="md-nav__link">
     Get Configuration Directory
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#configure-broker-settings" class="md-nav__link">
+  <a href="#broker" class="md-nav__link">
     Configure Broker Settings
   </a>
+  
+    <nav class="md-nav" aria-label="Configure Broker Settings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#broker-reuse" class="md-nav__link">
+    Option 1: Use the worker broker.conf.yaml
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#broker-new" class="md-nav__link">
+    Option 2: Create a new configuration
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#test-the-client-node-optional" class="md-nav__link">
+  <a href="#test" class="md-nav__link">
     Test the Client Node (Optional)
   </a>
   
@@ -2455,10 +2495,11 @@
 nodes can process them.</p>
 <p>Unlike the other nodes clients can easily be of any platform as long as they
 can access the same brokers and results directory as the workers.</p>
-<h3 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h3>
+<h2 id="prereq">Prerequisites<a class="headerlink" href="#prereq" title="Permanent link">&para;</a></h2>
 <ul>
-<li>An installed auth token, SSH keys or credentials for <code>git.isis.vanderbilt.edu</code>.</li>
-<li>A broker running at <code>&lt;broker-ip&gt;</code> and <code>&lt;broker-port&gt;</code>.</li>
+<li>An auth token, SSH keys or credentials for <code>git.isis.vanderbilt.edu</code>.</li>
+<li>A broker running at <code>&lt;broker&gt;</code>.</li>
+<li>Optionally, a backend running at <code>&lt;backend&gt;</code>.</li>
 <li>The following installed software:<ul>
 <li>Git</li>
 <li>Python (&gt;=3.9, &lt;3.11)</li>
@@ -2469,7 +2510,7 @@ can access the same brokers and results directory as the workers.</p>
 </ul>
 </li>
 </ul>
-<h3 id="setup-file-sharing-optional">Setup File Sharing <em>(Optional)</em><a class="headerlink" href="#setup-file-sharing-optional" title="Permanent link">&para;</a></h3>
+<h2 id="files">Setup File Sharing <em>(Optional)</em><a class="headerlink" href="#files" title="Permanent link">&para;</a></h2>
 <p>If you intend to share files (e.g. results) between workers and clients then
 set that up now, if you haven't done so already.</p>
 <p>If using AWS the instructions for the FSx file share take care of this.</p>
@@ -2480,7 +2521,7 @@ a normal directory.</p>
 <ul>
 <li>Save the shared results directory as <code>&lt;results-dir&gt;</code>.</li>
 </ul>
-<h3 id="download-simpleuam">Download SimpleUAM<a class="headerlink" href="#download-simpleuam" title="Permanent link">&para;</a></h3>
+<h2 id="download">Download SimpleUAM<a class="headerlink" href="#download" title="Permanent link">&para;</a></h2>
 <blockquote>
 <p>Get this repo onto the machine somehow, cloning is the default method.
 If you have a shared drive, placing the repo there will allow local development
@@ -2489,18 +2530,18 @@ without constant pushing and pulling.</p>
 <ul>
 <li>Save the repo's final location as <code>&lt;repo-root&gt;</code>.</li>
 </ul>
-<h4 id="option-1-clone-from-github-http"><strong>Option 1:</strong> Clone from Github (HTTP):<a class="headerlink" href="#option-1-clone-from-github-http" title="Permanent link">&para;</a></h4>
+<h3 id="download-github-http"><strong>Option 1:</strong> Clone from Github (HTTP):<a class="headerlink" href="#download-github-http" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>git clone https://github.com/LOGiCS-Project/swri-simple-uam-pipeline.git &lt;repo-root&gt;
 </code></pre></div>
-<h4 id="option-2-clone-from-github-ssh"><strong>Option 2:</strong> Clone from Github (SSH):<a class="headerlink" href="#option-2-clone-from-github-ssh" title="Permanent link">&para;</a></h4>
+<h3 id="download-github-ssh"><strong>Option 2:</strong> Clone from Github (SSH):<a class="headerlink" href="#download-github-ssh" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>git clone git@github.com:LOGiCS-Project/swri-simple-uam-pipeline.git &lt;repo-root&gt;
 </code></pre></div>
-<h3 id="initialize-simpleuam-package">Initialize SimpleUAM Package<a class="headerlink" href="#initialize-simpleuam-package" title="Permanent link">&para;</a></h3>
+<h2 id="init">Initialize SimpleUAM Package<a class="headerlink" href="#init" title="Permanent link">&para;</a></h2>
 <blockquote>
 <p>Initialize pdm and packages for client use.</p>
 </blockquote>
 <ul>
-<li>Navigate a shell to <code>&lt;repo_root&gt;</code>.</li>
+<li>Navigate a shell to <code>&lt;repo-root&gt;</code>.</li>
 <li>Setup PDM environment for this repo:
   <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>pdm install
 </code></pre></div></li>
@@ -2508,47 +2549,89 @@ without constant pushing and pulling.</p>
   <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>pdm run suam-client --help
 </code></pre></div>
   Result should be a help message showing all of <code>suam-client</code>'s flags and
-  subcommands.</li>
+  sub-commands.</li>
 </ul>
-<h3 id="get-configuration-directory">Get Configuration Directory<a class="headerlink" href="#get-configuration-directory" title="Permanent link">&para;</a></h3>
+<h2 id="config">Get Configuration Directory<a class="headerlink" href="#config" title="Permanent link">&para;</a></h2>
 <blockquote>
 <p>The configuration directory holds <code>*.conf.yaml</code> files that determine how
 many aspects of a running SimpleUAM system operate.</p>
 </blockquote>
 <ul>
-<li>Navigate a shell to <code>&lt;repo_root&gt;</code>.</li>
+<li>Navigate a shell to <code>&lt;repo-root&gt;</code>.</li>
 <li>Print config directory:
   <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>pdm run suam-config dir
 </code></pre></div></li>
 <li>Save result as <code>&lt;config-dir&gt;</code>.</li>
 </ul>
-<h3 id="configure-broker-settings">Configure Broker Settings<a class="headerlink" href="#configure-broker-settings" title="Permanent link">&para;</a></h3>
+<h2 id="broker">Configure Broker Settings<a class="headerlink" href="#broker" title="Permanent link">&para;</a></h2>
 <blockquote>
 <p>The client process needs to be configured with how to connect to a
 message broker.
 These options should be identical to any worker nodes which is why they
 use the same config file.</p>
 </blockquote>
+<h3 id="broker-reuse"><strong>Option 1:</strong> Use the worker <code>broker.conf.yaml</code><a class="headerlink" href="#broker-reuse" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>As long as the IPs or DNS names of the broker and backend resolve to the
+same machines as the worker, then you can reuse the <code>broker.conf.yaml</code>
+directly.</p>
+</blockquote>
 <ul>
-<li>Open a shell to <code>&lt;repo-root&gt;</code>.</li>
-<li><em>(Optional)</em> View currently loaded config file:
-  <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>pdm run suam-config print --config<span class="o">=</span>broker -r
+<li>Have the worker's <code>broker.conf.yaml</code> accessible at <code>&lt;conf-loc&gt;</code>.</li>
+<li>Make a copy in the configuration directory:
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>pdm run suam-config install --no-symlink --input<span class="o">=</span>&lt;conf-loc&gt;
 </code></pre></div></li>
-<li>Update the config at <code>&lt;config-dir&gt;/broker.conf.yaml</code>:<ul>
-<li>Set <code>protocol</code> to <code>"amqp"</code> if using RabbitMQ or <code>"redis"</code> if
-  using Redis.</li>
-<li>Set <code>host</code> to <code>&lt;broker-ip&gt;</code>.</li>
-<li>Set <code>port</code> to <code>&lt;broker-port&gt;</code>.</li>
-<li>If using Redis, set <code>db</code> to <code>&lt;broker-db&gt;</code></li>
-<li>If you have a <code>&lt;broker-url&gt;</code> set <code>url</code> to that instead.</li>
+</ul>
+<p><strong>See the <a href="../../usage/config#cli-install">config file usage page</a> for other
+ways to set this up...</strong></p>
+<h3 id="broker-new"><strong>Option 2</strong>: Create a new configuration<a class="headerlink" href="#broker-new" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>If visibility of the broker and backend differs from the default then
+a client specific <code>broker.conf.yaml</code> needs to be created.</p>
+</blockquote>
+<ul>
+<li>Open admin powershell to <code>&lt;repo-root&gt;</code>.</li>
+<li><em>(Optional)</em> View currently loaded config file:
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>pdm run suam-config print --config<span class="o">=</span>broker -r
+</code></pre></div></li>
+<li>Create or update the config at <code>&lt;config-dir&gt;/broker.conf.yaml</code>:<ul>
+<li>Set up the broker:<ul>
+<li>If you have a <code>&lt;broker.url&gt;</code>:<ul>
+<li>Set <code>url</code> to <code>&lt;broker.url&gt;</code>.</li>
 </ul>
 </li>
-<li>See the <a href="../../usage/config/">config file guide</a> for more detailed
+<li>Otherwise:<ul>
+<li>Set <code>host</code> to <code>&lt;broker.ip&gt;</code>.</li>
+<li>Set <code>protocol</code> to <code>"amqp"</code> if using RabbitMQ or <code>"redis"</code> if
+  using Redis.</li>
+<li>Set <code>port</code> to <code>&lt;broker.port&gt;</code>.</li>
+<li>Set <code>db</code> to <code>&lt;broker.db&gt;</code> if you have one.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Set up the backend, if available:<ul>
+<li>Set <code>backend.enabled</code> to <code>true</code></li>
+<li>If you have a <code>&lt;backend.url&gt;</code>:<ul>
+<li>Set <code>broker.url</code> to <code>&lt;broker.url&gt;</code></li>
+</ul>
+</li>
+<li>Otherwise:<ul>
+<li>Set <code>backend.host</code> to <code>&lt;backend.ip&gt;</code>.</li>
+<li>Set <code>backend.port</code> to <code>&lt;broker.port&gt;</code>.</li>
+<li>Set <code>backend.db</code> to <code>&lt;broker.db&gt;</code> if you have one.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>See the <a href="../../usage/config#files-broker">config file guide</a> for more detailed
   instructions and information.</li>
 </ul>
 <p><strong>Further details on configuring the client's broker and backend are
 <a href="../../usage/clients/">here</a>...</strong></p>
-<h3 id="test-the-client-node-optional">Test the Client Node <em>(Optional)</em><a class="headerlink" href="#test-the-client-node-optional" title="Permanent link">&para;</a></h3>
+<h2 id="test">Test the Client Node <em>(Optional)</em><a class="headerlink" href="#test" title="Permanent link">&para;</a></h2>
 <blockquote>
 <p>Run a simple test task, generating the info files for a design, in order to
 test the client node's configuration.</p>
@@ -2559,12 +2642,12 @@ test the client node's configuration.</p>
 <li>Have at least one worker running and connected to the broker.</li>
 <li>Open a shell to <code>&lt;repo-root&gt;</code>.</li>
 <li>Test generating design info files:
-  <div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>pdm run suam-client direct2cad.gen-info-files --input<span class="o">=</span>&lt;design-file&gt;
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>pdm run suam-client direct2cad.gen-info-files --input<span class="o">=</span>&lt;design-file&gt;
 </code></pre></div>
   A worker should pick up this task and run it, eventually placing an archive
   in the <code>&lt;results-dir&gt;</code> with the generated info files.</li>
 <li>Test generating processing designs:
-  <div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>pdm run suam-client direct2cad.process-design --input<span class="o">=</span>&lt;design-file&gt;
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>pdm run suam-client direct2cad.process-design --input<span class="o">=</span>&lt;design-file&gt;
 </code></pre></div>
   A worker should pick up this task and run it, eventually placing an archive
   in the <code>&lt;results-dir&gt;</code> with the generated results.</li>

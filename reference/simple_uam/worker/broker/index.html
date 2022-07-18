@@ -2411,10 +2411,7 @@
 
       <details class="quote">
         <summary>Source code in <code>simple_uam/worker/broker.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-63">63</a></span>
-<span class="normal"><a href="#__codelineno-0-64">64</a></span>
-<span class="normal"><a href="#__codelineno-0-65">65</a></span>
-<span class="normal"><a href="#__codelineno-0-66">66</a></span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-66">66</a></span>
 <span class="normal"><a href="#__codelineno-0-67">67</a></span>
 <span class="normal"><a href="#__codelineno-0-68">68</a></span>
 <span class="normal"><a href="#__codelineno-0-69">69</a></span>
@@ -2441,37 +2438,40 @@
 <span class="normal"><a href="#__codelineno-0-90">90</a></span>
 <span class="normal"><a href="#__codelineno-0-91">91</a></span>
 <span class="normal"><a href="#__codelineno-0-92">92</a></span>
-<span class="normal"><a href="#__codelineno-0-93">93</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-63" name="__codelineno-0-63"></a><span class="k">def</span> <span class="nf">actor</span><span class="p">(</span><span class="n">fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-64" name="__codelineno-0-64"></a>          <span class="o">*</span><span class="p">,</span>
-<a id="__codelineno-0-65" name="__codelineno-0-65"></a>          <span class="n">actor_class</span><span class="o">=</span><span class="n">Actor</span><span class="p">,</span>
-<a id="__codelineno-0-66" name="__codelineno-0-66"></a>          <span class="n">actor_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-67" name="__codelineno-0-67"></a>          <span class="n">queue_name</span><span class="o">=</span><span class="s1">&#39;default&#39;</span><span class="p">,</span>
-<a id="__codelineno-0-68" name="__codelineno-0-68"></a>          <span class="n">priority</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-<a id="__codelineno-0-69" name="__codelineno-0-69"></a>          <span class="o">**</span><span class="n">options</span><span class="p">):</span>
-<a id="__codelineno-0-70" name="__codelineno-0-70"></a>    <span class="sd">&quot;&quot;&quot;</span>
-<a id="__codelineno-0-71" name="__codelineno-0-71"></a><span class="sd">    Wraps &#39;dramatiq.actor&#39;, so the options and defaults are mostly the same.</span>
-<a id="__codelineno-0-72" name="__codelineno-0-72"></a>
-<a id="__codelineno-0-73" name="__codelineno-0-73"></a><span class="sd">    Changes:</span>
-<a id="__codelineno-0-74" name="__codelineno-0-74"></a><span class="sd">      - Default actor names are distinguished by modules. This applies even</span>
-<a id="__codelineno-0-75" name="__codelineno-0-75"></a><span class="sd">        when a specific name is given. If you want to have complete control</span>
-<a id="__codelineno-0-76" name="__codelineno-0-76"></a><span class="sd">        use &#39;dramatiq.actor&#39; directly.</span>
-<a id="__codelineno-0-77" name="__codelineno-0-77"></a><span class="sd">      - There is no &#39;broker&#39; option, it&#39;s fixed to the one initialized in</span>
-<a id="__codelineno-0-78" name="__codelineno-0-78"></a><span class="sd">        this modules.</span>
-<a id="__codelineno-0-79" name="__codelineno-0-79"></a>
-<a id="__codelineno-0-80" name="__codelineno-0-80"></a><span class="sd">    See: https://dramatiq.io/reference.html#dramatiq.actor</span>
-<a id="__codelineno-0-81" name="__codelineno-0-81"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="__codelineno-0-82" name="__codelineno-0-82"></a>    <span class="n">actor_name</span> <span class="o">=</span> <span class="n">actor_name</span> <span class="ow">or</span> <span class="n">fn</span><span class="o">.</span><span class="vm">__name__</span>
-<a id="__codelineno-0-83" name="__codelineno-0-83"></a>    <span class="n">actor_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">fn</span><span class="o">.</span><span class="vm">__module__</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">actor_name</span><span class="si">}</span><span class="s2">&quot;</span>
-<a id="__codelineno-0-84" name="__codelineno-0-84"></a>
-<a id="__codelineno-0-85" name="__codelineno-0-85"></a>    <span class="k">return</span> <span class="n">dramatiq</span><span class="o">.</span><span class="n">actor</span><span class="p">(</span>
-<a id="__codelineno-0-86" name="__codelineno-0-86"></a>        <span class="n">fn</span><span class="o">=</span><span class="n">fn</span><span class="p">,</span>
-<a id="__codelineno-0-87" name="__codelineno-0-87"></a>        <span class="n">actor_class</span><span class="o">=</span><span class="n">actor_class</span><span class="p">,</span>
-<a id="__codelineno-0-88" name="__codelineno-0-88"></a>        <span class="n">actor_name</span><span class="o">=</span><span class="n">actor_name</span><span class="p">,</span>
-<a id="__codelineno-0-89" name="__codelineno-0-89"></a>        <span class="n">queue_name</span><span class="o">=</span><span class="n">queue_name</span><span class="p">,</span>
-<a id="__codelineno-0-90" name="__codelineno-0-90"></a>        <span class="n">priority</span><span class="o">=</span><span class="n">priority</span><span class="p">,</span>
-<a id="__codelineno-0-91" name="__codelineno-0-91"></a>        <span class="n">broker</span><span class="o">=</span><span class="n">_BROKER</span><span class="p">,</span>
-<a id="__codelineno-0-92" name="__codelineno-0-92"></a>        <span class="o">**</span><span class="n">options</span><span class="p">,</span>
-<a id="__codelineno-0-93" name="__codelineno-0-93"></a>    <span class="p">)</span>
+<span class="normal"><a href="#__codelineno-0-93">93</a></span>
+<span class="normal"><a href="#__codelineno-0-94">94</a></span>
+<span class="normal"><a href="#__codelineno-0-95">95</a></span>
+<span class="normal"><a href="#__codelineno-0-96">96</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-66" name="__codelineno-0-66"></a><span class="k">def</span> <span class="nf">actor</span><span class="p">(</span><span class="n">fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-67" name="__codelineno-0-67"></a>          <span class="o">*</span><span class="p">,</span>
+<a id="__codelineno-0-68" name="__codelineno-0-68"></a>          <span class="n">actor_class</span><span class="o">=</span><span class="n">Actor</span><span class="p">,</span>
+<a id="__codelineno-0-69" name="__codelineno-0-69"></a>          <span class="n">actor_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-70" name="__codelineno-0-70"></a>          <span class="n">queue_name</span><span class="o">=</span><span class="s1">&#39;default&#39;</span><span class="p">,</span>
+<a id="__codelineno-0-71" name="__codelineno-0-71"></a>          <span class="n">priority</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<a id="__codelineno-0-72" name="__codelineno-0-72"></a>          <span class="o">**</span><span class="n">options</span><span class="p">):</span>
+<a id="__codelineno-0-73" name="__codelineno-0-73"></a>    <span class="sd">&quot;&quot;&quot;</span>
+<a id="__codelineno-0-74" name="__codelineno-0-74"></a><span class="sd">    Wraps &#39;dramatiq.actor&#39;, so the options and defaults are mostly the same.</span>
+<a id="__codelineno-0-75" name="__codelineno-0-75"></a>
+<a id="__codelineno-0-76" name="__codelineno-0-76"></a><span class="sd">    Changes:</span>
+<a id="__codelineno-0-77" name="__codelineno-0-77"></a><span class="sd">      - Default actor names are distinguished by modules. This applies even</span>
+<a id="__codelineno-0-78" name="__codelineno-0-78"></a><span class="sd">        when a specific name is given. If you want to have complete control</span>
+<a id="__codelineno-0-79" name="__codelineno-0-79"></a><span class="sd">        use &#39;dramatiq.actor&#39; directly.</span>
+<a id="__codelineno-0-80" name="__codelineno-0-80"></a><span class="sd">      - There is no &#39;broker&#39; option, it&#39;s fixed to the one initialized in</span>
+<a id="__codelineno-0-81" name="__codelineno-0-81"></a><span class="sd">        this modules.</span>
+<a id="__codelineno-0-82" name="__codelineno-0-82"></a>
+<a id="__codelineno-0-83" name="__codelineno-0-83"></a><span class="sd">    See: https://dramatiq.io/reference.html#dramatiq.actor</span>
+<a id="__codelineno-0-84" name="__codelineno-0-84"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-85" name="__codelineno-0-85"></a>    <span class="n">actor_name</span> <span class="o">=</span> <span class="n">actor_name</span> <span class="ow">or</span> <span class="n">fn</span><span class="o">.</span><span class="vm">__name__</span>
+<a id="__codelineno-0-86" name="__codelineno-0-86"></a>    <span class="n">actor_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">fn</span><span class="o">.</span><span class="vm">__module__</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">actor_name</span><span class="si">}</span><span class="s2">&quot;</span>
+<a id="__codelineno-0-87" name="__codelineno-0-87"></a>
+<a id="__codelineno-0-88" name="__codelineno-0-88"></a>    <span class="k">return</span> <span class="n">dramatiq</span><span class="o">.</span><span class="n">actor</span><span class="p">(</span>
+<a id="__codelineno-0-89" name="__codelineno-0-89"></a>        <span class="n">fn</span><span class="o">=</span><span class="n">fn</span><span class="p">,</span>
+<a id="__codelineno-0-90" name="__codelineno-0-90"></a>        <span class="n">actor_class</span><span class="o">=</span><span class="n">actor_class</span><span class="p">,</span>
+<a id="__codelineno-0-91" name="__codelineno-0-91"></a>        <span class="n">actor_name</span><span class="o">=</span><span class="n">actor_name</span><span class="p">,</span>
+<a id="__codelineno-0-92" name="__codelineno-0-92"></a>        <span class="n">queue_name</span><span class="o">=</span><span class="n">queue_name</span><span class="p">,</span>
+<a id="__codelineno-0-93" name="__codelineno-0-93"></a>        <span class="n">priority</span><span class="o">=</span><span class="n">priority</span><span class="p">,</span>
+<a id="__codelineno-0-94" name="__codelineno-0-94"></a>        <span class="n">broker</span><span class="o">=</span><span class="n">_BROKER</span><span class="p">,</span>
+<a id="__codelineno-0-95" name="__codelineno-0-95"></a>        <span class="o">**</span><span class="n">options</span><span class="p">,</span>
+<a id="__codelineno-0-96" name="__codelineno-0-96"></a>    <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
       </details>
   </div>
@@ -2532,7 +2532,10 @@
 <span class="normal"><a href="#__codelineno-0-54">54</a></span>
 <span class="normal"><a href="#__codelineno-0-55">55</a></span>
 <span class="normal"><a href="#__codelineno-0-56">56</a></span>
-<span class="normal"><a href="#__codelineno-0-57">57</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-19" name="__codelineno-0-19"></a><span class="k">def</span> <span class="nf">default_broker</span><span class="p">():</span>
+<span class="normal"><a href="#__codelineno-0-57">57</a></span>
+<span class="normal"><a href="#__codelineno-0-58">58</a></span>
+<span class="normal"><a href="#__codelineno-0-59">59</a></span>
+<span class="normal"><a href="#__codelineno-0-60">60</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-19" name="__codelineno-0-19"></a><span class="k">def</span> <span class="nf">default_broker</span><span class="p">():</span>
 <a id="__codelineno-0-20" name="__codelineno-0-20"></a>    <span class="sd">&quot;&quot;&quot;</span>
 <a id="__codelineno-0-21" name="__codelineno-0-21"></a><span class="sd">    Creates a new broker as specified by the config files</span>
 <a id="__codelineno-0-22" name="__codelineno-0-22"></a><span class="sd">    &quot;&quot;&quot;</span>
@@ -2568,9 +2571,12 @@
 <a id="__codelineno-0-52" name="__codelineno-0-52"></a>            <span class="n">url</span><span class="o">=</span><span class="n">Config</span><span class="p">[</span><span class="n">BrokerConfig</span><span class="p">]</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">url</span>
 <a id="__codelineno-0-53" name="__codelineno-0-53"></a>        <span class="p">)</span>
 <a id="__codelineno-0-54" name="__codelineno-0-54"></a>
-<a id="__codelineno-0-55" name="__codelineno-0-55"></a>        <span class="n">broker</span><span class="o">.</span><span class="n">add_middleware</span><span class="p">(</span><span class="n">Results</span><span class="p">(</span><span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">))</span>
-<a id="__codelineno-0-56" name="__codelineno-0-56"></a>
-<a id="__codelineno-0-57" name="__codelineno-0-57"></a>    <span class="k">return</span> <span class="n">broker</span>
+<a id="__codelineno-0-55" name="__codelineno-0-55"></a>        <span class="n">broker</span><span class="o">.</span><span class="n">add_middleware</span><span class="p">(</span><span class="n">Results</span><span class="p">(</span>
+<a id="__codelineno-0-56" name="__codelineno-0-56"></a>            <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">,</span>
+<a id="__codelineno-0-57" name="__codelineno-0-57"></a>            <span class="n">store_results</span><span class="o">=</span><span class="kc">True</span>
+<a id="__codelineno-0-58" name="__codelineno-0-58"></a>        <span class="p">))</span>
+<a id="__codelineno-0-59" name="__codelineno-0-59"></a>
+<a id="__codelineno-0-60" name="__codelineno-0-60"></a>    <span class="k">return</span> <span class="n">broker</span>
 </code></pre></div></td></tr></table></div>
       </details>
   </div>
@@ -2594,10 +2600,7 @@ message being processed.</p>
 
       <details class="quote">
         <summary>Source code in <code>simple_uam/worker/broker.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-95"> 95</a></span>
-<span class="normal"><a href="#__codelineno-0-96"> 96</a></span>
-<span class="normal"><a href="#__codelineno-0-97"> 97</a></span>
-<span class="normal"><a href="#__codelineno-0-98"> 98</a></span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-98"> 98</a></span>
 <span class="normal"><a href="#__codelineno-0-99"> 99</a></span>
 <span class="normal"><a href="#__codelineno-0-100">100</a></span>
 <span class="normal"><a href="#__codelineno-0-101">101</a></span>
@@ -2606,19 +2609,22 @@ message being processed.</p>
 <span class="normal"><a href="#__codelineno-0-104">104</a></span>
 <span class="normal"><a href="#__codelineno-0-105">105</a></span>
 <span class="normal"><a href="#__codelineno-0-106">106</a></span>
-<span class="normal"><a href="#__codelineno-0-107">107</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-95" name="__codelineno-0-95"></a><span class="k">def</span> <span class="nf">message_metadata</span><span class="p">():</span>
-<a id="__codelineno-0-96" name="__codelineno-0-96"></a>    <span class="sd">&quot;&quot;&quot;</span>
-<a id="__codelineno-0-97" name="__codelineno-0-97"></a><span class="sd">    When called in a running actor provides a dictionary of metadata from the</span>
-<a id="__codelineno-0-98" name="__codelineno-0-98"></a><span class="sd">    message being processed.</span>
-<a id="__codelineno-0-99" name="__codelineno-0-99"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="__codelineno-0-100" name="__codelineno-0-100"></a>
-<a id="__codelineno-0-101" name="__codelineno-0-101"></a>    <span class="n">msg</span> <span class="o">=</span> <span class="n">CurrentMessage</span><span class="o">.</span><span class="n">get_current_message</span><span class="p">()</span>
-<a id="__codelineno-0-102" name="__codelineno-0-102"></a>
-<a id="__codelineno-0-103" name="__codelineno-0-103"></a>    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span>
-<a id="__codelineno-0-104" name="__codelineno-0-104"></a>        <span class="n">actor_name</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">actor_name</span><span class="p">,</span>
-<a id="__codelineno-0-105" name="__codelineno-0-105"></a>        <span class="n">message_id</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">message_id</span><span class="p">,</span>
-<a id="__codelineno-0-106" name="__codelineno-0-106"></a>        <span class="n">message_timestamp</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">message_timestamp</span><span class="p">,</span>
-<a id="__codelineno-0-107" name="__codelineno-0-107"></a>    <span class="p">)</span>
+<span class="normal"><a href="#__codelineno-0-107">107</a></span>
+<span class="normal"><a href="#__codelineno-0-108">108</a></span>
+<span class="normal"><a href="#__codelineno-0-109">109</a></span>
+<span class="normal"><a href="#__codelineno-0-110">110</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-98" name="__codelineno-0-98"></a><span class="k">def</span> <span class="nf">message_metadata</span><span class="p">():</span>
+<a id="__codelineno-0-99" name="__codelineno-0-99"></a>    <span class="sd">&quot;&quot;&quot;</span>
+<a id="__codelineno-0-100" name="__codelineno-0-100"></a><span class="sd">    When called in a running actor provides a dictionary of metadata from the</span>
+<a id="__codelineno-0-101" name="__codelineno-0-101"></a><span class="sd">    message being processed.</span>
+<a id="__codelineno-0-102" name="__codelineno-0-102"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-103" name="__codelineno-0-103"></a>
+<a id="__codelineno-0-104" name="__codelineno-0-104"></a>    <span class="n">msg</span> <span class="o">=</span> <span class="n">CurrentMessage</span><span class="o">.</span><span class="n">get_current_message</span><span class="p">()</span>
+<a id="__codelineno-0-105" name="__codelineno-0-105"></a>
+<a id="__codelineno-0-106" name="__codelineno-0-106"></a>    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span>
+<a id="__codelineno-0-107" name="__codelineno-0-107"></a>        <span class="n">actor_name</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">actor_name</span><span class="p">,</span>
+<a id="__codelineno-0-108" name="__codelineno-0-108"></a>        <span class="n">message_id</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">message_id</span><span class="p">,</span>
+<a id="__codelineno-0-109" name="__codelineno-0-109"></a>        <span class="n">message_timestamp</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">message_timestamp</span><span class="p">,</span>
+<a id="__codelineno-0-110" name="__codelineno-0-110"></a>    <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
       </details>
   </div>

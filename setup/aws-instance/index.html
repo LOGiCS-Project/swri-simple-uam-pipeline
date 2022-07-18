@@ -2447,9 +2447,9 @@ work.</p>
 <li>Microsoft Windows Server 2019 Base</li>
 </ul>
 </li>
-<li><strong>Instance Type:</strong> t2.large<ul>
-<li>2x vCPU</li>
-<li>8gb Memory</li>
+<li><strong>Instance Type:</strong> t2.xlarge<ul>
+<li>4x vCPU</li>
+<li>16gb Memory</li>
 </ul>
 </li>
 <li><strong>Key Pair:</strong> <code>&lt;ec2-keypair.name&gt;</code></li>
@@ -2468,7 +2468,6 @@ work.</p>
 </ul>
 </li>
 </ul>
-<p>This can get CPU bound, so it might make sense to bump it up.</p>
 </details>
 <details class="note">
 <summary>Corpus DB Minimum Requirements</summary>
@@ -2478,6 +2477,10 @@ worker temporarily.</p>
 <p><strong>Option 2:</strong> If you need a corpus DB for an alternate analysis
 pipeline and are fine with a non-persistent corpus then use a
 stub DB on a worker.</p>
+<div class="admonition note">
+<p>This eats about 4gb of memory so ensure that the worker has at least
+12 gb if the stub server will be up permanently.</p>
+</div>
 <p><strong>Option 3:</strong> If you need a corpus that is persistent, shared between
 multiple workers, or needs to be performant then you should set up
 janus-graph on a linux machine.</p>

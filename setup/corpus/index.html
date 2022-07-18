@@ -2494,7 +2494,9 @@ export the relevant information to a small json file and use that directly.</p>
 <p>This file is needed for many of the tasks that worker nodes will do and needs
 to be retrieved or generated.</p>
 <h2 id="repo"><strong>Option 1:</strong> Use static corpus provided in repo <em>(Recommended)</em><a class="headerlink" href="#repo" title="Permanent link">&para;</a></h2>
-<p>This is the corpus for <code>all_schema_uam.graphml</code> generated in June '22.</p>
+<blockquote>
+<p>This static corpus was generated from <code>all_schema.graphml</code> on July 15th '22.</p>
+</blockquote>
 <h3 id="repo-prereqs">Prerequisites<a class="headerlink" href="#repo-prereqs" title="Permanent link">&para;</a></h3>
 <ul>
 <li><a href="../general/">General Setup</a> has been completed.</li>
@@ -2511,7 +2513,7 @@ to be retrieved or generated.</p>
 <h3 id="copy-prereqs">Prerequisites<a class="headerlink" href="#copy-prereqs" title="Permanent link">&para;</a></h3>
 <ul>
 <li><a href="../general/">General Setup</a> has been completed.</li>
-<li>The corpus we're installing is at <code>&lt;static-corpus-loc&gt;</code>.</li>
+<li>The corpus to be installed at <code>&lt;static-corpus-loc&gt;</code>.</li>
 </ul>
 <h3 id="copy-install">Install Static Corpus<a class="headerlink" href="#copy-install" title="Permanent link">&para;</a></h3>
 <ul>
@@ -2544,24 +2546,29 @@ connecting to a corpus DB server.</p>
 </li>
 <li>
 <p><em>(Optional)</em> If you're connecting to a corpus database not running on the
-  current machine then update <code>&lt;config-dir&gt;/craidl.conf.yaml</code>.</p>
+  current machine then create or update <code>&lt;config-dir&gt;/craidl.conf.yaml</code>.</p>
 <ul>
-<li>Set <code>server_host</code> to <code>&lt;corpus-db-ip&gt;</code>.</li>
-<li>Set <code>server_port</code> to <code>&lt;corpus-db-port&gt;</code>.</li>
+<li>Set <code>server_host</code> to <code>&lt;corpus-db.ip&gt;</code>.</li>
+<li>Set <code>server_port</code> to <code>&lt;corpus-db.port&gt;</code>.</li>
 </ul>
 </li>
 </ul>
 <h3 id="generate-run">Generate Static Corpus<a class="headerlink" href="#generate-run" title="Permanent link">&para;</a></h3>
 <ul>
-<li>Ensure the server at <code>&lt;corpus-db-ip&gt;</code> is currently running.</li>
+<li>Ensure the server at <code>&lt;corpus-db.ip&gt;</code> is currently running.</li>
 <li>Generate the static corpus from that server.
   <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>pdm run craidl static-corpus.generate
 </code></pre></div></li>
 </ul>
-<p>With default settings the corpus generation and the stub server can hang
-intermittently, so the generation command periodically saves its progress.
-Just rerun the command (with the same settings) and it will resume generating
+<div class="admonition note">
+<p>The stub server seems to hang when out of memory or CPU, halting the
+serialization process.</p>
+<p>To mitigate this the generation process periodically saves the serialized
+component data and skips re-downloading saved data.
+By default every cluster of 50 components is saved to disk.</p>
+<p>Just rerun the command (with the same settings) and it will resume generating
 the corpus from the last saved cluster of components.</p>
+</div>
 <p><strong>See the section on <a href="../usage/Craidl">using Craidl</a> for information on
 how to use the generated static corpus...</strong></p>
 

@@ -603,43 +603,56 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#setup-reference-workspace" class="md-nav__link">
-    Setup Reference Workspace
+  <a href="#operation" class="md-nav__link">
+    Basic Workspace Operation
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#manage-configuration-files" class="md-nav__link">
-    Manage Configuration Files
+  <a href="#reference" class="md-nav__link">
+    The Reference Workspace
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#manage-workspaces" class="md-nav__link">
-    Manage Workspaces
+  <a href="#sessions" class="md-nav__link">
+    Provided Sessions
   </a>
+  
+    <nav class="md-nav" aria-label="Provided Sessions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#session-creo" class="md-nav__link">
+    Start Creo
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#session-gen-info" class="md-nav__link">
+    Generate Info Files
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#session-process-design" class="md-nav__link">
+    Process Design
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#run-gen_info_files-session" class="md-nav__link">
-    Run gen_info_files Session
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#run-start_creo-session" class="md-nav__link">
-    Run start_creo Session
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#run-process_design-session" class="md-nav__link">
-    Run process_design Session
+  <a href="#manage" class="md-nav__link">
+    Workspace Management
   </a>
   
 </li>
@@ -2337,43 +2350,56 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#setup-reference-workspace" class="md-nav__link">
-    Setup Reference Workspace
+  <a href="#operation" class="md-nav__link">
+    Basic Workspace Operation
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#manage-configuration-files" class="md-nav__link">
-    Manage Configuration Files
+  <a href="#reference" class="md-nav__link">
+    The Reference Workspace
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#manage-workspaces" class="md-nav__link">
-    Manage Workspaces
+  <a href="#sessions" class="md-nav__link">
+    Provided Sessions
   </a>
+  
+    <nav class="md-nav" aria-label="Provided Sessions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#session-creo" class="md-nav__link">
+    Start Creo
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#session-gen-info" class="md-nav__link">
+    Generate Info Files
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#session-process-design" class="md-nav__link">
+    Process Design
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#run-gen_info_files-session" class="md-nav__link">
-    Run gen_info_files Session
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#run-start_creo-session" class="md-nav__link">
-    Run start_creo Session
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#run-process_design-session" class="md-nav__link">
-    Run process_design Session
+  <a href="#manage" class="md-nav__link">
+    Workspace Management
   </a>
   
 </li>
@@ -2397,216 +2423,144 @@
 
 
 <h1 id="direct2cad-workspace">Direct2Cad Workspace<a class="headerlink" href="#direct2cad-workspace" title="Permanent link">&para;</a></h1>
-<div class="admonition warning">
-<p class="admonition-title">Section Incomplete</p>
-</div>
+<p>A workspace is an isolated environment for SWRi's direct2cad scripts to run in.
+Various tasks will run in a workspace and have their results bundled into a
+zip file for use by clients.</p>
+<h2 id="operation">Basic Workspace Operation<a class="headerlink" href="#operation" title="Permanent link">&para;</a></h2>
+<p>In order to describe how operations occur in a workspace we need to define a
+few concepts:</p>
 <ul>
-<li>Workspace is wrapper around d2c that provides a consistent environment for
-  SWRi's scripts to run in.<ul>
-<li>Consistent env is defined in terms of a reference workspace which is
-  static and defines the initial condition for any operation.</li>
+<li><strong>Workspace</strong>: An isolated environment, in practice a file
+  folder, in which direct2cad operations are run.</li>
+<li><strong>Session</strong>: A set of operations, python and console commands, that are run
+  within a workspace to do something, usually processing a design with
+  direct2cad.</li>
+<li><strong>Reference Workspace</strong>: This is a static, read-only workspace which is used
+  to initialize a session.</li>
+<li><strong>Active Workspace</strong>: The workspace that is currently running a session.</li>
+<li><strong>Result Archive</strong>: A zip file that contains all the output from a session.</li>
 </ul>
-</li>
-<li>You can have a "session" within a workspace with this broad flow:<ul>
-<li>Workspace is reset (restored to same file state as reference workspace)</li>
-<li>Arbitrary python code, console commands, etc.. are run<ul>
-<li>Cad pipeline, writing info to file, etc...</li>
-</ul>
-</li>
-<li>Session Metadata, Logs, Errors are written to files in the workspace
-  directory.</li>
-<li>We compare this workspace to the reference and pack any files that changed
-  (incl. the metadata and logs) into a zip file.</li>
-<li>The zip file contains the results of the session and is placed in a shared
-  folder.<ul>
-<li><code>metadata.json</code>: Metadata about machine system is run on, message
-  that prompted the request (iff non-local).</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>We provide 3 sessions:<ul>
-<li><code>tasks.start-creo</code>: Will start Creo on the worker. Exists for debug
-  purposes. Other sessions that need Creo running can start it themselves.</li>
-<li><code>tasks.gen-info-files</code>: Will generate info files using the configs in
-  <code>d2c_workspace.conf.yaml</code> and package them in a records archive.<ul>
-<li>This uses the same core operation as <code>craidl</code> and requires that be
-  set up.</li>
-<li>Some additional files in the results:<ul>
-<li><code>design_swri.json</code>: The design file.</li>
-<li><code>info_*.json</code>: Input files generated by craidl.</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><code>tasks.process-design</code>: Runs the direct2cad pipeline on the provided
-  design and generates a record archive with the result.<ul>
-<li>This uses the same core operation as <code>craidl</code> and requires that be
-  set up.</li>
-<li>Additional files in the results:<ul>
-<li>Those from <code>tasks.gen_info_files</code>.</li>
-<li>'buildCad.stdout' : Captured stdout from <code>buildcad.py</code>.</li>
-<li>'buildCad.stderr' : Captured stderr from <code>buildcad.py</code>.</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>The reference workspace:<ul>
-<li>setup w/ <code>pdm run d2c-workspace setup.reference-workspace</code>. Mostly
-  takes care of itself.</li>
-</ul>
-</li>
-<li>General Workspace Management w/ <code>pdm run d2c-workspace &lt;subcommand&gt;</code>:<ul>
-<li><code>manage.cache-dir</code>: Prints cache dir</li>
-<li><code>manage.workspaces-dir</code>: Print the root workspaces directory. By default
-  contains the reference workspaces, lock files, and live workspaces.</li>
-<li><code>manage.results-dir</code>: Print the directory where results will be stored
-  given current config.</li>
-<li><code>manage.delete-locks</code>: Deletes all extant locks for workspace management,
-  used to clear stale ones.</li>
-<li><code>manage.prune-results</code> : Deletes any results the are to old <strong>and</strong> over
-  the configured limit. (default is no limit)</li>
-</ul>
-</li>
-<li>Go over config file?</li>
-</ul>
-<div class="admonition error">
-<p class="admonition-title">Below Info Out of Date</p>
-</div>
-<p>A workspace is an environment (i.e. folder) set up so that SWRi's direct2cad
-pipeline can run within it.</p>
-<p>Each workspace has session where commands are run and any changes from a
-clean workspace (like output cad or data files) are saved to a zipfile and
-moved to a storage directory.</p>
-<p>You can run these sessions locally through code or console commands.</p>
-<p>There are 3 provided sessions:</p>
-<p>These tasks only function on a worker node set up as <a href="../../setup/worker/">here</a>.</p>
-<p>In addition before running any sessions, a reference workspace must be set up
-to serve as the basis for any 'live' workspaces.</p>
-<h3 id="setup-reference-workspace">Setup Reference Workspace<a class="headerlink" href="#setup-reference-workspace" title="Permanent link">&para;</a></h3>
+<p>The flow is as follows:</p>
+<pre class="mermaid"><code>sequenceDiagram
+    autonumber
+    participant S as Session
+    participant A as Active&lt;br/&gt;Workspace
+    participant R as Reference&lt;br/&gt;Workspace
+    participant O as Results&lt;br/&gt;Directory
+    S --&gt; A : Acquire&lt;br/&gt;Lock
+    activate A
+    R -&gt;&gt; A : Reset Active&lt;br&gt;Workspace
+    Note over S,A: Perform session operations, e.g:&lt;br/&gt;gen info files, start Creo,&lt;br/&gt;run FDM, etc..
+    S --&gt; A : Write "metadata.json"&lt;br/&gt;to Active Workspace
+    R -&gt;&gt; A : Compare&lt;br/&gt;Workspaces
+    A -&gt;&gt; O : Write Changed Files&lt;br/&gt;to Result Archive
+    A --&gt; S : Release&lt;br/&gt;Lock
+    deactivate A</code></pre>
+<ol>
+<li><strong>Acquire Lock</strong>: Each active workspace has a lock that prevents multiple
+   processes and threads from using it at simultaneously.
+   The session acquires the lock for the first available workspace or
+   fails with an error if none are available.</li>
+<li><strong>Reset Workspace</strong>: We use <code>rsync</code> to make sure the active workspace is a
+   perfect copy of the reference workspace for the various session operations.</li>
+<li><strong>Write <code>metadata.json</code></strong>: The <code>metadata.json</code> file will end up in the
+   result archive, with information about the worker node, the specific workspace
+   being used, and whatever metadata the session was given when it was
+   initialized.</li>
+<li><strong>Compare Workspaces</strong>: Use <code>rsync</code> to get a list of files that have changed
+   relative to the reference workspace.</li>
+<li><strong>Write Results</strong>: Make zip archive with all the changes and place it in the
+   results directory.</li>
+<li><strong>Release Lock</strong>: Allow other sessions or processes to use the workspace
+   again.</li>
+</ol>
+<h2 id="reference">The Reference Workspace<a class="headerlink" href="#reference" title="Permanent link">&para;</a></h2>
+<p>Run the following to initialize or update the reference workspace:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pdm run d2c-workspace setup.reference-workspace
+</code></pre></div>
+<p>This shouldn't be run when there are any ongoing sessions.</p>
+<h2 id="sessions">Provided Sessions<a class="headerlink" href="#sessions" title="Permanent link">&para;</a></h2>
+<p>There are three basic sessions provided with SimpleUAM, though more can be
+added by modifying <a href="../../reference/simple_uam/direct2cad/session/#simple_uam.direct2cad.session.D2CSession"><code>simple_uam.direct2cad.D2CSession</code></a>.</p>
+<h3 id="session-creo">Start Creo<a class="headerlink" href="#session-creo" title="Permanent link">&para;</a></h3>
+<p>Starts Creo and the creoson server on the worker.
+This is mostly useful for testing, the other sessions that need to start Creo
+will do it automatically.
+Run with the following:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>pdm run d2c-workspace tasks.start-creo
+</code></pre></div>
+<p>A mostly empty result archive will be written to the results directory when
+the session is finished.</p>
+<p>Arguments:</p>
 <ul>
-<li>In admin powershell at <code>&lt;repo-root&gt;</code>.<ul>
-<li>Run: <code>pdm run d2c-workspace setup.reference-workspace</code></li>
+<li><strong><code>--output=FILE</code></strong>: Write the output metadata to <code>FILE</code>.
+  Metadata will be printed to console if not provided.</li>
+<li><strong><code>--workspace=NUM</code></strong>: Use workspace <code>NUM</code> if available.
+  The first available workspace will be used if not provided.</li>
 </ul>
-</li>
-</ul>
-<h3 id="manage-configuration-files">Manage Configuration Files<a class="headerlink" href="#manage-configuration-files" title="Permanent link">&para;</a></h3>
-<p>The configs in <code>&lt;config-dir&gt;/d2c_workspace.conf.yaml</code> control workspace
-locations, the settings for craidl's <code>gen_info_files</code>, and where records are
-stored.</p>
+<h3 id="session-gen-info">Generate Info Files<a class="headerlink" href="#session-gen-info" title="Permanent link">&para;</a></h3>
+<p>Uses the craidl code to generate info files for a design albeit within a
+session that writes the results to an archive in the results directory.
+With a <code>design_swri.json</code> at <code>&lt;design-loc&gt;</code>, run with:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>pdm run d2c-workspace tasks.gen-info-files --input<span class="o">=</span>&lt;design-loc&gt;
+</code></pre></div>
+<p>The output result archive will contain:</p>
 <ul>
-<li>Examine loaded config with <code>pdm run suam-config print --config=d2c_workspace -r</code></li>
+<li><strong><code>metadata.json</code></strong>: Assorted metadata from this session.</li>
+<li><strong><code>design_swri.json</code></strong>: The design file.</li>
+<li><strong><code>info_*.json</code></strong>: Input files generated by craidl.</li>
 </ul>
-<p>See <a href="../config/">here</a> for more information on config files.</p>
-<div class="admonition important">
-<p class="admonition-title">Important</p>
-<p>Make sure the <code>records_dir</code> is set how you want. That is where all the
-results archives will go.
-If you don't want it to be a sub-directory of <code>workspaces_dir</code> make sure
-<code>records_dir</code> is an absolute path.</p>
-</div>
-<h3 id="manage-workspaces">Manage Workspaces<a class="headerlink" href="#manage-workspaces" title="Permanent link">&para;</a></h3>
-<p>Get the cache directory for these workspaces.</p>
+<p>Arguments:</p>
 <ul>
-<li>In admin powershell at <code>&lt;repo-root&gt;</code>.<ul>
-<li>Run: <code>pdm run d2c-workspace manage.cache-dir</code></li>
+<li><strong><code>--output=FILE</code></strong>: Write the output metadata to <code>FILE</code>.
+  Metadata will be printed to console if not provided.</li>
+<li><strong><code>--workspace=NUM</code></strong>: Use workspace <code>NUM</code> if available.
+  The first available workspace will be used if not provided.</li>
 </ul>
-</li>
-</ul>
-<p>Get the root directory of the reference workspace and the live workspaces.</p>
+<h3 id="session-process-design">Process Design<a class="headerlink" href="#session-process-design" title="Permanent link">&para;</a></h3>
+<p>This processes an input design with the direct2cad pipeline.
+With a <code>design_swri.json</code> at <code>&lt;design-loc&gt;</code>, run with:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>pdm run d2c-workspace tasks.gen-info-files --input<span class="o">=</span>&lt;design-loc&gt;
+</code></pre></div>
+<p>The output result archive will contain:</p>
 <ul>
-<li>In admin powershell at <code>&lt;repo-root&gt;</code>.<ul>
-<li>Run: <code>pdm run d2c-workspace manage.cache-dir</code></li>
+<li>The additional files from <code>gen-info-files</code>.</li>
+<li>Various CAD files and outputs from the direct2cad pipeline.</li>
+<li><strong><code>buildcad.stdout</code></strong>: The output stream from <code>buildCad.py</code>.</li>
+<li><strong><code>buildcad.stderr</code></strong>: The error stream from <code>buildCad.py</code>.</li>
 </ul>
-</li>
-</ul>
-<p>Get the records directory for these workspaces. This is where the zip files with
-data from each session will go.</p>
+<p>Arguments:</p>
 <ul>
-<li>In admin powershell at <code>&lt;repo-root&gt;</code>.<ul>
-<li>Run: <code>pdm run d2c-workspace manage.records-dir</code></li>
+<li><strong><code>--output=FILE</code></strong>: Write the output metadata to <code>FILE</code>.
+  Metadata will be printed to console if not provided.</li>
+<li><strong><code>--workspace=NUM</code></strong>: Use workspace <code>NUM</code> if available.
+  The first available workspace will be used if not provided.</li>
 </ul>
-</li>
-</ul>
+<h2 id="manage">Workspace Management<a class="headerlink" href="#manage" title="Permanent link">&para;</a></h2>
+<p>Get the cache directory for these workspaces:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>pdm run d2c-workspace manage.cache-dir
+</code></pre></div>
+<p>Get the root directory of the reference workspace and the live workspaces:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>pdm run d2c-workspace manage.workspaces-dir
+</code></pre></div>
+<p>Get the records directory for these workspaces.
+This is where the zip files with
+data from each session will go.
+Run with:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>pdm run d2c-workspace manage.records-dir
+</code></pre></div>
 <p>Prune the records directory by deleting old records until only the configured
-maximum are present. It will not delete records that are newer than the
-configured <code>min_staletime</code>.</p>
-<ul>
-<li>In admin powershell at <code>&lt;repo-root&gt;</code>.<ul>
-<li>Run: <code>pdm run d2c-workspace manage.prune-records</code></li>
-</ul>
-</li>
-</ul>
+maximum are present.
+It will not delete records that are newer than the
+configured <code>min_staletime</code>.
+Run with:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>pdm run d2c-workspace manage.prune-records
+</code></pre></div>
 <p>Delete any file system locks that might have gotten left behind. These
 usually prevent multiple processes from taking control of the same live
-workspace.</p>
-<ul>
-<li>In admin powershell at <code>&lt;repo-root&gt;</code>.<ul>
-<li>Run: <code>pdm run d2c-workspace manage.delete-locks</code></li>
-</ul>
-</li>
-</ul>
-<h3 id="run-gen_info_files-session">Run <code>gen_info_files</code> Session<a class="headerlink" href="#run-gen_info_files-session" title="Permanent link">&para;</a></h3>
-<p>This requires <a href="../craidl/">craidl</a> to be properly set up including having a
-static corpus or graph server set up as needed.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nb">PS </span><span class="n">D</span><span class="p">:\</span><span class="n">simple-uam</span><span class="p">&gt;</span> <span class="n">pdm</span> <span class="n">run</span> <span class="n">d2c-workspace</span> <span class="n">tasks</span><span class="p">.</span><span class="n">gen-info-files</span> <span class="p">-</span><span class="n">-help</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">Usage</span><span class="p">:</span> <span class="n">pdm</span> <span class="n">run</span> <span class="n">d2c-workspace</span> <span class="p">[-</span><span class="n">-core-opts</span><span class="p">]</span> <span class="n">tasks</span><span class="p">.</span><span class="n">gen-info-files</span> <span class="p">[-</span><span class="n">-options</span><span class="p">]</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">Docstring</span><span class="p">:</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>  <span class="n">Will</span> <span class="nb">write </span><span class="n">the</span> <span class="n">design</span> <span class="n">info</span> <span class="n">files</span> <span class="k">in</span> <span class="n">the</span> <span class="n">specified</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>  <span class="n">workspace</span><span class="p">,</span> <span class="n">and</span> <span class="n">create</span> <span class="n">a</span> <span class="n">new</span> <span class="n">result</span> <span class="n">archive</span> <span class="n">with</span> <span class="n">only</span> <span class="n">the</span> <span class="n">newly</span> <span class="n">written</span> <span class="n">data</span><span class="p">.</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>  <span class="n">The</span> <span class="n">workspace</span> <span class="n">will</span> <span class="n">be</span> <span class="n">reset</span> <span class="n">on</span> <span class="n">the</span> <span class="n">next</span> <span class="n">run</span><span class="p">.</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>  <span class="n">Arguments</span><span class="p">:</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">input</span><span class="p">:</span> <span class="n">The</span> <span class="n">design</span> <span class="n">file</span> <span class="n">to</span> <span class="n">read</span> <span class="k">in</span><span class="p">.</span>
-<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="n">workspace</span><span class="p">:</span> <span class="n">The</span> <span class="n">workspace</span> <span class="n">to</span> <span class="n">run</span> <span class="n">this</span> <span class="n">operation</span> <span class="k">in</span><span class="p">.</span>
-<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    <span class="n">output</span><span class="p">:</span> <span class="n">File</span> <span class="n">to</span> <span class="nb">write </span><span class="n">output</span> <span class="n">session</span> <span class="n">metadata</span> <span class="n">to</span><span class="p">,</span> <span class="n">prints</span> <span class="n">to</span> <span class="n">stdout</span> <span class="k">if</span>
-<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>      <span class="n">not</span> <span class="n">specified</span><span class="p">.</span>
-<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>
-<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="n">Options</span><span class="p">:</span>
-<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>  <span class="n">-i</span> <span class="n">STRING</span><span class="p">,</span> <span class="p">-</span><span class="n">-input</span><span class="p">=</span><span class="n">STRING</span>
-<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>  <span class="n">-o</span> <span class="n">STRING</span><span class="p">,</span> <span class="p">-</span><span class="n">-output</span><span class="p">=</span><span class="n">STRING</span>
-<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>  <span class="n">-w</span> <span class="n">STRING</span><span class="p">,</span> <span class="p">-</span><span class="n">-workspace</span><span class="p">=</span><span class="n">STRING</span>
-</code></pre></div>
-<h3 id="run-start_creo-session">Run <code>start_creo</code> Session<a class="headerlink" href="#run-start_creo-session" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nb">PS </span><span class="n">D</span><span class="p">:\</span><span class="n">simple-uam</span><span class="p">&gt;</span> <span class="n">pdm</span> <span class="n">run</span> <span class="n">d2c-workspace</span> <span class="n">tasks</span><span class="p">.</span><span class="nb">start-creo</span> <span class="p">-</span><span class="n">-help</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">Usage</span><span class="p">:</span> <span class="n">pdm</span> <span class="n">run</span> <span class="n">d2c-workspace</span> <span class="p">[-</span><span class="n">-core-opts</span><span class="p">]</span> <span class="n">tasks</span><span class="p">.</span><span class="nb">start-creo</span> <span class="p">[-</span><span class="n">-options</span><span class="p">]</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">Docstring</span><span class="p">:</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>  <span class="nb">Start </span><span class="n">creo</span> <span class="n">within</span> <span class="n">the</span> <span class="n">specified</span> <span class="n">workspace</span><span class="p">,</span> <span class="n">whichever</span><span class="err">&#39;</span><span class="n">s</span> <span class="n">available</span> <span class="k">if</span>
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>  <span class="n">none</span><span class="p">.</span>
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>
-<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>  <span class="n">Arguments</span><span class="p">:</span>
-<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>    <span class="n">workspace</span><span class="p">:</span> <span class="n">The</span> <span class="n">workspace</span> <span class="n">to</span> <span class="n">run</span> <span class="n">this</span> <span class="n">operation</span> <span class="k">in</span><span class="p">.</span>
-<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>    <span class="n">output</span><span class="p">:</span> <span class="n">File</span> <span class="n">to</span> <span class="nb">write </span><span class="n">output</span> <span class="n">session</span> <span class="n">metadata</span> <span class="n">to</span><span class="p">,</span> <span class="n">prints</span> <span class="n">to</span> <span class="n">stdout</span> <span class="k">if</span>
-<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>      <span class="n">not</span> <span class="n">specified</span><span class="p">.</span>
-<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>
-<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="n">Options</span><span class="p">:</span>
-<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>  <span class="n">-o</span> <span class="n">STRING</span><span class="p">,</span> <span class="p">-</span><span class="n">-output</span><span class="p">=</span><span class="n">STRING</span>
-<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>  <span class="n">-w</span> <span class="n">STRING</span><span class="p">,</span> <span class="p">-</span><span class="n">-workspace</span><span class="p">=</span><span class="n">STRING</span>
-</code></pre></div>
-<h3 id="run-process_design-session">Run <code>process_design</code> Session<a class="headerlink" href="#run-process_design-session" title="Permanent link">&para;</a></h3>
-<p>This requires <a href="../craidl/">craidl</a> to be properly set up including having a
-static corpus or graph server set up as needed.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nb">PS </span><span class="n">D</span><span class="p">:\</span><span class="n">simple-uam</span><span class="p">&gt;</span> <span class="n">pdm</span> <span class="n">run</span> <span class="n">d2c-workspace</span> <span class="n">tasks</span><span class="p">.</span><span class="k">process</span><span class="n">-design</span> <span class="p">-</span><span class="n">-help</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">Usage</span><span class="p">:</span> <span class="n">pdm</span> <span class="n">run</span> <span class="n">d2c-workspace</span> <span class="p">[-</span><span class="n">-core-opts</span><span class="p">]</span> <span class="n">tasks</span><span class="p">.</span><span class="k">process</span><span class="n">-design</span> <span class="p">[-</span><span class="n">-options</span><span class="p">]</span>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">Docstring</span><span class="p">:</span>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>  <span class="n">Runs</span> <span class="n">the</span> <span class="n">direct2cad</span> <span class="n">pipeline</span> <span class="n">on</span> <span class="n">the</span> <span class="n">input</span> <span class="n">design</span> <span class="n">files</span><span class="p">,</span> <span class="n">producing</span> <span class="n">output</span>
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>  <span class="n">metadata</span> <span class="n">and</span> <span class="n">a</span> <span class="n">records</span> <span class="n">archive</span> <span class="n">with</span> <span class="n">all</span> <span class="n">the</span> <span class="n">generated</span> <span class="n">files</span><span class="p">.</span>
-<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>
-<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>  <span class="n">Arguments</span><span class="p">:</span>
-<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>    <span class="n">design</span><span class="p">:</span> <span class="n">The</span> <span class="n">design</span> <span class="n">file</span> <span class="n">to</span> <span class="n">read</span> <span class="k">in</span><span class="p">.</span>
-<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>    <span class="n">workspace</span><span class="p">:</span> <span class="n">The</span> <span class="n">workspace</span> <span class="n">to</span> <span class="n">run</span> <span class="n">this</span> <span class="n">operation</span> <span class="k">in</span><span class="p">.</span>
-<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>    <span class="n">output</span><span class="p">:</span> <span class="n">File</span> <span class="n">to</span> <span class="nb">write </span><span class="n">output</span> <span class="n">session</span> <span class="n">metadata</span> <span class="n">to</span><span class="p">,</span> <span class="n">prints</span> <span class="n">to</span> <span class="n">stdout</span> <span class="k">if</span>
-<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>      <span class="n">not</span> <span class="n">specified</span><span class="p">.</span>
-<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>
-<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="n">Options</span><span class="p">:</span>
-<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>  <span class="n">-i</span> <span class="n">STRING</span><span class="p">,</span> <span class="p">-</span><span class="n">-input</span><span class="p">=</span><span class="n">STRING</span>
-<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>  <span class="n">-o</span> <span class="n">STRING</span><span class="p">,</span> <span class="p">-</span><span class="n">-output</span><span class="p">=</span><span class="n">STRING</span>
-<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>  <span class="n">-w</span> <span class="n">STRING</span><span class="p">,</span> <span class="p">-</span><span class="n">-workspace</span><span class="p">=</span><span class="n">STRING</span>
+workspace.
+Run with:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>pdm run d2c-workspace manage.delete-locks<span class="sb">`</span>
 </code></pre></div>
 
               
