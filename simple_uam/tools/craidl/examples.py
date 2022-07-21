@@ -8,11 +8,15 @@ from simple_uam.util.config import Config, PathConfig, CraidlConfig, \
     AuthConfig, CorpusConfig
 from simple_uam.util.logging import get_logger
 from simple_uam.util.system import Git
+from simple_uam.craidl.corpus import GremlinCorpus, StaticCorpus, get_corpus
+from simple_uam.craidl.designs import GremlinDesignCorpus, StaticDesignCorpus
 
 from typing import Tuple
 
 from pathlib import Path
 
+import tempfile
+import json
 import random
 import subprocess
 
@@ -244,3 +248,89 @@ def examples_dir(ctx):
     Print the current examples directory.
     """
     print(str(example_path))
+
+
+@task
+def list_corpus_db_examples(ctx,
+                            host = None,
+                            port = None):
+    """
+    Lists the designs that are on a corpus DB
+
+    Arguments:
+      host: The hostname of the server we connect to.
+      port: The port we're connecting to the server on.
+
+    All arguments will default to values from 'CraidlConfig' if not
+    specified.
+    """
+
+    ### Normalize Args
+
+    if host == None:
+        host = Config[CraidlConfig].server_host
+
+    if port == None:
+        port = Config[CraidlConfig].server_port
+
+    design_corpus = GremlinDesignCorpus(host=host, port=port)
+
+    try:
+        for design_name in design_corpus.designs:
+            print(design_name)
+    finally:
+        design_corpus.close()
+
+@task(iterable=['name'])
+def install_corpus_db_examples(ctx,
+                               name = None,
+                               host = None,
+                               port = None):
+    """
+    Lists the designs that are on a corpus DB
+
+    Arguments:
+      name: Name of the example to download, defaults to all.
+      host: The hostname of the server we connect to.
+      port: The port we're connecting to the server on.
+
+    `host` and `port` will default to values from 'CraidlConfig' if not
+    specified.
+    """
+
+    if host == None:
+        host = Config[CraidlConfig].server_host
+
+    if port == None:
+        port = Config[CraidlConfig].server_port
+
+    design_corpus = GremlinDesignCorpus(host=host, port=port)
+
+    try:
+        examples = name
+
+        if not examples:
+            log.info("Getting list of examples from DB")
+            examples = design_corpus.designs
+
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            tmp_dir = Path(tmp_dir)
+            tmp_dir.mkdir(parents=True, exist_ok=True)
+
+            for example in examples:
+                log.info(f"Reading {example} from DB")
+                design_rep = design_corpus[example].rendered()
+
+                tmp_file = tmp_dir / f"{example}.json"
+                tmp_file.unlink(missing_ok=True)
+
+                with tmp_file.open("w") as tmp:
+                    json.dump(design_rep, tmp, indent="  ")
+
+                add_examples(
+                    ctx,
+                    input=tmp_file,
+                    name=example,
+                )
+    finally:
+        design_corpus.close()

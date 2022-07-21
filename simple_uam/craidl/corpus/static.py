@@ -194,6 +194,9 @@ class StaticCorpus(CorpusReader):
     def __getitem__(self, comp : str) -> ComponentReader:
         return StaticComponent.from_rep(self.rep[comp])
 
+    def __contains__(self, comp : str) -> bool:
+        return comp in self.rep[comp]
+
     @property
     def components(self) -> Iterator[ComponentReader]:
         return self.rep.keys()

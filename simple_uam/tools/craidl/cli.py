@@ -35,12 +35,17 @@ def main(args: Optional[List[str]] = None) -> int:
     sri_ns.add_task(examples.download_examples, "download")
     sri_ns.add_task(examples.install_examples, "install")
 
+    corpus_db_ns = Collection()
+    corpus_db_ns.add_task(examples.list_corpus_db_examples, "list")
+    corpus_db_ns.add_task(examples.install_corpus_db_examples, "install")
+
     examples_ns = Collection()
     examples_ns.add_task(examples.list_examples, 'list')
     examples_ns.add_task(examples.add_examples, 'add')
     examples_ns.add_task(examples.clean_examples, 'clean')
     examples_ns.add_task(examples.examples_dir, 'dir')
     examples_ns.add_collection(sri_ns, 'sri')
+    examples_ns.add_collection(corpus_db_ns, 'corpus_db')
 
     server_ns = Collection()
     server_ns.add_task(stub_server.download_server, 'download')
