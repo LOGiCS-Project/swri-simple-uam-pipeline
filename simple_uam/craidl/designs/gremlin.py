@@ -14,6 +14,7 @@ from gremlin_python.process.traversal import T, Order, Cardinality, Column, \
 
 from .abstract  import *
 from .static    import *
+from ..gremlin import GremlinConnection
 import time
 import json
 
@@ -209,88 +210,11 @@ class GremlinDesignCorpus(AbstractDesignCorpus):
     A corpus that is backed by a gremlin compatible server.
     """
 
-    host : Optional[str] = field(
-        default=None,
-    )
-
-    port : Optional[int] = field(
-        default=None,
-    )
-
-    conn_timeout : int = field(
-        default=300000,
-    )
-    """ Connection timeout in ms. """
-
-    eval_timeout : int = field(
-        default=120000,
-    )
-    """ Single query timeout in ms. """
-
-    url : str = field(
-        init=False,
-    )
-
-    @url.default
-    def _default_url(self):
-        host = self.host or 'localhost'
-        port = self.port or 8182
-        return f"ws://{host}:{port}/gremlin"
-
-    remote = field(
-        init=False,
-    )
-
-    @remote.default
-    def init_remote(self):
-        log.info(
-            'Creating Remote to Gremlin server...',
-            server=self.url,
-        )
-        return DriverRemoteConnection(self.url,'g')
-
-
-    conn = field(
-        init=False,
-    )
-
-    @conn.default
-    def init_conn(self):
-        log.info(
-            'Starting Connection...',
-            server=self.url,
-        )
-        return traversal().withRemote(self.remote)
-
-    start_time : float = field(
-        init=False,
-    )
-
-    @start_time.default
-    def _start_time_default(self):
-        return time.monotonic()
+    conn : GremlinConnection = field()
 
     @property
     def g(self):
-        curr_time = time.monotonic()
-        elapsed = curr_time - self.start_time
-        if elapsed > self.conn_timeout:
-            log.info(
-                "Connection timeout met, creating new connection.",
-                start_time = self.start_time,
-                curr_time = curr_time,
-                elapsed = elapsed,
-                conn_timeout = self.conn_timeout,
-            )
-            self.remote.close()
-            self.remote = self.init_remote()
-            self.conn = self.init_conn()
-            self.start_time = time.monotonic()
-
-        return self.conn.with_('evaluationTimeout', self.eval_timeout)
-
-    def close(self):
-        self.remote.close()
+        return conn.g
 
     def __getitem__(self, design : str) -> GremlinDesign:
         return GremlinDesign(self, design)
@@ -300,6 +224,5 @@ class GremlinDesignCorpus(AbstractDesignCorpus):
 
     @property
     def designs(self) -> Iterator[str]:
-
         return self.g.V().hasLabel('[avm]Design') \
                    .values('[]Name').toList()

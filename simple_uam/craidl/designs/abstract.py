@@ -1,14 +1,22 @@
-from attrs import define, frozen, field
-from typing import List, Dict, Any, Iterator, Tuple, Optional
+from attrs import define, frozen, field, setters
+from typing import List, Dict, Set, Any, Iterator, Tuple, Optional
 from abc import ABC, abstractmethod
 from simple_uam.craidl.corpus.abstract import CorpusReader
 
 @define
-class DesignParameterProperty():
+class DesignProperty():
     instance_name : str = field()
     property_name : str = field()
 
-    def rendered(self) -> object:
+    @staticmethod
+    def from_rep(rep : object) -> 'DesignProperty':
+        return DesignProperty(
+            instance_name = rep['component_name'],
+            property_name = rep['component_property'],
+        )
+
+    @property
+    def rep(self) -> object:
         """
         This parameter as a JSON serializable object.
         """
@@ -17,60 +25,71 @@ class DesignParameterProperty():
             component_property = self.property_name,
         )
 
-class AbstractDesignParameter(ABC):
+@define
+class DesignParameter():
     """
     Abstract interface representing a single parameter in a design
     """
 
-    @property
-    @abstractmethod
-    def name(self) -> str:
-        """
-        The parameter name.
-        """
-        ...
+    name : str = field(
+        on_setattr = setters.frozen,
+    )
+    """
+    The parameter name.
+    """
 
-    @property
-    @abstractmethod
-    def value(self) -> str:
-        """
-        The parameter vanlue.
-        """
-        ...
+    value : str = field(
+        on_setattr = setters.frozen,
+    )
+    """
+    The parameter value.
+    """
 
-    @property
-    @abstractmethod
-    def properties(self) -> List[DesignParameterProperty]:
-        """
-        A map from component name to property name with this parameter.
-        """
-        ...
+    properties : Set[DesignProperty] = field(
+        factory = set,
+    )
+    """
+    A set of properties bound to this parameter.
+    """
 
     @property
     def component_properties(self) -> List[Dict[str,str]]:
         """
         The rendered component properties with members as tuples
         """
-        return [prop.rendered() for prop in self.properties]
+        return [prop.rep for prop in self.properties]
 
     @component_properties.setter
     def component_properties(self, props : List[Dict[str,str]]):
-        self.properties = [
-            DesignParameterProperty(
-                instance_name = prop['component_name'],
-                property_name = prop['component_property']
-            )
+        self.properties = {
+            DesignProperty.from_rep(prop)
             for prop in props
-        ]
+        }
 
-    @abstractmethod
-    def add_property(self, prop: DesignParameterProperty):
+    def add_property(self, prop: DesignProperty):
         """
         Adds a single property to the list of component properties.
         """
-        ...
+        self.properties.add(prop)
 
-    def rendered(self) -> object:
+    def add_property_rep(self, prop_rep : object):
+        """
+        Adds a single property to the list of component properties.
+        """
+        self.add_property(DesignProperty.from_rep(prop_rep))
+
+    @staticmethod
+    def from_rep(rep: object) -> 'DesignParameter':
+        out = DesignParameter(
+            name = rep['parameter_name'],
+            value = rep['value'],
+        )
+
+        out.component_properties = rep['component_properties']
+        return out
+
+    @property
+    def rep(self) -> object:
         """
         This parameter as a JSON serializable object.
         """
@@ -102,36 +121,38 @@ class AbstractDesignParameter(ABC):
                 if not corpus[comp_name].has_param(prop.property_name):
                     raise RuntimeError(f"Component {comp_name} does not have parameter {prop.property_name}")
 
-class AbstractDesignComponent(ABC):
+@frozen
+class DesignComponent():
     """
-    Abstract interface representing a single component in a design.
+    A single component in a design.
     """
 
-    @property
-    @abstractmethod
-    def instance(self) -> str:
-        """
-        The name of the component instance
-        """
-        ...
+
+    instance : str = field()
+    """
+    The name of the component instance
+    """
+
+    type : Optional[str] = field(default = None)
+    """
+    The type of the component instance
+    """
+
+    choice : str = field()
+    """
+    The choice of the component instance
+    """
+
+    @staticmethod
+    def from_rep(rep : object) -> 'DesignComponent':
+        return DesignComponent(
+            instance = rep['component_instance'],
+            choice = rep['component_choice'],
+            type = rep.get('component_type',None),
+        )
 
     @property
-    @abstractmethod
-    def type(self) -> Optional[str]:
-        """
-        The type of the component instance
-        """
-        ...
-
-    @property
-    @abstractmethod
-    def choice(self) -> str:
-        """
-        The choice of the component instance
-        """
-        ...
-
-    def rendered(self) -> object:
+    def rep(self) -> object:
         """
         This component as a JSON serializable object.
         """
@@ -154,7 +175,7 @@ class AbstractDesignComponent(ABC):
         if corpus and self.choice not in corpus:
             raise RuntimeError(f"Component Type {self.choice} not found in corpus.")
 
-@frozen
+@frozen(order=True)
 class DesignConnector():
     """
     A single connector in a connection
@@ -190,28 +211,69 @@ class DesignConnector():
             if self.conn_type not in corpus[comp_name].connections:
                 raise RuntimeError(f"Component {comp_name} does not have connection {self.conn_type}")
 
-class AbstractDesignConnection(ABC):
+@frozen
+class DesignConnection():
     """
     A connection between two connectors in the abstract
     """
 
+    _side_a : DesignConnector = field(
+    )
+
+    _side_b : DesignConnector = field(
+    )
+
+    _flipped : bool = field(
+        eq=False,
+        order=False,
+        hash=False,
+    )
+
+    def __init__(self, from_side, to_side):
+
+        side_a = from_side
+        side_b = to_side
+        flipped = False
+        if side_b < side_a:
+            side_a = to_side
+            side_b = from_side
+            flipped = True
+
+        return self.__attrs_init__(
+            side_a=side_a,
+            side_b=side_b,
+            flipped=flipped,
+        )
+
     @property
-    @abstractmethod
     def from_side(self) -> DesignConnector:
         """
         Connector on the from side of the connection.
         """
-        ...
+        return self._side_b if self._flipped else self._side_a
 
     @property
-    @abstractmethod
     def to_side(self) -> DesignConnector:
         """
         Connector on the to side of the connection.
         """
-        ...
+        return self._side_b if self._flipped else self._side_a
 
-    def rendered(self) -> object:
+    @staticmethod
+    def from_rep(rep : object) -> 'DesignConnection':
+        return DesignConnection(
+            from_side=DesignConnector(
+                instance=rep['from_ci'],
+                conn_type=rep['from_conn'],
+            ),
+            to_side=DesignConnector(
+                instance=rep['to_ci'],
+                conn_type=rep['to_conn'],
+            ),
+        )
+
+    @property
+    def rep(self) -> object:
         """
         This connection as a JSON serializable object.
         """
@@ -270,20 +332,20 @@ class AbstractDesign(ABC):
 
     @property
     @abstractmethod
-    def parameter_dict(self) -> Dict[str,AbstractDesignParameter]:
+    def parameter_dict(self) -> Dict[str,DesignParameter]:
         """
         A dict of  all the parameters in the design
         """
         ...
 
     @property
-    def parameters(self) -> Iterator[AbstractDesignParameter]:
+    def parameters(self) -> Iterator[DesignParameter]:
         """
         An iterator of all the parameters in the design
         """
         return self.parameter_dict.values()
 
-    def parameter(self, name : str) -> AbstractDesignParameter:
+    def parameter(self, name : str) -> DesignParameter:
         """
         Accessor for a specific parameter.
         """
@@ -297,20 +359,20 @@ class AbstractDesign(ABC):
 
     @property
     @abstractmethod
-    def component_dict(self) -> Dict[str,AbstractDesignComponent]:
+    def component_dict(self) -> Dict[str,DesignComponent]:
         """
         A dict of  all the components in the design
         """
         ...
 
     @property
-    def components(self) -> Iterator[AbstractDesignComponent]:
+    def components(self) -> Iterator[DesignComponent]:
         """
         An iterator of all the components in the design
         """
         return self.component_dict.values()
 
-    def component(self, name : str) -> AbstractDesignComponent:
+    def component(self, name : str) -> DesignComponent:
         """
         Accessor for a specific component.
         """
@@ -324,64 +386,21 @@ class AbstractDesign(ABC):
 
     @property
     @abstractmethod
-    def connection_dict(self) -> Dict[DesignConnector, AbstractDesignConnection]:
-        """
-        A dictionary of connectors to abstract connections, only connections
-        where the connector is the front connector are printed.
-        """
-
-    @property
-    def connections(self) -> Iterator[AbstractDesignConnection]:
+    def connections(self) -> Iterator[DesignConnection]:
         """
         De-duplicated list of connections in this component
         """
-        for from_side, conn in self.connection_dict.items():
-            if conn.from_side == from_side:
-                yield conn
+        ...
 
-    def connection(self, side: DesignConnector) -> AbstractDesignConnection:
-        """
-        Accessor for a specific connection.
-        """
-        return self.connection_dict[side]
-
-    def has_connection(self, side: DesignConnector) -> AbstractDesignConnection:
-        """
-        Does a specific connection exist?
-        """
-        return side in self.connection_dict
-
-    def add_connection(self, conn: AbstractDesignConnection):
+    @abstractmethod
+    def add_connection(self, conn: DesignConnection):
         """
         Adds a connection to this component properly.
         """
+        ...
 
-        # Defer write so you can catch errors w/o leaving things in an
-        # invalid state.
-        f_conn = None
-        t_conn = None
-
-        if conn.from_side not in self.connection_dict:
-            f_conn = conn
-        else:
-            other = self.connection_dict[conn.from_side]
-            if not (conn == other or conn.is_flipped(other)):
-                raise RuntimeError(f"Connection already exists at: {conn.from_side}")
-
-        if conn.to_side not in self.connection_dict:
-            t_conn = conn
-        else:
-            other = self.connection_dict[conn.to_side]
-            if not (conn == other or conn.is_flipped(other)):
-                raise RuntimeError(f"Connection already exists at: {conn.to_side}")
-
-        if f_conn:
-            self.connection_dict[conn.from_side] = f_conn
-
-        if t_conn:
-            self.connection_dict[conn.to_side] = t_conn
-
-    def rendered(self) -> object:
+    @property
+    def rep(self) -> object:
         """
         Render the design into a JSON serialazable object.
         """
@@ -389,9 +408,9 @@ class AbstractDesign(ABC):
         return dict(
             name = self.name,
             extra = self.extra,
-            parameters  = [param.rendered() for param in self.parameters ],
-            components  = [comp.rendered()  for comp  in self.components ],
-            connections = [conn.rendered()  for conn  in self.connections],
+            parameters  = [param.rep for param in self.parameters ],
+            components  = [comp.rep  for comp  in self.components ],
+            connections = [conn.rep  for conn  in self.connections],
         )
 
     def validate(self, corpus : Optional[CorpusReader] = None):
@@ -439,7 +458,8 @@ class AbstractDesignCorpus(ABC):
         """
         ...
 
-    def rendered(self) -> object:
+    @property
+    def rep(self) -> object:
         """
         Produce a json serializable version of the corpus.
         """
