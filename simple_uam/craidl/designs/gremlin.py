@@ -1,5 +1,5 @@
 from attrs import define, frozen, field
-from typing import List, Dict, Any, Iterator, Tuple
+from typing import List, Dict, Any, Iterator, Tuple, Set, Optional
 from urllib.parse import urlparse
 
 # All the recommended imports, see
@@ -57,7 +57,7 @@ class GremlinDesign(AbstractDesign):
     def g(self) -> str:
         return self.parent.g
 
-    _parameter_dict : Optional[Dict[str,StaticDesignParameter]] = field(
+    _parameter_dict : Optional[Dict[str,DesignParameter]] = field(
         default = None,
     )
 
@@ -78,7 +78,7 @@ class GremlinDesign(AbstractDesign):
             .toList()
 
     @property
-    def parameter_dict(self) -> Dict[str,StaticDesignParameter]:
+    def parameter_dict(self) -> Dict[str,DesignParameter]:
         if self._parameter_dict == None:
 
             # Init dict
@@ -147,7 +147,7 @@ class GremlinDesign(AbstractDesign):
             self._component_dict = dict()
 
             for inst_rep in self.get_component_instances():
-                comp = StaticDesignComponent(inst_rep)
+                comp = DesignComponent.from_rep(inst_rep)
                 log.info(
                     "Adding DB component to design.",
                     name=self.name,
@@ -157,7 +157,7 @@ class GremlinDesign(AbstractDesign):
                 self._component_dict[comp.instance] = comp
 
             for inst_rep in self.get_untyped_component_instances():
-                comp = StaticDesignComponent(inst_rep)
+                comp = DesignComponent.from_rep(inst_rep)
                 log.info(
                     "Adding untyped DB component to design.",
                     name=self.name,
@@ -168,7 +168,7 @@ class GremlinDesign(AbstractDesign):
 
         return self._component_dict
 
-    _connection_dict : Optional[Dict[DesignConnector,StaticDesignConnection]] = field(
+    _connection_set : Optional[Set[DesignConnection]] = field(
         default = None,
     )
 
@@ -185,24 +185,25 @@ class GremlinDesign(AbstractDesign):
             .toList()
 
     @property
-    def connection_dict(self) -> Dict[DesignConnector, StaticDesignConnection]:
-        if self._connection_dict == None:
+    def connections(self) -> Set[DesignConnection]:
+        if self._connection_set == None:
 
-            self._connection_dict = dict()
+            self._connection_set = set
 
             for conn_rep in self.get_connections():
 
-                conn = StaticDesignConnection(conn_rep)
+                conn = DesignConnection.from_rep(conn_rep)
                 log.info(
                     "Adding DB connection to design.",
                     name=self.name,
                     rep=json.dumps(conn_rep, indent="  "),
                     conn=json.dumps(conn.rendered(), indent="  "),
                 )
-                self.add_connection(conn)
+                self._connection_set.add(conn)
+        return self._connection_set
 
-        return self._connection_dict
-
+    def add_connection(self, conn: DesignConnection):
+        self._connection_set.add(conn)
 
 @define
 class GremlinDesignCorpus(AbstractDesignCorpus):

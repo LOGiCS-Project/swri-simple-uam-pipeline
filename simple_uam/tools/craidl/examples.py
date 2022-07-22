@@ -10,6 +10,7 @@ from simple_uam.util.logging import get_logger
 from simple_uam.util.system import Git
 from simple_uam.craidl.corpus import GremlinCorpus, StaticCorpus, get_corpus
 from simple_uam.craidl.designs import GremlinDesignCorpus, StaticDesignCorpus
+from simple_uam.craidl.gramlin import GremlinConnection
 
 from typing import Tuple
 
@@ -273,13 +274,11 @@ def list_corpus_db_examples(ctx,
     if port == None:
         port = Config[CraidlConfig].server_port
 
-    design_corpus = GremlinDesignCorpus(host=host, port=port)
+    with GremlinConnection(host=host, port=port) as conn:
+        design_corpus = GremlinDesignCorpus(conn)
 
-    try:
         for design_name in design_corpus.designs:
             print(design_name)
-    finally:
-        design_corpus.close()
 
 @task(iterable=['name'])
 def install_corpus_db_examples(ctx,
@@ -304,9 +303,11 @@ def install_corpus_db_examples(ctx,
     if port == None:
         port = Config[CraidlConfig].server_port
 
-    design_corpus = GremlinDesignCorpus(host=host, port=port)
 
-    try:
+    with GremlinConnection(host=host, port=port) as conn:
+
+        design_corpus = GremlinDesignCorpus(conn)
+
         examples = name
 
         if not examples:
@@ -332,5 +333,3 @@ def install_corpus_db_examples(ctx,
                     input=tmp_file,
                     name=example,
                 )
-    finally:
-        design_corpus.close()
