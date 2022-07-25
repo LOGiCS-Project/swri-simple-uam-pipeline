@@ -34,6 +34,7 @@ def main(args: Optional[List[str]] = None) -> int:
     setup_ns.add_task(env.mkdirs, "dirs")
     setup_ns.add_task(env.creoson_server, "creoson_server")
     setup_ns.add_task(env.direct2cad, "uam_direct2cad")
+    setup_ns.add_task(env.uav_workflows, "uav_workflows")
     setup_ns.add_task(env.setup_reference, "reference_workspace")
 
     manage_ns = Collection()

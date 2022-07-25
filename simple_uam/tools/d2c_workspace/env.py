@@ -183,9 +183,43 @@ def direct2cad(ctx,  prompt=True, quiet=False, verbose=False):
 
     Git.clone_or_pull(**git_args)
 
+uav_workflows_dir = Path(Config[D2CWorkspaceConfig].cache_dir) / 'uav_workflows'
+uav_workflows_repo = Config[CorpusConfig].uav_workflows.repo
+uav_workflows_branch = Config[CorpusConfig].uav_workflows.branch
+
+@task
+def uav_workflows(ctx,  prompt=True, quiet=False, verbose=False):
+    """
+    Clones the creoson server repo into the appropriate cache folder.
+    Required to setup uav_workflows reference dir.
+
+    Arguments:
+      prompt: Prompt for a password on initial git clone.
+      quiet: Run in quiet mode.
+      verbose: Run in verbose mode.
+    """
+
+    git_args = dict(
+        repo_uri = uav_workflows_repo,
+        deploy_dir = str(uav_workflows_dir),
+        branch = uav_workflows_branch,
+        remote_user = Config[AuthConfig].isis_user,
+        remote_pass = Config[AuthConfig].isis_token,
+        password_prompt = prompt,
+        quiet = quiet,
+        verbose = verbose,
+        mkdir = True
+    )
+
+    if not quiet:
+        log.info("Running git clone/pull for uav_workflows."
+                 ,**git_args)
+
+    Git.clone_or_pull(**git_args)
+
 setvars_file = Config[PathConfig].repo_data_dir / 'creoson' / 'setvars.bat'
 
-@task(mkdirs, creoson_server, direct2cad)
+@task(mkdirs, creoson_server, direct2cad, uav_workflows)
 def setup_reference(ctx, creoson_gui = False):
     """
     Will set up the reference directory if needed.
@@ -201,9 +235,11 @@ def setup_reference(ctx, creoson_gui = False):
         "Settting up d2c workspace reference directory.",
         direct2cad_repo=str(direct2cad_dir),
         creoson_server_zip=str(creoson_server_zip),
+        uav_workflows_repo=str(uav_workflows_dir),
     )
     manager.setup_reference_dir(
         direct2cad_repo=direct2cad_dir,
+        uav_workflows_repo=uav_workflows_dir,
         creoson_server_zip=creoson_server_zip,
         setvars_file=None if creoson_gui else setvars_file,
     )

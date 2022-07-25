@@ -3,7 +3,7 @@ from typing import List, Dict, Set, Any, Iterator, Tuple, Optional
 from abc import ABC, abstractmethod
 from simple_uam.craidl.corpus.abstract import CorpusReader
 
-@define
+@frozen
 class DesignProperty():
     instance_name : str = field()
     property_name : str = field()
@@ -133,22 +133,23 @@ class DesignComponent():
     The name of the component instance
     """
 
-    type : Optional[str] = field(default = None)
-    """
-    The type of the component instance
-    """
-
     choice : str = field()
     """
     The choice of the component instance
     """
+
+    comp_type : Optional[str] = field(default = None)
+    """
+    The type of the component instance
+    """
+
 
     @staticmethod
     def from_rep(rep : object) -> 'DesignComponent':
         return DesignComponent(
             instance = rep['component_instance'],
             choice = rep['component_choice'],
-            type = rep.get('component_type',None),
+            comp_type = rep.get('component_type',None),
         )
 
     @property
@@ -160,8 +161,8 @@ class DesignComponent():
             component_instance = self.instance,
             component_choice = self.choice,
         )
-        if self.type:
-            output['component_type'] = self.type,
+        if self.comp_type:
+            output['component_type'] = self.comp_type
         return output
 
     def validate(self,
@@ -217,47 +218,9 @@ class DesignConnection():
     A connection between two connectors in the abstract
     """
 
-    _side_a : DesignConnector = field(
-    )
+    from_side : DesignConnector = field()
 
-    _side_b : DesignConnector = field(
-    )
-
-    _flipped : bool = field(
-        eq=False,
-        order=False,
-        hash=False,
-    )
-
-    def __init__(self, from_side, to_side):
-
-        side_a = from_side
-        side_b = to_side
-        flipped = False
-        if side_b < side_a:
-            side_a = to_side
-            side_b = from_side
-            flipped = True
-
-        return self.__attrs_init__(
-            side_a=side_a,
-            side_b=side_b,
-            flipped=flipped,
-        )
-
-    @property
-    def from_side(self) -> DesignConnector:
-        """
-        Connector on the from side of the connection.
-        """
-        return self._side_b if self._flipped else self._side_a
-
-    @property
-    def to_side(self) -> DesignConnector:
-        """
-        Connector on the to side of the connection.
-        """
-        return self._side_b if self._flipped else self._side_a
+    to_side : DesignConnector = field()
 
     @staticmethod
     def from_rep(rep : object) -> 'DesignConnection':

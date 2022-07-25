@@ -79,7 +79,7 @@ class StaticDesign(AbstractDesign):
             }
         return self._connection_set
 
-    def add_connection(self, conn: StaticDesignConnection):
+    def add_connection(self, conn: DesignConnection):
         raise RuntimeError("Cannot add connection to static design.")
 
     @classmethod

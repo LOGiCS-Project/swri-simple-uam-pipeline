@@ -90,20 +90,21 @@ class GremlinDesign(AbstractDesign):
                 log.info(
                     "Loading design param from db",
                     name=self.name,
-                    param=json.dumps(param, indent="  "),
+                    param=param,
+                    #param=json.dumps(param, indent="  "),
                 )
 
                 name = param['name']
+                value = param['value']
 
                 if name not in self._parameter_dict:
-                    self._parameter_dict[name] = StaticDesignParameter(dict(
+                    self._parameter_dict[name] = DesignParameter(
                         name=name,
-                        value=param['value'],
-                        component_properties=list(),
-                    ))
+                        value=value,
+                    )
 
                 self._parameter_dict[name].add_property(
-                    DesignParameterProperty(
+                    DesignProperty(
                         instance_name = param['ci'],
                         property_name = param['ci_prop'],
                     )
@@ -112,7 +113,7 @@ class GremlinDesign(AbstractDesign):
         return self._parameter_dict
 
 
-    _component_dict : Optional[Dict[str,StaticDesignComponent]] = field(
+    _component_dict : Optional[Dict[str,DesignComponent]] = field(
         default = None,
     )
 
@@ -141,7 +142,7 @@ class GremlinDesign(AbstractDesign):
             .toList()
 
     @property
-    def component_dict(self) -> Dict[str,StaticDesignComponent]:
+    def component_dict(self) -> Dict[str,DesignComponent]:
         if self._component_dict == None:
 
             self._component_dict = dict()
@@ -151,8 +152,7 @@ class GremlinDesign(AbstractDesign):
                 log.info(
                     "Adding DB component to design.",
                     name=self.name,
-                    rep=json.dumps(inst_rep, indent="  "),
-                    comp=json.dumps(comp.rendered(), indent="  "),
+                    comp=comp,
                 )
                 self._component_dict[comp.instance] = comp
 
@@ -161,8 +161,7 @@ class GremlinDesign(AbstractDesign):
                 log.info(
                     "Adding untyped DB component to design.",
                     name=self.name,
-                    rep=json.dumps(inst_rep, indent="  "),
-                    comp=json.dumps(comp.rendered(), indent="  "),
+                    comp=comp,
                 )
                 self._component_dict[comp.instance] = comp
 
@@ -188,18 +187,27 @@ class GremlinDesign(AbstractDesign):
     def connections(self) -> Set[DesignConnection]:
         if self._connection_set == None:
 
-            self._connection_set = set
+            self._connection_set = set()
 
             for conn_rep in self.get_connections():
 
                 conn = DesignConnection.from_rep(conn_rep)
-                log.info(
-                    "Adding DB connection to design.",
-                    name=self.name,
-                    rep=json.dumps(conn_rep, indent="  "),
-                    conn=json.dumps(conn.rendered(), indent="  "),
-                )
-                self._connection_set.add(conn)
+                if conn in self._connection_set:
+                    log.warning(
+                        "Already found connection in design",
+                        name=self.name,
+                        conn=conn,
+                        # conn=json.dumps(conn.rep, indent="  "),
+                    )
+                else:
+                    log.info(
+                        "Adding DB connection to design.",
+                        name=self.name,
+                        conn=conn,
+                        # conn=json.dumps(conn.rep, indent="  "),
+                    )
+
+                    self._connection_set.add(conn)
         return self._connection_set
 
     def add_connection(self, conn: DesignConnection):
@@ -215,7 +223,7 @@ class GremlinDesignCorpus(AbstractDesignCorpus):
 
     @property
     def g(self):
-        return conn.g
+        return self.conn.g
 
     def __getitem__(self, design : str) -> GremlinDesign:
         return GremlinDesign(self, design)

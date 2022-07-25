@@ -10,7 +10,7 @@ from simple_uam.util.logging import get_logger
 from simple_uam.util.system import Git
 from simple_uam.craidl.corpus import GremlinCorpus, StaticCorpus, get_corpus
 from simple_uam.craidl.designs import GremlinDesignCorpus, StaticDesignCorpus
-from simple_uam.craidl.gramlin import GremlinConnection
+from simple_uam.craidl.gremlin import GremlinConnection
 
 from typing import Tuple
 
@@ -320,7 +320,7 @@ def install_corpus_db_examples(ctx,
 
             for example in examples:
                 log.info(f"Reading {example} from DB")
-                design_rep = design_corpus[example].rendered()
+                design_rep = design_corpus[example].rep
 
                 tmp_file = tmp_dir / f"{example}.json"
                 tmp_file.unlink(missing_ok=True)

@@ -43,7 +43,7 @@ class D2CWorkspaceConfig(WorkspaceConfig):
 
     result_exclude : List[str] = [
         '.git',
-        'workingdir/*.prt', #copied part files
+        # 'workingdir/*.prt', #copied part files
     ]
 
     # craidl : CraidlConfig = field(
