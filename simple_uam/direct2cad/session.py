@@ -42,7 +42,7 @@ class D2CSession(Session):
         #     )
 
         self.run(["python", "startCreo.py"])
-        wait_time=20
+        wait_time=5
         for i in range(1, wait_time):
             log.info(
                 f"Waiting for Creo Start {i}s / {wait_time}s"

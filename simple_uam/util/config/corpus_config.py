@@ -69,7 +69,19 @@ class Direct2CadRepoConfig():
     repo: str = "https://git.isis.vanderbilt.edu/SwRI/uam_direct2cad.git"
     """ Repo to clone """
 
-    branch: str = "923ed545"
+    branch: str = "272621cc"
+    """ Branch to checkout, can be refspec. """
+
+@define
+class UAVWorkflowsRepoConfig():
+    """
+    Config properties for the uav_workflows repo.
+    """
+
+    repo: str = "https://git.isis.vanderbilt.edu/SwRI/athens-uav-workflows.git"
+    """ Repo to clone """
+
+    branch: str = "3772de06"
     """ Branch to checkout, can be refspec. """
 
 @define
@@ -103,6 +115,11 @@ class CorpusConfig():
     direct2cad : Direct2CadRepoConfig = Direct2CadRepoConfig()
     """
     Direct2Cad repo settings: used to define the direct2cad repo and branch.
+    """
+
+    uav_workflows : UAVWorkflowsRepoConfig = UAVWorkflowsRepoConfig()
+    """
+    UAV_workflows repo settings: used to define the uav_workflows repo and branch.
     """
 
 # Add to the configuration manager

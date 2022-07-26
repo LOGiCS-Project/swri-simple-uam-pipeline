@@ -49,10 +49,18 @@ class DesignInfoFiles():
             new_entry = {
                 'FROM_COMP': from_comp,
                 'LIB_COMPONENT': lib_comp,
-                'CAD_PRT': cad_prt
             }
 
-            if any_none(from_comp, lib_comp, cad_prt):
+            if cad_prt:
+                new_entry['CAD_PRT'] = cad_prt
+            else:
+                log.warning(
+                    'Part in componentMap had no cad_part defined',
+                    **new_entry,
+                )
+
+
+            if any_none(from_comp, lib_comp):
                 log.warning(
                     'Skipping entry in component_maps due to null values',
                     **new_entry,
@@ -138,7 +146,7 @@ class DesignInfoFiles():
         for entry in self.component_maps: # NOTE : needs component map list
             comp_name = entry['FROM_COMP']
             lib_name = entry['LIB_COMPONENT']
-            cad_part = entry['CAD_PRT']
+            cad_part = entry.get('CAD_PRT',None)
             prop_vals = self.corpus[lib_name].cad_properties
             for prop_val in prop_vals:
                 prop_name = prop_val['PROP_NAME']
@@ -150,7 +158,8 @@ class DesignInfoFiles():
                     'PROP_NAME': prop_name,
                     'PROP_VALUE': prop_value
                 }
-                if any_none(prop_name, prop_value):
+
+                if any_none(prop_name, prop_value, cad_part):
                     log.warning(
                         'Skipping entry in paramMap due to null values',
                         entry=entry,
@@ -179,6 +188,14 @@ class DesignInfoFiles():
             to_comp_type = self.design_to_corpus[to_comp]
             from_conn_cs = self.corpus[from_comp_type].cad_connection(from_conn)
             to_conn_cs = self.corpus[to_comp_type].cad_connection(to_conn)
+
+            # Cad connections don't always exist for power but we need to
+            # preserve them anyway.
+            # if not from_conn_cs and 'Power' in from_conn:
+            #     from_conn_cs = from_conn
+            # if not to_conn_cs and 'Power' in to_conn:
+            #     to_conn_cs = to_conn
+
             new_entry = {
                 'FROM_COMP': from_comp,
                 'FROM_CONN_CS': from_conn_cs,
@@ -274,7 +291,7 @@ class DesignInfoFiles():
         for entry in self.component_maps: ## NOTE: ComponentMapList
             comp_name = entry['FROM_COMP']
             lib_name = entry['LIB_COMPONENT']
-            cad_part = entry['CAD_PRT']
+            cad_part = entry.get('CAD_PRT',None)
             prop_vals = self.corpus[lib_name].cad_params
             for prop_val in prop_vals:
                 prop_name = prop_val['PROP_NAME']
@@ -286,7 +303,12 @@ class DesignInfoFiles():
                     'PROP_NAME': prop_name,
                     'PROP_VALUE': prop_value
                 }
-                if any_none(prop_name, prop_value):
+
+                # Propagating possibly missing cad_part forward
+                # if cad_part:
+                #     new_entry['CAD_PART'] = cad_part
+
+                if any_none(prop_name, prop_value, cad_part):
                     log.warning(
                         'Skipping entry in componentCadParams due to null values',
                         entry=entry,

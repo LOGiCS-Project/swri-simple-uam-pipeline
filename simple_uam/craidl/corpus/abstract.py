@@ -88,6 +88,15 @@ class ComponentReader(ABC):
         """
         ...
 
+    def has_param(self, param_name: str) -> bool:
+        """
+        Does this component have the given param?
+        """
+        for p in self.params():
+            if p['PROP_NAME'] == param_name:
+                return True
+        return False
+
 class CorpusReader(ABC):
     """
     Represents a corpus that can be read and queried.
@@ -100,6 +109,13 @@ class CorpusReader(ABC):
 
         Implementations may error on call or defer errors till compoent
         is used.
+        """
+        ...
+
+    @abstractmethod
+    def __contains__(self, comp :str) -> bool:
+        """
+        Eagerly test whether an component is in this corpus.
         """
         ...
 

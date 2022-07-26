@@ -42,6 +42,7 @@ class D2CManager(WorkspaceManager):
                      reference_dir : Path,
                      assets_dir : Path,
                      direct2cad_repo : Path,
+                     uav_workflows_repo : Path,
                      creoson_server_zip : Path,
                      setvars_file : Optional[Path]):
         """
@@ -56,6 +57,7 @@ class D2CManager(WorkspaceManager):
           reference_dir: The reference directory
           assets_dir: The static assets directory
           direct2cad_repo: The direct2cad repo
+          uav_workflows_repo: The UAV_Workflows repo
           creoson_server_zip: Zip w/ creoson server
           setvars_file: The setvars.bat file to put in the creoson server dir.
             If none will start the creoson server gui.
@@ -137,3 +139,17 @@ class D2CManager(WorkspaceManager):
                 """,
                 wait=True,
             )
+
+        uav_cad_dir = Path(uav_workflows_repo) / "CAD"
+        ref_cad_dir = reference_dir / "CAD"
+
+        log.info(
+            "Copying CAD files from UAV workflows repo.",
+            uav_cad_dir=str(uav_cad_dir),
+            ref_cad_dir=str(ref_cad_dir),
+        )
+
+        for uav_cad in uav_cad_dir.iterdir():
+            ref_cad = ref_cad_dir / uav_cad.name
+            backup_file(ref_cad, delete=True)
+            shutil.copy2(uav_cad, ref_cad)

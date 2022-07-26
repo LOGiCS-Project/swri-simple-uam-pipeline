@@ -194,6 +194,9 @@ class GremlinCorpus(CorpusReader):
     def __getitem__(self, comp : str) -> GremlinComponent:
         return GremlinComponent(self, comp)
 
+    def __contains__(self, comp : str) -> bool:
+        return self.g.V().has('[avm]Component','[]Name',comp)
+
     @property
     def components(self) -> Iterator[ComponentReader]:
 

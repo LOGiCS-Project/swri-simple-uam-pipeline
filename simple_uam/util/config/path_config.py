@@ -40,7 +40,7 @@ class PathConfig:
     @property
     def repo_dir(self):
         """ Repository root dir. """
-        return Path(__file__).resolve().parent.parent.parent.parent.parent
+        return Path(__file__).resolve().parent.parent.parent.parent
 
     @property
     def config_dir(self):
