@@ -15,6 +15,7 @@ from simple_uam.direct2cad.session import D2CSession
 from simple_uam.direct2cad.workspace import D2CWorkspace
 from pathlib import Path
 import textwrap
+import sys
 
 import subprocess
 
@@ -38,6 +39,7 @@ creoson_server_manual_uri = Config[CorpusConfig].creoson_server.manual
 # creoson_server_repo = "https://git.isis.vanderbilt.edu/SwRI/creoson/creoson-server.git"
 # creoson_server_branch = 'dchee-jars'
 creoson_server_zip = creoson_server_dir / "CreosonServerWithSetup-2.8.0-win64.zip"
+sys_input = input
 
 @task
 def creoson_server(ctx,
@@ -102,17 +104,18 @@ def creoson_server(ctx,
             "No Isis credentials found, using manual download."
         )
 
-        input(textwrap.dedent(
+        print(textwrap.dedent(
             f"""
             Please Download the Creoson Server Zip manually:
 
-              From: {creson_server_manual_uri}
+              From: {creoson_server_manual_uri}
 
               To: {str(creoson_server_zip.resolve())}
 
             Press enter when completed:
             """
         ))
+        sys.stdin.readline()
 
         if not creoson_server_zip.exists():
             err = RuntimeError("No Server Zip Found.")
