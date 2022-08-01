@@ -24,7 +24,7 @@ repo_data_corpus = Config[PathConfig].repo_data_dir / 'corpus_static_dump.json'
 @task
 def copy_static_corpus(ctx,
                        input = None,
-                       force = False,
+                       force = True,
                        backup = True):
     """
     Copies a provided static corpus to the configured location.
@@ -32,8 +32,7 @@ def copy_static_corpus(ctx,
     Arguments:
       input: The input copy of the static corpus, defaults to the copy provided
         with the repo.
-      force: Do we overwrite the corpus if it's already there? Defaults to
-        true if output is specified otherwise defaults to false.
+      force: Do we overwrite the corpus if it's already there? Defaults to True.
       backup: Should we create a backup if there's a preexisting output file?
     """
 
