@@ -140,7 +140,7 @@ def match_msg_to_zip(
 
     metadata = get_zip_metadata(zip_file)
 
-    return metadata and msg_id == metadata['message_info']['message_id']
+    return metadata and msg_id == metadata.get('message_info',dict()).get('message_id')
 
 def watch_results_dir(
         msg: dramatiq.Message,
