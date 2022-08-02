@@ -32,12 +32,12 @@ license server and a broker for most tasks.
 
 ## Get License Information {#license}
 
-**Option 1:** License Server
+### **Option 1:** License Server {#license-server}
 
 - Have a license server running at `<license-server.ip>` on
   port `<license-server.port>`.
 
-**Option 2:** Static Creo License
+### **Option 2:** Static Creo License {#license-static}
 
 - Open an admin powershell to `<repo-root>`.
 - Get your mac address (for generating licenses):
@@ -258,6 +258,13 @@ locally see [this page](../usage/workspaces.md)...**
       `service.auto_start` to `True`
 - See the [config file guide](../usage/config.md) for more detailed
   instructions and information.
+
+!!! Hint "Other Configuration Notes"
+
+    - Because services don't run as a frontend user paths to network drives
+      can't use drive letters. Make sure all paths in all config files are in
+      [UNC format](https://docs.microsoft.com/en-us/dotnet/standard/io/file-path-formats#unc-paths)
+      where applicable.
 
 **Further details on configuring the worker as a service are
 [here](../usage/workers.md)...**

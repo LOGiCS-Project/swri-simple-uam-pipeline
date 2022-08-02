@@ -6,7 +6,7 @@ This section of the guide will cover:
   - Creating a VPN connection into that cloud for home access.
   - Creating a shared network drive for hosting code and analysis results.
 
-## Initial Steps
+## Initial Steps {#initial}
 
 Most operations will require access to the
 [AWS Console](https://console.aws.amazon.com/) so ensure you have a valid amazon
@@ -21,7 +21,7 @@ AWS account.
     If you do use an IAM user for this install process, please tell us what
     policies you used so we can include them in this guide.
 
-## Choose an Availability Zone
+## Choose an Availability Zone {#az}
 
 > AWS features clusters of cloud computing resources called
 > [availability zones](https://docs.aws.amazon.com/AWSEC2/latest/WindowsGuide/using-regions-availability-zones.html#concepts-availability-zones) (AZs).

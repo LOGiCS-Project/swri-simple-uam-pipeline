@@ -23,6 +23,7 @@ nav:
     - Usage:
       - Configuration: usage/config.md
       - Craidl: usage/craidl.md
+      - License Server: usage/license.md
       - Workspaces: usage/workspaces.md
       - Workers: usage/workers.md
       - Clients: usage/clients.md
