@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://LOGiCS-Project.github.io/swri-simple-uam-pipeline/setup/worker/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.3.9">
+      <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-8.3.9">
     
     
       
@@ -528,6 +528,26 @@
     Get License Information
   </a>
   
+    <nav class="md-nav" aria-label="Get License Information">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#license-server" class="md-nav__link">
+    Option 1: License Server
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#license-static" class="md-nav__link">
+    Option 2: Static Creo License
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -750,6 +770,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../../usage/license/" class="md-nav__link">
+        License Server
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../usage/workspaces/" class="md-nav__link">
         Workspaces
       </a>
@@ -887,6 +921,26 @@
   <a href="#license" class="md-nav__link">
     Get License Information
   </a>
+  
+    <nav class="md-nav" aria-label="Get License Information">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#license-server" class="md-nav__link">
+    Option 1: License Server
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#license-static" class="md-nav__link">
+    Option 2: Static Creo License
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1075,12 +1129,12 @@ needed by creopyson and direct2cad.</p>
 <li>Close powershell and open a new instance for future commands.</li>
 </ul>
 <h2 id="license">Get License Information<a class="headerlink" href="#license" title="Permanent link">&para;</a></h2>
-<p><strong>Option 1:</strong> License Server</p>
+<h3 id="license-server"><strong>Option 1:</strong> License Server<a class="headerlink" href="#license-server" title="Permanent link">&para;</a></h3>
 <ul>
 <li>Have a license server running at <code>&lt;license-server.ip&gt;</code> on
   port <code>&lt;license-server.port&gt;</code>.</li>
 </ul>
-<p><strong>Option 2:</strong> Static Creo License</p>
+<h3 id="license-static"><strong>Option 2:</strong> Static Creo License<a class="headerlink" href="#license-static" title="Permanent link">&para;</a></h3>
 <ul>
 <li>Open an admin powershell to <code>&lt;repo-root&gt;</code>.</li>
 <li>Get your mac address (for generating licenses):
@@ -1319,6 +1373,15 @@ be provided that can see the mounted drive.</p>
 <li>See the <a href="../../usage/config/">config file guide</a> for more detailed
   instructions and information.</li>
 </ul>
+<div class="admonition hint">
+<p class="admonition-title">Other Configuration Notes</p>
+<ul>
+<li>Because services don't run as a frontend user paths to network drives
+  can't use drive letters. Make sure all paths in all config files are in
+  <a href="https://docs.microsoft.com/en-us/dotnet/standard/io/file-path-formats#unc-paths">UNC format</a>
+  where applicable.</li>
+</ul>
+</div>
 <p><strong>Further details on configuring the worker as a service are
 <a href="../../usage/workers/">here</a>...</strong></p>
 <h4 id="service-install">Set up the Worker Node Service<a class="headerlink" href="#service-install" title="Permanent link">&para;</a></h4>

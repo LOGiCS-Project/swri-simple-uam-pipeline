@@ -10,14 +10,14 @@
       
       
       
-        <link rel="canonical" href="https://LOGiCS-Project.github.io/swri-simple-uam-pipeline/setup/general/">
+        <link rel="canonical" href="https://LOGiCS-Project.github.io/swri-simple-uam-pipeline/usage/license/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-8.3.9">
     
     
       
-        <title>General Setup - Simple UAM Pipeline</title>
+        <title>License Server - Simple UAM Pipeline</title>
       
     
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#general-machine-setup" class="md-skip">
+        <a href="#license-server" class="md-skip">
           Skip to content
         </a>
       
@@ -109,7 +109,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              General Setup
+              License Server
             
           </span>
         </div>
@@ -334,14 +334,12 @@
               
   
   
-    
-  
   
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_1_2" type="checkbox" id="__nav_1_2" checked>
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_1_2" type="checkbox" id="__nav_1_2" >
       
       
       
@@ -364,7 +362,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../intro/" class="md-nav__link">
+      <a href="../../setup/intro/" class="md-nav__link">
         Introduction
       </a>
     </li>
@@ -378,7 +376,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../aws-network/" class="md-nav__link">
+      <a href="../../setup/aws-network/" class="md-nav__link">
         AWS (Network)
       </a>
     </li>
@@ -392,7 +390,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../aws-instance/" class="md-nav__link">
+      <a href="../../setup/aws-instance/" class="md-nav__link">
         AWS (Instance)
       </a>
     </li>
@@ -404,182 +402,11 @@
               
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          General Setup
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../setup/general/" class="md-nav__link">
         General Setup
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#prereqs" class="md-nav__link">
-    Prerequisites
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#install-choco" class="md-nav__link">
-    Install Chocolatey and Minimal Deps
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#suam" class="md-nav__link">
-    Download SimpleUAM
-  </a>
-  
-    <nav class="md-nav" aria-label="Download SimpleUAM">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#suam-github-http" class="md-nav__link">
-    Option 1: Clone From Github (HTTP):
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#suam-github-ssh" class="md-nav__link">
-    Option 2: Clone From Github (SSH):
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#suam-other" class="md-nav__link">
-    Option 3: Retrieve From Other Source
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#setup" class="md-nav__link">
-    Initialize Setup Package
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#conf-dir" class="md-nav__link">
-    Get Configuration Directory
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#qol" class="md-nav__link">
-    Install Quality of Life Packages (Optional)
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#nfs" class="md-nav__link">
-    Setup File Sharing (Optional)
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#isis" class="md-nav__link">
-    Set up Isis Authentication
-  </a>
-  
-    <nav class="md-nav" aria-label="Set up Isis Authentication">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#isis-token" class="md-nav__link">
-    Option 1: Install an API token for git.isis.vanderbilt.edu (Recommended)
-  </a>
-  
-    <nav class="md-nav" aria-label="Option 1: Install an API token for git.isis.vanderbilt.edu (Recommended)">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#isis-token-create" class="md-nav__link">
-    Create a Personal Access Token
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#isis-token-config" class="md-nav__link">
-    Configure SimpleUAM to use your token
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#isis-ssh" class="md-nav__link">
-    Option 2: Install SSH keys for git.isis.vanderbilt.edu
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#isis-skip" class="md-nav__link">
-    Option 3: Skip Authentication
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#next" class="md-nav__link">
-    Next Steps
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -591,7 +418,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../license_server/" class="md-nav__link">
+      <a href="../../setup/license_server/" class="md-nav__link">
         License Server
       </a>
     </li>
@@ -605,7 +432,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../broker/" class="md-nav__link">
+      <a href="../../setup/broker/" class="md-nav__link">
         Broker & Backend
       </a>
     </li>
@@ -619,7 +446,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../graph/" class="md-nav__link">
+      <a href="../../setup/graph/" class="md-nav__link">
         Corpus Database
       </a>
     </li>
@@ -633,7 +460,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../corpus/" class="md-nav__link">
+      <a href="../../setup/corpus/" class="md-nav__link">
         Static Corpus
       </a>
     </li>
@@ -647,7 +474,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../worker/" class="md-nav__link">
+      <a href="../../setup/worker/" class="md-nav__link">
         Worker Node
       </a>
     </li>
@@ -661,7 +488,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../client/" class="md-nav__link">
+      <a href="../../setup/client/" class="md-nav__link">
         Client Node
       </a>
     </li>
@@ -680,12 +507,14 @@
               
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_1_3" type="checkbox" id="__nav_1_3" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_1_3" type="checkbox" id="__nav_1_3" checked>
       
       
       
@@ -708,7 +537,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../usage/config/" class="md-nav__link">
+      <a href="../config/" class="md-nav__link">
         Configuration
       </a>
     </li>
@@ -722,7 +551,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../usage/craidl/" class="md-nav__link">
+      <a href="../craidl/" class="md-nav__link">
         Craidl
       </a>
     </li>
@@ -734,11 +563,72 @@
               
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../../usage/license/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          License Server
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         License Server
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#update-creo" class="md-nav__link">
+    Updating Creo License
+  </a>
+  
+    <nav class="md-nav" aria-label="Updating Creo License">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#update-creo-prereqs" class="md-nav__link">
+    Prerequisites
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update-creo-import" class="md-nav__link">
+    Import to Flexnet Server
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -750,7 +640,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../usage/workspaces/" class="md-nav__link">
+      <a href="../workspaces/" class="md-nav__link">
         Workspaces
       </a>
     </li>
@@ -764,7 +654,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../usage/workers/" class="md-nav__link">
+      <a href="../workers/" class="md-nav__link">
         Workers
       </a>
     </li>
@@ -778,7 +668,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../usage/clients/" class="md-nav__link">
+      <a href="../clients/" class="md-nav__link">
         Clients
       </a>
     </li>
@@ -870,139 +760,29 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#prereqs" class="md-nav__link">
+  <a href="#update-creo" class="md-nav__link">
+    Updating Creo License
+  </a>
+  
+    <nav class="md-nav" aria-label="Updating Creo License">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#update-creo-prereqs" class="md-nav__link">
     Prerequisites
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#install-choco" class="md-nav__link">
-    Install Chocolatey and Minimal Deps
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#suam" class="md-nav__link">
-    Download SimpleUAM
-  </a>
-  
-    <nav class="md-nav" aria-label="Download SimpleUAM">
-      <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#suam-github-http" class="md-nav__link">
-    Option 1: Clone From Github (HTTP):
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#suam-github-ssh" class="md-nav__link">
-    Option 2: Clone From Github (SSH):
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#suam-other" class="md-nav__link">
-    Option 3: Retrieve From Other Source
+  <a href="#update-creo-import" class="md-nav__link">
+    Import to Flexnet Server
   </a>
   
 </li>
         
       </ul>
     </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#setup" class="md-nav__link">
-    Initialize Setup Package
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#conf-dir" class="md-nav__link">
-    Get Configuration Directory
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#qol" class="md-nav__link">
-    Install Quality of Life Packages (Optional)
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#nfs" class="md-nav__link">
-    Setup File Sharing (Optional)
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#isis" class="md-nav__link">
-    Set up Isis Authentication
-  </a>
-  
-    <nav class="md-nav" aria-label="Set up Isis Authentication">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#isis-token" class="md-nav__link">
-    Option 1: Install an API token for git.isis.vanderbilt.edu (Recommended)
-  </a>
-  
-    <nav class="md-nav" aria-label="Option 1: Install an API token for git.isis.vanderbilt.edu (Recommended)">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#isis-token-create" class="md-nav__link">
-    Create a Personal Access Token
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#isis-token-config" class="md-nav__link">
-    Configure SimpleUAM to use your token
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#isis-ssh" class="md-nav__link">
-    Option 2: Install SSH keys for git.isis.vanderbilt.edu
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#isis-skip" class="md-nav__link">
-    Option 3: Skip Authentication
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#next" class="md-nav__link">
-    Next Steps
-  </a>
   
 </li>
       
@@ -1018,189 +798,65 @@
             <article class="md-content__inner md-typeset">
               
                 
-  <a href="https://github.com/LOGiCS-Project/swri-simple-uam-pipeline/edit/master/docs/setup/general.md" title="Edit this page" class="md-content__button md-icon">
+  <a href="https://github.com/LOGiCS-Project/swri-simple-uam-pipeline/edit/master/docs/usage/license.md" title="Edit this page" class="md-content__button md-icon">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
   </a>
 
 
 
-<h1 id="general-machine-setup">General Machine Setup<a class="headerlink" href="#general-machine-setup" title="Permanent link">&para;</a></h1>
-<p>This is setup that needs to be done for multiple types of machines.</p>
-<h2 id="prereqs">Prerequisites<a class="headerlink" href="#prereqs" title="Permanent link">&para;</a></h2>
-<ul>
-<li>This machine must be running Windows.<ul>
-<li>If you're using a Linux machine skip to the setup page of whatever
-  component type it's meant to host.</li>
-</ul>
-</li>
-<li>You must be okay using <a href="https://chocolatey.org/">chocolatey</a> as your package
-  manager.</li>
-</ul>
-<h2 id="install-choco">Install Chocolatey and Minimal Deps<a class="headerlink" href="#install-choco" title="Permanent link">&para;</a></h2>
+<h1 id="license-server">License Server<a class="headerlink" href="#license-server" title="Permanent link">&para;</a></h1>
+<p>The license server will provide floating licenses to Creo on each of your worker
+nodes.</p>
+<h2 id="update-creo">Updating Creo License<a class="headerlink" href="#update-creo" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p>This downloads a minimal install script for chocolatey, git, and python.
-This step is idempotent and will just do nothing if these are all installed.</p>
+<p>Update the creo license on a running server with a new one.</p>
 </blockquote>
+<h3 id="update-creo-prereqs">Prerequisites<a class="headerlink" href="#update-creo-prereqs" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Have your new license available at <code>&lt;creo-license.file&gt;</code></li>
+</ul>
+<h3 id="update-creo-import">Import to Flexnet Server<a class="headerlink" href="#update-creo-import" title="Permanent link">&para;</a></h3>
 <ul>
 <li>
-<p>Open admin powershell and run:
-  <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>iwr -Uri https://raw.githubusercontent.com/LOGiCS-Project/swri-simple-uam-pipeline/main/data/setup/bootstrap_win.ps1 <span class="p">|</span> iex
-</code></pre></div></p>
+<p>Open the web interface:</p>
+<ul>
+<li>Start Menu -&gt; PTC -&gt; Flexnet Admin Web Interface</li>
+</ul>
 </li>
 <li>
-<p>Close this powershell terminal and open new ones for future steps.</p>
-</li>
-</ul>
-<h2 id="suam">Download SimpleUAM<a class="headerlink" href="#suam" title="Permanent link">&para;</a></h2>
-<blockquote>
-<p>Get this repo onto the machine somehow, cloning is the default method.
-If you have a shared drive, placing the repo there will allow local development
-without constant pushing and pulling.</p>
-</blockquote>
+<p>Open the administration page:</p>
 <ul>
-<li>Save the repo's final location as: <code>&lt;repo-root&gt;</code></li>
-</ul>
-<h4 id="suam-github-http"><strong>Option 1</strong>: Clone From Github (HTTP):<a class="headerlink" href="#suam-github-http" title="Permanent link">&para;</a></h4>
-<ul>
-<li>Clone from Github via HTTP, replacing <code>&lt;repo-root&gt;</code> in the following command:
-  <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>git clone https://github.com/LOGiCS-Project/swri-simple-uam-pipeline.git &lt;repo-root&gt;
-</code></pre></div></li>
-</ul>
-<h4 id="suam-github-ssh"><strong>Option 2</strong>: Clone From Github (SSH):<a class="headerlink" href="#suam-github-ssh" title="Permanent link">&para;</a></h4>
-<ul>
-<li>Clone from Github via SSH, replacing <code>&lt;repo-root&gt;</code> in the following command:
-  <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>git clone git@github.com:LOGiCS-Project/swri-simple-uam-pipeline.git &lt;repo-root&gt;
-</code></pre></div></li>
-</ul>
-<h4 id="suam-other"><strong>Option 3</strong>: Retrieve From Other Source<a class="headerlink" href="#suam-other" title="Permanent link">&para;</a></h4>
-<p>Details are left to the user.</p>
-<h2 id="setup">Initialize Setup Package<a class="headerlink" href="#setup" title="Permanent link">&para;</a></h2>
-<blockquote>
-<p>Initialize pdm and packages for worker setup.</p>
-</blockquote>
-<ul>
-<li>Navigate an admin powershell to <code>&lt;repo_root&gt;</code>.</li>
-<li>Setup PDM environment for this repo:
-  <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>pdm install
-</code></pre></div></li>
-<li>Test whether setup script was installed:
-  <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>pdm run setup-win --help
-</code></pre></div>
-  Result should be a help message showing all of <code>setup-win</code>'s flags and
-  subcommands.</li>
-</ul>
-<h2 id="conf-dir">Get Configuration Directory<a class="headerlink" href="#conf-dir" title="Permanent link">&para;</a></h2>
-<blockquote>
-<p>The configuration directory holds <code>*.conf.yaml</code> files that determine how
-many aspects of a running SimpleUAM system operate.</p>
-</blockquote>
-<ul>
-<li>Navigate an admin powershell to <code>&lt;repo_root&gt;</code>.</li>
-<li>Print config directory:
-  <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>pdm run suam-config dir
-</code></pre></div></li>
-<li>Save result as <code>&lt;config-dir&gt;</code>.</li>
-</ul>
-<h2 id="qol">Install Quality of Life Packages <em>(Optional)</em><a class="headerlink" href="#qol" title="Permanent link">&para;</a></h2>
-<blockquote>
-<p>This installs Firefox, Notepad++, Tess, and other applications that make working
-on a new windows install more bearable.</p>
-</blockquote>
-<ul>
-<li>Navigate an admin powershell to <code>&lt;repo_root&gt;</code>.</li>
-<li>Install the packages:
-  <div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>pdm run setup-win install.qol-deps
-</code></pre></div></li>
-<li>Close this powershell terminal and open new ones for future steps.</li>
-</ul>
-<div class="admonition info">
-<p>One of the default QoL packages, <a href="https://tessapp.dev/">Tess</a>, is
-significantly nicer to use than the native powershell terminal.
-Consider using it to create an admin powershell instead of the OS-provided
-terminal.</p>
-</div>
-<h2 id="nfs">Setup File Sharing <em>(Optional)</em><a class="headerlink" href="#nfs" title="Permanent link">&para;</a></h2>
-<p>If you intend to share files (e.g. results) between workers and clients then
-set that up now, if you haven't done so already.</p>
-<p>If using AWS the instructions for the FSx file share take care of this.</p>
-<p>Otherwise shared directory and file server configurations are too varied for us
-to provide precise instructions.
-The only real requirement is that worker nodes see the shared file storage as
-a normal directory.</p>
-<ul>
-<li>Save the shared results directory as <code>&lt;results-dir&gt;</code>.</li>
-</ul>
-<h2 id="isis">Set up Isis Authentication<a class="headerlink" href="#isis" title="Permanent link">&para;</a></h2>
-<blockquote>
-<p>Various private resources are on git.isis.vanderbilt.edu.
-So that they aren't made available to the public SimpleUAM will retrieve any
-non-public information using credentials you provide.</p>
-</blockquote>
-<h3 id="isis-token"><strong>Option 1</strong>: Install an API token for <code>git.isis.vanderbilt.edu</code> <em>(Recommended)</em><a class="headerlink" href="#isis-token" title="Permanent link">&para;</a></h3>
-<blockquote>
-<p>We can use an API token to automate some repository and file accesses using
-Isis that would otherwise require manual authentication.</p>
-</blockquote>
-<h4 id="isis-token-create">Create a Personal Access Token<a class="headerlink" href="#isis-token-create" title="Permanent link">&para;</a></h4>
-<ul>
-<li>Log into <a href="https://git.isis.vanderbilt.edu">https://git.isis.vanderbilt.edu</a> .</li>
-<li>Save your isis username as: <code>&lt;isis-auth.user&gt;</code></li>
-<li>Go to "User Settings" -&gt; "<a href="https://git.isis.vanderbilt.edu/-/profile/personal_access_tokens">Access Tokens</a>".<ul>
-<li><strong>Token Name</strong>: <code>&lt;isis-auth.token-name&gt;</code></li>
-<li><strong>Expiration Date</strong>: 2100-01-01</li>
-<li>Select Scopes:<ul>
-<li><strong><code>read_api</code></strong>: Check</li>
-<li><strong><code>read_repository</code></strong>: Check</li>
-<li>All other others should be unchecked.</li>
+<li><strong>User:</strong> admin</li>
+<li><strong>Pass:</strong> <code>&lt;creo-license.flexnet-password&gt;</code></li>
 </ul>
 </li>
-</ul>
-</li>
-<li>Click "Create Personal Access Token".</li>
-<li>Save "Your new personal access token" as: <code>&lt;isis-auth.token&gt;</code></li>
-</ul>
-<h4 id="isis-token-config">Configure SimpleUAM to use your token<a class="headerlink" href="#isis-token-config" title="Permanent link">&para;</a></h4>
-<ul>
 <li>
-<p>Open <code>&lt;config-dir&gt;/auth.conf.yaml</code> in a text editor.</p>
+<p>Open the 'Vendor Deamon Adminstration' page:</p>
 <ul>
-<li>Set the <code>isis_user</code> field to <code>&lt;isis-auth.user&gt;</code></li>
-<li>Set the <code>isis_token</code> field to <code>&lt;isis-auth.token&gt;</code></li>
+<li>Click 'Import License':<ul>
+<li><strong>License File From Your Local Machine</strong>: <code>&lt;creo-license.file&gt;</code></li>
+<li><strong>Overwrite License File on License Server</strong>: Yes</li>
 </ul>
-<details class="example">
-<summary>Sample <code>auth.conf.yaml</code></summary>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1">### auth.conf.yaml ###</span><span class="w"></span>
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>
-<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="nt">isis_user</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myIsisUsername</span><span class="w"></span>
-<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="nt">isis_token</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;glpat-XXXXXXXXXXXXXXXXXXXX&#39;</span><span class="w"></span>
-</code></pre></div>
-</details>
 </li>
 </ul>
-<h3 id="isis-ssh"><strong>Option 2</strong>: Install SSH keys for <code>git.isis.vanderbilt.edu</code><a class="headerlink" href="#isis-ssh" title="Permanent link">&para;</a></h3>
-<blockquote>
-<p>SSH access to Isis, while not strictly necessary, will make future install
-steps easier and more secure.
-This doesn't do anything if an API token is already provided.</p>
-</blockquote>
+</li>
+<li>
+<p>Reboot the server.</p>
+</li>
+<li>
+<p>Open the web interface:</p>
 <ul>
-<li>Follow the instructions <a href="https://docs.gitlab.com/ee/user/ssh.html">here</a> to
-  set up ssh key based access to the isis server.</li>
+<li>Start Menu -&gt; PTC -&gt; Flexnet Admin Web Interface</li>
 </ul>
-<h3 id="isis-skip"><strong>Option 3</strong>: Skip Authentication<a class="headerlink" href="#isis-skip" title="Permanent link">&para;</a></h3>
-<blockquote>
-<p>If you skip authentication here you will prompted for passwords when
-cloning repositories and asked to manually download files when needed.</p>
-</blockquote>
-<h2 id="next">Next Steps<a class="headerlink" href="#next" title="Permanent link">&para;</a></h2>
-<p>Once this setup is complete you can continue to one or more of the following
-steps.
-All of the following nodes can coexist on a single windows instance.</p>
-<p><strong>Continue to <a href="../license_server/">Creo License Server Setup</a>...</strong><br/>
-<strong>Or to <a href="../broker/">Message Broker Setup</a>...</strong><br/>
-<strong>Or to <a href="../graph/">Corpus DB Setup</a>...</strong><br/>
-<strong>Or to <a href="../corpus/">Static Corpus Setup</a>...</strong><br/>
-<strong>Or to <a href="../worker/">Worker Node Setup</a>...</strong></p>
+</li>
+<li>
+<p>Open the 'Vendor Deamon Adminstration' page:</p>
+<ul>
+<li>Click 'Administer' for the 'ptc_d' license</li>
+<li>Click 'Start'</li>
+</ul>
+</li>
+</ul>
 
               
             </article>
@@ -1223,7 +879,7 @@ All of the following nodes can coexist on a single windows instance.</p>
     <nav class="md-footer__inner md-grid" aria-label="Footer" >
       
         
-        <a href="../aws-instance/" class="md-footer__link md-footer__link--prev" aria-label="Previous: AWS (Instance)" rel="prev">
+        <a href="../craidl/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Craidl" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
           </div>
@@ -1232,20 +888,20 @@ All of the following nodes can coexist on a single windows instance.</p>
               <span class="md-footer__direction">
                 Previous
               </span>
-              AWS (Instance)
+              Craidl
             </div>
           </div>
         </a>
       
       
         
-        <a href="../license_server/" class="md-footer__link md-footer__link--next" aria-label="Next: License Server" rel="next">
+        <a href="../workspaces/" class="md-footer__link md-footer__link--next" aria-label="Next: Workspaces" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              License Server
+              Workspaces
             </div>
           </div>
           <div class="md-footer__button md-icon">
