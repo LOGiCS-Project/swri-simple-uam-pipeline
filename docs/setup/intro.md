@@ -20,51 +20,12 @@ available to the clients as they're completed.
 
 The key components of a SimpleUAM deployment are:
 
-- **Client Nodes**: These make requests to analyze designs and retrieve analysis
-  results once they finish.
-  Client nodes will usually be running some optimization or search process.
-- **Message Brokers**: These gather analysis requests from client nodes and
-  distribute them to free worker nodes.
-- **Worker Nodes**: These will perform analyses on designs and store the results
-  somewhere accessible to the clients.
-- **License Management**: Each worker node needs Creo to perform analysis, and
-  a license for Creo must be made available somehow.
-    - **License Server**: These can provide licenses to a number of worker nodes
-      at once if provided with a floating license.
-    - **Node-Locked Creo License**: This is a worker-specific, static license
-      file that can be placed on a worker.
-- **Component Corpus**: A corpus of component information that every
-  worker needs in order to analyze designs.
-    - **Corpus DB**: A graph database that the worker can use to look up
-      component information.
-    - **Static Corpus**: A static file containing a dump of the component corpus
-      which is placed on each worker node.
-- **Results Storage**: A file system, accessible to both worker nodes and
-  clients, where analysis results (in individual zip files) are placed.
-- **Results Backends**: These notify client nodes when their analysis requests
-  are completed and where the output is in Results Storage.
+--8<-- "docs/assets/deployment-components.md"
 
 In order to form a complete SimpleUAM deployment some core requirements need to
 be met:
 
-- There must be one, and only one, message broker.
-    - The broker must be accessible over the network to all worker and client nodes.
-- There needs to be at least one configured, running worker node to run analyses.
-    - Each worker node needs to have a Creo license, either through a
-      node-locked license or a connection to a Creo license server.
-    - Each worker node needs to have access to a component corpus, either through
-      an initialized corpus DB or a static corpus file.
-- There must be a results storage accessible to all the worker and client nodes.
-    - The results storage should be a directory where workers can place files
-      which are then made accessible to all the clients,
-    - Generally these are network file share or some local folders with
-      automatic synchronization mechanism like rsync+cron or Dropbox.
-- In order for clients to receive analysis completion notifications there must
-  be a single, unique results backend.
-    - This backend must be accessible over the network to all worker nodes and
-      any client that wants to receive notifications.
-    - Note that a results backend is optional and simply polling the results
-      storage is perfectly viable.
+--8<-- "docs/assets/deployment-rules.md"
 
 With a SimpleUAM deployment meeting those requirements, a client nodes can
 offload analysis jobs to a pool of workers though simple python and command
@@ -324,7 +285,38 @@ but it does make it easier to keep track of what you're doing during install.
 This is particularly important if you are setting up multiple machines and
 don't want to waste time.
 
-## AWS Network Setup {#setup-aws-net}
+## Installation and Setup {#setup}
+
+Setting up a SimpleUAM requires choosing how components are distributed between
+the different machines in a deployment.
+
+??? info "SimpleUAM Deployment Components"
+
+    <figure markdown>
+      ![Project Components](../assets/component-diagram.png)
+      <figcaption>SimpleUAM Component Structure</figcaption>
+    </figure>
+
+    --8<-- "docs/assets/deployment-components.md"
+
+The assignment between components and machines must follow the following rules.
+
+??? info "Deployment Topology Rules"
+
+    --8<-- "docs/assets/deployment-rules.md"
+
+Then follow the steps for network setup once, and the machine setup instructions
+for each machine in the deployment.
+
+### Network Setup {#setup-net}
+
+Once a deployment topology has been chosen, first set up the network so that:
+
+- All workers and clients can communicate with the message broker and results
+  backend.
+- If using a license server, ensure it can communicate with all the workers.
+- If using a global, shared corpus DB ensure it can communicate with all the
+  workers.
 
 If you are using AWS you can start with our instructions for setting up a
 virtual private cloud (VPC).
@@ -333,7 +325,7 @@ for access to that private subnet.
 
 - **[AWS (Network) Setup](aws-network.md)**
 
-## Machine Setup {#setup-machine}
+### Machine Setup {#setup-machine}
 
 Installation for each machine requires following the other pages in this section
 in order, skipping any that aren't relevant and always including general setup.
@@ -352,3 +344,82 @@ Client nodes are less directly dependent on the SimpleUAM infrastructure and the
 setup can skip directly to the corresponding section:
 
 - **[Client Node](client.md)**
+
+## Example Installation Orders {#setup-example}
+
+Here are some worked examples of how to proceed through the setup process for
+our example deployment topologies:
+
+??? example "Example Local Development Deployment"
+
+    <figure markdown>
+      ![Project Components](../assets/development-setup.png)
+      <figcaption>Development SimpleUAM System</figcaption>
+    </figure>
+
+    This deployment places a single worker node in a VM on a host machine.
+
+    Initial setup would begin with:
+
+    - Creating a Windows VM for the worker.
+    - Ensuring that the VM can access the internet.
+    - Ensuring the host machine has a route to the VM at some IP address.
+    - Ensuring that a folder in the VM is mounted or mirrored on the host
+      machine.
+
+    Setup for the Worker VM would then go through the instructions for the
+    relevant components:
+
+    - **[General Setup](general.md)** *(Required)*
+    - **[Message Broker & Results Backend](broker.md)**
+    - **[Static Corpus](corpus.md)**
+    - **[Worker Node](worker.md)**
+
+    Finally, the host machine would go through the client instructions at:
+
+    - **[Client Node](client.md)**
+
+??? example "Example Production Deployment"
+
+    <figure markdown>
+      ![Project Components](../assets/production-setup.png)
+      <figcaption>Production SimpleUAM System</figcaption>
+    </figure>
+
+    This deployment spreads work over multiple worker nodes within a subnet.
+
+    Initial setup on AWS would follow **[AWS (Network) Setup](aws-network.md)**,
+    otherwise it would begin with:
+
+    - Creating the license server along with the broker, results, and worker
+      nodes.
+    - Creating the results storage and ensuring it's mounted on the worker
+      nodes.
+    - Ensure that the workers have a route to the license server and the message
+      broker.
+
+    The license server would go through the following, adding the AWS step if
+    needed:
+
+    - **[AWS (Instance) Setup](aws-instance.md)**
+    - **[General Setup](general.md)** *(Required)*
+    - **[Creo License Server](license_server.md)**
+
+    The message broker would likewise go through:
+
+    - **[AWS (Instance) Setup](aws-instance.md)**
+    - **[General Setup](general.md)** *(Required)*
+    - **[Message Broker & Results Backend](broker.md)**
+
+    Similarly, each worker node would go through:
+
+    - **[AWS (Instance) Setup](aws-instance.md)**
+    - **[General Setup](general.md)** *(Required)*
+    - **[Static Corpus](corpus.md)**
+    - **[Worker Node](worker.md)**
+
+    !!! Tip "A clone of a working worker should be fully functional out of the box."
+
+    Finally, each client would go through the client instructions at:
+
+    - **[Client Node](client.md)**
