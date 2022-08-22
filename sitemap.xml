@@ -2,102 +2,112 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipeline/</loc>
-         <lastmod>2022-08-02</lastmod>
+         <lastmod>2022-08-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipeline/contributing/</loc>
-         <lastmod>2022-08-02</lastmod>
+         <lastmod>2022-08-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipeline/license/</loc>
-         <lastmod>2022-08-02</lastmod>
+         <lastmod>2022-08-22</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipeline/assets/deployment-components/</loc>
+         <lastmod>2022-08-22</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipeline/assets/deployment-rules/</loc>
+         <lastmod>2022-08-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipeline/reference/SUMMARY/</loc>
-         <lastmod>2022-08-02</lastmod>
+         <lastmod>2022-08-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipeline/setup/aws-instance/</loc>
-         <lastmod>2022-08-02</lastmod>
+         <lastmod>2022-08-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipeline/setup/aws-network/</loc>
-         <lastmod>2022-08-02</lastmod>
+         <lastmod>2022-08-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipeline/setup/broker/</loc>
-         <lastmod>2022-08-02</lastmod>
+         <lastmod>2022-08-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipeline/setup/client/</loc>
-         <lastmod>2022-08-02</lastmod>
+         <lastmod>2022-08-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipeline/setup/corpus/</loc>
-         <lastmod>2022-08-02</lastmod>
+         <lastmod>2022-08-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipeline/setup/general/</loc>
-         <lastmod>2022-08-02</lastmod>
+         <lastmod>2022-08-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipeline/setup/graph/</loc>
-         <lastmod>2022-08-02</lastmod>
+         <lastmod>2022-08-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipeline/setup/intro/</loc>
-         <lastmod>2022-08-02</lastmod>
+         <lastmod>2022-08-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipeline/setup/license_server/</loc>
-         <lastmod>2022-08-02</lastmod>
+         <lastmod>2022-08-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipeline/setup/worker/</loc>
-         <lastmod>2022-08-02</lastmod>
+         <lastmod>2022-08-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipeline/usage/clients/</loc>
-         <lastmod>2022-08-02</lastmod>
+         <lastmod>2022-08-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipeline/usage/config/</loc>
-         <lastmod>2022-08-02</lastmod>
+         <lastmod>2022-08-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipeline/usage/craidl/</loc>
-         <lastmod>2022-08-02</lastmod>
+         <lastmod>2022-08-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipeline/usage/license/</loc>
-         <lastmod>2022-08-02</lastmod>
+         <lastmod>2022-08-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipeline/usage/workers/</loc>
-         <lastmod>2022-08-02</lastmod>
+         <lastmod>2022-08-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://LOGiCS-Project.github.io/swri-simple-uam-pipeline/usage/workspaces/</loc>
-         <lastmod>2022-08-02</lastmod>
+         <lastmod>2022-08-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>

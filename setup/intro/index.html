@@ -467,15 +467,35 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#setup-aws-net" class="md-nav__link">
-    AWS Network Setup
+  <a href="#setup" class="md-nav__link">
+    Installation and Setup
   </a>
+  
+    <nav class="md-nav" aria-label="Installation and Setup">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#setup-net" class="md-nav__link">
+    Network Setup
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#setup-machine" class="md-nav__link">
+    Machine Setup
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#setup-machine" class="md-nav__link">
-    Machine Setup
+  <a href="#setup-example" class="md-nav__link">
+    Example Installation Orders
   </a>
   
 </li>
@@ -885,15 +905,35 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#setup-aws-net" class="md-nav__link">
-    AWS Network Setup
+  <a href="#setup" class="md-nav__link">
+    Installation and Setup
   </a>
+  
+    <nav class="md-nav" aria-label="Installation and Setup">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#setup-net" class="md-nav__link">
+    Network Setup
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#setup-machine" class="md-nav__link">
+    Machine Setup
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#setup-machine" class="md-nav__link">
-    Machine Setup
+  <a href="#setup-example" class="md-nav__link">
+    Example Installation Orders
   </a>
   
 </li>
@@ -978,19 +1018,41 @@ be met:</p>
   an initialized corpus DB or a static corpus file.</li>
 </ul>
 </li>
-<li>There must be a results storage accessible to all the worker and client nodes.<ul>
-<li>The results storage should be a directory where workers can place files
-  which are then made accessible to all the clients,</li>
-<li>Generally these are network file share or some local folders with
-  automatic synchronization mechanism like rsync+cron or Dropbox.</li>
+<li>
+<p>There must be a results storage accessible to all the worker and client nodes.</p>
+<ul>
+<li>
+<p>The results storage should be a directory where workers can place files
+  which are then made accessible to all the clients.</p>
+<details class="tip">
+<summary>Possible Storage Mechanisms</summary>
+<p>Generally the results store will be a mounted network file share or
+local folder, but could also be:</p>
+<ul>
+<li>A network file system mounted on workers and clients. <em>(Default)</em></li>
+<li>A local folder, if both worker and client are on the same machine.</li>
+<li><a href="https://rsync.samba.org/">rsync</a>+<a href="https://en.wikipedia.org/wiki/Cron">cron</a></li>
+<li><a href="https://www.dropbox.com/">Dropbox</a></li>
+<li><a href="https://www.google.com/drive/">Google Drive</a></li>
+<li><a href="https://www.nsoftware.com/drive/s3drive/">S3 Drive</a></li>
+<li>Anything that looks like a filesystem directory to both the worker
+  and the client.</li>
+</ul>
+</details>
+</li>
 </ul>
 </li>
-<li>In order for clients to receive analysis completion notifications there must
-  be a single, unique results backend.<ul>
-<li>This backend must be accessible over the network to all worker nodes and
-  any client that wants to receive notifications.</li>
-<li>Note that a results backend is optional and simply polling the results
-  storage is perfectly viable.</li>
+<li>
+<p>In order for clients to receive analysis completion notifications there must
+  be a single, unique results backend.</p>
+<ul>
+<li>
+<p>This backend must be accessible over the network to all worker nodes and
+  any client that wants to receive notifications.</p>
+<div class="admonition tip">
+<p class="admonition-title">A results backend is optional and simply polling the results storage is perfectly viable.</p>
+</div>
+</li>
 </ul>
 </li>
 </ul>
@@ -1477,7 +1539,110 @@ We recommend keeping a file open for this.</p>
 but it does make it easier to keep track of what you're doing during install.
 This is particularly important if you are setting up multiple machines and
 don't want to waste time.</p>
-<h2 id="setup-aws-net">AWS Network Setup<a class="headerlink" href="#setup-aws-net" title="Permanent link">&para;</a></h2>
+<h2 id="setup">Installation and Setup<a class="headerlink" href="#setup" title="Permanent link">&para;</a></h2>
+<p>Setting up a SimpleUAM requires choosing how components are distributed between
+the different machines in a deployment.</p>
+<details class="info">
+<summary>SimpleUAM Deployment Components</summary>
+<p><figure markdown>
+  <img alt="Project Components" src="../../assets/component-diagram.png" />
+  <figcaption>SimpleUAM Component Structure</figcaption>
+</figure></p>
+<ul>
+<li><strong>Client Nodes</strong>: These make requests to analyze designs and retrieve analysis
+  results once they finish.
+  Client nodes will usually be running some optimization or search process.</li>
+<li><strong>Message Brokers</strong>: These gather analysis requests from client nodes and
+  distribute them to free worker nodes.</li>
+<li><strong>Worker Nodes</strong>: These will perform analyses on designs and store the results
+  somewhere accessible to the clients.</li>
+<li><strong>License Management</strong>: Each worker node needs Creo to perform analysis, and
+  a license for Creo must be made available somehow.<ul>
+<li><strong>License Server</strong>: These can provide licenses to a number of worker nodes
+  at once if provided with a floating license.</li>
+<li><strong>Node-Locked Creo License</strong>: This is a worker-specific, static license
+  file that can be placed on a worker.</li>
+</ul>
+</li>
+<li><strong>Component Corpus</strong>: A corpus of component information that every
+  worker needs in order to analyze designs.<ul>
+<li><strong>Corpus DB</strong>: A graph database that the worker can use to look up
+  component information.</li>
+<li><strong>Static Corpus</strong>: A static file containing a dump of the component corpus
+  which is placed on each worker node.</li>
+</ul>
+</li>
+<li><strong>Results Storage</strong>: A file system, accessible to both worker nodes and
+  clients, where analysis results (in individual zip files) are placed.</li>
+<li><strong>Results Backends</strong>: These notify client nodes when their analysis requests
+  are completed and where the output is in Results Storage.</li>
+</ul>
+</details>
+<p>The assignment between components and machines must follow the following rules.</p>
+<details class="info">
+<summary>Deployment Topology Rules</summary>
+<ul>
+<li>There must be one, and only one, message broker.<ul>
+<li>The broker must be accessible over the network to all worker and client nodes.</li>
+</ul>
+</li>
+<li>There needs to be at least one configured, running worker node to run analyses.<ul>
+<li>Each worker node needs to have a Creo license, either through a
+  node-locked license or a connection to a Creo license server.</li>
+<li>Each worker node needs to have access to a component corpus, either through
+  an initialized corpus DB or a static corpus file.</li>
+</ul>
+</li>
+<li>
+<p>There must be a results storage accessible to all the worker and client nodes.</p>
+<ul>
+<li>
+<p>The results storage should be a directory where workers can place files
+  which are then made accessible to all the clients.</p>
+<details class="tip">
+<summary>Possible Storage Mechanisms</summary>
+<p>Generally the results store will be a mounted network file share or
+local folder, but could also be:</p>
+<ul>
+<li>A network file system mounted on workers and clients. <em>(Default)</em></li>
+<li>A local folder, if both worker and client are on the same machine.</li>
+<li><a href="https://rsync.samba.org/">rsync</a>+<a href="https://en.wikipedia.org/wiki/Cron">cron</a></li>
+<li><a href="https://www.dropbox.com/">Dropbox</a></li>
+<li><a href="https://www.google.com/drive/">Google Drive</a></li>
+<li><a href="https://www.nsoftware.com/drive/s3drive/">S3 Drive</a></li>
+<li>Anything that looks like a filesystem directory to both the worker
+  and the client.</li>
+</ul>
+</details>
+</li>
+</ul>
+</li>
+<li>
+<p>In order for clients to receive analysis completion notifications there must
+  be a single, unique results backend.</p>
+<ul>
+<li>
+<p>This backend must be accessible over the network to all worker nodes and
+  any client that wants to receive notifications.</p>
+<div class="admonition tip">
+<p class="admonition-title">A results backend is optional and simply polling the results storage is perfectly viable.</p>
+</div>
+</li>
+</ul>
+</li>
+</ul>
+</details>
+<p>Then follow the steps for network setup once, and the machine setup instructions
+for each machine in the deployment.</p>
+<h3 id="setup-net">Network Setup<a class="headerlink" href="#setup-net" title="Permanent link">&para;</a></h3>
+<p>Once a deployment topology has been chosen, first set up the network so that:</p>
+<ul>
+<li>All workers and clients can communicate with the message broker and results
+  backend.</li>
+<li>If using a license server, ensure it can communicate with all the workers.</li>
+<li>If using a global, shared corpus DB ensure it can communicate with all the
+  workers.</li>
+</ul>
 <p>If you are using AWS you can start with our instructions for setting up a
 virtual private cloud (VPC).
 It sets up a private subnet for non-client machines and a VPN and Network drive
@@ -1485,7 +1650,7 @@ for access to that private subnet.</p>
 <ul>
 <li><strong><a href="../aws-network/">AWS (Network) Setup</a></strong></li>
 </ul>
-<h2 id="setup-machine">Machine Setup<a class="headerlink" href="#setup-machine" title="Permanent link">&para;</a></h2>
+<h3 id="setup-machine">Machine Setup<a class="headerlink" href="#setup-machine" title="Permanent link">&para;</a></h3>
 <p>Installation for each machine requires following the other pages in this section
 in order, skipping any that aren't relevant and always including general setup.
 Try to setup machines with centralized functions, like the license server and
@@ -1504,6 +1669,82 @@ setup can skip directly to the corresponding section:</p>
 <ul>
 <li><strong><a href="../client/">Client Node</a></strong></li>
 </ul>
+<h2 id="setup-example">Example Installation Orders<a class="headerlink" href="#setup-example" title="Permanent link">&para;</a></h2>
+<p>Here are some worked examples of how to proceed through the setup process for
+our example deployment topologies:</p>
+<details class="example">
+<summary>Example Local Development Deployment</summary>
+<p><figure markdown>
+  <img alt="Project Components" src="../../assets/development-setup.png" />
+  <figcaption>Development SimpleUAM System</figcaption>
+</figure></p>
+<p>This deployment places a single worker node in a VM on a host machine.</p>
+<p>Initial setup would begin with:</p>
+<ul>
+<li>Creating a Windows VM for the worker.</li>
+<li>Ensuring that the VM can access the internet.</li>
+<li>Ensuring the host machine has a route to the VM at some IP address.</li>
+<li>Ensuring that a folder in the VM is mounted or mirrored on the host
+  machine.</li>
+</ul>
+<p>Setup for the Worker VM would then go through the instructions for the
+relevant components:</p>
+<ul>
+<li><strong><a href="../general/">General Setup</a></strong> <em>(Required)</em></li>
+<li><strong><a href="../broker/">Message Broker &amp; Results Backend</a></strong></li>
+<li><strong><a href="../corpus/">Static Corpus</a></strong></li>
+<li><strong><a href="../worker/">Worker Node</a></strong></li>
+</ul>
+<p>Finally, the host machine would go through the client instructions at:</p>
+<ul>
+<li><strong><a href="../client/">Client Node</a></strong></li>
+</ul>
+</details>
+<details class="example">
+<summary>Example Production Deployment</summary>
+<p><figure markdown>
+  <img alt="Project Components" src="../../assets/production-setup.png" />
+  <figcaption>Production SimpleUAM System</figcaption>
+</figure></p>
+<p>This deployment spreads work over multiple worker nodes within a subnet.</p>
+<p>Initial setup on AWS would follow <strong><a href="../aws-network/">AWS (Network) Setup</a></strong>,
+otherwise it would begin with:</p>
+<ul>
+<li>Creating the license server along with the broker, results, and worker
+  nodes.</li>
+<li>Creating the results storage and ensuring it's mounted on the worker
+  nodes.</li>
+<li>Ensure that the workers have a route to the license server and the message
+  broker.</li>
+</ul>
+<p>The license server would go through the following, adding the AWS step if
+needed:</p>
+<ul>
+<li><strong><a href="../aws-instance/">AWS (Instance) Setup</a></strong></li>
+<li><strong><a href="../general/">General Setup</a></strong> <em>(Required)</em></li>
+<li><strong><a href="../license_server/">Creo License Server</a></strong></li>
+</ul>
+<p>The message broker would likewise go through:</p>
+<ul>
+<li><strong><a href="../aws-instance/">AWS (Instance) Setup</a></strong></li>
+<li><strong><a href="../general/">General Setup</a></strong> <em>(Required)</em></li>
+<li><strong><a href="../broker/">Message Broker &amp; Results Backend</a></strong></li>
+</ul>
+<p>Similarly, each worker node would go through:</p>
+<ul>
+<li><strong><a href="../aws-instance/">AWS (Instance) Setup</a></strong></li>
+<li><strong><a href="../general/">General Setup</a></strong> <em>(Required)</em></li>
+<li><strong><a href="../corpus/">Static Corpus</a></strong></li>
+<li><strong><a href="../worker/">Worker Node</a></strong></li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">A clone of a working worker should be fully functional out of the box.</p>
+</div>
+<p>Finally, each client would go through the client instructions at:</p>
+<ul>
+<li><strong><a href="../client/">Client Node</a></strong></li>
+</ul>
+</details>
 
               
             </article>
