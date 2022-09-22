@@ -47,6 +47,7 @@ class WinSetupConfig():
         'matplotlib',
         'triangle',
         'scipy',
+        'python-dateutil',
         # Craidl
         # 'gremlinpython', # Handling this internally now
     ]
