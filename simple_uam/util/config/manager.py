@@ -397,12 +397,15 @@ class Config(object):
         current_dir = Path(PathConfig().config_dir).resolve()
         conf_dirs = [current_dir]
         path_conf = current_dir / PATHCONFIG_FILE_NAME
+        changed = True
 
-        while current_dir and path_conf.is_file():
+        while current_dir and path_conf.is_file() and changed:
+            changed = False
             conf = OmegaConf.load(path_conf)
             new_dir = OmegaConf.select(conf, "config_directory")
             new_dir = Path(current_dir).resolve()
             if new_dir and new_dir != current_dir:
+                changed = True
                 conf_dirs.append(new_dir)
                 path_conf = new_dir / PATHCONFIG_FILE_NAME
             current_dir = new_dir
