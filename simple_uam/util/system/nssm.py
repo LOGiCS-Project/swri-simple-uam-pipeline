@@ -209,6 +209,8 @@ class NssmService():
             "AppStdout": str(Path(self.config.stdout_file).resolve()),
             "AppStderr":  str(Path(self.config.stderr_file).resolve()),
             "Type": 'SERVICE_INTERACTIVE_PROCESS' if self.config.interactive else 'SERVICE_WIN32_OWN_PROCESS',
+            "AppEvents Start/Pre": self.config.pre_hook,
+            "AppEvents Exit/Post": self.config.post_hook,
         }
 
         log.info(
@@ -221,15 +223,17 @@ class NssmService():
 
         for key, val in assignments.items():
             args = None
+
+            key = key.split(" ")
             if val == None:
-                args = ['nssm.exe', 'reset', self.service_name, key]
+                args = ['nssm.exe', 'reset', self.service_name, *key]
             else:
                 args=None
                 if isinstance(val,list):
                     args = [_escape(a) for a in val]
                 else:
                     args = [_escape(val)]
-                args = ['nssm.exe', 'set', self.service_name, key, *args]
+                args = ['nssm.exe', 'set', self.service_name, *key, *args]
             log.info(
                 "Updating NSSM Config.",
                 args=args,

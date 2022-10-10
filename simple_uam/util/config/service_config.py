@@ -117,3 +117,24 @@ class ServiceConfig():
     The password to the user account that runs this service.
     None means no password is given, empty string is empty string.
     """
+
+    pre_hook : Optional[str] = field(
+        default=None,
+    )
+    """
+    If given, the full command to run before the service starts.
+    Usually, a command that will update files or data before starting the
+    worker service.
+
+    Note: This should have the full path to executable and all commands.
+    """
+
+    post_hook : Optional[str] = field(
+        default=None,
+    )
+    """
+    If given, the full command to run after a service closes.
+    Usually will perform some cleanup.
+
+    Note: This should have the full path to executable and all commands.
+    """
