@@ -30,7 +30,7 @@ class GraphMLCorpusRepoConfig():
     repo: str = "https://git.isis.vanderbilt.edu/SwRI/athens-uav-workflows.git"
     """ Repo to clone """
 
-    branch: str = "3772de06"
+    branch: str = "75e54908"
     """ Branch to checkout, can be refspec. """
 
     graphml_file: str = 'ExportedGraphML/all_schema.graphml'
@@ -69,7 +69,7 @@ class Direct2CadRepoConfig():
     repo: str = "https://git.isis.vanderbilt.edu/SwRI/uam_direct2cad.git"
     """ Repo to clone """
 
-    branch: str = "272621cc"
+    branch: str = "aa2c71b3"
     """ Branch to checkout, can be refspec. """
 
 @define
@@ -81,7 +81,7 @@ class UAVWorkflowsRepoConfig():
     repo: str = "https://git.isis.vanderbilt.edu/SwRI/athens-uav-workflows.git"
     """ Repo to clone """
 
-    branch: str = "3772de06"
+    branch: str = "75e54908"
     """ Branch to checkout, can be refspec. """
 
 @define
