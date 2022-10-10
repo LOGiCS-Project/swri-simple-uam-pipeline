@@ -54,7 +54,7 @@ def download_corpus(ctx,  prompt=True, quiet=False, verbose=False):
     Git.clone_or_pull(**git_args)
 
 @task
-def install_corpus(ctx, corpus=None, skip=False, yes=False):
+def install_corpus(ctx, corpus=None, skip=False, delete=False):
     """
     Install the stub server corpus into the configured location.
 
@@ -62,7 +62,7 @@ def install_corpus(ctx, corpus=None, skip=False, yes=False):
       corpus: The '.graphml' file to generate the corpus from, defaults to the
         file from the download step if found.
       skip: skip updating corpus if existing corpus is found.
-      yes: skip confirmation prompt if old corpus is deleted.
+      delete: if found delete the existing corpus instead of backing it up.
     """
 
     # Default
@@ -101,15 +101,22 @@ def install_corpus(ctx, corpus=None, skip=False, yes=False):
             target = target,
         )
         return
-    elif target.exists() and not yes:
+    elif target.exists() and not delete:
         log.warning(
-            "Corpus already exists at target location, delete?",
+            "Corpus already exists at target location, backing up old corpus.",
             target = target,
         )
-        choice = input("Confirm deletion (y/N):")
 
-        if choice != 'y':
-            raise RuntimeError("Confirmation not given, aborting.")
+        backup_file(
+            target,
+            delete=True,
+        )
+
+    elif target.exists():
+        log.warning(
+            "Corpus already exists at target location, deleting old corpus.",
+            target = target,
+        )
 
         target.unlink()
 
