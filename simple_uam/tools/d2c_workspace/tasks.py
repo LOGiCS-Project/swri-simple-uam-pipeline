@@ -12,6 +12,7 @@ from simple_uam.direct2cad.session import D2CSession
 from simple_uam.direct2cad.workspace import D2CWorkspace
 
 from pathlib import Path
+import csv
 import json
 
 import subprocess
@@ -97,7 +98,8 @@ def gen_info_files(ctx,
 def process_design(ctx,
                    input='design_swri.json',
                    workspace=None,
-                   output=None):
+                   output=None,
+                   study_params=None):
     """
     Runs the direct2cad pipeline on the input design files, producing output
     metadata and a results archive with all the generated files.
@@ -107,6 +109,10 @@ def process_design(ctx,
       workspace: The workspace to run this operation in.
       output: File to write output session metadata to, prints to stdout if
         not specified.
+      study_params: File to read study parameters from. If provided this
+        should be a non-empty list in either json form (w/ a '.json' extension)
+        or csv form (w/ any other extension) with each row containing a
+        single study operation.
     """
 
     design = Path(input)
@@ -123,8 +129,22 @@ def process_design(ctx,
     with design.open('r') as fp:
         design_data = json.load(fp)
 
+    if study_params:
+
+        param_file = Path(study_params).resolve()
+
+        with param_file.open('r') as fp:
+
+            if param_file.suffix == ".json":
+                study_params = json.load(fp)
+            else:
+                reader = csv.DictReader(fp)
+                study_params = [row for row in reader]
+
+
+
     with D2CWorkspace(name="process-design",number=workspace) as session:
-        session.process_design(design_data)
+        session.process_design(design_data, study_params=study_params)
 
     if output:
         log.info(

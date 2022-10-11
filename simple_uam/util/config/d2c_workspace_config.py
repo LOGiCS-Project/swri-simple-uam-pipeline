@@ -7,6 +7,93 @@ from typing import List
 from .workspace_config import ResultsConfig, WorkspaceConfig
 
 @define
+class StudyParamsConfig():
+    """
+    Dataclass carrying configuration information for the study_params used in
+    when processing a design.
+    """
+
+    field_order : List[str] = [
+        "Analysis_Type",
+        "Flight_Path",
+        "CargoMass",
+        "Requested_Lateral_Speed",
+        "Requested_Vertical_Speed",
+        "Requested_Vertical_Down_Speed",
+        "Requested_Lateral_Acceleration",
+        "Requested_Lateral_Deceleration",
+        "Requested_Vertical_Acceleration",
+        "Requested_Vertical_Deceleration",
+        "Landing_Approach_Height",
+        "Vertical_Landing_Speed",
+        "Vertical_Landing_Speed_At_Ground",
+        "Q_Position",
+        "Q_Velocity",
+        "Q_Angular_Velocity",
+        "Q_Angles",
+        "Ctrl_R",
+    ]
+    """
+    Fields in the above list, when they exist in the provided params, will
+    be written out in the above order to `study_params.csv`.
+
+    Fields not mentioned above will appear afterwards in an arbitrary order.
+
+    Fields from any provided study params are also checked against this list
+    to catch simple formatting errors.
+    """
+
+    default : List[Dict[str,object]] = [
+        {
+            "Flight_Path": 1,
+            "Requested_Vertical_Speed": 0,
+            "Requested_Lateral_Speed": 46,
+            "Q_Position": 1,
+            "Q_Velocity": 1,
+            "Q_Angular_Velocity": 1,
+            "Q_Angles": 1,
+            "Ctrl_R": 1
+        },
+        {
+            "Flight_Path": 3,
+            "Requested_Vertical_Speed": 0,
+            "Requested_Lateral_Speed": 46,
+            "Q_Position": 1,
+            "Q_Velocity": 1,
+            "Q_Angular_Velocity": 1,
+            "Q_Angles": 1,
+            "Ctrl_R": 0.9
+        },
+        {
+            "Flight_Path": 4,
+            "Requested_Vertical_Speed": -4,
+            "Requested_Lateral_Speed": 0,
+            "Q_Position": 1,
+            "Q_Velocity": 1,
+            "Q_Angular_Velocity": 1,
+            "Q_Angles": 1,
+            "Ctrl_R": 0.8
+        },
+        {
+            "Flight_Path": 5,
+            "Requested_Vertical_Speed": 0,
+            "Requested_Lateral_Speed": 46,
+            "Q_Position": 1,
+            "Q_Velocity": 1,
+            "Q_Angular_Velocity": 1,
+            "Q_Angles": 1,
+            "Ctrl_R": 0.7
+        }
+    ]
+    """
+    The default study parameters to use when no other study parameters were
+    provided.
+
+    This should be a list of dicts each containing what should end up being
+    a row of the output CSV.
+    """
+
+@define
 class D2CWorkspaceConfig(WorkspaceConfig):
     """
     A dataclass carrying configuration fields and defaults.
@@ -40,12 +127,25 @@ class D2CWorkspaceConfig(WorkspaceConfig):
     """
 
     exclude : List[str] = ['.git']
+    """
+    Files and folders to exclude when creating the workspace.
+    """
 
     result_exclude : List[str] = [
         '.git',
         'workingdir/*.prt', #copied part files
         'data.zip',
     ]
+    """
+    Files and folders to exclude from the generated results file.
+    """
+
+    study_params : StudyParamsConfig = field(
+        factory=StudyParamsConfig
+    )
+    """
+    Config info for the study params using when processing a design.
+    """
 
     # craidl : CraidlConfig = field(
     #     default=SI("${craidl:}")

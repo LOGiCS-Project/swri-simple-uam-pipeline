@@ -10,6 +10,7 @@ from simple_uam.worker import actor
 from time import sleep
 
 import json
+import csv
 from pathlib import Path
 
 log = get_logger(__name__)
@@ -80,6 +81,83 @@ class D2CSession(Session):
             json.dump(design, fp, indent="  ")
 
     @session_op
+    def write_study_params(self, params, out_file="study_params.csv"):
+        """
+        Writes the study parameters to a file in the data directory.
+
+        Arguments:
+          params: The params as an array of dictionaries each containing a
+            row of parameters.
+
+            Note: There must be at least one item in params.
+            Note: All of the dictionaries must have the same set of keys.
+          out_file: The file, in the working directory, that the study params
+            will be written to. By default `study_params.csv`.
+        """
+
+        out_file = Path(out_file)
+
+        if out_file.is_absolute():
+            raise RuntimeError("out_file for writing study params must be relative.")
+
+        out_file = self.work_dir / out_file
+
+        if len(params) == 0:
+            raise RuntimeError("Study params list must have at least one element.")
+
+        if any([a.keys() != b.keys() for a in params for b in params]):
+            raise RuntimeError("Study params dictionaries do not have identical key sets.")
+
+        param_fields = params[0].keys()
+        base_fields = Config[D2CWorkspaceConfig].study_params.field_order
+        # normalizes the fields to ensure that likely errors collide w/ base
+        norm = lambda f: f.lower().strip().strip("_")
+        normed_fields = [norm(f) for f in base_fields]
+        field_order = list()
+
+        # Get the initial ordered set of fields
+        for field in base_fields:
+            if field in param_fields:
+                field_order.append(field)
+
+        # Gather remaining fields
+        for field in param_fields:
+
+            # Check if cases are right, because it's an easy error to miss
+            if (field not in base_fields) and (norm(field) in normed_fields):
+                correct = base_fields[normed_fields.index(norm(field))]
+                raise RuntimeError(
+                    f"Field {repr(field)} should be {repr(correct)} in order "
+                    "for SWRi's code to work correctly.")
+
+            # Append field to order list if needed.
+            if field not in field_order:
+                field_order.append(field)
+
+        # Clean up out_file if it exists
+        out_file.unlink(missing_ok=True)
+
+        # Write param info out as a CSV
+        with out_file.open('w') as fp:
+
+            log.info(
+                "Writing study params to output file.",
+                workspace=self.number,
+                out_file=str(out_file),
+                field_order=field_order,
+                params=params,
+            )
+
+            writer = csv.DictWriter(fp, fieldnames=field_order)
+            writer.writeheader()
+            writer.writerows(params)
+
+
+
+
+
+
+    @session_op
     def gen_info_files(self, design):
         """
         Creates info files in the target directory from the provided design
@@ -142,12 +220,16 @@ class D2CSession(Session):
             )
 
     @session_op
-    def process_design(self, design):
+    def process_design(self, design, study_params=None):
         """
         Runs the chain of operations needed to process a single uam design
         and produce FDM, cad, and other output.
         """
 
+        if not study_params:
+            study_params = Config[D2CWorkspaceConfig].study_params.default
+
         self.write_design(design)
+        self.write_study(study_params)
         self.gen_info_files(design)
         self.build_cad()

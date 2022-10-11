@@ -18,13 +18,20 @@ def gen_info_files(design, metadata=None):
     """
     gen_info_files as an actor that will perform the task on a worker node
     and return metadata information.
+
+    Arguments:
+      design: The design to generate the info files for as a JSON serializable
+        python object.
+      metadata: An arbitrary JSON serializable object that will be included
+        in 'metadata.json' under the 'user_metadata' field.
     """
 
-    if not metadata:
-        metadata = dict()
-    metadata['message_info'] = message_metadata()
+    internal_data = dict()
+    if metadata:
+        internal_data['user_metadata'] = metadata
+    internal_data['message_info'] = message_metadata()
 
-    with D2CWorkspace(name="gen_info_files",metadata=metadata) as session:
+    with D2CWorkspace(name="gen_info_files",metadata=internal_data) as session:
         session.write_design(design)
         session.gen_info_files(design)
 
@@ -32,18 +39,27 @@ def gen_info_files(design, metadata=None):
 
 
 @actor
-def process_design(design, metadata=None):
+def process_design(design, metadata=None, study_params=None):
     """
     Processes a design on a worker node and saves the result into a result
     archive on the worker. Returns metadata on the worker used and archive
     created.
+
+    Arguments:
+      design: The design to be processed as a JSON serializable object.
+      metadata: A JSON serializable metadata object that will be placed
+        in 'metadata.json' under the field 'user_metadata'.
+      study_params: A list of dictionaries each containing one set of study
+        parameters to run analyses for. The list must have at least one entry
+        and the dictionaries must all have the same keys set.
     """
 
-    if not metadata:
-        metadata = dict()
-    metadata['message_info'] = message_metadata()
+    internal_data = dict()
+    if metadata:
+        internal_data['user_metadata'] = metadata
+    internal_data['message_info'] = message_metadata()
 
-    with D2CWorkspace(name="process_design",metadata=metadata) as session:
-        session.process_design(design)
+    with D2CWorkspace(name="gen_info_files",metadata=internal_data) as session:
+        session.process_design(design, study_params=study_params)
 
     return session.metadata
