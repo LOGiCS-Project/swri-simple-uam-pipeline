@@ -230,6 +230,6 @@ class D2CSession(Session):
             study_params = Config[D2CWorkspaceConfig].study_params.default
 
         self.write_design(design)
-        self.write_study(study_params)
+        self.write_study_params(study_params)
         self.gen_info_files(design)
         self.build_cad()

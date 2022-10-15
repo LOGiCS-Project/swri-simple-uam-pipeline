@@ -44,7 +44,8 @@ class D2CManager(WorkspaceManager):
                      direct2cad_repo : Path,
                      uav_workflows_repo : Path,
                      creoson_server_zip : Path,
-                     setvars_file : Optional[Path]):
+                     setvars_file : Optional[Path],
+                     copy_uav_parts : Optional[bool] = None):
         """
         This function should be overloaded by a child class with a task
         specific setup operation.
@@ -61,6 +62,9 @@ class D2CManager(WorkspaceManager):
           creoson_server_zip: Zip w/ creoson server
           setvars_file: The setvars.bat file to put in the creoson server dir.
             If none will start the creoson server gui.
+          copy_uav_parts: Should parts from the UAV Workflows repo be copied
+            int the reference directory, overriding any direct2cad parts?
+            If none, will use whatever setting is in the config.
         """
 
         rsync_args = dict(
@@ -140,16 +144,24 @@ class D2CManager(WorkspaceManager):
                 wait=True,
             )
 
-        uav_cad_dir = Path(uav_workflows_repo) / "CAD"
-        ref_cad_dir = reference_dir / "CAD"
+        if copy_uav_parts == None:
+            copy_uav_parts = Config[D2CWorkspaceConfig].copy_uav_parts
 
-        log.info(
-            "Copying CAD files from UAV workflows repo.",
-            uav_cad_dir=str(uav_cad_dir),
-            ref_cad_dir=str(ref_cad_dir),
-        )
+        if copy_uav_parts:
+            uav_cad_dir = Path(uav_workflows_repo) / "CAD"
+            ref_cad_dir = reference_dir / "CAD"
 
-        for uav_cad in uav_cad_dir.iterdir():
-            ref_cad = ref_cad_dir / uav_cad.name
-            backup_file(ref_cad, delete=True)
-            shutil.copy2(uav_cad, ref_cad)
+            log.info(
+                "Copying CAD files from UAV workflows repo.",
+                uav_cad_dir=str(uav_cad_dir),
+                ref_cad_dir=str(ref_cad_dir),
+            )
+
+            for uav_cad in uav_cad_dir.iterdir():
+                ref_cad = ref_cad_dir / uav_cad.name
+                backup_file(ref_cad, delete=True)
+                shutil.copy2(uav_cad, ref_cad)
+        else:
+            log.info(
+                "Not copying UAV Workflows CAD files into reference workspace.",
+            )

@@ -3,7 +3,7 @@ from omegaconf import SI
 from .manager import Config
 from .path_config import PathConfig
 from .craidl_config import CraidlConfig
-from typing import List
+from typing import List, Dict, Union
 from .workspace_config import ResultsConfig, WorkspaceConfig
 
 @define
@@ -43,7 +43,7 @@ class StudyParamsConfig():
     to catch simple formatting errors.
     """
 
-    default : List[Dict[str,object]] = [
+    default : List[Dict[str,Union[int,float]]] = [
         {
             "Flight_Path": 1,
             "Requested_Vertical_Speed": 0,
@@ -135,16 +135,22 @@ class D2CWorkspaceConfig(WorkspaceConfig):
         '.git',
         'workingdir/*.prt', #copied part files
         'data.zip',
+        '__pycache__',
     ]
     """
     Files and folders to exclude from the generated results file.
     """
 
     study_params : StudyParamsConfig = field(
-        factory=StudyParamsConfig
+        default=StudyParamsConfig()
     )
     """
     Config info for the study params using when processing a design.
+    """
+
+    copy_uav_parts : bool = False
+    """
+    Should the direct2cad workspace copy the parts from the athens uav repo?
     """
 
     # craidl : CraidlConfig = field(
