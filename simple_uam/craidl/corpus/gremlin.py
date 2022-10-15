@@ -48,14 +48,17 @@ class GremlinComponent(ComponentReader):
 
         return self.g.V().has('[avm]Component','[]Name',self.name) \
                    .in_('inside').hasLabel('[]Connector') \
-                   .values('[]Name').toList()
+                       .values('[]Name') \
+                   .toList()
 
     @property
     def cad_part(self) -> Optional[str]:
 
         part = self.g.V().has('[avm]Component','[]Name',self.name) \
             .in_('inside').has('VertexLabel','[]DomainModel') \
-            .has('[]Format','Creo').values('[]Name').toList()
+                .has('[]Format','Creo') \
+                .values('[]Name') \
+            .toList()
 
         return None if len(part) == 0 else part[0]
 
@@ -63,10 +66,14 @@ class GremlinComponent(ComponentReader):
     def cad_properties(self) -> List[Dict[str,Any]]:
 
         return self.g.V().has('[avm]Component','[]Name',self.name) \
-            .in_('inside').hasLabel('[]DomainModel').has('[]Format','Creo') \
-            .in_('inside').hasLabel('[]Parameter') \
-            .as_('PROP').values('[]Name').as_('PROP_NAME') \
-            .select('PROP').in_('inside').in_('inside').out('value_source') \
+            .in_('inside').hasLabel('[]DomainModel') \
+                .has('[]Format','Creo') \
+                .in_('inside').hasLabel('[]Parameter') \
+                .as_('PROP') \
+            .values('[]Name') \
+                .as_('PROP_NAME') \
+            .select('PROP') \
+                .in_('inside').in_('inside').out('value_source') \
                 .in_('inside').in_('inside').in_('inside').values('value') \
                 .as_('PROP_VALUE') \
             .select('PROP_NAME','PROP_VALUE') \
@@ -76,13 +83,17 @@ class GremlinComponent(ComponentReader):
     def cad_params(self) -> List[Dict[str,Any]]:
 
         return self.g.V().has('[avm]Component','[]Name',self.name) \
-            .in_('inside').hasLabel('[]DomainModel').has('[]Format','Creo') \
-            .in_('inside').hasLabel('[]Parameter').as_('LIB_PROP') \
-                .values('[]Name').as_('PROP_NAME') \
-            .select('LIB_PROP').in_('inside').in_('inside').out('value_source') \
-                .in_('inside').in_('inside') \
-                .hasLabel('[]AssignedValue') \
-                .in_('inside').in_('inside').values('value').as_('PROP_VALUE') \
+            .in_('inside').hasLabel('[]DomainModel') \
+                .has('[]Format','Creo') \
+                .in_('inside').hasLabel('[]Parameter') \
+                .as_('LIB_PROP') \
+            .values('[]Name') \
+                .as_('PROP_NAME') \
+            .select('LIB_PROP') \
+                .in_('inside').in_('inside').out('value_source') \
+                .in_('inside').in_('inside').hasLabel('[]AssignedValue') \
+                .in_('inside').in_('inside').values('value') \
+                .as_('PROP_VALUE') \
             .select('PROP_NAME','PROP_VALUE') \
             .toList()
 
@@ -99,10 +110,14 @@ class GremlinComponent(ComponentReader):
     def properties(self) -> List[Dict[str,Any]]:
 
         return self.g.V().has('[avm]Component','[]Name',self.name) \
-            .in_('inside').hasLabel('[]Property').as_('C_PROP') \
-            .values('[]Name').as_('PROP_NAME').select('C_PROP') \
-            .in_('inside').hasLabel('[]Value').in_('inside') \
-            .in_('inside').in_('inside').values('value').as_('PROP_VALUE') \
+            .in_('inside').hasLabel('[]Property') \
+                .as_('C_PROP') \
+            .values('[]Name') \
+                .as_('PROP_NAME') \
+            .select('C_PROP') \
+                .in_('inside').hasLabel('[]Value') \
+                .in_('inside').in_('inside').in_('inside').values('value') \
+                .as_('PROP_VALUE') \
             .select('PROP_NAME','PROP_VALUE') \
             .toList()
 
@@ -110,12 +125,15 @@ class GremlinComponent(ComponentReader):
     def params(self) -> List[Dict[str,Any]]:
 
         return self.g.V().has('[avm]Component','[]Name',self.name) \
-            .in_('inside').hasLabel('[]Property').as_('C_PROP') \
-            .values('[]Name').as_('PROP_NAME') \
-            .select('C_PROP').in_('inside').hasLabel('[]Value') \
-            .in_('inside').in_('inside') \
-                .hasLabel('[]AssignedValue').in_('inside') \
-                .in_('inside').values('value').as_('PROP_VALUE') \
+            .in_('inside').hasLabel('[]Property') \
+                .as_('C_PROP') \
+            .values('[]Name') \
+                .as_('PROP_NAME') \
+            .select('C_PROP') \
+                .in_('inside').hasLabel('[]Value') \
+                .in_('inside').in_('inside').hasLabel('[]AssignedValue') \
+                .in_('inside').in_('inside').values('value') \
+                .as_('PROP_VALUE') \
             .select('PROP_NAME','PROP_VALUE') \
             .toList()
 
