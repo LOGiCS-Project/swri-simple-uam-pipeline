@@ -41,15 +41,13 @@ class WinSetupConfig():
         # Direct2Cad
         'psutil',
         'parea',
-        # 'creopyson', # Need to use the creopyson from the swri repo
         'numpy',
         'trimesh',
         'matplotlib',
         'triangle',
         'scipy',
         'python-dateutil',
-        # Craidl
-        # 'gremlinpython', # Handling this internally now
+        'gremlinpython',
     ]
     """
     Pip packages needed for a windows worker node.
