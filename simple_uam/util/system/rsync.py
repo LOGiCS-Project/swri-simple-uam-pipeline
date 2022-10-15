@@ -261,9 +261,9 @@ class Rsync():
                      prune_missing : bool = True,
     ) -> List[Path]:
         """
-        Use rsync to generate a list of files changed in dst relative to src.
+        Use rsync to generate a list of files changed in src relative to ref.
 
-        Output paths are all given relative to dst.
+        Output paths are all given relative to src.
 
         Arguments:
           ref: the reference directory

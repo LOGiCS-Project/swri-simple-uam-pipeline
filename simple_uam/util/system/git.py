@@ -11,7 +11,7 @@ from urllib.parse import urlparse
 import re
 from typing import Optional, Union
 
-from .backup import archive_files
+from .backup import archive_files, backup_file
 from ..logging import get_logger
 
 log = get_logger(__name__)
@@ -20,6 +20,36 @@ class Git():
     """
     Static class used to wrap a bunch of git commands.
     """
+
+    @staticmethod
+    def get_remote_url(
+            repo_root : Union[str, Path],
+            remote_name : str = "origin",
+    ):
+        """
+        Gets the remote repo for a repository at a particular location.
+        Raises error if no git repo exists at location or remote isn't found.
+
+        Uses the command: "git remote get-url <remote_name>"
+
+        WARNING: Not Yet Implemented
+
+        Arguments:
+          repo_root : The root directory of the repo.
+          remote_name : The remote repo to get the url for (Default: "origin")
+        """
+
+        repo_root = Path(repo_root).resolve()
+
+        if not repo_root.exists():
+            raise RuntimeError("Could not find git repo at {str(repo_root)}")
+
+        # Finish implementing this, there are enough quirks to this that
+        # we should look at it separately.
+        raise NotImplementedError()
+
+
+
 
     @staticmethod
     def clone_or_pull(
