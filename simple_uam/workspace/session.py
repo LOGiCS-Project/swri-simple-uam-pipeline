@@ -3,6 +3,7 @@ from typing import List, Tuple, Dict, Optional, Union
 from pathlib import Path
 from simple_uam.util.logging import get_logger
 from simple_uam.util.system import Rsync
+import simple_uam.util.system.backup as backup
 from attrs import define,field
 from filelock import Timeout, FileLock
 from functools import wraps
@@ -239,14 +240,23 @@ class Session():
         )
 
         for exception in exceptions:
-            exception_data['chain'].append(dict(
+            formatted = dict(
                 type = exception['type'].__name__,
                 value = traceback.format_exception_only(
                     exception['type'],
                     exception['val'],
                 ),
-                stack = traceback.format_stack(exception['tb']),
-            ))
+                traceback=traceback.format_tb(exception['tb']),
+            )
+
+            log.warning(
+                "Exception during session:",
+                workspace=self.number,
+                ref=str(self.reference_dir),
+                src=str(self.work_dir),
+            )
+
+            exception_data['chain'].append(formatted)
 
         ### Add to Metadata ###
 
@@ -401,26 +411,65 @@ class Session():
             json.dump(self.metadata, out_file, indent="  ")
 
     @session_op
-    def generate_result_archive(self):
+    def generate_result_archive_files(self):
         """
-        Creates the result archive from the current working directory as it
-        is.
+        Overloadable function to generate a mapping between filesystem files
+        and their positions in the results archive.
+
+        The default implementation will compare the reference workspace to the
+        current workspace, and produce the list of all changes.
+
+        Note: This is only called by generate_result_archive and will be
+        ignored if that function is overridden.
+
+        Returns:
+          A `Dict[Union[str,Path],Union[str,Path]]` whose keys are the
+          system files to be put into the result archive and whose values
+          are the location in the archive each system file goes.
         """
+
+        src = self.work_dir
 
         rsync_args = dict(
             ref=str(self.reference_dir),
-            src=str(self.work_dir),
-            out=str(self.result_archive),
+            src=str(src),
             exclude=self.result_exclude_patterns,
         )
 
         log.info(
-            "Generating result archive for session.",
+            "Finding list of changed files for session's result archive.",
             workspace=self.number,
             **rsync_args,
         )
 
-        Rsync.archive_changes(**rsync_args)
+        changes = Rsync.list_changes(**rsync_args)
+
+        return backup.archive_file_list_to_file_mapping(src,changes)
+
+    @session_op
+    def generate_result_archive(self):
+        """
+        Creates the result archive from the current working directory as it
+        is.
+
+        Calls the `generate_result_archive_files` function to get the list,
+        which might be overloaded from the default "get changes from reference"
+        behavior.
+        """
+
+        files = self.generate_result_archive_files()
+        out = self.result_archive
+
+        log.info(
+            "Generating result archive for session.",
+            workspace=self.number,
+            ref=str(self.reference_dir),
+            src=str(self.work_dir),
+            out=str(out),
+            files={str(s_f): str(a_f) for s_f, a_f in files.items()},
+        )
+
+        backup.archive_file_mapping(files, out)
 
     @session_op
     def validate_complete(self):
