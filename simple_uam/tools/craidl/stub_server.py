@@ -16,13 +16,13 @@ import subprocess
 
 log = get_logger(__name__)
 
-uav_workflows_dir = Path(Config[CraidlConfig].stub_server.cache_dir) / 'uav_workflows'
+uav_uam_corpus_dir = Path(Config[CraidlConfig].stub_server.cache_dir) / 'uav_uam_corpus'
 
-uav_workflows_repo = Config[CorpusConfig].graphml_corpus.repo
+uav_uam_corpus_repo = Config[CorpusConfig].graphml_corpus.repo
 
-uav_workflows_branch = Config[CorpusConfig].graphml_corpus.branch
+uav_uam_corpus_branch = Config[CorpusConfig].graphml_corpus.branch
 
-uav_workflows_corpus = uav_workflows_dir / Config[CorpusConfig].graphml_corpus.graphml_file
+uav_uam_corpus_file = uav_uam_corpus_dir / Config[CorpusConfig].graphml_corpus.graphml_file
 
 @task
 def download_corpus(ctx,  prompt=True, quiet=False, verbose=False):
@@ -37,11 +37,11 @@ def download_corpus(ctx,  prompt=True, quiet=False, verbose=False):
     """
 
     git_args = dict(
-        repo_uri = uav_workflows_repo,
-        deploy_dir = str(uav_workflows_dir),
+        repo_uri = uav_uam_corpus_repo,
+        deploy_dir = str(uav_uam_corpus_dir),
         remote_user = Config[AuthConfig].isis_user,
         remote_pass = Config[AuthConfig].isis_token,
-        branch = uav_workflows_branch,
+        branch = uav_uam_corpus_branch,
         password_prompt = prompt and not Config[AuthConfig].isis_token,
         quiet = quiet,
         verbose = verbose,
@@ -69,7 +69,7 @@ def install_corpus(ctx, corpus=None, skip=False, delete=False):
 
     if not corpus:
         download_corpus(ctx)
-        corpus = uav_workflows_corpus
+        corpus = uav_uam_corpus_file
     else:
         corpus = Path(corpus)
 

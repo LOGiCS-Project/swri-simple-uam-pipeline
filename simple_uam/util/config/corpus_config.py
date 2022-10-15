@@ -27,10 +27,10 @@ class GraphMLCorpusRepoConfig():
     Config properties for the repo with the graphml corpus.
     """
 
-    repo: str = "https://git.isis.vanderbilt.edu/SwRI/athens-uav-workflows.git"
+    repo: str = "https://git.isis.vanderbilt.edu/SwRI/uam-uav-models.git"
     """ Repo to clone """
 
-    branch: str = "75e54908"
+    branch: str = "f9bcc652"
     """ Branch to checkout, can be refspec. """
 
     graphml_file: str = 'ExportedGraphML/all_schema.graphml'
@@ -69,7 +69,7 @@ class Direct2CadRepoConfig():
     repo: str = "https://git.isis.vanderbilt.edu/SwRI/uam_direct2cad.git"
     """ Repo to clone """
 
-    branch: str = "aa2c71b3"
+    branch: str = "00fca9e6"
     """ Branch to checkout, can be refspec. """
 
 @define
@@ -81,7 +81,7 @@ class UAVWorkflowsRepoConfig():
     repo: str = "https://git.isis.vanderbilt.edu/SwRI/athens-uav-workflows.git"
     """ Repo to clone """
 
-    branch: str = "75e54908"
+    branch: str = "b98d4c28"
     """ Branch to checkout, can be refspec. """
 
 @define
@@ -90,6 +90,10 @@ class CorpusConfig():
     Config properties for corpus repo repositories and files.
     This generally controls the versions of each repo/installer in use for a
     particular simple_uam deployment.
+
+    This is separated out because it allows a deployment admin to cleanly
+    control the versions of all the core repositories, incl. replacing them
+    with local forks.
     """
 
     trinity : TrinityRepoConfig = TrinityRepoConfig()
