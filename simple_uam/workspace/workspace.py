@@ -157,6 +157,9 @@ class Workspace():
             # setup metadata (more stuff can go here I guess)
             metadata = deepcopy(self.metadata)
 
+            # Get extra parameters for new session init.
+            extra_params = self.extra_session_params()
+
             # create active session
             self.active_session = self.session_class(
                 reference_dir=self.config.reference_path,
@@ -168,6 +171,7 @@ class Workspace():
                 metadata=metadata,
                 name=self.name,
                 metadata_file=Path(self.config.results.metadata_file),
+                **extra_params,
             )
             self.active_session.reset_workspace(
                 progress=True,
@@ -253,3 +257,14 @@ class Workspace():
         self.active_session.exit_workdir()
         self.finish()
         return None
+
+    def extra_session_params(self):
+        """
+        Provides extra parameters to a session's __init__ call.
+
+        Should be overloaded by child classes if any extra params are needed.
+
+        Returns: A dict from param name to value.
+        """
+
+        return dict()

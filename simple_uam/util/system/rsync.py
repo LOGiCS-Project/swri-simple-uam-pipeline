@@ -132,7 +132,7 @@ class Rsync():
 
         if not (src.exists() and src.is_dir()):
             err = RuntimeError("Rsync src isn't a dir.")
-            log.exception(
+            log.error(
                 "Rsync src argument must be a dir.",
                 src=str(src),
                 exists=src.exists(),
@@ -145,7 +145,7 @@ class Rsync():
 
         if not (dst.exists() and dst.is_dir()):
             err = RuntimeError("Rsync dst isn't a dir.")
-            log.exception(
+            log.error(
                 "Rsync dst argument must be a dir.",
                 dst=str(dst),
                 exists=dst.exists(),

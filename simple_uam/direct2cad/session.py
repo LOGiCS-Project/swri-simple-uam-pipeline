@@ -2,7 +2,7 @@
 from simple_uam.workspace.session import Session, session_op
 from simple_uam.util.logging import get_logger
 from simple_uam.util.config import Config, D2CWorkspaceConfig, CraidlConfig
-from simple_uam.util.system import backup_file
+from simple_uam.util.system import backup_file, configure_file
 from simple_uam.craidl.corpus import GremlinCorpus, StaticCorpus, get_corpus
 from simple_uam.craidl.info_files import DesignInfoFiles
 from attrs import define,field

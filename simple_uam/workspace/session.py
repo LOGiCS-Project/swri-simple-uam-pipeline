@@ -306,6 +306,10 @@ class Session():
            quiet: perform the copy silently.
         """
 
+        # In change number of workspaces changes w/o reference workspace being
+        # regenerated.
+        self.work_dir.mkdir(parents=True, exist_ok=True)
+
         rsync_args = dict(
             src=self.reference_dir,
             dst=self.work_dir,
