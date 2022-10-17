@@ -8,6 +8,7 @@ from simple_uam.util.logging import get_logger
 from simple_uam.util.system import Git, Pip
 
 from . import choco
+import importlib.resources as resources
 from .helpers import GUIInstaller, append_to_file, get_mac_address
 
 import subprocess
@@ -159,12 +160,6 @@ def matlab(ctx, force=False):
     """
     matlab_installer.run(force=force)
 
-# Directory where chocolatey scripts are found
-setup_script_dir = Config[PathConfig].repo_data_dir / 'setup'
-
-# Chololatey env bootstrap scrip
-disable_ieesc_script = setup_script_dir / 'disable_ieesc.ps1'
-
 @task
 def disable_ieesc(ctx):
     """
@@ -178,15 +173,17 @@ def disable_ieesc(ctx):
       - https://www.casbay.com/guide/kb/disable-enhanced-security-configuration-for-internet-explorer-in-windows-server-2019-2016
     """
 
-    log.info(
-        "Disabling IE Enhanced Security .",
-        script=str(disable_ieesc_script),
-    )
+    with resources.path('simple_uam.data.setup','disable_ieesc.ps1') as disable_iessc_script:
 
-    installed = subprocess.run([
-        'powershell',
-        '-executionpolicy','bypass',
-        '-File',disable_ieesc_script])
+        log.info(
+            "Disabling IE Enhanced Security .",
+            script=str(disable_ieesc_script),
+        )
+
+        installed = subprocess.run([
+            'powershell',
+            '-executionpolicy','bypass',
+            '-File',disable_ieesc_script])
 
 creopyson_dir = Config[PathConfig].work_dir / 'creopyson'
 """ Directory with creopyson repo. """

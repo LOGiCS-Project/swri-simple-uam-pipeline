@@ -220,8 +220,6 @@ def uav_workflows(ctx,  prompt=True, quiet=False, verbose=False):
 
     Git.clone_or_pull(**git_args)
 
-setvars_file = Config[PathConfig].repo_data_dir / 'creoson' / 'setvars.bat'
-
 @task(mkdirs, creoson_server, direct2cad, uav_workflows)
 def setup_reference(ctx, creoson_gui = False):
     """
@@ -240,9 +238,12 @@ def setup_reference(ctx, creoson_gui = False):
         creoson_server_zip=str(creoson_server_zip),
         uav_workflows_repo=str(uav_workflows_dir),
     )
-    manager.setup_reference_dir(
-        direct2cad_repo=direct2cad_dir,
-        uav_workflows_repo=uav_workflows_dir,
-        creoson_server_zip=creoson_server_zip,
-        setvars_file=None if creoson_gui else setvars_file,
-    )
+
+    with resources.path('simple_uam.data.creoson','setvars.bat') as setvars_file:
+
+        manager.setup_reference_dir(
+            direct2cad_repo=direct2cad_dir,
+            uav_workflows_repo=uav_workflows_dir,
+            creoson_server_zip=creoson_server_zip,
+            setvars_file=None if creoson_gui else setvars_file,
+        )

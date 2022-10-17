@@ -11,6 +11,7 @@ from simple_uam.util.system import Git, configure_file, backup_file
 from simple_uam.util.system.windows import download_file, verify_file, unpack_file, \
     run_gui_exe, append_to_file, get_mac_address
 from pathlib import Path
+import importlib.resources as resources
 import tempfile
 import subprocess
 
@@ -235,18 +236,6 @@ def unpack_server(ctx, force_unpack=False, force_download=False):
             gremlin_unpack_dir = Path(temp_dir) / gremlin_unpack_folder
             shutil.move(gremlin_unpack_dir, gremlin_server_dir)
 
-conf_data_root = Config[PathConfig].repo_dir / 'data' / 'gremlin-server'
-
-server_conf_data = conf_data_root / 'gremlin-server-uam.yaml'
-server_conf_target = Path('conf','gremlin-server-uam.yaml')
-server_conf_path = gremlin_server_dir / server_conf_target
-
-corpus_loader_data = conf_data_root / 'uam-corpus.groovy'
-corpus_loader_target = Path('scripts','uam-corpus.groovy')
-corpus_loader_path = gremlin_server_dir / corpus_loader_target
-
-corpus_data_target = Path('data', 'all_schema.graphml')
-corpus_data_path = gremlin_server_dir / corpus_data_target
 
 @task(unpack_server)
 def configure_server(ctx,
@@ -280,33 +269,48 @@ def configure_server(ctx,
     else:
         corpus = Path(corpus)
 
-    ## Server Conf
+    data_module = 'simple_uam.data.gremlin_server'
 
-    configure_file(
-        server_conf_data,
-        server_conf_path,
-        replacements = {
-            '<<HOSTNAME>>': host,
-            '<<PORT>>': str(port),
-            '<<LOAD_SCRIPT>>': corpus_loader_target.as_posix(),
-        },
-        exist_ok = True,
-    )
+    corpus_data_target = Path('data', 'all_schema.graphml')
+    corpus_data_path = gremlin_server_dir / corpus_data_target
 
     ## Corpus Loader
 
     read_only = Config[CraidlConfig].stub_server.read_only
     traversal_strats = 'ReadOnlyStrategy' if read_only else ''
 
-    configure_file(
-        corpus_loader_data,
-        corpus_loader_path,
-        replacements = {
-            '<<CORPUS_DATA>>': corpus_data_target.as_posix(),
-            '<<TRAVERSAL_STRATEGIES>>': traversal_strats,
-        },
-        exist_ok = True,
-    )
+    with resources.path(data_module, 'uam-corpus.groovy') as corpus_loader_data:
+
+        corpus_loader_target = Path('scripts','uam-corpus.groovy')
+        corpus_loader_path = gremlin_server_dir / corpus_loader_target
+
+        configure_file(
+            corpus_loader_data,
+            corpus_loader_path,
+            replacements = {
+                '<<CORPUS_DATA>>': corpus_data_target.as_posix(),
+                '<<TRAVERSAL_STRATEGIES>>': traversal_strats,
+            },
+            exist_ok = True,
+        )
+
+    ## Server Conf
+
+    with resources.path(data_module, 'gremlin-server-uam.yaml') as server_conf_data:
+
+        server_conf_target = Path('conf','gremlin-server-uam.yaml')
+        server_conf_path = gremlin_server_dir / server_conf_target
+
+        configure_file(
+            server_conf_data,
+            server_conf_path,
+            replacements = {
+                '<<HOSTNAME>>': host,
+                '<<PORT>>': str(port),
+                '<<LOAD_SCRIPT>>': corpus_loader_target.as_posix(),
+            },
+            exist_ok = True,
+        )
 
     ## Server Command
 
@@ -322,7 +326,7 @@ def configure_server(ctx,
         exist_ok = True,
     )
 
-    ## Corpus schema
+    ## Corpus Schema
 
     if corpus_data_path.is_symlink():
         log.info(

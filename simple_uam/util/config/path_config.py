@@ -64,13 +64,8 @@ class PathConfig:
 
     @property
     def data_dir(self):
-        """ Ysytem user static data storage. """
+        """ System user static data storage. """
         return Path(self.data_directory)
-
-    @property
-    def repo_data_dir(self):
-        """ Repository static data storage. """
-        return Path(self.repo_dir) / 'data'
 
 """
 This particular config object is special and doesn't need an explicit

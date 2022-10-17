@@ -12,14 +12,13 @@ from simple_uam.craidl.info_files import DesignInfoFiles
 from simple_uam.util.system import backup_file
 
 from .examples import *
+import importlib.resources as resources
 from pathlib import Path
 import json
 
 import subprocess
 
 log = get_logger(__name__)
-
-repo_data_corpus = Config[PathConfig].repo_data_dir / 'corpus_static_dump.json'
 
 @task
 def copy_static_corpus(ctx,
@@ -35,10 +34,6 @@ def copy_static_corpus(ctx,
       force: Do we overwrite the corpus if it's already there? Defaults to True.
       backup: Should we create a backup if there's a preexisting output file?
     """
-
-    if input == None:
-        input = repo_data_corpus
-    input = Path(input)
 
     output = Config[CraidlConfig].static_corpus
     output = Path(output)
@@ -62,14 +57,20 @@ def copy_static_corpus(ctx,
         )
         output.unlink()
 
-    log.info(
-        "Copying corpus data into location.",
-        input_corpus = str(input),
-        output_corpus = str(output),
-    )
+    with resources.path('simple_uam.data','corpus_static_dump.json') as default_corpus:
 
-    output.parent.mkdir(parents=True, exist_ok=True)
-    shutil.copy2(input, output)
+        if input == None:
+            input = default_corpus
+        input = Path(input)
+
+        log.info(
+            "Copying corpus data into location.",
+            input_corpus = str(input),
+            output_corpus = str(output),
+        )
+
+        output.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(input, output)
 
 corpus_cache = Config[CraidlConfig].static_corpus_cache
 

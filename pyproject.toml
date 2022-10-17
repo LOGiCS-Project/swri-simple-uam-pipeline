@@ -49,22 +49,24 @@ Discussions = "https://github.com/LOGiCS-Project/swri-simple-uam-pipeline/discus
 suam-config = "simple_uam.tools.config_mgr.cli:main"
 craidl = "simple_uam.tools.craidl.cli:main"
 d2c-workspace = "simple_uam.tools.d2c_workspace.cli:main"
-suam-worker = "simple_uam.tools.worker.cli:main"
+# suam-worker = "simple_uam.tools.worker.cli:main"
 suam-client = "simple_uam.tools.client.cli:main"
+suam-test = "simple_uam.tools.test.cli:main"
 
 [tool.pdm]
 version = {use_scm = true}
 
 [tool.pdm.build]
 editable-backend = "editables"
-# includes = [
-#     "data/*",
-# ]
+include = [
+  "simple_uam/data/**",
+]
 
 [tool.pdm.scripts]
 # config-mgr = {call = "simple_uam.tools.config_mgr.cli:main(['pdm run config-mgr'])"}
 # craidl = {call = "simple_uam.tools.craidl.cli:main(['pdm run craidl'])"}
 setup-win = {call = "simple_uam.tools.setup_win.cli:main(['pdm run setup-win'])"}
+suam-worker = {call = "simple_uam.tools.worker.cli:main(['pdm run suam-worker'])"}
 check-docs = {call = "simple_uam.tools.dev_util.cli:main(['pdm run check-docs','check-docs'])"}
 docs = {call = "simple_uam.tools.dev_util.cli:main(['pdm run docs','docs'])"}
 docs-serve = {call = "simple_uam.tools.dev_util.cli:main(['pdm run docs-serve','docs-serve'])"}
