@@ -148,14 +148,14 @@ class Workspace():
             self.active_workspace = lock_tuple[0]
             self.active_lock = lock_tuple[1]
 
+            # setup metadata (more stuff can go here I guess)
+            metadata = deepcopy(self.metadata)
+
             # create temp_dir & temp_results dir name
             self.active_temp_dir = tempfile.TemporaryDirectory()
             uniq_str = ''.join(random.choices(
                 string.ascii_lowercase + string.digits, k=10))
             temp_archive = Path(self.active_temp_dir.name) / f"{self.name}-{uniq_str}.zip"
-
-            # setup metadata (more stuff can go here I guess)
-            metadata = deepcopy(self.metadata)
 
             # Get extra parameters for new session init.
             extra_params = self.extra_session_params()
@@ -212,7 +212,7 @@ class Workspace():
                 # Move it to the manager's results directory
                 self.active_session.result_archive = self.manager.add_result(
                     archive=self.active_session.result_archive,
-                    prefix=self.name,
+                    prefix=self.archive_prefix(self.active_session),
                     copy=False,
                 )
 
@@ -230,6 +230,27 @@ class Workspace():
             self.active_workspace = None
             self.active_lock = None
             self.active_temp_dir = None
+
+    def archive_prefix(self, session):
+        """
+        Chooses a prefix for an archive type based on the current workspace
+        and the current session that we're creating the archive for.
+
+        Default behaviour is to return the name of the session type and iff
+        there's a message_id available, add the last 12 characters of the UUID.
+
+        Note: This can be overloaded in subclasses with more intricate behaviour.
+        """
+
+        prefix = self.name
+
+        if "message_info" in session.metadata:
+            message_info = seession.metadata["message_info"]
+            if "message_id" in message_info:
+                msg_uniq = '-'.split(message_info["message_id"])[-1]
+                prefix = f"{prefix}-{msg_uniq}"
+
+        return self.name
 
     def __enter__(self):
         """

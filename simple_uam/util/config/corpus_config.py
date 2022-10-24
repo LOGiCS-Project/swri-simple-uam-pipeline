@@ -85,6 +85,47 @@ class UAVWorkflowsRepoConfig():
     """ Branch to checkout, can be refspec. """
 
 @define
+class FDMBuildRepoConfig():
+    """
+    Config properties for SWRi's flight dynamics model repo.
+    """
+
+    repo: str = "https://git.isis.vanderbilt.edu/SwRI/flight-dynamics-model.git"
+    """ Repo to clone """
+
+    branch: str = "a7d4f84d"
+    """ Branch to checkout, can be refspec. """
+
+@define
+class FDMEvalRepoConfig():
+    """
+    Config properties for the environment in which SWRi's FDM repo can run.
+
+    Both the direct2cad and UAV workflows repos should be able to act as the
+    FDM environment.
+    """
+
+    repo: str = Direct2CadRepoConfig().repo
+    """ Repo to clone """
+
+    branch: str = Direct2CadRepoConfig.branch
+    """ Branch to checkout, can be refspec. """
+
+    exe_loc: str = "FlightDynamics/"
+    """
+    Location within the above repo the alternate new_fdm.exe and associated
+    dlls should go.
+    """
+
+    exe_cwd : str = "/Results/fdmEvalResult/fdmTB/"
+    """
+    The directory in which input files should be placed and where the output
+    files for FDM will go. Will be created if need be.
+    """
+
+
+
+@define
 class CorpusConfig():
     """
     Config properties for corpus repo repositories and files.
@@ -124,6 +165,17 @@ class CorpusConfig():
     uav_workflows : UAVWorkflowsRepoConfig = UAVWorkflowsRepoConfig()
     """
     UAV_workflows repo settings: used to define the uav_workflows repo and branch.
+    """
+
+    fdm_build : FDMBuildRepoConfig = FDMBuildRepoConfig()
+    """
+    FDM Build repo settings: used to define the flight dynamics model repo and branch.
+    """
+
+    fdm_eval: FDMEvalRepoConfig = FDMEvalRepoConfig()
+    """
+    FDM evaluation environment repo settings: Defined the file environment
+    within which calls of FDM will run.
     """
 
 # Add to the configuration manager

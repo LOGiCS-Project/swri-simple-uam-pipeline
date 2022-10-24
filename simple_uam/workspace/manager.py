@@ -128,6 +128,7 @@ class WorkspaceManager():
                    archive : Union[str,Path],
                    prefix : Optional[str] = None,
                    suffix : Optional[str] = None,
+                   uniq_str : Optional[str] = None,
                    copy : bool = True,
     ) -> Optional[Path]:
         """
@@ -156,8 +157,10 @@ class WorkspaceManager():
 
         # Get archive file name setup
         time_str = datetime.now().strftime("%Y-%m-%d")
-        uniq_str = ''.join(random.choices(
-            string.ascii_lowercase + string.digits, k=10))
+
+        if not uniq_str:
+            uniq_str = ''.join(random.choices(
+                string.ascii_lowercase + string.digits, k=10))
 
         if not prefix:
             prefix = archive.stem
@@ -207,7 +210,7 @@ class WorkspaceManager():
         for result in self.config.results_path.iterdir():
             if result.is_file():
                 total_results += 1
-                access_time = datime.from_timestamp(result.stat().st_atime)
+                access_time = datetime.from_timestamp(result.stat().st_atime)
                 staletime = (now - access_time).total_seconds()
                 if staletime > self.config.results.min_staletime:
                     results.append(tuple(staletime,result))
@@ -230,7 +233,7 @@ class WorkspaceManager():
             with self.results_lock().acquire(blocking=False):
                 for result in results:
                     # If a result got deleted before this point, that's fine.
-                    results.unlink(missing_ok=True)
+                    results[1].unlink(missing_ok=True)
         except Timeout:
             pass
 

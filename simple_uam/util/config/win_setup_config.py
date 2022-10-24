@@ -14,6 +14,8 @@ class WinSetupConfig():
         'checksum',
         'wget',
         '7zip',
+        'rsync',
+        'nssm',
     ]
     """
     Packages that are needed for all windows nodes, please don't remove any
@@ -30,8 +32,6 @@ class WinSetupConfig():
     worker_dep_packages : List[str] = [
         'openjdk11',
         # 'openmodelica',
-        'rsync',
-        'nssm',
     ]
     """
     Chocolatey packages needed for a windows worker node.
@@ -50,7 +50,7 @@ class WinSetupConfig():
         'gremlinpython',
     ]
     """
-    Pip packages needed for a windows worker node.
+    Pip packages needed for a windows D2C worker node.
     """
 
     license_dep_packages : List[str] = [
@@ -67,6 +67,24 @@ class WinSetupConfig():
     Chocolatey packages needed for a windows graph server node.
     """
 
+    fdm_dep_packages : List[str] = [
+        'msys2',
+    ]
+    """
+    Chocolatey packages needed for a windows FDM worker node.
+    """
+
+    fdm_msys2_packages : List[str] = [
+        'base-devel',
+        'mingw-w64-x86_64-toolchain',
+        'gcc',
+        'gcc-fortran',
+        'python',
+    ]
+    """
+    Packages to install on the FDM worker's msys2 environment.
+    """
+
     qol_packages : List[str] = [
         'firefox',
         'notepadplusplus',
@@ -75,8 +93,8 @@ class WinSetupConfig():
         'freecad',
     ]
     """
-    Quality of life packages that make actually using a windows node
-    bearable.
+    Quality of life chocolatey packages that make actually using a windows
+    node bearable.
     """
 
 # Add to the configuration manager
