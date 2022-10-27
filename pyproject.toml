@@ -36,6 +36,8 @@ dependencies = [
     "dramatiq[rabbitmq,redis]>=1.13.0",
     "platformdirs>=2.5.2",
     "editables>=0.3",
+    "f90nml>=1.4.3",
+    "parsy>=2.0",
 ]
 
 [project.urls]
@@ -49,9 +51,10 @@ Discussions = "https://github.com/LOGiCS-Project/swri-simple-uam-pipeline/discus
 suam-config = "simple_uam.tools.config_mgr.cli:main"
 craidl = "simple_uam.tools.craidl.cli:main"
 d2c-workspace = "simple_uam.tools.d2c_workspace.cli:main"
-# suam-worker = "simple_uam.tools.worker.cli:main"
+fdm-workspace = "simple_uam.tools.fdm_workspace.cli:main"
 suam-client = "simple_uam.tools.client.cli:main"
-suam-test = "simple_uam.tools.test.cli:main"
+# suam-worker = "simple_uam.tools.worker.cli:main"
+# suam-test = "simple_uam.tools.test.cli:main"
 
 [tool.pdm]
 version = {use_scm = true}

@@ -128,6 +128,7 @@ class WorkspaceManager():
                    archive : Union[str,Path],
                    prefix : Optional[str] = None,
                    suffix : Optional[str] = None,
+                   ident : Optional[str] = None,
                    uniq_str : Optional[str] = None,
                    copy : bool = True,
     ) -> Optional[Path]:
@@ -155,15 +156,25 @@ class WorkspaceManager():
         if not archive.exists() or not archive.is_file():
             raise RuntimeError(f"Expected {archive} to be file, cannot proceed.")
 
-        # Get archive file name setup
+        # Get archive file name
+        name_components = list()
+
+        if not prefix:
+            prefix = archive.stem
+        name_components.append(prefix)
+
         time_str = datetime.now().strftime("%Y-%m-%d")
+        name_components.append(time_str)
+
+        if ident:
+            name_components.append(ident)
 
         if not uniq_str:
             uniq_str = ''.join(random.choices(
                 string.ascii_lowercase + string.digits, k=10))
+        name_components.append(uniq_str)
 
-        if not prefix:
-            prefix = archive.stem
+        out_file = '-'.join(name_components)
 
         if not suffix:
             suffix = archive.suffix
@@ -171,8 +182,9 @@ class WorkspaceManager():
         if not suffix.startswith('.'):
             suffix = "." + suffix
 
-        out_file = f"{prefix}-{time_str}-{uniq_str}{suffix}"
+        out_file += suffix
 
+        # Actually copy things into output locations
         with tempfile.TemporaryDirectory() as tmp_dir:
 
             # Create a temorary copy if needed.

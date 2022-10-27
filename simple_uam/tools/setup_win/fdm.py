@@ -30,7 +30,7 @@ def choco_pkgs(ctx):
 def msys2_pkgs(ctx):
     """ Install FDM Node pip packages. """
 
-    msys2.install(*Config[WinSetupConfig].fdm_msys2_packages)
+    Msys2.install(*Config[WinSetupConfig].fdm_msys2_packages)
 
 @task(choco_pkgs, msys2_pkgs)
 def dep_pkgs(ctx):

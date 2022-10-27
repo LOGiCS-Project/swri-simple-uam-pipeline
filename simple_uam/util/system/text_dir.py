@@ -747,3 +747,28 @@ class TDir(TDirEntry):
                 out.add_dirent(name, deepcopy(dirent))
 
         return out
+
+    def is_subsumed_by(self, other : TDir):
+        """
+        Does every entry in self exist in other?
+
+        Arguments:
+          other: The other TDir which is being checked against
+        """
+
+        out = TDir()
+
+        for name, dirent in self.members.items():
+            other_dirent = other.members.get(name)
+
+            # Item is dir in both, if not subsumed, propagate
+            if isinstance(dirent,TDir) and isinstance(other_dirent,TDir):
+                if not dirent.is_subsumed_by(other_dirent):
+                    return False
+
+            # item not subsumed
+            elif not other_dirent:
+                return False
+
+        # All items exist
+        return True

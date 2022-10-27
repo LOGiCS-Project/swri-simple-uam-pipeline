@@ -4,6 +4,7 @@ from pathlib import Path
 from simple_uam.util.logging import get_logger
 from simple_uam.util.system import Rsync
 import simple_uam.util.system.backup as backup
+from simple_uam.worker import actor, message_metadata
 from attrs import define,field
 from filelock import Timeout, FileLock
 from functools import wraps
@@ -402,6 +403,11 @@ class Session():
         """
 
         self.metadata['session_info'] = self.session_info()
+
+        # If this is run in an actor add a message info component.
+        message_info = message_metadata()
+        if message_info:
+            self.metadata['message_info'] = message_info
 
         meta_path = self.work_dir / self.metadata_file
 

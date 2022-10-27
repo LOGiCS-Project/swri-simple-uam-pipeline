@@ -5,6 +5,7 @@ import argparse
 import textwrap
 import logging
 import shutil
+import time
 from typing import Optional, Union, Dict, List
 from pathlib import Path
 from dataclasses import dataclass, field, asdict
@@ -43,6 +44,13 @@ def parse_arguments() -> argparse.Namespace:
         default='INFO',
         choices=levels,
         help="The level of logs to show.",
+    )
+
+    parser.add_argument(
+        "-w",
+        "--wait",
+        action="store_true",
+        help="Hold the terminal window open after the process is finished so output can be seen.",
     )
 
     return parser.parse_args()
@@ -221,6 +229,8 @@ if __name__ == "__main__":
     init_logger(args)
     log.debug(f"args: {args}")
 
+    wait = bool(args.wait)
+
     cmd_opts = read_cmd_opts(args.cmd_file)
     log.debug(f"initial cmd_opts: {cmd_opts}")
 
@@ -233,7 +243,7 @@ if __name__ == "__main__":
     try:
 
         validate_cmd_opts(cmd_opts)
-        process = run_cmd_opts(cmd_opts)
+        process = run_cmd_opts(cmd_opts,wait=wait)
         stop_data = {"completed": process.returncode}
 
     except subprocess.TimeoutExpired as err:
@@ -251,3 +261,6 @@ if __name__ == "__main__":
     finally:
         with cmd.stop_flag.open('w') as fp:
             json.dump(stop_data,fp,indent=2)
+
+    while wait:
+        time.sleep(1)

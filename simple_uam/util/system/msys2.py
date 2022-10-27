@@ -9,6 +9,7 @@ import textwrap
 from urllib.parse import urlparse
 import re
 import time
+import shutil
 import json
 import importlib.resources as resources
 from typing import Optional, Union, List, Dict
@@ -212,7 +213,7 @@ class Msys2():
 
             temp_dir = Path(temp_dir).resolve()
 
-            std_ext = 'txt' if text else 'bin'
+            std_ext = '.txt' if text else '.bin'
 
             if stdin:
                 stdin_file = (temp_dir / 'stdin').with_suffix(std_ext).resolve()
@@ -248,6 +249,15 @@ class Msys2():
             with data_file.open('w') as fp:
                 json.dump(shim_data,fp,indent=2)
 
+            log.info(
+                "Wrote Msys2 shim data file.",
+                file=str(data_file),
+                temp_dir=str(temp_dir),
+                flag_file=str(flag_file),
+                data_file=str(data_file),
+                **shim_data,
+            )
+
             # Actually run the shim now that we've created the files
             flag_output = Msys2._run_shim(
                 data_file=data_file,
@@ -271,7 +281,18 @@ class Msys2():
 
             return process
 
+    @staticmethod
+    def bindir():
+        """
+        Gets the default binary directory for msys2, assumes that it is
+        in a specific place relative to `msys2.exe`.
+        """
 
+        exe = Path(shutil.which('msys2.exe')).resolve()
+        root_dir = exe.parent
+        bin_dir = root_dir / 'usr' / 'bin'
+
+        return bin_dir
 
     @staticmethod
     def _run_shim(data_file : Path,
@@ -296,18 +317,43 @@ class Msys2():
         with resources.path('simple_uam.data.fdm','msys2_shim.py') as shim:
 
             shim_file = Path(shim).resolve()
+            process_cmd = [
+                'msys2.exe',
+                'python',
+                shim_file,
+                data_file,
+                "--log-level=DEBUG",
+                "--wait",
+            ]
 
-            process = subprocess.run(
-                ['msys2.exe','python',shim_file, data_file],
+            log.info(
+                "Running Msys2 shim with command:",
+                cmd=process_cmd,
             )
+            process = subprocess.run(process_cmd)
 
             elapsed = 0
 
+            if timeout == None:
+                log.info(
+                    "No Msys timeout provided. Waiting indefinitely."
+                )
+
             while (timeout == None) or (elapsed <= timeout):
+
+                log.info(
+                    "Checking for existence of output flag file.",
+                    timeout=timeout,
+                    elapsed=elapsed,
+                    poll_interval=poll_interval,
+                    exists=flag_file.exists(),
+                )
+
                 if flag_file.exists():
                     with flag_file.open('r') as fp:
                         return json.load(fp)
                 time.sleep(poll_interval)
+                elapsed += poll_interval
 
             raise RuntimeError(
                 f"Running msys2 cmd shim (at `{str(shim_file)}`) with "

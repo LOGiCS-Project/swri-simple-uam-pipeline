@@ -2,6 +2,7 @@
 from simple_uam.util.config import Config, PathConfig, BrokerConfig
 from simple_uam.util.logging import get_logger
 from urllib.parse import urlparse
+from copy import deepcopy
 from pathlib import Path
 from attrs import define,field
 import dramatiq
@@ -99,15 +100,27 @@ def message_metadata():
     """
     When called in a running actor provides a dictionary of metadata from the
     message being processed.
+
+    Returns:
+      None if not in actor context, otherwise a dict with assorted
+      metadata from the current message.
     """
 
     msg = CurrentMessage.get_current_message()
 
-    return dict(
-        actor_name = msg.actor_name,
-        message_id = msg.message_id,
-        message_timestamp = msg.message_timestamp,
-    )
+    if msg:
+        # I copy things into a new dict to better control what
+        # properties are preserved.
+        return deepcopy(dict(
+            queue_name = msg.queue_name,
+            actor_name = msg.actor_name,
+            message_id = msg.message_id,
+            message_timestamp = msg.message_timestamp,
+            args=msg.args,
+            kwargs=msg.kwargs,
+        ))
+    else:
+        return None
 
 def has_backend():
     """

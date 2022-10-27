@@ -1,6 +1,7 @@
 from typing import List, Tuple, Dict, Optional, Union, Type
 from pathlib import Path
 from attrs import define,field,converters, setters
+from simple_uam.worker import actor, message_metadata
 from filelock import Timeout, FileLock
 from functools import wraps
 from copy import deepcopy
@@ -44,6 +45,17 @@ class Workspace():
     )
     """ The number of the workspace this object is operating with. """
 
+    user_metadata : Optional[Dict] = field(
+        default=None,
+        kw_only=True,
+    )
+    """
+    The user_provided metadata for this session, will be stored in
+    metadata.json under the 'user_metadata' key in the result archive.
+
+    Can be set at init, or modified before session start. Changes to
+    this persist between sessions.
+    """
     metadata : Dict = field(
         factory=dict,
         kw_only=True,
@@ -114,6 +126,19 @@ class Workspace():
     moved into the results directory.
     """
 
+    def new_session_metadata(self) -> object:
+        """
+        Will generate the metadata for a particular session by combining
+        the base metadata, user_metadata, and the message metadata if
+        it exists.
+        """
+
+        metadata = self.deepcopy(self.metadata)
+
+        metadata['user_metadata'] = self.deepcopy(self.user_metadata)
+
+        return metadata
+
     def start(self) -> Session:
         """
         Starts the session, meant to be used in a try-finally style.
@@ -148,9 +173,6 @@ class Workspace():
             self.active_workspace = lock_tuple[0]
             self.active_lock = lock_tuple[1]
 
-            # setup metadata (more stuff can go here I guess)
-            metadata = deepcopy(self.metadata)
-
             # create temp_dir & temp_results dir name
             self.active_temp_dir = tempfile.TemporaryDirectory()
             uniq_str = ''.join(random.choices(
@@ -168,7 +190,7 @@ class Workspace():
                 init_exclude_patterns=self.config.exclude,
                 result_exclude_patterns=self.config.result_exclude,
                 result_archive=temp_archive,
-                metadata=metadata,
+                metadata=self.new_session_metadata(),
                 name=self.name,
                 metadata_file=Path(self.config.results.metadata_file),
                 **extra_params,
@@ -212,7 +234,7 @@ class Workspace():
                 # Move it to the manager's results directory
                 self.active_session.result_archive = self.manager.add_result(
                     archive=self.active_session.result_archive,
-                    prefix=self.archive_prefix(self.active_session),
+                    ident=self.archive_ident(self.active_session),
                     copy=False,
                 )
 
@@ -231,26 +253,26 @@ class Workspace():
             self.active_lock = None
             self.active_temp_dir = None
 
-    def archive_prefix(self, session):
+    def archive_ident(self, session):
         """
-        Chooses a prefix for an archive type based on the current workspace
-        and the current session that we're creating the archive for.
+        Chooses an indent frangment for an archive type based on the current
+        workspace and the current session that we're creating the archive for.
 
-        Default behaviour is to return the name of the session type and iff
-        there's a message_id available, add the last 12 characters of the UUID.
+        Default behaviour is to return the last segment of the message id if
+        available (`'-'.split(message_id)[-1]`) otherwise return "local" for
+        a local operation.
+
+        Returning 'None' will drop the ident segment alltogether.
 
         Note: This can be overloaded in subclasses with more intricate behaviour.
         """
 
-        prefix = self.name
+        message_info = message_metadata()
 
-        if "message_info" in session.metadata:
-            message_info = seession.metadata["message_info"]
-            if "message_id" in message_info:
-                msg_uniq = '-'.split(message_info["message_id"])[-1]
-                prefix = f"{prefix}-{msg_uniq}"
-
-        return self.name
+        if message_info:
+            return ('-'.split(message_info["message_id"]))[-1]
+        else:
+            return "local"
 
     def __enter__(self):
         """

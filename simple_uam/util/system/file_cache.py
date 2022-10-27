@@ -62,19 +62,19 @@ class FileCache(Generic[K]):
     Should be on same drive as the cache dir.
     """
 
-    clean_trigger : int = field(
-        default = 1100
-    )
-    """
-    Threshold at which to clean the cache.
-    """
-
-    clean_limit : int = field(
+    prune_limit : int = field(
         default = 1000
     )
     """
-    Number of cache items that should be remaining at the end of a clean
+    Number of cache items that should be remaining at the end of a prune
     cycle.
+    """
+
+    prune_trigger : int = field(
+        default = 1100
+    )
+    """
+    Threshold at which to prune the cache.
     """
 
     @temp_dir.default
@@ -241,6 +241,10 @@ class FileCache(Generic[K]):
           key: The key for the cache
           force_gen: Do we generate the cached item even if it already exists?
           **kwargs: Additional kwargs are passed to the callback.
+
+        As stmt:
+          A tuple where the first element is the cache item, and the second
+          is whatever the callback returns, or None if it wasn't run.
         """
 
         self.init_dirs()
@@ -249,13 +253,15 @@ class FileCache(Generic[K]):
 
         cache_file_path = self.cache_dir / cache_file_name
 
+        callback_return = None
+
         # Generate a new file if needed
         if force_gen or not self.is_cached_file(cache_file_name):
             with tempfile.TemporaryDirectory(dir=self.temp_dir) as tmp_dir:
 
                 temp_target = Path(tmp_dir) / cache_file_name
 
-                self.callback(key, temp_target, **kwargs)
+                callback_return = self.callback(key, temp_target, **kwargs)
 
                 if not temp_target.exists():
                     raise RuntimeError(
@@ -279,10 +285,10 @@ class FileCache(Generic[K]):
             # This assumes that hardlinks are basically atomic.
             tmp_file.hardlink_to(cache_file_path)
 
-            # Hand the temporary link to the caller
-            yield tmp_file
+            # Hand the temporary link & the result of the callback to the caller
+            yield tuple(tmp_file, callback_return)
 
-            # We let the tempdir context handle cleaning up the link we made.
+            # We let the tempdir context handle pruneing up the link we made.
 
     def entries(self):
         """
@@ -295,21 +301,24 @@ class FileCache(Generic[K]):
             if item.exists() and item.is_file() and self.is_cache_entry(item):
                 yield item
 
-    def clean_lock(self):
-        clean_lockfile = self.lock_dir / "clean.lock"
-        return FileLock(clean_lockfile)
+    def prune_lock(self):
+        prune_lockfile = self.lock_dir / "prune.lock"
+        return FileLock(prune_lockfile)
 
-    def clean(self,
+    def prune(self,
               force = False,
               all = False):
         """
-        If needed, clean up the cache directory of the oldest entries over the
-        clean limit.
+        If needed, prune the cache directory of the oldest entries over the
+        prune limit.
 
         Arguments:
-          force: Do a cleaning even if the clean threshold hasn't been met.
-          all: Clean all the items in the cache. Implies force.
+          force: Do a pruning even if the prune threshold hasn't been met.
+          all: Prune all the items in the cache. Implies force.
         """
+
+        if self.prune_limit <= 0:
+            return
 
         self.init_dirs()
 
@@ -326,14 +335,14 @@ class FileCache(Generic[K]):
             results.append(tuple(staletime,result))
 
         # Short circuit if the there aren't enough items.
-        if not force and total_results < self.clean_trigger:
+        if not force and total_results < self.prune_trigger:
             return
 
-        # If we're not cleaning everything up then only pick the oldest items
+        # If we're not pruning everything up then only pick the oldest items
         # to remove.
         if not all:
             results = heapq.nlargest(
-                total_results - self.clean_limit,
+                total_results - self.prune_limit,
                 results,
                 key=lambda t: t[0],
             )
@@ -341,7 +350,7 @@ class FileCache(Generic[K]):
         try:
             # Presumably someone else is also pruning if there's a lock,
             # Just let them do the work, and move on.
-            with self.clean_lock().acquire(blocking=False):
+            with self.prune_lock().acquire(blocking=False):
                 for result in results:
                     # If a result got deleted before this point, that's fine.
                     results[1].unlink(missing_ok=True)
