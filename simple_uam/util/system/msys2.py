@@ -10,6 +10,7 @@ from urllib.parse import urlparse
 import re
 import time
 import shutil
+import shlex
 import json
 import importlib.resources as resources
 from typing import Optional, Union, List, Dict
@@ -128,7 +129,97 @@ class Msys2():
         )
 
     @staticmethod
+    def bindir():
+        """
+        Gets the default binary directory for msys2, assumes that it is
+        in a specific place relative to `msys2.exe`.
+        """
+
+        exe = Path(shutil.which('msys2.exe')).resolve()
+        root_dir = exe.parent
+        bin_dir = root_dir / 'usr' / 'bin'
+
+        return bin_dir
+
+    @staticmethod
     def run( args : Union[str,Path,List[Union[str,Path]]],
+             cwd : Union[None, str, Path] = None,
+             stdin : Union[None,str, bytes] = None,
+             stdout : Union[bool, str, Path] = False,
+             stderr : Union[bool, str, Path] = False,
+             timeout : Optional[int] = None,
+             text : bool = False,
+    ):
+        """
+        Akin to `subprocess.run` but will run the command within the local
+        msys2 environment. Calls msys bash directly.
+
+        Arguments:
+          args: A list of strings and Paths to serve as the command and args to
+            be run. Note that Path objects are automatically converted to the
+            appropriate cygwin paths.
+          cwd: The directory in which to run the command, if provided must
+            be provided as a Path object.(Default: cwd)
+          stdin: The data to be sent to the process via STDIN. If
+            text is true this should be a str, otherwise a bytes object.
+            (Default: None)
+          stdout: Should be save the stdout from the process? If True, will
+            be in the returned Msys2CompletedProcess object; If a string or
+            Path it will be placed in the appropriate file; otherwise will
+            be ignored. (Default: False)
+          stderr: Should be save the stderr from the process? If True, will
+            be in the returned Msys2CompletedProcess object; If a string or
+            Path it will be placed in the appropriate file; otherwise will
+            be ignored. (Default: False)
+          timeout: How long should we wait until we give up on the process
+            and raise an error (Default: None)
+          reraise_errors: Should we try to re-raise errors from the shim in
+            this process? (Default: True)
+          text: Should stdin, stdout, and stderr use strings (as opposed to
+            bytes objects?) (Default: False)
+        """
+
+        msys_bash = (Msys2.bindir() / 'bash.exe').resolve()
+
+        # Norm current working dir
+        if not cwd:
+            cwd = Path.cwd()
+        cwd=Path(cwd).resolve()
+
+        # Ensure arguments are in list form
+        if not isinstance(args, list):
+            args = [args]
+
+        bash_cmd = [
+            msys_bash,
+            '-l',             # run a login shell
+            '-c',             # run a command
+            shlex.join(args), # command string to run
+        ]
+
+        run_opts = dict(
+            stdin=stdin,
+            stdout=stdout,
+            stderr=stderr,
+            text=text,
+            timeout=timeout,
+            cwd=str(cwd),
+        )
+
+        log.info(
+            "Running Msys2 command via bash.",
+            args = bash_cmd,
+            **run_opts,
+        )
+
+        return subprocess.run(
+            bash_cmd,
+            **run_opts,
+        )
+
+
+    @staticmethod
+    def run_with_shim( args : Union[str,Path,List[Union[str,Path]]],
              cwd : Union[None, str, Path] = None,
              stdin : Union[None,str, bytes] = None,
              stdout : Union[bool, str, Path] = False,
@@ -281,18 +372,6 @@ class Msys2():
 
             return process
 
-    @staticmethod
-    def bindir():
-        """
-        Gets the default binary directory for msys2, assumes that it is
-        in a specific place relative to `msys2.exe`.
-        """
-
-        exe = Path(shutil.which('msys2.exe')).resolve()
-        root_dir = exe.parent
-        bin_dir = root_dir / 'usr' / 'bin'
-
-        return bin_dir
 
     @staticmethod
     def _run_shim(data_file : Path,
