@@ -178,6 +178,10 @@ def with_fdm_compile(srcs : Union[None,TDir,object],
         )
 
         if use_cache:
+
+            if not key:
+                key = TDir()
+
             cache_result = stack.enter_context(
                 FDMBinCache().use_cache(
                     key,

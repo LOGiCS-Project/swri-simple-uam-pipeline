@@ -48,7 +48,7 @@ def gen_info_files(
     )
 
     print(json.dumps(
-        result_metadata,
+        result_metadata.asdict(),
         sort_keys=True,
         indent="  ",
     ))
@@ -57,6 +57,7 @@ def gen_info_files(
 def process_design(
         ctx,
         design = None,
+        study_params = None,
         metadata = None,
         autopilot_f = None,
         autopilot_c = None,
@@ -76,6 +77,9 @@ def process_design(
 
     Arguments:
       design: The name of the design file to gen info files for.
+      study_params: The name of a JSON or CSV design parameters file to use when
+        running the direct2cad pipeline. Should be a list of dictionaries if
+        in JSON format.
       metadata: name of a json file to include as `user_metadata` in the output
         `metadata.json`.
       autopilot_f: file to include as `external_autopilot/src/externalAutopilot.f`
@@ -98,6 +102,7 @@ def process_design(
     result_metadata = cli_process_design_wrapper(
         actors.process_design.send,
         design=design,
+        study_params=study_params,
         metadata=metadata,
         autopilot_f = autopilot_f,
         autopilot_c = autopilot_c,
@@ -109,7 +114,7 @@ def process_design(
     )
 
     print(json.dumps(
-        result_metadata,
+        result_metadata.asdict(),
         sort_keys=True,
         indent="  ",
     ))

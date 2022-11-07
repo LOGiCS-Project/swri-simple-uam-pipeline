@@ -11,9 +11,7 @@ from simple_uam.util.system.file_cache import FileCache
 from simple_uam.util.system.text_dir import TDir
 from simple_uam.util.invoke import task, call
 from contextlib import contextmanager
-from simple_uam.fdm.compile.build_ops import gen_build_key
-from simple_uam.fdm.compile.workspace import FDMCompileWorkspace
-from simple_uam.fdm.compile.session import FDMCompileSession
+from simple_uam.direct2cad.workspace import D2CWorkspace
 from . import base
 from .cli_wrapper import *
 
@@ -82,6 +80,7 @@ def gen_info_files(
 def process_design(
         ctx,
         design = None,
+        study_params = None,
         metadata = None,
         autopilot_f = None,
         autopilot_c = None,
@@ -102,6 +101,8 @@ def process_design(
 
     Arguments:
       design: The name of the design file to gen info files for.
+      study_params: The name of a JSON or CSV design parameters file to use when
+        running the direct2cad pipeline.
       metadata: name of a json file to include as `user_metadata` in the output
         `metadata.json`.
       autopilot_f: file to include as `external_autopilot/src/externalAutopilot.f`
@@ -126,6 +127,7 @@ def process_design(
     result_metadata = cli_process_design_wrapper(
         base.process_design,
         design=design,
+        study_params=study_params,
         metadata=metadata,
         autopilot_f = autopilot_f,
         autopilot_c = autopilot_c,

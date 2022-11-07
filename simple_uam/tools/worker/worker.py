@@ -9,7 +9,9 @@ from simple_uam.util.config import Config, PathConfig, D2CWorkerConfig
 from simple_uam.util.logging import get_logger
 
 from simple_uam.worker.run_worker import run_worker_node
-from simple_uam import direct2cad
+from simple_uam.fdm.compile.actions import actors
+from simple_uam.fdm.eval.actions import actors
+from simple_uam.direct2cad.actions import actors
 from dramatiq import get_broker
 
 from pathlib import Path

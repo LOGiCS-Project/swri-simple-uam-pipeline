@@ -14,6 +14,7 @@ from simple_uam.util.system.text_dir import TDir
 from contextlib import contextmanager
 import simple_uam.fdm.compile.actions.cli_wrapper as compile_cli
 import json
+import csv
 
 from pathlib import Path, WindowsPath
 from typing import Union, List, Optional, Dict, Callable, TypeVar, Generic
@@ -35,9 +36,6 @@ def load_design(design : Union[str, Path],
         cwd = Path.cwd()
     cwd = Path(cwd).resolve()
 
-    if not metadata:
-        return None
-
     design = Path(design)
     if not design.is_absolute():
         design = cwd / design
@@ -45,6 +43,50 @@ def load_design(design : Union[str, Path],
 
     with design.open('r') as fp:
         return json.load(fp)
+
+def load_study_params(study_params : Union[None,str,Path],
+                      cwd: Union[None,str,Path] = None):
+    """
+    Loads the study parameters from file, will use either json or csv format,
+    whichever works.
+
+    Arguments:
+      study_params: The filename of the json or csv study params file.
+      cwd: the working dir for relative paths (Default: cwd)
+    """
+
+    if not study_params:
+        return None
+
+    if not cwd:
+        cwd = Path.cwd()
+    cwd = Path(cwd).resolve()
+
+    study_params = Path(study_params)
+    if not study_params.is_absolute():
+        study_params = cwd / study_params
+    study_params = study_params.resolve()
+
+    errs = list()
+
+    try:
+        with study_params.open('r') as sp:
+            return json.load(sp)
+    except Exception as err:
+        errs.append(err)
+
+    try:
+        with study_params.open('r') as sp:
+            reader = csv.DictReader(sp)
+            return [row for row in reader]
+    except Exception as err:
+        errs.append(err)
+
+    raise RuntimeError(
+        f"Could not decode study params at `{str(study_params)}` as either "
+        "JSON or CSV.", *errs)
+
+
 
 def cli_info_args(
         design : Union[str, Path],
@@ -119,6 +161,7 @@ def cli_info_wrapper(
 
 def cli_process_design_args(
         design : Union[str, Path],
+        study_params : Union[None, str, Path] = None,
         metadata : Union[None, str, Path] = None,
         force_autoreconf : bool = False,
         force_configure : bool = False,
@@ -127,6 +170,7 @@ def cli_process_design_args(
         autopilot_c : Union[None, str, Path] = None,
         source_root : Union[None, str, Path] = None,
         source_files : Optional[List[Union[str,Path]]] = None,
+        compile_args : Optional[Dict] = None,
         **kwargs,
 ):
     """
@@ -135,6 +179,8 @@ def cli_process_design_args(
 
     Arguments:
       design: name of a design_swri.json to use as input.
+      study_params: The name of a JSON or CSV design parameters file to use when
+        running the direct2cad pipeline.
       metadata: name of a json file to include as `user_metadata` in the output
         `metadata.json`.
       force_autoreconf: Force the autoreconf step in the build process
@@ -159,6 +205,11 @@ def cli_process_design_args(
 
     design_obj = load_design(design)
 
+    param_data = load_study_params(study_params)
+
+    if not compile_args:
+        compile_args = dict()
+
     compile_args = compile_cli.cli_format_args(
         metadata=metadata,
         force_autoreconf=force_autoreconf,
@@ -173,6 +224,7 @@ def cli_process_design_args(
 
     op_args = dict(
         design=design_obj,
+        study_params=param_data,
         metadata=metadata_obj,
         compile_args=compile_args,
         **kwargs,
@@ -183,6 +235,7 @@ def cli_process_design_args(
 def cli_process_design_wrapper(
         process_op : Callable,
         design : Union[str, Path],
+        study_params : Union[None,str,Path] = None,
         metadata : Union[None, str, Path] = None,
         force_autoreconf : bool = False,
         force_configure : bool = False,
@@ -203,6 +256,8 @@ def cli_process_design_wrapper(
       process_op: The operation to wrap usually either `actions.process_design`
         for local evaluation or `actors.process_design.send` for remote operation.
       design: name of a design_swri.json to use as input.
+      study_params: The name of a JSON or CSV design parameters file to use when
+        running the direct2cad pipeline.
       metadata: name of a json file to include as `user_metadata` in the output
         `metadata.json`.
       force_autoreconf: Force the autoreconf step in the build process
@@ -239,6 +294,7 @@ def cli_process_design_wrapper(
 
     op_args = cli_process_design_args(
         design=design,
+        study_params=study_params,
         metadata=metadata,
         force_autoreconf=force_autoreconf,
         force_configure=force_configure,

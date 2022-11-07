@@ -14,6 +14,7 @@ from dramatiq.actor import Actor
 from dramatiq.middleware import CurrentMessage
 from enum import IntEnum
 
+import functools
 import textwrap
 
 log = get_logger(__name__)
@@ -106,18 +107,25 @@ def actor(fn=None,
 
     See: https://dramatiq.io/reference.html#dramatiq.actor
     """
-    actor_name = actor_name or fn.__name__
-    actor_name = f"{fn.__module__}:{actor_name}"
 
-    return dramatiq.actor(
-        fn=fn,
-        actor_class=actor_class,
-        actor_name=actor_name,
-        queue_name=queue_name,
-        priority=priority,
-        broker=_BROKER,
-        **options,
-    )
+    def mk_actor(f, actor_name=actor_name):
+        actor_name = actor_name or f.__name__
+        actor_name = f"{f.__module__}:{actor_name}"
+
+        return dramatiq.actor(
+            fn=f,
+            actor_class=actor_class,
+            actor_name=actor_name,
+            queue_name=queue_name,
+            priority=priority,
+            broker=_BROKER,
+            **options,
+        )
+
+    if fn != None:
+        return mk_actor(fn)
+    else:
+        return mk_actor
 
 def message_metadata():
     """

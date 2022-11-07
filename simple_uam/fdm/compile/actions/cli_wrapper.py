@@ -246,8 +246,7 @@ def cli_compile_wrapper(
         "Wrapping fdm compile op with cli readers.",
         op_module = compile_op.__module__,
         op_name = compile_op.__name__,
-        src_files = [str(f) for f in source_dir.files],
-        **{k: str(v) for k, v in op_args.items() if k != 'srcs'},
+        **{str(k): str(v) for k, v in op_args.items()},
     )
 
     return compile_op(**op_args)

@@ -12,6 +12,7 @@ from simple_uam.util.system.text_dir import TDir
 from contextlib import contextmanager
 from copy import deepcopy
 from . import base
+import dramatiq
 
 
 from pathlib import Path, WindowsPath
@@ -32,7 +33,6 @@ actor_args = dict(
     min_backoff =                1 * 1000, # 1sec
     max_backoff =           1 * 60 * 1000, # 1min
     max_age     = 1 * 24 * 60 * 60 * 1000, # 1day
-    priority    = ActorPriority.WORKSPACE_BOUNDED, # Lower priority than default
 )
 
 info_actor_args = dict(
@@ -55,10 +55,27 @@ def gen_info_files(design : object,
         in 'metadata.json' under the 'user_metadata' field.
     """
 
-    return build.gen_info_files(
+    return base.gen_info_files(
         design=design,
         metadata=metadata,
     )
+
+# TODO: Setup ala https://dramatiq.io/cookbook.html#rate-limiting .
+#       This should allow gen_info_files and other operations in the same
+#       workspace to run in parallel.
+#
+#       Use of the stub backend keeps the rate limit local to this box
+#       rather than shared over multiple workers.
+#
+# from dramatiq.rate_limits import ConcurrentRateLimiter
+# from dramatiq.rate_limits.backends import StubBackend
+#
+# local_backend = StubBackend()
+# creo_mutex = ConcurrentRateLimiter(
+#     local_backend,
+#     "creo_mutex",
+#     limit=1,
+# )
 
 process_actor_args = dict(
     priority    = ActorPriority.CREO_BOUNDED, # Lower priority than workspace bounded.
@@ -67,11 +84,8 @@ process_actor_args = dict(
 
 @actor(**process_actor_args)
 def process_design(design : object,
+                   study_params : Optional[List[Dict]] = None,
                    metadata : Optional[object] =None,
-                   srcs: Optional[object] = None,
-                   force_autoreconf : bool = False,
-                   force_configure : bool = False,
-                   force_make : bool = False,
 ):
     """
     gen_info_files as an actor that will perform the task on a worker node
@@ -80,23 +94,15 @@ def process_design(design : object,
     Arguments:
       design: The design to generate the info files for as a JSON serializable
         python object.
+      study_params: The study parameters to use for this run of the pipeline.
       metadata: An arbitrary JSON serializable object that will be included
         in 'metadata.json' under the 'user_metadata' field.
-      srcs: A TDir or compatible json representable that has the modified
-        source files for the build.
-      metadata: An arbitrary JSON serializable object that will be included
-        in 'metadata.json' under the 'user_metadata' field.
-      force_autoreconf: Force the autoreconf step in the build process
-        (implies force_configure)
-      force_configure: force configure step in build process
-      force_make: force rebuild of the object even if it's in cache.
+      compile_args : Options to be passed to the fdm compile workspace.
     """
 
-    return build.gen_info_files(
+    return base.process_design(
         design=design,
+        study_params=study_params,
         metadata=metadata,
-        srcs=srcs,
-        force_autoreconf=force_autoreconf,
-        force_configure=force_configure,
-        force_make=force_make,
+        compile_args=compile_args,
     )

@@ -32,12 +32,6 @@ def eval_fdms(inputs : Dict[Union[str,int],object],
       inputs: Map from index strings to input data objects.
       metadata: An arbitrary JSON serializable object that will be included
         in 'metadata.json' under the 'user_metadata' field.
-      srcs: A TDir or compatible json representable that has the modified
-        source files for the build.
-      force_autoreconf: Force the autoreconf step in the build process
-        (implies force_configure)
-      force_configure: force configure step in build process
-      force_make: force rebuild of the object even if it's in cache.
       compile_args : Options to be passed to the fdm compile workspace.
       **kwargs: Additional args to be passed to the FDM eval workspace.
     """
@@ -60,16 +54,3 @@ def eval_fdms(inputs : Dict[Union[str,int],object],
         session.eval_fdms(inputs)
 
     return session.metadata
-
-def eval_fdm(input : object,
-             *vargs,
-             **kwargs,
-):
-    """
-    Runs a single fdm input with the index '0', other arguments are
-    same as eval_fdms.
-    """
-
-    inputs = {'0': input}
-
-    return eval_fdms(inputs, *vargs, **kwargs)

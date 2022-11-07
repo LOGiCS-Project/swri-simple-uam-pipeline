@@ -39,10 +39,7 @@ actor_args = dict(
 @actor(**actor_args)
 def eval_fdms(inputs : Dict[Union[str,int],object],
               metadata : Optional[object] = None,
-              srcs: Optional[object] = None,
-              force_autoreconf : bool = False,
-              force_configure : bool = False,
-              force_make : bool = False,
+              compile_args : Optional[Dict] = None,
 ):
     """
     An actor, to be used with `send` that will perform the fdm eval action on
@@ -52,56 +49,11 @@ def eval_fdms(inputs : Dict[Union[str,int],object],
       inputs: Map from index strings to input data objects.
       metadata: An arbitrary JSON serializable object that will be included
         in 'metadata.json' under the 'user_metadata' field.
-      srcs: A TDir or compatible json representable that has the modified
-        source files for the build.
-      metadata: An arbitrary JSON serializable object that will be included
-        in 'metadata.json' under the 'user_metadata' field.
-      force_autoreconf: Force the autoreconf step in the build process
-        (implies force_configure)
-      force_configure: force configure step in build process
-      force_make: force rebuild of the object even if it's in cache.
+      compile_args : Options to be passed to the fdm compile workspace.
     """
 
-    return build.eval_fdms(
+    return base.eval_fdms(
         inputs=inputs,
-        srcs=srcs,
         metadata=metadata,
-        force_autoreconf=force_autoreconf,
-        force_configure=force_configure,
-        force_make=force_make,
-    )
-
-@actor(**actor_args)
-def eval_fdm(input : object,
-             metadata : Optional[object] = None,
-             srcs: Optional[object] = None,
-             force_autoreconf : bool = False,
-             force_configure : bool = False,
-             force_make : bool = False,
-):
-    """
-    An actor, to be used with `send` that will perform the fdm eval action on
-    an appropriate worker node.
-
-    Arguments:
-      input: A single input data object.
-      metadata: An arbitrary JSON serializable object that will be included
-        in 'metadata.json' under the 'user_metadata' field.
-      srcs: A TDir or compatible json representable that has the modified
-        source files for the build.
-      metadata: An arbitrary JSON serializable object that will be included
-        in 'metadata.json' under the 'user_metadata' field.
-      force_autoreconf: Force the autoreconf step in the build process
-        (implies force_configure)
-      force_configure: force configure step in build process
-      force_make: force rebuild of the object even if it's in cache.
-    """
-
-    return build.eval_fdm(
-        input=input,
-        srcs=srcs,
-        metadata=metadata,
-        force_autoreconf=force_autoreconf,
-        force_configure=force_configure,
-        force_make=force_make,
+        compile_args=compile_args,
     )

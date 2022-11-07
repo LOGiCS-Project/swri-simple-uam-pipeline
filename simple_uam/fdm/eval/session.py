@@ -123,7 +123,7 @@ class FDMEvalSession(Session):
 
         self.exe_dir.mkdir(parents=True, exist_ok=True)
 
-        with ZipFile.open(bin_zip, mode='r') as b_z:
+        with ZipFile(bin_zip, mode='r') as b_z:
 
             exe_path = zipfile.Path(b_z, "new_fdm.exe")
 
@@ -149,15 +149,17 @@ class FDMEvalSession(Session):
 
                     out_file.unlink()
 
-            log.info(
-                "Extracting executable binaries to appropriate dir",
-                workspace=self.number,
-                work_dir=str(self.work_dir),
-                bin_zip=str(bin_zip),
-                exe_dir=str(self.exe_dir),
-            )
+        log.info(
+            "Extracting executable binaries to appropriate dir",
+            workspace=self.number,
+            work_dir=str(self.work_dir),
+            bin_zip=str(bin_zip),
+            exe_dir=str(self.exe_dir),
+        )
 
-            b_z.extractall(self.exe_dir)
+        with ZipFile(bin_zip, mode='r') as b_z:
+            self.exe_dir.mkdir(parents=True, exist_ok=True)
+            b_z.extractall(path=self.exe_dir)
 
     @session_op
     def write_raw(self,

@@ -11,20 +11,18 @@ from simple_uam.util.system.file_cache import FileCache
 from simple_uam.util.system.text_dir import TDir
 from simple_uam.util.invoke import task, call
 from contextlib import contextmanager
-from simple_uam.fdm.compile.build_ops import gen_build_key
-from simple_uam.fdm.compile.workspace import FDMCompileWorkspace
-from simple_uam.fdm.compile.session import FDMCompileSession
 from . import base, actors
-from .cli_wrapper import cli_compile_wrapper
+from .cli_wrapper import cli_eval_wrapper
 
 import json
 from pathlib import Path, WindowsPath
 from typing import Union, List, Optional, Dict, Callable, TypeVar, Generic
 from attrs import define, field
 
-@task(iterable=['src_file'])
-def fdm_compile(
+@task(iterable=['src_file','input_file'])
+def eval_fdm(
         ctx,
+        input_file,
         autopilot_f = None,
         autopilot_c = None,
         src_root = None,
@@ -33,16 +31,16 @@ def fdm_compile(
         autoreconf = False,
         configure = False,
         make = False,
-        workspace = None,
 ):
     """
-    This will run the FDM compile operation remotely, using the provided source
-    files and metadata. This only works on an appropriately configured client
-    node. One that is connected to a broker with at least one running worker.
+    Evaluates the FDM tool remotely on one or more inputs.
 
-    This prints the message information for the worker to stdout.
+    This print output metadata to stdout.
 
     Arguments:
+      input_file: A specific FDM input file to process. Can be given multiple
+        times in order to process multiple files. Files will processed in the
+        order given.
       autopilot_f: file to include as `external_autopilot/src/externalAutopilot.f`
         when running this build. (Supersedes any other method of specifying this file)
       autopilot_c: file to include as `external_autopilot/src/external_autopilot.c`
@@ -62,8 +60,10 @@ def fdm_compile(
       make: force rebuild of the object even if it's in cache.
     """
 
-    message = cli_compile_wrapper(
-        actors.fdm_compile.send,
+    result_metadata = cli_eval_wrapper(
+        actors.eval_fdms.send,
+        indices = list(),
+        files = input_file,
         autopilot_f = autopilot_f,
         autopilot_c = autopilot_c,
         source_root = src_root,
@@ -75,7 +75,7 @@ def fdm_compile(
     )
 
     print(json.dumps(
-        message.asdict(),
+        result_metadata.asdict(),
         sort_keys=True,
         indent="  ",
     ))

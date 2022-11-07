@@ -14,10 +14,16 @@ class D2CWorkerConfig():
     As described here: https://omegaconf.readthedocs.io/en/2.1_branch/structured_config.html
     """
 
-    max_processes : int = SI("${d2c_workspace:max_workspaces}")
+    max_workspaces : int = 1
     """
-    Max number of forked processes on a worker node.
-    Default is the number of workspaces on the machine.
+    See workspaces config for meaning.
+    """
+
+    max_processes : int = 4
+    """
+    Max number of forked processes on a worker node. This is higher than the
+    number of workspaces by default because the FDM operations can handle more
+    parallel operations.
     """
 
     max_threads : int =  1

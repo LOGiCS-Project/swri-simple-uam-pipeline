@@ -60,6 +60,7 @@ class Workspace():
     Can be set at init, or modified before session start. Changes to
     this persist between sessions.
     """
+
     metadata : Dict = field(
         factory=dict,
         kw_only=True,
@@ -277,7 +278,7 @@ class Workspace():
         message_info = message_metadata()
 
         if message_info:
-            return ('-'.split(message_info["message_id"]))[-1]
+            return message_info["message_id"].split('-')[-1]
         else:
             return "local"
 

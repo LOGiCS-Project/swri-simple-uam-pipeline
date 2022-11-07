@@ -63,7 +63,7 @@ def fdm_compile(srcs : object,
       session.
     """
 
-    return build.fdm_compile(
+    return base.fdm_compile(
         srcs=srcs,
         metadata=metadata,
         force_autoreconf=force_autoreconf,

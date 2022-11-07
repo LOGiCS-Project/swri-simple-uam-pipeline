@@ -13,6 +13,7 @@ from simple_uam.util.system.windows import download_file
 from simple_uam.direct2cad.manager import D2CManager
 from simple_uam.direct2cad.session import D2CSession
 from simple_uam.direct2cad.workspace import D2CWorkspace
+import importlib.resources as resources
 from pathlib import Path
 import textwrap
 import sys

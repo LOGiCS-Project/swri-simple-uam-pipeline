@@ -8,7 +8,8 @@ from simple_uam.craidl.info_files import DesignInfoFiles
 from attrs import define,field
 from simple_uam.worker import actor
 from time import sleep
-
+from zipfile import ZipFile
+import zipfile
 import json
 import csv
 from pathlib import Path
@@ -76,7 +77,7 @@ class D2CSession(Session):
 
         self.exe_dir.mkdir(parents=True, exist_ok=True)
 
-        with ZipFile.open(bin_zip, mode='r') as b_z:
+        with ZipFile(bin_zip, mode='r') as b_z:
 
             exe_path = zipfile.Path(b_z, "new_fdm.exe")
 
@@ -110,6 +111,8 @@ class D2CSession(Session):
                 exe_dir=str(self.exe_dir),
             )
 
+        with ZipFile(bin_zip, mode='r') as b_z:
+            self.exe_dir.mkdir(parents=True, exist_ok=True)
             b_z.extractall(self.exe_dir)
 
     @session_op

@@ -201,11 +201,13 @@ class Session():
             exc_tb=exc_tb,
         )
 
-        if (exc_type or exc_val or exc_tb) and len(excs) > 0:
+        split_exc = exc_type or exc_val or exc_tb
+
+        if split_exc and len(excs) > 0:
             raise RuntimeError(
                 "Can only provide positional arg or kw args, not both."
             )
-        elif len(excs) != 1:
+        elif not split_exc and len(excs) != 1:
             raise RuntimeError(
                 "Can only log a single exception at a time."
             )

@@ -51,7 +51,7 @@ def gen_info_files(design : object,
       **kwargs: Additional args to be passed to the FDM eval workspace.
     """
 
-    with D2CWorkspace(name="gen-info-files",metadata=internal_data) as session:
+    with D2CWorkspace(name="gen-info-files",user_metadata=metadata) as session:
         session.write_design(design)
         session.gen_info_files(design)
 

@@ -14,7 +14,8 @@
 from typing import List, Optional
 from simple_uam.util.invoke import Collection, InvokeProg, task
 from simple_uam.util.logging import get_logger
-from . import tasks, env, manage
+import simple_uam.direct2cad.actions.local as tasks
+from . import env, manage
 
 log = get_logger(__name__)
 
@@ -49,8 +50,7 @@ def main(args: Optional[List[str]] = None) -> int:
     tasks_ns.add_task(tasks.gen_info_files, "gen_info_files")
     tasks_ns.add_task(tasks.process_design, "process_design")
 
-    namespace = Collection(
-    )
+    namespace = Collection()
     namespace.add_collection(setup_ns, 'setup')
     namespace.add_collection(manage_ns, 'manage')
     namespace.add_collection(tasks_ns, 'tasks')
