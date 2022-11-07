@@ -3,11 +3,12 @@ from omegaconf import SI
 from .manager import Config
 from .path_config import PathConfig
 from .craidl_config import CraidlConfig
+from pathlib import Path
 from typing import List, Dict, Union, Optional
 from .workspace_config import ResultsConfig, WorkspaceConfig
 
 @define
-class FDMBuildCacheConfig():
+class FDMCompileCacheConfig():
     """
     Configuring for the build cache which keeps copies of previously built
     FDM executables for efficiency's sake.
@@ -39,7 +40,7 @@ class FDMBuildCacheConfig():
     """
 
 @define
-class FDMBuildConfig(WorkspaceConfig):
+class FDMCompileConfig(WorkspaceConfig):
     """
     A dataclass carrying configuration fields and defaults.
     As described here: https://omegaconf.readthedocs.io/en/2.1_branch/structured_config.html
@@ -50,14 +51,14 @@ class FDMBuildConfig(WorkspaceConfig):
     """
 
     workspaces_dir : str = field(
-        default=SI("${path:work_directory}/fdm_build")
+        default=SI("${path:work_directory}/fdm_compile")
     )
     """
     Dir where workspaces are stored.
     """
 
     cache_dir : str = field(
-        default=SI("${path:cache_directory}/fdm_build")
+        default=SI("${path:cache_directory}/fdm_compile")
     )
     """
     Dir for cached data.
@@ -78,13 +79,21 @@ class FDMBuildConfig(WorkspaceConfig):
     configuration.
     """
 
-    result_exclude : List[str] = [
-        'THIS FIELD ISN\'T USED IN FDM BUILD',
-        'BECAUSE RSYNC ISN\'T USED TO CONSTRUCT',
-        'THE RESULTS ARCHIVE',
-    ]
+    result_exclude : List[str] = []
     """
     Not relevant since we don't use Rsync to construct the results archive.
+    """
+
+    dos2unix_files : List[str] = [
+        "**/*.am",
+        "**/*.ac",
+        "**/*.c",
+        "**/*.f",
+        "**/*.h",
+    ]
+    """
+    Globs for files in the reference workspace that need dos2unix applied to
+    them in order for autoconf to work.
     """
 
     force_autoreconf : bool = False
@@ -158,11 +167,11 @@ class FDMBuildConfig(WorkspaceConfig):
     """
 
     result_always : Dict[str,str] = {
-        "bin/**": "**",
+        "bin/*.*": "*.*",
         'external_autopilot/src/*.c': 'src/external_autopilot/src/*.c',
         'external_autopilot/src/*.f': 'src/external_autopilot/src/*.f',
         '*.json': '*.json',
-        '*.stdout': '*.stderr',
+        '*.stdout': '*.stdout',
         '*.stderr': '*.stderr',
         '*.log': '*.log',
     }
@@ -171,7 +180,18 @@ class FDMBuildConfig(WorkspaceConfig):
     that are always included when available even if no change is made.
     """
 
-    bin_cache : FDMBuildCacheConfig = FDMBuildCacheConfig()
+    result_requirements : List[str] = [
+        "bin/new_fdm.exe",
+    ]
+    """
+    This is the list of files that must be there at the end of a build job
+    for it to be considered finished.
+
+    Entries must not be glob patterns and should be based on locations in
+    the build dir rather than in the output zip file.
+    """
+
+    bin_cache : FDMCompileCacheConfig = FDMCompileCacheConfig()
     """
     Settings for the cache of FDM executables.
     """
@@ -203,19 +223,19 @@ class FDMBuildConfig(WorkspaceConfig):
 
 # Add to the configuration manager
 Config.register(
-    FDMBuildConfig, # class to be registered
+    FDMCompileConfig, # class to be registered
 
     conf_deps = [PathConfig, CraidlConfig],
     # Config classes this can interpolate with.
     # e.g. If `PathConfig` is in `conf_deps` this config file (and the defaults)
     #      can use "${path:data_dir}/foo/bar.txt" and have it resolve correctly.
 
-    conf_file = "fdm_build.conf.yaml",
+    conf_file = "fdm_compile.conf.yaml",
     # The file that will be loaded to fill out this config class.
     # i.e. If you write: `example_int: 32` to "${path:config_dir}/uam_workspace.conf.yaml"
     #      then `Config[UAMWorkspaceConfig].example_int == 32`.
 
-    interpolation_key = "fdm_build",
+    interpolation_key = "fdm_compile",
     # Key used by other config classes to access variables in this class.
     # e.g. If another config class registers `UAMWorkspaceConfig` in its
     #      `conf_deps`, it can use "${uam_workspace:example_str}"

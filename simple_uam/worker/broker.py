@@ -12,6 +12,7 @@ from dramatiq.results import Results
 from dramatiq.results.backends import RedisBackend
 from dramatiq.actor import Actor
 from dramatiq.middleware import CurrentMessage
+from enum import IntEnum
 
 import textwrap
 
@@ -64,12 +65,34 @@ def default_broker():
 _BROKER = default_broker()
 dramatiq.set_broker(_BROKER)
 
+class ActorPriority(IntEnum):
+    """
+    Priorities for actors being run on a worker node. Lower numbers are
+    higher priority.
+    """
+
+    DEFAULT = 20
+    """
+    The default priority for most tasks. Meant for things that mostly CPU or
+    IO bound.
+    """
+
+    WORKSPACE_BOUNDED = 60
+    """
+    Priority for things that are bounded by the number of available workspaces.
+    """
+
+    CREO_BOUNDED = 100
+    """
+    Priority for things bounded by need for a CREO instance.
+    """
+
 def actor(fn=None,
           *,
           actor_class=Actor,
           actor_name=None,
           queue_name='default',
-          priority=0,
+          priority=ActorPriority.DEFAULT,
           **options):
     """
     Wraps 'dramatiq.actor', so the options and defaults are mostly the same.

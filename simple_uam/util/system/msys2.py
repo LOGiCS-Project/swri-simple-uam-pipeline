@@ -12,97 +12,15 @@ import time
 import shutil
 import shlex
 import json
+from contextlib import ExitStack, contextmanager
 import importlib.resources as resources
-from typing import Optional, Union, List, Dict
+from typing import Optional, Union, List, Dict, Callable, Any
 from attrs import define, field
-
-from .backup import archive_files
+from pathlib import Path
+from .backup import archive_files, backup_file
 from ..logging import get_logger
 
 log = get_logger(__name__)
-
-@define
-class Msys2CompletedProcess():
-
-    args : List = field()
-
-    flag_output : Dict = field()
-
-    @property
-    def returncode(self):
-        if 'completed' in self.flag_output:
-            return self.flag_output['completed']
-        else:
-            return None
-
-    def check_returncode(self):
-        if self.returncode == None:
-            self.raise_errors()
-        elif self.returncode != 0:
-            raise subprocess.CalledProcessError(
-                cmd = " ".join(self.args),
-                stdout = self.stdout,
-                stderr = self.stderr,
-            )
-
-    @property
-    def error(self):
-        if 'error' in self.flag_output:
-            return {self.flag_output['error']: self.flag_output.get('message')}
-        else:
-            return None
-
-    def raise_errors(self):
-        if self.error:
-            raise RuntimeError(
-                f"Msys2.run() existed with error `{self.error}`")
-
-    text : bool = field(
-        default = False
-    )
-
-    stdout_file : Optional[Path] = field(
-        default=None
-    )
-
-    stdout_data : Union[None, str, bytes] = field(
-        default = None
-    )
-
-    @property
-    def stdout(self):
-        self.load_stdout()
-        return self.stdout_data
-
-    def load_stdout():
-        if self.stdout_data:
-            pass
-        elif self.stdout_file and self.text:
-            self.stdout_data = self.stdout_file.read_text()
-        elif self.stdout_file:
-            self.stdout_data = self.stdout_file.read_bytes()
-
-    stderr_file : Optional[Path] = field(
-        default = None
-    )
-
-    stderr_data : Union[None, str, bytes] = field(
-        default = None
-    )
-
-    @property
-    def stderr(self):
-        self.load_stderr()
-        return self.stderr_data
-
-    def load_stderr(self):
-        if self.stderr_data:
-            pass
-        elif self.stderr_file and self.text:
-            self.stderr_data = self.stderr_file.read_text()
-        elif self.stderr_file:
-            self.stderr_data = self.stderr_file.read_bytes()
-
 
 class Msys2():
     """
@@ -123,32 +41,148 @@ class Msys2():
 
         Msys2.run(
             pacman_cmd,
-            stdout=True,
-            stderr=True,
-            text=True,
+            cwd=Path.cwd(),
         )
 
+    _root = None
+
     @staticmethod
-    def bindir():
+    def root():
+        """
+        The root msysy 2 directory, the dir containing 'msys2.exe'.
+        """
+        if Msys2._root == None:
+            Msys2._root = Path(shutil.which('msys2.exe')).resolve().parent
+        return Msys2._root
+
+    @staticmethod
+    def bin_root():
         """
         Gets the default binary directory for msys2, assumes that it is
         in a specific place relative to `msys2.exe`.
         """
+        return (Msys2.root() / 'usr' / 'bin').resolve()
 
-        exe = Path(shutil.which('msys2.exe')).resolve()
-        root_dir = exe.parent
-        bin_dir = root_dir / 'usr' / 'bin'
+    @staticmethod
+    def bash_path():
+        """
+        The path to the bash executable used for an msys2 login shell.
+        """
+        return  (Msys2.bin_root() / 'bash.exe').resolve()
 
-        return bin_dir
+    @staticmethod
+    def tmp_root():
+        """
+        The msys2 temp directory, should be on the same drive as the msys2
+        install bypassing some issues with paths.
+        """
+        return (Msys2.root() / 'tmp').resolve()
+
+    @staticmethod
+    @contextmanager
+    def tempdir(suffix=None, prefix=None, ignore_cleanup_errors=False):
+        """
+        Creates and returns temporary directory on the same drive as the
+        msys2 binary.
+
+        Arguments: Same as tempfile.TemporaryDirectory except without 'dir'.
+        """
+
+        Msys2.tmp_root().mkdir(parents=True, exist_ok=True)
+
+        with tempfile.TemporaryDirectory(
+                suffix=suffix,
+                prefix=prefix,
+                dir=Msys2.tmp_root(),
+                ignore_cleanup_errors=ignore_cleanup_errors) as temp_dir:
+            yield temp_dir
+
+    @staticmethod
+    def cygpath_path():
+        """
+        The path to the cygpath executable for converting windowspaths to
+        cygwin paths.
+        """
+        return  (Msys2.bin_root() / 'cygpath.exe').resolve()
+
+    @staticmethod
+    def cygpath(path : Union[Any,Path],
+                passthrough : bool = False,
+                resolve : bool = False,
+                cwd : Union[None,str,Path] = False,
+                run_cmd : Optional[Callable] = None):
+        """
+        Will convert a windows path to a valid cygwin path.
+
+        Arguments:
+          path: The path to covert to a cygwin path
+          passthrough: Should we allow non-path ojects to pass through
+            unchanged. If False non-path or str objects raise an error and
+            strs are converted to paths. If true all non-Path objects,
+            including strings are returned without change. (Default: False)
+          resolve: Should all relative paths be converted into absolute paths
+            (Default: False)
+          cwd: The working directory to be used if resolve is true.
+            (Default: cwd)
+          run_cmd: A command with a signature equal to subprocess.run, that
+            will be used to actual evaluate the function in the location.
+            (Default: subprocess.run)
+        """
+
+        if passthrough and not isinstance(path, Path):
+            return path
+
+        path = Path(path)
+
+        if not cwd:
+            cwd = Path.cwd()
+        cwd = Path(cwd).resolve()
+
+        if resolve and not path.is_absolute():
+            path = (cwd / path).resolve()
+
+        if not run_cmd:
+            run_cmd = subprocess.run
+
+        log.info(
+            f"Converting path win_path to cygwin form using cygpath.",
+            win_path = str(path),
+            cwd = str(cwd),
+            resolve = resolve,
+            run_cmd_module=run_cmd.__module__,
+            run_cmd_name=run_cmd.__name__,
+        )
+
+        process = run_cmd(
+            [Msys2.cygpath_path(),"-u",path],
+            capture_output=True,
+            text=True,
+        )
+
+        process.check_returncode()
+
+        out_path = process.stdout.strip()
+
+        log.debug(
+            f"Finished converting path to cygwin form.",
+            win_path = str(path),
+            out_path = str(out_path),
+            cwd = str(cwd),
+            resolve = resolve,
+            run_cmd_module=run_cmd.__module__,
+            run_cmd_name=run_cmd.__name__,
+        )
+
+        return out_path
+
+
 
     @staticmethod
     def run( args : Union[str,Path,List[Union[str,Path]]],
-             cwd : Union[None, str, Path] = None,
-             stdin : Union[None,str, bytes] = None,
-             stdout : Union[bool, str, Path] = False,
-             stderr : Union[bool, str, Path] = False,
-             timeout : Optional[int] = None,
-             text : bool = False,
+             cwd : Union[str,Path],
+             *,
+             run_cmd : Optional[Callable] = None,
+             **kwargs,
     ):
         """
         Akin to `subprocess.run` but will run the command within the local
@@ -158,284 +192,74 @@ class Msys2():
           args: A list of strings and Paths to serve as the command and args to
             be run. Note that Path objects are automatically converted to the
             appropriate cygwin paths.
-          cwd: The directory in which to run the command, if provided must
-            be provided as a Path object.(Default: cwd)
-          stdin: The data to be sent to the process via STDIN. If
-            text is true this should be a str, otherwise a bytes object.
-            (Default: None)
-          stdout: Should be save the stdout from the process? If True, will
-            be in the returned Msys2CompletedProcess object; If a string or
-            Path it will be placed in the appropriate file; otherwise will
-            be ignored. (Default: False)
-          stderr: Should be save the stderr from the process? If True, will
-            be in the returned Msys2CompletedProcess object; If a string or
-            Path it will be placed in the appropriate file; otherwise will
-            be ignored. (Default: False)
-          timeout: How long should we wait until we give up on the process
-            and raise an error (Default: None)
-          reraise_errors: Should we try to re-raise errors from the shim in
-            this process? (Default: True)
-          text: Should stdin, stdout, and stderr use strings (as opposed to
-            bytes objects?) (Default: False)
+          cwd: The working directory for the command to be run in, note this
+            is mandatory because it needs to be passed to bash explicitle.
+          run_cmd: A command with a signature equal to subprocess.run, that
+            will be used to actual evaluate the function in the location.
+            (Default: subprocess.run)
+          **kwargs: Other args to be passed through to the underlying
+            run_cmd.
         """
 
-        msys_bash = (Msys2.bindir() / 'bash.exe').resolve()
+        msys_bash = Msys2.bash_path()
 
-        # Norm current working dir
-        if not cwd:
-            cwd = Path.cwd()
-        cwd=Path(cwd).resolve()
+        cwd = Path(cwd)
 
-        # Ensure arguments are in list form
+        # Normalize various arguments
+        if not run_cmd:
+            run_cmd = subprocess.run
+
         if not isinstance(args, list):
             args = [args]
+
+        def norm_arg(a):
+            return str(Msys2.cygpath(
+                path=a,
+                passthrough=True,
+                cwd=cwd,
+                resolve=False,
+                run_cmd=run_cmd,
+            ))
+
+        cd_args = ['cd', norm_arg(cwd)]
+
+        log.info(
+            "Generated msys2 command arg lists.",
+            cmd_args = args,
+            cd_args  = cd_args,
+        )
+
+        cmd_str = shlex.join([norm_arg(a) for a in args])
+        cd_str  = shlex.join(cd_args)
+
+        cmd = f"{cd_str} ; {cmd_str}"
+
+        log.info(
+            "Generated msys2 command arg string.",
+            cmd_str = cmd_str,
+            cd_str = cd_str,
+            cmd = cmd,
+        )
 
         bash_cmd = [
             msys_bash,
             '-l',             # run a login shell
             '-c',             # run a command
-            shlex.join(args), # command string to run
+            cmd, # command string to run
         ]
 
-        run_opts = dict(
-            stdin=stdin,
-            stdout=stdout,
-            stderr=stderr,
-            text=text,
-            timeout=timeout,
-            cwd=str(cwd),
-        )
 
         log.info(
             "Running Msys2 command via bash.",
-            args = bash_cmd,
-            **run_opts,
+            args = [str(a) for a in bash_cmd],
+            cwd = str(cwd),
+            run_cmd_module=run_cmd.__module__,
+            run_cmd_name=run_cmd.__name__,
+            **kwargs,
         )
 
-        return subprocess.run(
+        return run_cmd(
             bash_cmd,
-            **run_opts,
+            cwd=cwd,
+            **kwargs,
         )
-
-
-    @staticmethod
-    def run_with_shim( args : Union[str,Path,List[Union[str,Path]]],
-             cwd : Union[None, str, Path] = None,
-             stdin : Union[None,str, bytes] = None,
-             stdout : Union[bool, str, Path] = False,
-             stderr : Union[bool, str, Path] = False,
-             timeout : Optional[int] = None,
-             reraise_errors : bool = True,
-             text : bool = False,
-             poll_interval : int = 1,
-             data_dir : Union[None, str, Path] = False,
-    ):
-        """
-        Akin to `subprocess.run` but will run the command within the local
-        msys2 environment. Uses a shim to allow waiting on a command to
-        finish even when the msys terminal detaches.
-
-        Arguments:
-          args: A list of strings and Paths to serve as the command and args to
-            be run. Note that Path objects are automatically converted to the
-            appropriate cygwin paths.
-          cwd: The directory in which to run the command, if provided must
-            be provided as a Path object.(Default: cwd)
-          stdin: The data to be sent to the process via STDIN. If
-            text is true this should be a str, otherwise a bytes object.
-            (Default: None)
-          stdout: Should be save the stdout from the process? If True, will
-            be in the returned Msys2CompletedProcess object; If a string or
-            Path it will be placed in the appropriate file; otherwise will
-            be ignored. (Default: False)
-          stderr: Should be save the stderr from the process? If True, will
-            be in the returned Msys2CompletedProcess object; If a string or
-            Path it will be placed in the appropriate file; otherwise will
-            be ignored. (Default: False)
-          timeout: How long should we wait until we give up on the process
-            and raise an error (Default: None)
-          reraise_errors: Should we try to re-raise errors from the shim in
-            this process? (Default: True)
-          text: Should stdin, stdout, and stderr use strings (as opposed to
-            bytes objects?) (Default: False)
-          poll_interval: How often should we poll for process completion?
-            (Default: 1)
-          data_dir: Should we store all the intermediate files in a
-            non-temporary dir? If so, where? (Default: None)
-        """
-
-        # Ensure arguments are in list form
-        if not isinstance(args, list):
-            args = [args]
-
-        # The data we'll write into a file for the shim to read.
-        shim_data = dict()
-
-        # Format the args
-        shim_args = list()
-
-        for arg in args:
-            shim_arg = arg
-            if isinstance(arg, str):
-                shim_arg = {'str': arg}
-            elif isinstance(arg, Path):
-                shim_arg = {'path': str(Path(arg).resolve())}
-            else:
-                raise RuntimeError(
-                    f"Argument of type `{type(arg).__name__}` not allowed in "
-                    f"Msys2.run()'s args parameter. The argument '{arg}' in "
-                    f"argument list '{args}' is invalid."
-                )
-            shim_args.append(shim_arg)
-
-        shim_data['args'] = shim_args
-
-        # The current working dir
-        if not cwd:
-            cwd = Path.cwd()
-        cwd = Path(cwd).resolve()
-        shim_data['cwd'] = str(cwd)
-
-        # Working with files now so we enter a tempdir
-        with tempfile.TemporaryDirectory(prefix="Msys2Run") as temp_dir:
-
-            if data_dir:
-                temp_dir = data_dir
-
-            temp_dir = Path(temp_dir).resolve()
-
-            std_ext = '.txt' if text else '.bin'
-
-            if stdin:
-                stdin_file = (temp_dir / 'stdin').with_suffix(std_ext).resolve()
-                if text:
-                    stdin_file.write_text(stdin)
-                else:
-                    stdin_file.write_bytes(stdin)
-                shim_data['stdin'] = str(stdin_file)
-
-            stdout_file = None
-            if stdout:
-                if isinstance(stdout,bool):
-                    stdout_file = (temp_dir / 'stdout').with_suffix(std_ext).resolve()
-                else:
-                    stdout_file = Path(stdout).resolve()
-                shim_data['stdout'] = str(stdout_file)
-
-            stderr_file = None
-            if stderr:
-                if isinstance(stderr,bool):
-                    stderr_file = (temp_dir / 'stderr').with_suffix(std_ext).resolve()
-                else:
-                    stderr_file = Path(stderr).resolve()
-                shim_data['stderr'] = str(stderr_file)
-
-            if timeout:
-                shim_data['timeout'] = timeout
-
-            flag_file = (temp_dir / 'shim_flag.json').resolve()
-            shim_data['stop_flag'] = str(flag_file)
-
-            data_file = (temp_dir / 'shim_data.json').resolve()
-            with data_file.open('w') as fp:
-                json.dump(shim_data,fp,indent=2)
-
-            log.info(
-                "Wrote Msys2 shim data file.",
-                file=str(data_file),
-                temp_dir=str(temp_dir),
-                flag_file=str(flag_file),
-                data_file=str(data_file),
-                **shim_data,
-            )
-
-            # Actually run the shim now that we've created the files
-            flag_output = Msys2._run_shim(
-                data_file=data_file,
-                flag_file=flag_file,
-                timeout=timeout,
-                poll_interval=poll_interval,
-            )
-
-            # Make the results neater for the the user.
-            process = Msys2CompletedProcess(
-                args = args,
-                flag_output = flag_output,
-                text=text,
-                stdout_file=stdout_file,
-                stderr_file=stderr_file,
-            )
-
-            if isinstance(stdout,bool): process.load_stdout()
-            if isinstance(stderr,bool): process.load_stderr()
-            if reraise_errors: process.raise_errors()
-
-            return process
-
-
-    @staticmethod
-    def _run_shim(data_file : Path,
-                  flag_file : Path,
-                  timeout : Optional[int],
-                  poll_interval : int):
-        """
-        Helper that runs the shim with the target data_file, and waits on the
-        flag file to appear.
-
-        Arguments:
-          data_file: the path of the data to be run
-          flag_file: path to file where flag will appear
-          **kwargs: See similar args in run
-        """
-
-        if flag_file.exists():
-            raise RuntimeError(
-                f"Cannot use msys2 cmd shim for {str(flag_file)} because it "
-                "already exists.")
-
-        with resources.path('simple_uam.data.fdm','msys2_shim.py') as shim:
-
-            shim_file = Path(shim).resolve()
-            process_cmd = [
-                'msys2.exe',
-                'python',
-                shim_file,
-                data_file,
-                "--log-level=DEBUG",
-                "--wait",
-            ]
-
-            log.info(
-                "Running Msys2 shim with command:",
-                cmd=process_cmd,
-            )
-            process = subprocess.run(process_cmd)
-
-            elapsed = 0
-
-            if timeout == None:
-                log.info(
-                    "No Msys timeout provided. Waiting indefinitely."
-                )
-
-            while (timeout == None) or (elapsed <= timeout):
-
-                log.info(
-                    "Checking for existence of output flag file.",
-                    timeout=timeout,
-                    elapsed=elapsed,
-                    poll_interval=poll_interval,
-                    exists=flag_file.exists(),
-                )
-
-                if flag_file.exists():
-                    with flag_file.open('r') as fp:
-                        return json.load(fp)
-                time.sleep(poll_interval)
-                elapsed += poll_interval
-
-            raise RuntimeError(
-                f"Running msys2 cmd shim (at `{str(shim_file)}`) with "
-                f"{str(data_file)} did not produce an output at "
-                f"{str(flag_file)} within the alloted timeout."
-            )

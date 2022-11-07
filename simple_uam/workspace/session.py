@@ -190,23 +190,33 @@ class Session():
           exc_tb: The traceback of the exception.
         """
 
+        log.info(
+            "Logging exception.",
+            workspace=self.number,
+            ref=str(self.reference_dir),
+            src=str(self.work_dir),
+            excs=excs,
+            exc_type=exc_type,
+            exc_val=exc_val,
+            exc_tb=exc_tb,
+        )
+
         if (exc_type or exc_val or exc_tb) and len(excs) > 0:
             raise RuntimeError(
                 "Can only provide positional arg or kw args, not both."
             )
-
-        elif len(excs) > 1:
+        elif len(excs) != 1:
             raise RuntimeError(
                 "Can only log a single exception at a time."
             )
 
         ### Organize Exceptions ###
-
         exceptions = list()
 
         current = None
 
         if len(excs) > 0:
+            exc = excs[0]
             current = dict(
                 type=type(exc),
                 val=exc,
@@ -479,7 +489,7 @@ class Session():
             files={str(s_f): str(a_f) for s_f, a_f in files.items()},
         )
 
-        backup.archive_file_mapping(files, out)
+        backup.archive_file_mapping(files, out, cwd=self.work_dir)
 
     @session_op
     def validate_complete(self):

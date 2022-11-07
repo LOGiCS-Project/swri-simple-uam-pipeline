@@ -14,7 +14,10 @@
 from typing import List, Optional
 from simple_uam.util.invoke import Collection, InvokeProg, task
 from simple_uam.util.logging import get_logger
-from . import build
+from . import compile, eval
+
+import simple_uam.fdm.compile.actions.local as compile_local
+import simple_uam.fdm.eval.actions.local as eval_local
 
 log = get_logger(__name__)
 
@@ -30,13 +33,39 @@ def main(args: Optional[List[str]] = None) -> int:
     Returns:
         An exit code.
     """
-    build_setup_ns = Collection()
-    build_setup_ns.add_task(build.setup.mkdirs, "dirs")
-    build_setup_ns.add_task(build.setup.flight_dynamics_model, "fdm_repo")
-    build_setup_ns.add_task(build.setup.setup_reference, "reference_workspace")
+    compile_setup_ns = Collection()
+    compile_setup_ns.add_task(compile.setup.mkdirs, "dirs")
+    compile_setup_ns.add_task(compile.setup.flight_dynamics_model, "fdm_repo")
+    compile_setup_ns.add_task(compile.setup.setup_reference, "reference_workspace")
 
-    build_ns = Collection()
-    build_ns.add_collection(build_setup_ns, "setup")
+    compile_manage_ns = Collection()
+    compile_manage_ns.add_task(compile.manage.delete_locks, "delete_locks")
+    compile_manage_ns.add_task(compile.manage.prune_results, "prune_results")
+    compile_manage_ns.add_task(compile.manage.workspaces_dir, "workspaces_dir")
+    compile_manage_ns.add_task(compile.manage.cache_dir, "cache_dir")
+    compile_manage_ns.add_task(compile.manage.results_dir, "results_dir")
+
+    compile_ns = Collection()
+    compile_ns.add_collection(compile_setup_ns, "setup")
+    compile_ns.add_collection(compile_manage_ns, "manage")
+    compile_ns.add_task(compile_local.fdm_compile, "run")
+
+    eval_setup_ns = Collection()
+    eval_setup_ns.add_task(eval.setup.mkdirs, "dirs")
+    eval_setup_ns.add_task(eval.setup.fdm_env, "fdm_environment")
+    eval_setup_ns.add_task(eval.setup.setup_reference, "reference_workspace")
+
+    eval_manage_ns = Collection()
+    eval_manage_ns.add_task(eval.manage.delete_locks, "delete_locks")
+    eval_manage_ns.add_task(eval.manage.prune_results, "prune_results")
+    eval_manage_ns.add_task(eval.manage.workspaces_dir, "workspaces_dir")
+    eval_manage_ns.add_task(eval.manage.cache_dir, "cache_dir")
+    eval_manage_ns.add_task(eval.manage.results_dir, "results_dir")
+
+    eval_ns = Collection()
+    eval_ns.add_collection(eval_setup_ns, "setup")
+    eval_ns.add_collection(eval_manage_ns, "manage")
+    eval_ns.add_task(eval_local.eval_fdms, "run")
 
     # manage_ns = Collection()
     # manage_ns.add_task(manage.delete_locks, "delete_locks")
@@ -52,7 +81,8 @@ def main(args: Optional[List[str]] = None) -> int:
 
     namespace = Collection(
     )
-    namespace.add_collection(build_ns, 'build')
+    namespace.add_collection(compile_ns, 'compile')
+    namespace.add_collection(eval_ns, 'eval')
     # namespace.add_collection(manage_ns, 'manage')
     # namespace.add_collection(tasks_ns, 'tasks')
 

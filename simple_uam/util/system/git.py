@@ -9,7 +9,7 @@ import textwrap
 import shutil
 from urllib.parse import urlparse
 import re
-from typing import Optional, Union
+from typing import Optional, Union, Dict, List
 
 from .backup import archive_files, backup_file
 from ..logging import get_logger
@@ -48,8 +48,36 @@ class Git():
         # we should look at it separately.
         raise NotImplementedError()
 
+    @staticmethod
+    def config( options : Dict,
+                repo_dir : Union[None, str,Path],
+    ):
+        """
+        Sets git configuration options for the global system or a single
+        repository.
 
+        Arguments:
+          options: Pairs from an option name string to an option value.
+          repo_dir: The repository to set local options for, options are set
+            globally if None.
+        """
 
+        cwd = Path.cwd()
+        env_flag = "--global"
+
+        if repo_dir:
+           env_flag = "--local"
+           repo_dir = Path(repo_dir)
+           cwd = repo_dir
+
+        git_cmd = ["git","config", env_flag]
+
+        for opt, val in options.items():
+            proc=subprocess.run(
+                [*git_cmd, opt, val],
+                cwd = cwd,
+            )
+            proc.check_returncode()
 
     @staticmethod
     def clone_or_pull(

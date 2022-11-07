@@ -260,7 +260,7 @@ class TDir(TDirEntry):
         Get the stable hash of this DirEntry.
         """
 
-        memb_hash = {name: m.hash for name, m in self.membs}
+        memb_hash = {str(name): m.hash.hex() for name, m in self.members.items()}
 
         return stable_json_hash(memb_hash)
 
@@ -272,7 +272,7 @@ class TDir(TDirEntry):
 
         out = list()
 
-        for name, dirent in self.members:
+        for name, dirent in self.members.items():
             if isinstance(dirent, TFile):
                 out.append(Path(name))
             elif isinstance(dirent, TDir):
@@ -287,7 +287,7 @@ class TDir(TDirEntry):
 
     def get_dirent(self,
                    loc : Union[str,Path],
-                   missing_ok : bool = False) -> Optional[TDirent]:
+                   missing_ok : bool = False) -> Optional[TDirEntry]:
         """
         Get the dirent within this TDir
 
@@ -421,6 +421,60 @@ class TDir(TDirEntry):
                 overwrite=overwrite,
             )
 
+    def add_file(self,
+                 filepath : Union[str,Path],
+                 dirloc : Union[str,Path],
+                 mkdir : bool = False,
+                 overwrite : bool = False):
+        """
+        Adds a directory entry object to this directory at the provided
+        location.
+
+        Arguments:
+          filepath: The file system location of the file to be added.
+          dirloc: The relative location within this directory that the file
+            should be placed.
+          mkdir: Should we make extra directories as needed to place the dirent?
+            (default: False)
+          overwrite: Should we overwrite a dirent that already exists when
+            adding this one? (Default: False)
+        """
+
+        filepath = Path(filepath).resolve()
+
+        self.add_dirent(
+            loc=dirloc,
+            dirent=TFile.read_file(filepath),
+            mkdir=mkdir,
+            overwrite=overwrite,
+        )
+
+    def add_files(self,
+                  filemap : Dict[Union[str,Path],Union[str,Path]],
+                  mkdir : bool = False,
+                  overwrite : bool = False):
+        """
+        Adds a set of files to the directory.
+
+        Arguments:
+          filemap: A map from file system location of the file to be added to
+            the relative location within this directory that the file
+            should be placed.
+          mkdir: Should we make extra directories as needed to place the dirent?
+            (default: False)
+          overwrite: Should we overwrite a dirent that already exists when
+            adding this one? (Default: False)
+        """
+
+        for inp, out in filemap.items():
+
+            self.add_file(
+                filepath=inp,
+                dirloc=out,
+                mkdir=mkdir,
+                overwrite=overwrite,
+            )
+
     def __set_item__(self,key,value):
         """
         Alias for add_dirent with mkdir=True and overwrite=True.
@@ -468,14 +522,14 @@ class TDir(TDirEntry):
 
         if not loc:
             loc = Path.cwd()
-        loc = Path(loc).resolve
+        loc = Path(loc).resolve()
 
         res_map = dict()
 
         # Manage files entries
-        if not files and not mapping:
+        if files == None and not mapping:
             files = ["**"]
-        elif not files:
+        elif files == None:
             files = []
 
         for f in files:
@@ -491,6 +545,9 @@ class TDir(TDirEntry):
             res_map[str(f)] = str(loc / f)
 
         # Manage mappings
+        if not mapping:
+            mapping = dict()
+
         for inp, out in mapping.items():
 
             inp = str(inp)
@@ -502,13 +559,18 @@ class TDir(TDirEntry):
                     "only relative paths are allowed."
                 )
 
-            if out.is_relative():
+            if not out.is_absolute():
                 out = cwd / out
 
             res_map[str(inp)] = str(out)
 
         # Get actual input/output file pairs
         pairs = apply_glob_mapping(res_map, files=self.files)
+
+        log.info(
+            "Writing file pairs from TDir out to disk.",
+            pairs = {str(k):str(v) for k, v in pairs.items()},
+        )
 
         # And write them to disk
         for inp, out in pairs.items():
@@ -534,12 +596,6 @@ class TDir(TDirEntry):
                     f"write file '{inp}' to '{str(out)}' when writing TDir."
                 )
 
-            log.info(
-                "Writing file from TDir out to disk.",
-                input_file = str(inp),
-                output_loc = str(out),
-            )
-
             in_file.write_file(out)
 
     @classmethod
@@ -561,14 +617,14 @@ class TDir(TDirEntry):
 
         if not loc:
             loc = Path.cwd()
-        loc = Path(loc).resolve
+        loc = Path(loc).resolve()
 
         res_map = dict()
 
         # Manage files entries
-        if not files and not mapping:
+        if files == None and not mapping:
             files = ["**"]
-        elif not files:
+        elif files == None:
             files = []
 
         for f in files:
@@ -584,6 +640,9 @@ class TDir(TDirEntry):
             res_map[str(f)] = str(f)
 
         # Manage mappings
+        if not mapping:
+            mapping = dict()
+
         for inp, out in mapping.items():
 
             inp = Path(inp)
@@ -603,18 +662,22 @@ class TDir(TDirEntry):
 
             res_map[str(inp)] = str(out)
 
+
+        log.info(
+            "Reading files into TDir.",
+            mapping={k: str(v) for k,v in res_map.items()},
+            files= [str(f) for f in files] if files else None,
+            loc=str(loc),
+        )
+
         # Get the full map from input to putput files
         pairs = apply_glob_mapping(res_map, loc)
+
+        # Make sure the input paths are relative to loc
+        pairs = {loc / k: v for k, v in pairs.items()}
+
         out = cls()
-
-        for inp, out in pairs.items():
-
-            inp = Path(loc / inp).resolve()
-
-            data = TFile.read_file(inp)
-
-            out.add_dirent(out, data)
-
+        out.add_files(pairs, mkdir=True, overwrite=False)
         return out
 
     @property
@@ -623,9 +686,9 @@ class TDir(TDirEntry):
         Is this directory empty?
         """
 
-        return len(self.members)
+        return len(self.members) == 0
 
-    def difference(self, other : TDir):
+    def difference(self, other : 'TDir'):
         """
         Produces a new TDir that has the directory entries of self without any
         found in other.
@@ -638,7 +701,7 @@ class TDir(TDirEntry):
 
         out = TDir()
 
-        for name, dirent in self.members:
+        for name, dirent in self.members.items():
             other_dirent = other.members.get(name)
 
             # Item isn't in other, include
@@ -653,7 +716,7 @@ class TDir(TDirEntry):
 
         return out
 
-    def overlay(self, other : TDir):
+    def overlay(self, other : 'TDir'):
         """
         Produces a new TDir that is identical to self except when a dirent
         also exists in other, in which case it uses the dirent from other
@@ -666,7 +729,7 @@ class TDir(TDirEntry):
 
         out = TDir()
 
-        for name, dirent in self.members:
+        for name, dirent in self.members.items():
             other_dirent = other.members.get(name)
 
             # Item isn't in other, include unchanged
@@ -685,7 +748,7 @@ class TDir(TDirEntry):
 
         return out
 
-    def intersection(self, other : TDir):
+    def intersection(self, other : 'TDir'):
         """
         Produces a new TDir that composed of those directory entries that
         are also found in other.
@@ -698,7 +761,7 @@ class TDir(TDirEntry):
 
         out = TDir()
 
-        for name, dirent in self.members:
+        for name, dirent in self.members.items():
             other_dirent = other.members.get(name)
 
             # Item is dir in both, take overlay of dirs
@@ -713,7 +776,7 @@ class TDir(TDirEntry):
 
         return out
 
-    def union(self, other : TDir):
+    def union(self, other : 'TDir'):
         """
         Produces new TDir with all the entries of self and other.
 
@@ -748,7 +811,7 @@ class TDir(TDirEntry):
 
         return out
 
-    def is_subsumed_by(self, other : TDir):
+    def is_subsumed_by(self, other : 'TDir'):
         """
         Does every entry in self exist in other?
 

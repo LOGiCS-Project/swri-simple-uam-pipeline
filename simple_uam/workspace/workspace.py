@@ -19,6 +19,10 @@ from .session import Session
 
 log = get_logger(__name__)
 
+@define(auto_exc=True)
+class NoFreeWorkspaceException(RuntimeError):
+    pass
+
 @define
 class Workspace():
     """
@@ -133,9 +137,9 @@ class Workspace():
         it exists.
         """
 
-        metadata = self.deepcopy(self.metadata)
+        metadata = deepcopy(self.metadata)
 
-        metadata['user_metadata'] = self.deepcopy(self.user_metadata)
+        metadata['user_metadata'] = deepcopy(self.user_metadata)
 
         return metadata
 
@@ -167,7 +171,9 @@ class Workspace():
         # Get lock if possible, fail otherwise.
         lock_tuple = self.manager.acquire_workspace_lock(self.number)
         if lock_tuple == None:
-            raise RuntimeError("Could not acquire Workspace lock.")
+            raise NoFreeWorkspaceException(
+                "Could not acquire Workspace lock."
+            )
         try:
             # mark session_start
             self.active_workspace = lock_tuple[0]
@@ -234,6 +240,7 @@ class Workspace():
                 # Move it to the manager's results directory
                 self.active_session.result_archive = self.manager.add_result(
                     archive=self.active_session.result_archive,
+                    prefix=self.name,
                     ident=self.archive_ident(self.active_session),
                     copy=False,
                 )
@@ -292,11 +299,12 @@ class Workspace():
         return session
 
     def __exit__(self, exc_type, exc_val, exc_traceback):
-        self.active_session.log_exception(
-            exc_type=exc_type,
-            exc_val=exc_val,
-            exc_tb=exc_traceback,
-        )
+        if exc_type or exc_val or exc_traceback:
+            self.active_session.log_exception(
+                exc_type=exc_type,
+                exc_val=exc_val,
+                exc_tb=exc_traceback,
+            )
         self.active_session.exit_workdir()
         self.finish()
         return None

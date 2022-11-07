@@ -24,6 +24,7 @@ choco_exe_map = {
     'tortoisegit': 'TortoiseGitMerge.exe', # not really a CLI app but it's a test
     'nssm': 'nssm.exe',
     'msys2': 'msys2.exe',
+    'dos2unix': 'dos2unix.exe',
 }
 
 @task

@@ -16,7 +16,7 @@ def stable_json_hash(inp : object) -> bytes:
         indent=None,
         separators=(",",":"),
     )
-    return stable_str_hash(dumps)
+    return stable_str_hash(dump)
 
 def stable_str_hash(inp : str) -> bytes:
     """

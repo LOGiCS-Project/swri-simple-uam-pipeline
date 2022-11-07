@@ -11,7 +11,7 @@ from zipfile import ZipFile
 from attrs import define, field
 from copy import deepcopy
 import subprocess
-from filelock import Filelock, Timeout
+from filelock import FileLock, Timeout
 from contextlib import contextmanager
 import tempfile
 import shutil
@@ -37,24 +37,23 @@ class FileCache(Generic[K]):
 
     cache_dir : Path = field(
         converter=[Path, lambda x: x.resolve()],
+        kw_only=True,
     )
     """
     Directory in which all the zip files are stored.
     """
 
     lock_dir : Path = field(
-        converter=[Path, lambda x: x.resolve()],
+        default=None,
+        kw_only=True,
     )
     """
     Directory in which all the lockfiles are stored.
     """
 
-    @lock_dir.default
-    def _default_lock_dir(self):
-        return Path(self.cache_dir / "locks").resolve()
-
     temp_dir : Path = field(
-        converter=[Path, lambda x: x.resolve()],
+        default=None,
+        kw_only=True,
     )
     """
     Directory in where temporary folders for cache use are found.
@@ -63,7 +62,8 @@ class FileCache(Generic[K]):
     """
 
     prune_limit : int = field(
-        default = 1000
+        default = 1000,
+        kw_only=True,
     )
     """
     Number of cache items that should be remaining at the end of a prune
@@ -71,15 +71,18 @@ class FileCache(Generic[K]):
     """
 
     prune_trigger : int = field(
-        default = 1100
+        default = 1100,
+        kw_only=True,
     )
     """
     Threshold at which to prune the cache.
     """
 
-    @temp_dir.default
-    def _default_temp_dir(self):
-        return Path(self.cache_dir / "temp").resolve()
+    def __attrs_post_init__(self):
+        if not self.lock_dir:
+            self.lock_dir = Path(self.cache_dir / "locks").resolve()
+        if not self.temp_dir:
+            self.temp_dir = Path(self.cache_dir / "temp").resolve()
 
     def init_dirs(self):
         """
@@ -110,8 +113,8 @@ class FileCache(Generic[K]):
 
         raise NotImplementedError()
 
-    @staticfunction
-    def callback(key : K,
+    def callback(self,
+                 key : K,
                  output_file : Path,
                  **kwargs):
         """
@@ -198,10 +201,6 @@ class FileCache(Generic[K]):
                 shutil.copy2(target_file, target)
                 target_file = target
 
-            # Move temp_file to results dir (no lock needed)
-            out_path = self.config.results_path / out_file
-
-
             if cache_file.exists() and overwrite:
                 log.info(
                     "Deleting existing cache file in favor of new.",
@@ -216,7 +215,7 @@ class FileCache(Generic[K]):
                     target_file=target_file,
                     cache_file=cache_file,
                 )
-                shutil.move(target_file, cache_file)
+                shutil.move(target_file, cache_file) # assumes move is mostly atomic
             else:
                 log.info(
                     "Cache already exists",
@@ -228,7 +227,7 @@ class FileCache(Generic[K]):
         return cache_file
 
 
-    @contextmangager
+    @contextmanager
     def use_cache(self,
                   key : K,
                   force_gen : bool = False,
@@ -286,7 +285,7 @@ class FileCache(Generic[K]):
             tmp_file.hardlink_to(cache_file_path)
 
             # Hand the temporary link & the result of the callback to the caller
-            yield tuple(tmp_file, callback_return)
+            yield tuple([tmp_file, callback_return])
 
             # We let the tempdir context handle pruneing up the link we made.
 

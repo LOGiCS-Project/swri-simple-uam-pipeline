@@ -170,10 +170,15 @@ __all__ = ['get_logger']
 
 #         return sio.getvalue()
 
+structlog.configure(
+    logger_factory=structlog.PrintLoggerFactory(file=sys.stderr)
+)
+
 def get_logger(name: str):
     logger = structlog.get_logger(name)
     return structlog.wrap_logger(
         logger,
         processors=[
+            structlog.dev.ConsoleRenderer(),
         ]
     )

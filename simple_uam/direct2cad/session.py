@@ -21,6 +21,97 @@ class D2CSession(Session):
     A workspace session specialized to the direct2cad workflow.
     """
 
+    @property
+    def exe_subdir(self):
+        """
+        The subdirectory where the fdm exe should be placed when evaluating new
+        inputs.
+        """
+        return Config[CorpusConfig].direct2cad.exe_subdir
+
+    @property
+    def exe_dir(self):
+        """
+        The full path to the exe directory,
+        """
+        return Path(self.work_dir / self.exe_subdir).resolve()
+
+    @property
+    def exe_path(self):
+        """
+        The path to the new_fdm.exe
+        """
+        return Path(self.exe_dir / 'new_fdm.exe').resolve()
+
+    @session_op
+    def extract_fdm_exe(self,
+                        bin_zip):
+        """
+        Will extract a zipfile containing the FDM executable into the
+        appropriate location.
+
+        Arguments:
+          bin_zip: must be an absolute path.
+        """
+
+        if bin_zip == None:
+            log.info(
+                "No binary zip provided when extracting fdm exe, skipping.",
+                workspace=self.number,
+                work_dir=str(self.work_dir),
+            )
+            return
+
+        bin_zip = Path(bin_zip)
+
+        if not bin_zip.is_absolute():
+            raise RuntimeError(
+                "Provided path to new_fdm zip must be an absolute path."
+            )
+
+        if not bin_zip.exists():
+            raise RuntimeError(
+                f"No executable binaries zip file found at `{str(bin_zip)}`."
+            )
+
+        self.exe_dir.mkdir(parents=True, exist_ok=True)
+
+        with ZipFile.open(bin_zip, mode='r') as b_z:
+
+            exe_path = zipfile.Path(b_z, "new_fdm.exe")
+
+            if not exe_path.exists():
+                raise RuntimeError(
+                    f"Could not find executable `{str(exe_path)}` within "
+                    f"archive `{str(bin_zip)}`, are you sure this zip "
+                    "contains the fdm executable?"
+                )
+
+            # clear up dir if needed
+            for out_file in b_z.namelist():
+                out_file = Path(self.exe_dir / out_file)
+
+                if out_file.exists():
+                    log.info(
+                        "File already exists when extracting binaries.",
+                        workspace=self.number,
+                        work_dir=str(self.work_dir),
+                        file=str(out_file),
+                        bin_zip=str(bin_zip),
+                    )
+
+                    out_file.unlink()
+
+            log.info(
+                "Extracting executable binaries to appropriate dir",
+                workspace=self.number,
+                work_dir=str(self.work_dir),
+                bin_zip=str(bin_zip),
+                exe_dir=str(self.exe_dir),
+            )
+
+            b_z.extractall(self.exe_dir)
+
     @session_op
     def start_creo(self):
         """

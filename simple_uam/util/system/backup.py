@@ -136,7 +136,9 @@ def backup_file(
 
 def archive_file_mapping(files : Dict[Union[str,Path],Union[str,Path]],
                          out : Union[str,Path],
+                         cwd : Union[None,str,Path] = None,
                          missing_ok : bool = False,
+                         delete_existing : bool = False,
 ):
     """
     Uses the mapping `files`, from input file locations to archive locations,
@@ -146,15 +148,31 @@ def archive_file_mapping(files : Dict[Union[str,Path],Union[str,Path]],
        files: dictionary from system files to archive location. Archive location
          must be a relative path.
        out: Output zipfile location.
+       cwd: The working directory which is taken as the root for all relative
+         system files and the output zipfile. (Default: cwd)
        missing_ok: Do we ignore files that don't exist?
+       delete_existing: Delete a preexisting archive at out if True, otherwise
+         make backup. (Default: False)
     """
 
-    out = Path(out).resolve()
+    if not cwd:
+        cwd = Path.cwd()
+    cwd = Path(cwd).resolve()
+
+    out = Path(out)
+    if not out.is_absolute():
+        out = cwd / out
+    out = out.resolve()
+
     normed_files = dict()
 
     for sys_file, arc_file in files.items():
 
-        sys_file = Path(sys_file).resolve()
+        sys_file = Path(sys_file)
+        if not sys_file.is_absolute():
+            sys_file = cwd / sys_file
+        sys_file = sys_file.resolve()
+
         arc_file = Path(arc_file)
 
         if arc_file.is_absolute():
@@ -163,7 +181,7 @@ def archive_file_mapping(files : Dict[Union[str,Path],Union[str,Path]],
                 "relative path."
             )
 
-            log.exception(
+            log.error(
                 "Archive file loc must be relative path.",
                 sys_file=str(sys_file),
                 arc_file=str(arc_file),
@@ -174,6 +192,19 @@ def archive_file_mapping(files : Dict[Union[str,Path],Union[str,Path]],
             raise err
 
         normed_files[sys_file] = arc_file
+
+    if out.exists() and delete_existing:
+        log.info(
+            "Archive already exists, deleting.",
+            archive_file=str(out),
+        )
+        out.unlink()
+    elif out.exists():
+        log.info(
+            "Archive already exists, backing up before creating a new one.",
+            archive_file=str(out),
+        )
+        backup_file(out, delete=True)
 
     # Iterate through the files to archive, adding them to the zip file as
     # needed.

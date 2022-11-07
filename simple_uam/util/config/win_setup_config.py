@@ -69,6 +69,7 @@ class WinSetupConfig():
 
     fdm_dep_packages : List[str] = [
         'msys2',
+        'dos2unix',
     ]
     """
     Chocolatey packages needed for a windows FDM worker node.

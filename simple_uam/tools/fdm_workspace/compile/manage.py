@@ -4,19 +4,16 @@ Various setup and development tasks for SimpleUAM Utility Modules.
 
 import shutil
 from simple_uam.util.invoke import task, call
-from simple_uam.util.config import Config, PathConfig, D2CWorkspaceConfig
+from simple_uam.util.config import Config, PathConfig, FDMCompileConfig, \
+    AuthConfig, CorpusConfig
 from simple_uam.util.logging import get_logger
-
-from simple_uam.fdm.eval.manager import FDMEvalManager
-from simple_uam.fdm.eval.session import FDMEvalSession
-from simple_uam.fdm.eval.workspace import FDMEvalWorkspace
-
+from simple_uam.fdm.compile.manager import FDMCompileManager
 from pathlib import Path
 import subprocess
 
 log = get_logger(__name__)
 
-manager = FDMEvalManager()
+manager = FDMCompileManager()
 
 @task
 def delete_locks(ctx,
