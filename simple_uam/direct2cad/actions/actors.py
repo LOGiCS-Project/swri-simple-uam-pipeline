@@ -86,6 +86,7 @@ process_actor_args = dict(
 def process_design(design : object,
                    study_params : Optional[List[Dict]] = None,
                    metadata : Optional[object] =None,
+                   compile_args : Optional[Dict] = None,
 ):
     """
     gen_info_files as an actor that will perform the task on a worker node
