@@ -6,7 +6,7 @@ build-backend = "pdm.pep517.api"
 name = "simple-uam"
 description = "A set of libraries and wrappers around the SWRi athens-uav project."
 authors = [{name = "Rohit Ramesh", email = "rkr@berkeley.edu"}]
-license-expression = "MIT"
+# license-expression = "MIT"
 readme = "README.md"
 requires-python = ">=3.9,<3.11"
 keywords = []

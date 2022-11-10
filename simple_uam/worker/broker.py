@@ -66,6 +66,12 @@ def default_broker():
 _BROKER = default_broker()
 dramatiq.set_broker(_BROKER)
 
+def get_broker():
+    """
+    Gets the default broker in other code.
+    """
+    return _BROKER
+
 class ActorPriority(IntEnum):
     """
     Priorities for actors being run on a worker node. Lower numbers are

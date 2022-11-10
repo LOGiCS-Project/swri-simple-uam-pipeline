@@ -5,8 +5,8 @@ from pathlib import Path
 from typing import List, Optional
 from attrs import define,field,asdict
 
-from .broker import _BROKER
-from dramatiq import get_broker
+from .broker import _BROKER, get_broker
+# from dramatiq import get_broker
 from dramatiq.cli import main
 
 import textwrap

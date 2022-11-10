@@ -52,12 +52,12 @@ AWS account.
   VPCs and [VPC Peering](https://docs.aws.amazon.com/vpc/latest/peering/what-is-vpc-peering.html) to allow
   services on each VPC to access each other.
 
-## Virtual Private Cloud
+## Virtual Private Cloud {#vpc}
 
 > This creates a private network where your servers can live isolated from the
 > internet yet able to communicate with each other.
 
-### Create public and private subnets
+### Create public and private subnets {#vpc-subnets}
 
 - Open the VPC console's [Create VPC page](https://console.aws.amazon.com/vpc/home#CreateVpc:).
     - VPC Settings:
@@ -79,7 +79,7 @@ AWS account.
         - **Enable DNS Hostnames**: Yes (check box)
         - **Enable DNS Resolution**: Yes (check box)
 
-### Save useful information
+### Save useful information {#vpc-save}
 
 - Click "Create VPC". Once the process bar is done click "View VPC".
     - Keep track of:
@@ -104,7 +104,7 @@ AWS account.
             - "Name" as: `<aws-private-subnet.name>`
             - "Subnet ID" as: `<aws-private-subnet.id>`
 
-### Open up the internal firewal
+### Open up the internal firewall {#vpc-firewall}
 
 - Open the [Security Groups page](https://console.aws.amazon.com/vpc/home#SecurityGroups) of the VPC console.
     - Find the security group whose "VPC ID" is `<aws-vpc.id>`.
@@ -124,12 +124,12 @@ AWS account.
                 - **Source**: 10.0.0.0/8
             - Click "Save rules"
 
-## AWS VPN Connection
+## AWS VPN Connection {#vpn}
 
 > Sets up keys and a VPN connection so your local computer can directly
 > communicate with instances and services on the private subnet.
 
-### Create keys for VPN access
+### Create keys for VPN access {#vpn-keys}
 
 - Create sever and client certs:
     - Follow the instructions [here](https://docs.aws.amazon.com/vpn/latest/clientvpn-admin/client-authentication.html#mutual).
@@ -155,7 +155,7 @@ AWS account.
         - Keep track of "Identifier" as: `<aws-client-cert.id>`
         - Keep track of "ARN" as: `<aws-client-cert.arn>`
 
-### Create the VPN interface
+### Create the VPN interface {#vpn-interface}
 
 - Follow the instructions [here](https://docs.aws.amazon.com/vpn/latest/clientvpn-admin/cvpn-getting-started.html).
     - Step 2:
@@ -194,7 +194,7 @@ AWS account.
     - Step 7: Skip this step
     - Step 8: Skip this step
 
-### Create Client VPN Config File
+### Create Client VPN Config File {#vpn-client-config}
 
 > This is the file users will import in order to connect to the above
 > VPN interface. Instructions taken from [here](https://docs.aws.amazon.com/vpn/latest/clientvpn-admin/cvpn-getting-started.html#cvpn-getting-started-config)
@@ -270,7 +270,7 @@ AWS account.
 - Distribute the `<aws-cvpn.config>` to your intended users.
 
 
-### Connect to the VPN
+### Connect to the VPN {#vpn-connect}
 
 > These instructions apply to your users as well as long as you provide them
 > access to the `<aws-cvpn.config>` file.
@@ -279,14 +279,14 @@ AWS account.
 - **MacOS:** [Instructions](https://docs.aws.amazon.com/vpn/latest/clientvpn-user/macos.html)
 - **Windows:** [Instructions](https://docs.aws.amazon.com/vpn/latest/clientvpn-user/windows.html)
 
-## Shared Drive
+## Shared Drive {#drive}
 
 > Create a shared drive that you can mount on both your local machine and worker nodes.
 > This drive is both a convenient shared mount for development work, using your
 > local setup to edit server code, and a place for multiple workers to stash
 > results.
 
-### Option 1: Use Amazon FSx for OpenZFS
+### Option 1: Use Amazon FSx for OpenZFS {#drive-fsx}
 
 - Go to the [FSx File System console](https://console.aws.amazon.com/fsx/home#file-systems).
     - Click [Create File System](https://console.aws.amazon.com/fsx/home#file-system-create):
@@ -336,11 +336,24 @@ AWS account.
 
     Run: `mount \\<aws-fsx-ip>\fsx\ <drive-letter>`
 
-## Create an EC2 Keypair
+??? info "Using FSx Drives in Config Files"
+
+    Paths to FSx drives on a Windows box, such as the worker, should be in
+    [UNC Format](https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-dfsc/149a3039-98ce-491a-9268-2f5ddef08192)
+    so that access to a particular resource isn't tied to any specific drive name.
+
+    In addition, you should replace any Windows forward slashes in a path with
+    UNIX backslashes.
+
+    For example, if you have an FSx drive mounted at `D:\\` with a results
+    storage directory at `D:\\results` then config files should instead use
+    the path `//<fsx-drive-ip>/fsx/results`.
+
+## Create an EC2 Keypair {#ec2-keypair}
 
 > This keypair is needed to connect to various EC2 instances in the VPC.
 
-#### Create a keypair for connecting to AWS instances.
+#### Create a keypair for connecting to AWS instances. {#ec2-keypair-create}
 
 - Open the EC2 console to the [Key pairs page](https://console.aws.amazon.com/ec2/v2/home#KeyPairs:) and click
   "[Create key pair](https://console.aws.amazon.com/ec2/v2/home#CreateKeyPair:)".

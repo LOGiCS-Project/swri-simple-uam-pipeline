@@ -22,7 +22,7 @@ import f90nml
 
 log = get_logger(__name__)
 
-def read_fdm_input(file_name : Union[str,Path],
+def load_fdm_input(file_name : Union[str,Path],
                    cwd : Union[None,str,Path] = None):
     """
     Reads a single fdm input file into memory. Will try to parse file as
@@ -64,9 +64,9 @@ def read_fdm_input(file_name : Union[str,Path],
 
     raise Exception(exceptions)
 
-def read_inputs(indices : Optional[List[str]] = None,
-                files : Optional[List[str]] = None,
-                file_map : Optional[Dict[str,str]] = None,
+def load_fdm_inputs(indices : Optional[List[str]] = None,
+                    files : Optional[List[str]] = None,
+                    file_map : Optional[Dict[str,str]] = None,
 ):
     """
     Will take inputs from the command line with optional index names and
@@ -89,7 +89,7 @@ def read_inputs(indices : Optional[List[str]] = None,
 
         for k,fn in file_map.items():
 
-            inputs[k] = read_fdm_input(fn)
+            inputs[k] = load_fdm_input(fn)
 
     else:
 
@@ -100,7 +100,7 @@ def read_inputs(indices : Optional[List[str]] = None,
             if i < len(indices):
                 k = str(indices[i])
 
-            inputs[k] = read_fdm_input(fn)
+            inputs[k] = load_fdm_input(fn)
 
     return inputs
 
@@ -145,7 +145,7 @@ def cli_format_args(
       **kwargs: Additional keyword arguments that will be passed to compile_op.
     """
 
-    inputs = read_inputs(
+    inputs = load_fdm_inputs(
         indices=indices,
         files=files,
     )

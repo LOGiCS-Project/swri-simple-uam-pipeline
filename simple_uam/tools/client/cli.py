@@ -14,6 +14,7 @@
 from typing import List, Optional
 from simple_uam.util.invoke import Collection, InvokeProg, task
 from simple_uam.util.logging import get_logger
+from . import watch
 import simple_uam.fdm.compile.actions.client as compile_client
 import simple_uam.fdm.eval.actions.client as eval_client
 import simple_uam.direct2cad.actions.client as d2c_client
@@ -41,9 +42,15 @@ def main(args: Optional[List[str]] = None) -> int:
     fdm_ns.add_task(compile_client.fdm_compile, "compile")
     fdm_ns.add_task(eval_client.eval_fdm, "eval")
 
+    watch_ns = Collection()
+    watch_ns.add_task(watch.poll_backend, "backend")
+    watch_ns.add_task(watch.poll_dir, "dir")
+
     namespace = Collection()
     namespace.add_collection(d2c_ns, 'd2c')
     namespace.add_collection(fdm_ns, 'fdm')
+    namespace.add_collection(watch_ns, 'watch')
+
 
     # Setup the invoke program runner class
     program = InvokeProg(
