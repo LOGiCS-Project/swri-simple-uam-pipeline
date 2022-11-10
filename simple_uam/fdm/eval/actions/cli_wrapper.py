@@ -59,7 +59,7 @@ def load_fdm_input(file_name : Union[str,Path],
         try:
             with file_name.open('r') as fn:
                 return json.load(fn)
-        except Exception:
+        except Exception as err:
             exceptions.append(err)
 
     raise Exception(exceptions)
