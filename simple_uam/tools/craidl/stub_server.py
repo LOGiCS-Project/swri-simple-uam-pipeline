@@ -155,6 +155,10 @@ gremlin_server_old_cmd = Path('bin','gremlin-server.bat')
 
 gremlin_server_cmd = Path('bin','gremlin-server-more-mem.bat')
 
+server_conf_target = Path('conf','gremlin-server-uam.yaml')
+
+server_conf_path = gremlin_server_dir / server_conf_target
+
 @task
 def download_server(ctx, force_download=False):
     """
@@ -298,8 +302,6 @@ def configure_server(ctx,
 
     with resources.path(data_module, 'gremlin-server-uam.yaml') as server_conf_data:
 
-        server_conf_target = Path('conf','gremlin-server-uam.yaml')
-        server_conf_path = gremlin_server_dir / server_conf_target
 
         configure_file(
             server_conf_data,

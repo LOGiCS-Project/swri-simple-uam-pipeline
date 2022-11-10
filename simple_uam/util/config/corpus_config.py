@@ -30,7 +30,7 @@ class GraphMLCorpusRepoConfig():
     repo: str = "https://git.isis.vanderbilt.edu/SwRI/uam-uav-models.git"
     """ Repo to clone """
 
-    branch: str = "f9bcc652"
+    branch: str = "19a3a301"
     """ Branch to checkout, can be refspec. """
 
     graphml_file: str = 'ExportedGraphML/all_schema.graphml'
@@ -69,7 +69,7 @@ class Direct2CadRepoConfig():
     repo: str = "https://git.isis.vanderbilt.edu/SwRI/uam_direct2cad.git"
     """ Repo to clone """
 
-    branch: str = "00fca9e6"
+    branch: str = "b158eed8"
     """ Branch to checkout, can be refspec. """
 
     exe_subdir : str = "FlightDynamics/"
@@ -99,7 +99,7 @@ class FDMCompileRepoConfig():
     repo: str = "https://git.isis.vanderbilt.edu/SwRI/flight-dynamics-model.git"
     """ Repo to clone """
 
-    branch: str = "a7d4f84d"
+    branch: str = "d892825b"
     """ Branch to checkout, can be refspec. """
 
 @define
