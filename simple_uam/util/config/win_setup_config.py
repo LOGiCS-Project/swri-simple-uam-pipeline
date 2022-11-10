@@ -42,6 +42,7 @@ class WinSetupConfig():
         'psutil',
         'parea',
         'numpy',
+        'pyyaml',
         'trimesh',
         'matplotlib',
         'triangle',
