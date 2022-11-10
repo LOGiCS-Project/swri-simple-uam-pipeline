@@ -52,7 +52,22 @@ class Msys2():
         The root msysy 2 directory, the dir containing 'msys2.exe'.
         """
         if Msys2._root == None:
-            Msys2._root = Path(shutil.which('msys2.exe')).resolve().parent
+            exe = Path(shutil.which('msys2.exe'))
+            if not exe:
+                log.warning(
+                    "Could not find msys2.exe on path, using default location. "
+                    "Try running this command again in a fresh terminal if it "
+                    "still fails."
+                )
+                exe = Path("C:/tools/msys64/msys2.exe")
+
+            if not exe.exists():
+                raise RuntimeError(
+                    "Could not find msys2.exe in default location. "
+                    "Please ensure it is installed and available on your PATH."
+                )
+
+            Msys2._root = Path(exe).resolve().parent
         return Msys2._root
 
     @staticmethod

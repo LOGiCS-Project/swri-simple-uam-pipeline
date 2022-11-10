@@ -81,6 +81,7 @@ class WinSetupConfig():
         'gcc',
         'gcc-fortran',
         'python',
+        'autotools',
     ]
     """
     Packages to install on the FDM worker's msys2 environment.
