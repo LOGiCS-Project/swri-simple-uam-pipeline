@@ -8,10 +8,18 @@ nav = mkdocs_gen_files.Nav()
 src_root = "simple_uam"
 paths = sorted(Path(src_root).rglob("*.py"))
 
+ignore_paths = [
+    # Hidden & temp files
+    "**/.*.py",
+    # Data Files
+    "**/data/**/*.py",
+]
+
 for path in paths:
-    # Skip hidden and temp files:
-    if path.match("**/.*.py"):
+
+    if any([path.match(p) for p in ignore_paths]):
         continue
+
     module_path = src_root / path.relative_to(src_root).with_suffix("")
     doc_path = src_root / path.relative_to(src_root).with_suffix(".md")
     full_doc_path = Path("reference", doc_path)
