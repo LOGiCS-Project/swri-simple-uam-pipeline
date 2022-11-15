@@ -127,8 +127,8 @@ def has_compile_opts(srcs : Union[None, TDir, object] = None,
     return srcs or force_autoreconf or force_configure or force_make
 
 @contextmanager
-def with_fdm_compile(srcs : Union[None,TDir,object],
-                     metadata : Optional[object] =None,
+def with_fdm_compile(srcs : Union[None,TDir,object] = None,
+                     metadata : Optional[object] = None,
                      force_autoreconf : bool = False,
                      force_configure : bool = False,
                      force_make : bool = False,
