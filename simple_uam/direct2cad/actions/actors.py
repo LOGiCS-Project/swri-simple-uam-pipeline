@@ -100,7 +100,7 @@ def process_design(design : object,
         in 'metadata.json' under the 'user_metadata' field.
       compile_args : Options to be passed to the fdm compile workspace.
     """
-
+    print(">>> Calling Evaluation Actor")
     return base.process_design(
         design=design,
         study_params=study_params,
