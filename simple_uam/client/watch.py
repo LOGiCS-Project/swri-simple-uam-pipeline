@@ -29,6 +29,7 @@ async def apoll_results_backend( msg_info: object,
       interval: The polling interval, in seconds. (Default: 10s)
     """
 
+    msg_info = norm_msg_info(msg_info)
     msg_id = message_info_to_id(msg_info)
     msg = mk_dramatiq_message(msg_info)
 
@@ -128,6 +129,7 @@ async def apoll_result_archive( msg_info: object,
       interval: The polling interval, in seconds. (Default: 10s)
     """
 
+    msg_info = norm_msg_info(msg_info)
     name_filter=functools.partial(is_message_archive_name, msg_info=msg_info)
 
     watcher = awatch_archive_dir(
@@ -156,6 +158,8 @@ def poll_results_backend( msg_info: object,
           None implies no timeout. (Default: None)
     """
 
+    msg_info = norm_msg_info(msg_info)
+
     return asyncio.run(
         asyncio.wait_for(
             apoll_results_backend(
@@ -182,6 +186,8 @@ def poll_result_archive( msg_info: object,
       timeout: The time to wait for a result to appear before giving up.
           None implies no timeout. (Default: None)
     """
+
+    msg_info = norm_msg_info(msg_info)
 
     return asyncio.run(
         asyncio.wait_for(

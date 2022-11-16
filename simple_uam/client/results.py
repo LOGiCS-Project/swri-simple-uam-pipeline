@@ -10,6 +10,19 @@ from simple_uam.worker.broker import get_broker
 from pathlib import Path
 from typing import Union, List, Optional, Dict, Callable, TypeVar, Generic
 
+def norm_msg_info(msg_or_info : Union[object, dramatiq.Message]):
+    """
+    Normalizes the input to a message info dictionary.
+
+    Argument:
+      msg_or_info: either a dramatiq.Message object or a msg_info dict.
+    """
+
+    if isinstance(msg_or_info, dramatiq.Message):
+        return msg_or_info.asdict()
+    else:
+        return msg_or_info
+
 def message_info_to_id(msg_info : object):
     """
     Get the message id (GUID) field from the message info object.
@@ -17,6 +30,8 @@ def message_info_to_id(msg_info : object):
     Arguments:
       msg_info: The message_info object that you get from dramatiq.Message.asdict
     """
+
+    msg_info = norm_msg_info(msg_info)
 
     if not 'message_id' in msg_info:
         raise RuntimeError(
@@ -97,6 +112,7 @@ def is_message_archive_name(file_name : Union[str,Path],
       msg_info: The JSON object with the encoded information from the message
     """
 
+    msg_info = norm_msg_info(msg_info)
     msg_id = message_info_to_id(msg_info)
     msg_slug = message_id_to_slug(msg_id)
 
@@ -115,7 +131,9 @@ def is_message_archive(file_name : Union[str, Path],
       cwd: The working directory to use if file_name is relative (Default: cwd)
     """
 
-    if not is_message_arhive_name(file_name, msg_info):
+    msg_info = norm_msg_info(msg_info)
+
+    if not is_message_archive_name(file_name, msg_info):
         return False
 
     if not is_result_archive(file_name, cwd):
@@ -135,6 +153,9 @@ def is_redis_message(msg_info : object):
     Arguments:
       msg_info: The JSON object with the encoded information from the message
     """
+
+    msg_info = norm_msg_info(msg_info)
+
     return 'redis_message_id' in msg_info.get('options',dict())
 
 def mk_dramatiq_message(msg_info : object):
@@ -145,6 +166,8 @@ def mk_dramatiq_message(msg_info : object):
     Arguments:
       msg_info: The JSON object with the encoded information from the message
     """
+
+    msg_info = norm_msg_info(msg_info)
 
     return dramatiq.Message(
         queue_name = msg_info['queue_name'],
