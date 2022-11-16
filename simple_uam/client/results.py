@@ -16,6 +16,8 @@ def norm_msg_info(msg_or_info : Union[object, dramatiq.Message]):
 
     Argument:
       msg_or_info: either a dramatiq.Message object or a msg_info dict.
+
+    Returns: The JSON encodable object for the message info.
     """
 
     if isinstance(msg_or_info, dramatiq.Message):
@@ -29,6 +31,8 @@ def message_info_to_id(msg_info : object):
 
     Arguments:
       msg_info: The message_info object that you get from dramatiq.Message.asdict
+
+    Returns: A string with the message's GUID
     """
 
     msg_info = norm_msg_info(msg_info)
@@ -46,6 +50,9 @@ def message_id_to_slug(msg_id : str):
 
     Arguments:
       msg_id: The message_id string containing the message's GUID.
+
+    Returns: A string that will appear in the name of the result archive for
+      the given message.
     """
 
     parts = msg_id.split('-')
@@ -66,6 +73,8 @@ def get_result_metadata(file_name : Union[str,Path],
     Arguments:
       file_name: The name of the result_archive
       cwd: The working directory to use if file_name is relative (Default: cwd)
+
+    Returns: The contents of the `file_name`'s internal `metadata.json`
     """
 
     if not cwd:
@@ -90,6 +99,8 @@ def is_result_archive(file_name : Union[str,Path],
     Arguments:
       file_name: The name of the result_archive
       cwd: The working directory to use if file_name is relative (Default: cwd)
+
+    Returns: True if file_name is a result archive, false otherwise.
     """
 
     try:
@@ -110,6 +121,9 @@ def is_message_archive_name(file_name : Union[str,Path],
     Arguments:
       file_name: The name of the result_archive
       msg_info: The JSON object with the encoded information from the message
+
+    Returns: True if file_name could be an archive for the message. False
+      otherwise.
     """
 
     msg_info = norm_msg_info(msg_info)
@@ -129,6 +143,9 @@ def is_message_archive(file_name : Union[str, Path],
       file_name: The name of the result_archive
       msg_info: The JSON object with the encoded information from the message
       cwd: The working directory to use if file_name is relative (Default: cwd)
+
+    Returns: True if file_name is the result archive for msg_info.
+      False otherwise.
     """
 
     msg_info = norm_msg_info(msg_info)
@@ -152,6 +169,9 @@ def is_redis_message(msg_info : object):
 
     Arguments:
       msg_info: The JSON object with the encoded information from the message
+
+    Returns: True if this is a message for a redis backed broker, so one with
+      a message backend that can be used.
     """
 
     msg_info = norm_msg_info(msg_info)
@@ -165,6 +185,9 @@ def mk_dramatiq_message(msg_info : object):
 
     Arguments:
       msg_info: The JSON object with the encoded information from the message
+
+    Returns: The dramatiq.Message constructed from msg_info, to be used for
+      polling a backend.
     """
 
     msg_info = norm_msg_info(msg_info)

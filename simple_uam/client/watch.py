@@ -27,6 +27,8 @@ async def apoll_results_backend( msg_info: object,
     Arguments:
       msg_info: The message info we're checking completion for.
       interval: The polling interval, in seconds. (Default: 10s)
+
+    Returns: The same data as the 'metadata.json' from a completed result.
     """
 
     msg_info = norm_msg_info(msg_info)
@@ -79,6 +81,8 @@ async def awatch_archive_dir(archive_dir : Union[str,Path],
         number of files we actually have to check. (Default: const True)
       cwd: The working dir relative to which we'll resolve the file name.
       interval: The polling interval, in seconds. (Default: 10s)
+
+    Returns: An async iterator over the result archives from `archive_dir`.
     """
 
     if not cwd:
@@ -127,6 +131,9 @@ async def apoll_result_archive( msg_info: object,
       archive_dir: location where results archives will appear.
       cwd: The working dir relative to which we'll resolve the file name.
       interval: The polling interval, in seconds. (Default: 10s)
+
+    Returns: The same data as the 'metadata.json' from the completed result
+      archive.
     """
 
     msg_info = norm_msg_info(msg_info)
@@ -156,6 +163,9 @@ def poll_results_backend( msg_info: object,
       interval: The polling interval, in seconds. (Default: 10s)
       timeout: The time to wait for a result to appear before giving up.
           None implies no timeout. (Default: None)
+
+    Returns: The same data as the 'metadata.json' from the completed result
+      archive.
     """
 
     msg_info = norm_msg_info(msg_info)
@@ -185,6 +195,9 @@ def poll_result_archive( msg_info: object,
       interval: The polling interval, in seconds. (Default: 10s)
       timeout: The time to wait for a result to appear before giving up.
           None implies no timeout. (Default: None)
+
+    Returns: The same data as the 'metadata.json' from the completed result
+      archive.
     """
 
     msg_info = norm_msg_info(msg_info)
