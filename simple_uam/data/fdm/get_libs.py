@@ -138,11 +138,13 @@ def run_ldd(obj : Union[str,Path]):
     try:
         process.check_returncode()
     except subprocess.CalledProcessError:
-        raise RuntimeError(
+        log.error(
             f"ldd failed when called on: {str(obj)}\n\n"
             f"stderr:\n\n{process.stderr}\n"
             f"stdout:\n\n{process.stdout}"
         )
+
+        return dict()
 
     log.debug(f"ldd output:\n\n{process.stdout}")
 
