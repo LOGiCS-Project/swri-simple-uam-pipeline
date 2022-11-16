@@ -148,14 +148,7 @@ def message_metadata():
     if msg:
         # I copy things into a new dict to better control what
         # properties are preserved.
-        return deepcopy(dict(
-            queue_name = msg.queue_name,
-            actor_name = msg.actor_name,
-            message_id = msg.message_id,
-            message_timestamp = msg.message_timestamp,
-            args=msg.args,
-            kwargs=msg.kwargs,
-        ))
+        return deepcopy(msg.asdict())
     else:
         return None
 
