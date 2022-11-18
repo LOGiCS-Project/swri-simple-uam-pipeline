@@ -192,12 +192,16 @@ def mk_dramatiq_message(msg_info : object):
 
     msg_info = norm_msg_info(msg_info)
 
-    return dramatiq.Message(
+    msg_args = dict(
         queue_name = msg_info['queue_name'],
         actor_name = msg_info['actor_name'],
         args = msg_info['args'],
         kwargs = msg_info['kwargs'],
-        options = msg_info['options'],
         message_id = msg_info['message_id'],
         message_timestamp = msg_info['message_timestamp'],
     )
+
+    if 'options' in msg_info:
+        msg_args['options'] = msg_info['options']
+
+    return dramatiq.Message(**msg_args)

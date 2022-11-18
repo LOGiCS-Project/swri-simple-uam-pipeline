@@ -3,6 +3,7 @@
 from pathlib import Path
 
 import mkdocs_gen_files
+import textwrap
 
 nav = mkdocs_gen_files.Nav()
 src_root = "simple_uam"
@@ -37,7 +38,15 @@ for path in paths:
 
     with mkdocs_gen_files.open(full_doc_path, "w") as fd:
         ident = ".".join(parts)
-        fd.write(f"::: {ident}")
+
+        content = textwrap.dedent(
+            f"""
+            # {ident}
+
+            ::: {ident}
+            """
+        )
+        fd.write(content)
 
     mkdocs_gen_files.set_edit_path(full_doc_path, path)
 

@@ -4,33 +4,36 @@ site_url: "https://LOGiCS-Project.github.io/swri-simple-uam-pipeline"
 repo_url: "https://github.com/LOGiCS-Project/swri-simple-uam-pipeline"
 repo_name: "LOGiCS-Project/swri-simple-uam-pipeline"
 site_dir: "site"
-watch: [README.md, CONTRIBUTING.md]
+watch: [README.md, CONTRIBUTING.md, simple_uam]
 
 nav:
   - Home:
     - Overview: index.md
-    - Install:
+    - Installation: # setup/*
       - Introduction: setup/intro.md
-      - AWS (Network): setup/aws-network.md
-      - AWS (Instance): setup/aws-instance.md
-      - General Setup: setup/general.md
-      - License Server: setup/license_server.md
-      - Broker & Backend: setup/broker.md
-      - Corpus Database: setup/graph.md
-      - Static Corpus: setup/corpus.md
-      - Worker Node: setup/worker.md
-      - Client Node: setup/client.md
-    - Usage:
-      - Configuration: usage/config.md
-      - Craidl: usage/craidl.md
-      - License Server: usage/license.md
-      - Workspaces: usage/workspaces.md
-      - Workers: usage/workers.md
-      - Clients: usage/clients.md
-    - License: license.md
-  # defer to gen-files + literate-nav
-  - Code Reference: reference/
-  - Contributing: contributing.md
+      - Notes: setup/notes.md
+      - Worker Deployment: # setup/worker/*
+        - Choosing a Topology: setup/worker/topology.md # TODO
+      - AWS (Network): setup/aws-network.md # TODO
+      - AWS (Instance): setup/aws-instance.md # TODO
+      - General Setup: setup/general.md # TODO
+      - License Server: setup/license_server.md # TODO
+      - Broker & Backend: setup/broker.md # TODO
+      - Corpus Database: setup/graph.md # TODO
+      - Static Corpus: setup/corpus.md # TODO
+      - Worker Node: setup/worker.md # TODO
+      - Client Node: setup/client.md # TODO
+    - Usage: # TODO
+      - Configuration: usage/config.md # TODO
+      - Craidl: usage/craidl.md # TODO
+      - License Server: usage/license.md # TODO
+      - Workspaces: usage/workspaces.md # TODO
+      - Workers: usage/workers.md # TODO
+      - Clients: usage/clients.md # TODO
+    - License: license.md # TODO
+  # defer to gen-files + literate-nav # TODO
+  - Code Reference: reference/ # TODO
+  - Contributing: contributing.md # TODO
 
 theme:
   name: material
@@ -42,15 +45,15 @@ theme:
   palette:
   - media: "(prefers-color-scheme: light)"
     scheme: default
-    primary: teal
-    accent: purple
+    primary: light blue
+    accent: light blue
     toggle:
       icon: material/weather-sunny
       name: Switch to dark mode
   - media: "(prefers-color-scheme: dark)"
     scheme: slate
-    primary: black
-    accent: lime
+    primary: blue
+    accent: yellow
     toggle:
       icon: material/weather-night
       name: Switch to light mode
