@@ -116,19 +116,19 @@ light and dark color schemes of the component diagram on app.diagrams.net .
         },
         {
             "commonStyle": {
-                "fontColor": "#333333",
-                "fillColor": "#333333",
-                "strokeColor": "#333333"
+                "fontColor": "#4d4d4d",
+                "fillColor": "#4d4d4d",
+                "strokeColor": "#4d4d4d"
             },
             "edgeStyle": {
-                "fontColor": "#333333",
-                "fillColor": "#333333",
-                "strokeColor": "#333333"
+                "fontColor": "#4d4d4d",
+                "fillColor": "#4d4d4d",
+                "strokeColor": "#4d4d4d"
             },
             "vertexStyle": {
-                "fontColor": "#333333",
-                "fillColor": "#333333",
-                "strokeColor": "#333333"
+                "fontColor": "#4d4d4d",
+                "fillColor": "#4d4d4d",
+                "strokeColor": "#4d4d4d"
             },
             "graph": {
                 "background": "#FFFFFF"
