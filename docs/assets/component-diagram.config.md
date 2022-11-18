@@ -1,3 +1,10 @@
+## Export Options
+
+Export As: PNG
+Zoom: 300%
+Selection Only: Yes (usually)
+Transparent Background: Yes
+
 ## Custom Config
 
 Use this under "Extras -> Configuration..." to get nice presets for both the
@@ -7,14 +14,14 @@ light and dark color schemes of the component diagram on app.diagrams.net .
 {
     "customPresetColors":[
         "506e3f",
-        "8a6c32",
-        "425f85",
-        "226b6b",
-        "534270",
         "8BBF6E",
+        "8a6c32",
         "D1B254",
+        "425f85",
         "6891CF",
+        "226b6b",
         "3BBABA",
+        "534270",
         "B387D0"
     ],
     "customColorSchemes":[

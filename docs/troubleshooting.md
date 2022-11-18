@@ -74,3 +74,34 @@
       ```bash
       $ pdm install
       ```
+
+- Errors connecting to the broker through a VPN:
+
+  ```bash
+   return self.broker.enqueue(message, delay=delay)
+  File "/usr/local/lib/python3.10/site-packages/dramatiq/brokers/redis.py", line 186, in enqueue
+    self.do_enqueue(queue_name, message.options["redis_message_id"], message.encode())
+  File "/usr/local/lib/python3.10/site-packages/dramatiq/brokers/redis.py", line 278, in do_dispatch
+    self._max_unpack_size(),
+  File "/usr/local/lib/python3.10/site-packages/dramatiq/brokers/redis.py", line 255, in _max_unpack_size
+    cls._max_unpack_size_val = DEFAULT_LUA_MAX_STACK or self.scripts["maxstack"]()
+  File "/usr/local/lib/python3.10/site-packages/redis/commands/core.py", line 5710, in __call__
+    return client.evalsha(self.sha, len(keys), *args)
+  File "/usr/local/lib/python3.10/site-packages/redis/commands/core.py", line 5095, in evalsha
+    return self._evalsha("EVALSHA", sha, numkeys, *keys_and_args)
+  File "/usr/local/lib/python3.10/site-packages/redis/commands/core.py", line 5079, in _evalsha
+    return self.execute_command(command, sha, numkeys, *keys_and_args)
+  File "/usr/local/lib/python3.10/site-packages/redis/client.py", line 1235, in execute_command
+    conn = self.connection or pool.get_connection(command_name, **options)
+  File "/usr/local/lib/python3.10/site-packages/redis/connection.py", line 1387, in get_connection
+    connection.connect()
+  File "/usr/local/lib/python3.10/site-packages/redis/connection.py", line 617, in connect
+    raise ConnectionError(self._error_message(e))
+  redis.exceptions.ConnectionError: Error 8 connecting to swri-cloud-broker.iquigz.clustercfg.memorydb.us-west-2.amazonaws.com:6379. nodename nor servname provided, or not known.
+  ```
+
+  Probably a DNS resolution error, where it can't lookup the address by DNS name. Check VPN settings.
+
+  See: https://aws.amazon.com/premiumsupport/knowledge-center/client-vpn-how-dns-works-with-endpoint/
+
+  Also try replacing a DNS lookup in your broker with an IP address
