@@ -26,7 +26,7 @@ class StudyParamsConfig():
         "Requested_Vertical_Deceleration",
         "Landing_Approach_Height",
         "Vertical_Landing_Speed",
-        "Vertical_Landing_Speed_At_Ground",
+        "Vertical_Landing_Speed_at_Ground",
         "Q_Position",
         "Q_Velocity",
         "Q_Angular_Velocity",
