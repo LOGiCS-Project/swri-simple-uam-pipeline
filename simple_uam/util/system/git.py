@@ -49,6 +49,91 @@ class Git():
         raise NotImplementedError()
 
     @staticmethod
+    def get_repo_root(test_dir : Union[str,Path]):
+        """
+        Checks whether the test_dir is within a git repo and if it is, returns
+        the root directory of that repo.
+
+        Arguments:
+          test_dir: The directory to check.
+
+        Returns: The root of the repo if in a repo, None otherwise.
+        """
+
+        test_dir = Path(test_dir)
+        if not test_dir.is_absolute():
+            test_dir = Path.cwd() / test_dir
+        test_dir = test_dir.resolve()
+
+        process = subprocess.run(
+            ['git','rev-parse','--git-dir'],
+            capture_output=True,
+            text=True,
+            cwd=test_dir,
+        )
+
+        if process.returncode == 0:
+            git_dir = Path(process.stdout)
+            return git_dir.parent
+        else:
+            return None
+
+    @staticmethod
+    def get_refspec(repo_dir : Union[str,Path]):
+        """
+        Gets the full refspec for the repo at repo_dir.
+
+        Arguments:
+          repo_dir: A directory within or at the root of the relevant repo.
+        """
+
+        repo_dir = Path(repo_dir)
+        if not repo_is.is_absolute():
+            repo_dir = Path.cwd() / repo_dir
+        repo_dir = repo_dir.resolve()
+
+        process = subprocess.run(
+            ['git','rev-parse','HEAD'],
+            capture_output=True,
+            text=True,
+            cwd=repo_dir,
+        )
+
+        process.check_returncode()
+
+        return process.stdout
+
+    @staticmethod
+    def get_branch_name(repo_dir : Union[str,Path]):
+        """
+        Gets the branch_name for the repo at repo_dir.
+
+        Arguments:
+          repo_dir: A directory within or at the root of the relevant repo.
+
+        Returns: The short branch name or none if not in a branch head.
+        """
+
+        repo_dir = Path(repo_dir)
+        if not repo_is.is_absolute():
+            repo_dir = Path.cwd() / repo_dir
+        repo_dir = repo_dir.resolve()
+
+        process = subprocess.run(
+            ['git','symbolic-ref','HEAD','-q','--short'],
+            capture_output=True,
+            text=True,
+            cwd=repo_dir,
+        )
+
+        if process.returncode == 0:
+            return process.stdout
+        elif process.stdout == "":
+            return None
+        else:
+            process.check_returncode()
+
+    @staticmethod
     def config( options : Dict,
                 repo_dir : Union[None, str,Path],
     ):

@@ -4,6 +4,7 @@ from pathlib import Path
 from simple_uam.util.logging import get_logger
 from simple_uam.util.system import Rsync
 import simple_uam.util.system.backup as backup
+from simple_uam.util.system.git import Git
 from simple_uam.worker import actor, message_metadata
 from attrs import define,field
 from filelock import Timeout, FileLock
@@ -405,6 +406,21 @@ class Session():
         info['ip_address']=socket.gethostbyname(socket.gethostname())
         info['mac_address']=':'.join(re.findall('..', '%012x' % uuid.getnode()))
         info['processor']=platform.processor()
+
+        # Get information about the current state of the source repo
+        # producing this. This is a best effort thing I don't want to debug so
+        # it just moves on if there's errors.
+        try:
+            src_dir = Path(__file__).resolve().parent
+            git_repo = Git.get_repo_root(src_dir)
+            if git_repo:
+                info['git_repo'] = str(git_repo)
+                info['git_refspec'] = Git.get_refspec(src_dir)
+                git_branch = Git.get_branch_name(src_dir)
+                if git_branch:
+                    info['git_branch'] = git_branch
+        except:
+            pass
 
         return info
 
