@@ -101,6 +101,12 @@ def process_design(design : object,
       compile_args : Options to be passed to the fdm compile workspace.
     """
 
+    if not compile_args:
+        compile_args = dict()
+
+    if 'srcs' not in compile_args:
+        compile_args['srcs'] = None
+
     return base.process_design(
         design=design,
         study_params=study_params,

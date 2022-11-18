@@ -59,7 +59,7 @@ def gen_info_files(design : object,
 
 
 def process_design(design : object,
-                   study_params : List[Dict] = None,
+                   study_params : Optional[List[Dict]] = None,
                    metadata : Optional[object] = None,
                    compile_args : Optional[Dict] = None,
                    **kwargs):
@@ -80,7 +80,13 @@ def process_design(design : object,
     """
 
     if not compile_args:
-        compile_args = dict()
+        compile_args = dict(
+            srcs=None,
+            metadata=metadata,
+            force_autoreconf=False,
+            force_configure=False,
+            force_make=False,
+        )
 
     with with_fdm_compile(
             **compile_args,
