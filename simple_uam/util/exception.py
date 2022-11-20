@@ -184,7 +184,7 @@ class ExcFrame():
         filter_locals = filter_locals if filter_locals else default_filter
 
         locs = {
-            k:v for k,v in frame_summary.locals.items() if filter_locals(k,v)
+            k:deepcopy(v) for k,v in frame_summary.locals.items() if filter_locals(k,v)
         }
 
         return cls(
@@ -332,7 +332,7 @@ class ExcTrace():
             frame_summaries = traceback.StackSummary.extract(
                 frames,
                 lookup_lines=True,
-                capture_locals = True
+                capture_locals = show_locals,
             )
 
             for frame_summary in frame_summaries:
@@ -358,3 +358,29 @@ class ExcTrace():
             trace.stacks.append(stack)
 
         return trace
+
+def contextualize_exception(*excs,
+                            exc_type=None,
+                            exc_val=None,
+                            exc_tb=None,
+                            show_locals=True,
+                            local_converter : Optional[Callable] = None):
+    """
+    Produces a json serializable object that gathers its context, including
+    stack frames, local variables, and other data.
+
+    Arguments:
+      *excs: A single exception to contextualize.
+      exc_type: The type of the exception.
+      exc_val: The value of the exception.
+      exc_tb: The traceback of the exception.
+      show_locals: Should we gather local variable information for the stack
+        stack frames?
+      local_converter: Function to convert local variable values into
+        JSON representable objects. (Default: Attempts to convert via
+        json.dumps/json.loads, then str, then repr)
+    """
+
+    e_box = ExcBox(*excs,typ=exc_type,val=exc_val,tb=exc_tb)
+    e_trace = ExcTrace(e_box,show_locals=show_locals)
+    return e_trace.to_rep(local_converter=local_converter)

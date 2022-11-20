@@ -6,10 +6,12 @@ from simple_uam.util.system import backup_file, configure_file
 from simple_uam.util.system.glob import apply_glob_mapping
 import simple_uam.util.system.backup as backup
 from simple_uam.fdm.parsing import parse_path_data
+from simple_uam.util.exception import contextualize_exception
 from zipfile import ZipFile
 import zipfile
 import tempfile
 from attrs import define,field
+from contextlib import contextmanager
 from simple_uam.worker import actor
 from time import sleep
 import shutil
@@ -23,17 +25,10 @@ from pathlib import Path
 log = get_logger(__name__)
 
 @define
-class FDMEvalSession(Session):
+class FDMEnvSession(Session):
     """
-    A workspace session specialized to the direct2cad workflow.
-    """
-
-    indices : List[str] = field(
-        factory = list,
-        init = False,
-    )
-    """
-    Internal list of all evaluated inputs by index.
+    A workspace session specialized to setting up FDM env within a
+    d2c_session and parsing FDM inputs and outputs.
     """
 
     @property
@@ -57,38 +52,6 @@ class FDMEvalSession(Session):
         The path to the new_fdm.exe
         """
         return Path(self.exe_dir / 'new_fdm.exe').resolve()
-
-    def eval_subdir(self, index):
-        """
-        The subdirectory within each workspace where we place input files,
-        find output files, and evaluate FDM.
-        """
-
-        base = Config[CorpusConfig].fdm_eval.eval_subdir
-        flag = '%INDEX%'
-
-        if base.count(flag) != 1:
-            raise RuntimeError(
-                f"The provided eval subdir {repr(base)} should contain exactly "
-                f"one instance of the flag {repr(flag)}."
-            )
-
-        index = str(index)
-
-        if index != Path(index).stem or '.' in index:
-            raise RuntimeError(
-                f"Sample index cannout contain directory markers or file "
-                f"extensions. {repr(index)} is invalid because it could "
-                "be mistaken for a directory path or file."
-            )
-
-        return base.replace(flag,index)
-
-    def eval_dir(self, index):
-        """
-        The eval dir for a particular input index.
-        """
-        return Path(self.work_dir / self.eval_subdir(index)).resolve()
 
     @session_op
     def extract_fdm_exe(self,
@@ -163,28 +126,25 @@ class FDMEvalSession(Session):
 
     @session_op
     def write_raw(self,
-                   filename,
-                   data,
-                   index):
+                  file_path,
+                  data):
         """
-        Writes the data provided to the eval_dir under filename.
+        Writes the data provided to file_path.
 
         Arguments:
-          filename: The file, within the eval_dir, to write to.
+          file_path: The file, relative to the work_dir, to write to.
           data: The raw string data to write.
-          index: The index of the eval dir to write to.
         """
 
-        eval_dir = self.eval_dir(index)
-        file_loc = Path(eval_dir / filename).resolve()
+        file_loc = self.to_workpath(file_path)
 
-        eval_dir.mkdir(parents=True, exist_ok=True)
+        file_loc.parent.mkdir(parents=True, exist_ok=True)
 
         log.info(
-                f"Writing raw data to input file.",
+            f"Writing raw data to output file.",
             workspace=self.number,
             work_dir=str(self.work_dir),
-            input_file=str(file_loc),
+            output_file=str(file_loc),
         )
 
         if isinstance(data, str):
@@ -199,57 +159,51 @@ class FDMEvalSession(Session):
 
     @session_op
     def write_json(self,
-                   filename,
-                   data,
-                   index):
+                   file_path,
+                   data):
         """
-        Writes the data provided to the eval_dir under filename.
+        Writes the data provided to the file_path in JSON format.
 
         Arguments:
-          filename: The file, within the eval_dir, to write to.
-          data: The data to write.
-          index: The index of the eval dir to write to.
+          file_path: The file, relative to the work_dir, to write to.
+          data: The raw string data to write.
         """
 
-        eval_dir = self.eval_dir(index)
-        file_loc = Path(eval_dir / filename).resolve()
+        file_loc = self.to_workpath(file_path)
 
-        eval_dir.mkdir(parents=True, exist_ok=True)
+        file_loc.parent.mkdir(parents=True, exist_ok=True)
 
         log.info(
-            f"Writing JSON data to input file.",
+            f"Writing JSON data to output file.",
             workspace=self.number,
             work_dir=str(self.work_dir),
-            input_file=str(file_loc),
+            output_file=str(file_loc),
         )
 
         with file_loc.open('w') as fp:
-            json.dump(data, fp, indent=2)
+            json.dump(data, fp, indent=2, sort_keys=True)
 
     @session_op
     def write_namelist(self,
-                       filename,
-                       data,
-                       index):
+                       file_path,
+                       data):
         """
-        Writes the data provided to the eval_dir under filename.
+        Writes the data provided to the file_path in namelist format.
 
         Arguments:
-          filename: The file, within the eval_dir, to write to.
-          data: The data to write.
-          index: The index of the eval dir to write to.
+          file_path: The file, relative to the work_dir, to write to.
+          data: The raw string data to write.
         """
 
-        eval_dir = self.eval_dir(index)
-        file_loc = Path(eval_dir / filename).resolve()
+        file_loc = self.to_workpath(file_path)
 
-        eval_dir.mkdir(parents=True, exist_ok=True)
+        file_loc.parent.mkdir(parents=True, exist_ok=True)
 
         log.info(
-            f"Writing Fortran namelist to input file.",
+            f"Writing namelist data to output file.",
             workspace=self.number,
             work_dir=str(self.work_dir),
-            input_file=str(file_loc),
+            output_file=str(file_loc),
         )
 
         with file_loc.open('w') as fp:
@@ -257,32 +211,30 @@ class FDMEvalSession(Session):
 
     @session_op
     def write_csv(self,
-                  filename,
+                  file_path,
                   data,
                   fieldnames,
-                  index,
                   **kwargs):
         """
-        Writes the data provided to the eval_dir under filename.
+        Writes the data provided to the file_path in csv format.
 
         Arguments:
-          filename: The file, within the eval_dir, to write to.
-          data: The data to write.
+          file_path: The file, relative to the work_dir, to write to.
+          data: The raw string data to write.
           fieldnames: fieldnames to write entries under.
-          index: The index of the eval dir to write to.
           **kwargs: extra args to pass to csv.DictWriter
         """
 
-        eval_dir = self.eval_dir(index)
-        file_loc = Path(eval_dir / filename).resolve()
+        file_loc = self.to_workpath(file_path)
 
-        eval_dir.mkdir(parents=True, exist_ok=True)
+        file_loc.parent.mkdir(parents=True, exist_ok=True)
 
         log.info(
-            f"Writing writing csv to output file.",
+            f"Writing csv data to output file.",
             workspace=self.number,
             work_dir=str(self.work_dir),
             output_file=str(file_loc),
+            fieldnames=[str(f) for f in fieldnames],
             **kwargs,
         )
 
@@ -294,28 +246,23 @@ class FDMEvalSession(Session):
 
     @session_op
     def read_raw(self,
-                 filename,
-                 index,
+                 file_path,
                  text=True):
         """
-        Reads a raw file from the eval directory and returns the contents.
+        Reads a raw file from the file_path and returns the contents.
 
         Arguments:
-          filename: The file, within eval_dir, to read from.
-          index: The index of the eval dir to write to.
+          file_path: The file, relative to the work_dir, to read from.
           text: if true read str else bytes
         """
 
-        eval_dir = self.eval_dir(index)
-        file_loc = Path(eval_dir / filename).resolve()
-
-        eval_dir.mkdir(parents=True, exist_ok=True)
+        file_loc = self.to_workpath(file_path)
 
         log.info(
-            f"Reading raw data from output file.",
+            f"Reading raw data from input file.",
             workspace=self.number,
             work_dir=str(self.work_dir),
-            output_file=str(file_loc),
+            input_file=str(file_loc),
         )
 
         if text:
@@ -325,10 +272,9 @@ class FDMEvalSession(Session):
 
     @session_op
     def read_path_data(self,
-                       filename,
-                       index):
+                       file_path):
         """
-        Reads a path_data file from the eval directory and returns the contents.
+        Reads a path_data file from file_path and returns the contents.
 
         Arguments:
           filename: The file, within eval_dir, to read from.
@@ -340,32 +286,27 @@ class FDMEvalSession(Session):
           fieldnames: An ordered list of fieldnames to use.
         """
 
-        path_data = self.read_raw(filename, index, text=True)
+        path_data = self.read_raw(file_path, text=True)
 
         return parse_path_data(path_data)
 
     @session_op
     def read_json(self,
-                  filename,
-                  index):
+                  file_path):
         """
-        Reads a JSON file from the eval directory and returns the contents.
+        Reads a JSON file from the file_path and returns the contents.
 
         Arguments:
-          filename: The file, within eval_dir, to read from.
-          index: The index of the eval dir to write to.
+          file_path: The file, relative to the work_dir, to read from.
         """
 
-        eval_dir = self.eval_dir(index)
-        file_loc = Path(eval_dir / filename).resolve()
-
-        eval_dir.mkdir(parents=True, exist_ok=True)
+        file_loc = self.to_workpath(file_path)
 
         log.info(
-            f"Reading JSON data from output file.",
+            f"Reading JSON data from input file.",
             workspace=self.number,
             work_dir=str(self.work_dir),
-            output_file=str(file_loc),
+            input_file=str(file_loc),
         )
 
         with file_loc.open('r') as fp:
@@ -373,136 +314,232 @@ class FDMEvalSession(Session):
 
     @session_op
     def read_namelist(self,
-                      filename,
-                      index):
+                      file_path):
         """
-        Reads a fortran namelist from the eval directory and returns the
+        Reads a fortran namelist file from the file_path and returns the
         contents.
 
         Arguments:
-          filename: The file, within eval_dir, to read from.
-          index: The index of the eval dir to write to.
+          file_path: The file, relative to the work_dir, to read from.
         """
 
-        eval_dir = self.eval_dir(index)
-        file_loc = Path(eval_dir / filename).resolve()
-
-        eval_dir.mkdir(parents=True, exist_ok=True)
+        file_loc = self.to_workpath(file_path)
 
         log.info(
-            f"Reading Fortran namelist from output file.",
+            f"Reading fortran namelist from input file.",
             workspace=self.number,
             work_dir=str(self.work_dir),
-            output_file=str(file_loc),
+            input_file=str(file_loc),
         )
 
         with file_loc.open('r', errors='backslashreplace') as fp:
             return f90nml.read(fp)
 
+    @session_op
+    @contextmanager
+    def write_exception(self,
+                        file_path,
+                        context = None,
+                        supress = False):
+        """
+        A context manager that will catch any exceptions within it and write
+        it to file.
+
+        Arguments:
+          file_path: The file to write the exception to.
+          context: The context used in log messages for the exception.
+            (Default: none)
+          supress: Will supress any thrown exceptions if true, otherwise
+            reraise them for callers to handle. (Default: False)
+        """
+
+        try:
+            yield
+        except Exception as exc:
+
+            exc_data = contextualize_exception(exc, show_locals=True)
+
+            log.error(
+                "Catching exception and adding to log.",
+                workspace=self.number,
+                work_dir=str(self.work_dir),
+                error_file=str(file_path),
+                context=context,
+            )
+
+            self.log_exception(exc)
+
+            printed_err = ''.join(traceback.format_exception(err))
+
+            self.write_raw(
+                file_path,
+                printed_err
+            )
+
+            if not supress:
+                raise exc
 
     @session_op
     def nml_to_json(self,
-                    input_name,
-                    index):
+                    input_path,
+                    output_path = None,
+                    error_path = None):
         """
         Converts a namelist to a json file.
+
+        Arguments:
+          input_path
         """
 
-        output_name = input_name + ".json"
-        error_name = input_name + ".json.error"
+        if not output_path:
+            output_path = str(input_path) + ".json"
 
-        try:
-            data = self.read_namelist(input_name,index)
-            self.write_json(output_name,data,index)
-        except Exception as err:
-            log.error(
-                "Failed to convert namelist to json file.",
-                input=input_name,
-                output=output_name,
-                index=index,
-                error=err,
-            )
-            self.log_exception(err)
-            printed_err = ''.join(traceback.format_exception(err))
-            self.write_raw(
-                error_name,
-                printed_err,
-                index,
-            )
+        if not error_path:
+            error_path = str(output_path) + ".error"
 
+        input_loc  = self.to_workpath(input_path)
+        output_loc = self.to_workpath(output_path)
+        error_loc  = self.to_workpath(error_path)
+
+        output_loc.parent.mkdir(parents=True, exist_ok=True)
+        error_loc.parent.mkdir(parents=True, exist_ok=True)
+
+        with self.write_exception(
+                error_loc,
+                context="Failed to convert namelist to JSON",
+                supress=True,
+        ):
+            data = self.read_namelist(input_loc)
+            self.write_json(output_loc,data)
+
+    @session_op
+    def path_to_csv(self,
+                    input_pth,
+                    output_path = None,
+                    error_path = None):
+        """
+        Converts a path file to a json file.
+        """
+
+        if not output_path:
+            output_path = str(input_path) + ".csv"
+
+        if not error_path:
+            error_path = str(output_path) + ".error"
+
+        input_loc  = self.to_workpath(input_path)
+        output_loc = self.to_workpath(output_path)
+        error_loc  = self.to_workpath(error_path)
+
+        output_loc.parent.mkdir(parents=True, exist_ok=True)
+        error_loc.parent.mkdir(parents=True, exist_ok=True)
+
+        with self.write_exception(
+                error_loc,
+                context="Failed to convert path data to csv file.",
+                supress=True,
+        ):
+            (data, fieldnames) = self.read_path_data(input_loc)
+            self.write_csv(output_loc,data,fieldnames)
 
     @session_op
     def all_nml_to_json(self,
-                        index):
+                        eval_dir: Union[str,Path]):
         """
         Converts all configured nml files to their json equivalent.
+
+        Arguments:
+          eval_dir: The directory in which to look for nml files.
         """
 
-        eval_dir = self.eval_dir(index)
+        eval_dir = self.to_workpath(eval_dir)
         eval_dir.mkdir(parents=True, exist_ok=True)
 
         globs = Config[FDMEvalConfig].nml_to_json
         files = [f for g in globs for f in eval_dir.glob(g)]
 
-        for f in files:
-            ff = str(f.relative_to(eval_dir))
-
+        for nml_file in files:
             log.info(
                 "Converting nml to json",
-                file = str(f),
-                file_mod = str(ff),
+                workspace=self.number,
+                work_dir=str(self.work_dir),
+                nml_file = str(nml_file),
                 eval_dir = str(eval_dir),
-                index = str(index),
             )
-            self.nml_to_json(ff, index)
-
-    @session_op
-    def path_to_csv(self,
-                    input_name,
-                    index):
-        """
-        Converts a path file to a json file.
-        """
-
-        output_name = input_name + ".csv"
-        error_name = input_name + ".csv.error"
-
-
-        try:
-            (data, fieldnames) = self.read_path_data(input_name,index)
-            self.write_csv(output_name,data,fieldnames, index)
-        except Exception as err:
-            log.error(
-                "Failed to convert path data to csv file.",
-                input=input_name,
-                output=output_name,
-                index=index,
-                error=err,
-            )
-            self.log_exception(err)
-            printed_err = ''.join(traceback.format_exception(err))
-            self.write_raw(
-                error_name,
-                printed_err,
-                index,
-            )
+            self.nml_to_json(nml_file)
 
     @session_op
     def all_path_to_csv(self,
-                        index):
+                        eval_dir: Union[str,Path]):
         """
         Converts all configured nml files to their json equivalent.
+
+        Arguments:
+          eval_dir: The directory in which to look for nml files.
         """
 
-        eval_dir = self.eval_dir(index)
+        eval_dir = self.to_workpath(eval_dir)
         eval_dir.mkdir(parents=True, exist_ok=True)
 
         globs = Config[FDMEvalConfig].path_to_csv
         files = [f for g in globs for f in eval_dir.glob(g)]
 
-        for f in files:
-            f = str(f.relative_to(eval_dir))
-            self.path_to_csv(f, index)
+        for path_file in files:
+            log.info(
+                "Converting pathfile to csv",
+                workspace=self.number,
+                work_dir=str(self.work_dir),
+                path_file = str(nml_file),
+                eval_dir = str(eval_dir),
+            )
+            self.path_to_csv(path_file)
+
+@define
+class FDMEvalSession(FDMEnvSession):
+    """
+    A workspace session specialized to evaluating the FDM within a direct2cad
+    repository.
+    """
+
+    indices : List[str] = field(
+        factory = list,
+        init = False,
+    )
+    """
+    Internal list of all evaluated inputs by index.
+    """
+
+    def eval_subdir(self, index):
+        """
+        The subdirectory within each workspace where we place input files,
+        find output files, and evaluate FDM.
+        """
+
+        base = Config[CorpusConfig].fdm_eval.eval_subdir
+        flag = '%INDEX%'
+
+        if base.count(flag) != 1:
+            raise RuntimeError(
+                f"The provided eval subdir {repr(base)} should contain exactly "
+                f"one instance of the flag {repr(flag)}."
+            )
+
+        index = str(index)
+
+        if index != Path(index).stem or '.' in index:
+            raise RuntimeError(
+                f"Sample index cannout contain directory markers or file "
+                f"extensions. {repr(index)} is invalid because it could "
+                "be mistaken for a directory path or file."
+            )
+
+        return base.replace(flag,index)
+
+    def eval_dir(self, index):
+        """
+        The eval dir for a particular input index.
+        """
+        return Path(self.work_dir / self.eval_subdir(index)).resolve()
 
     @session_op
     def run_fdm(self,
@@ -526,23 +563,9 @@ class FDMEvalSession(Session):
 
         eval_dir = self.eval_dir(index)
         eval_dir.mkdir(parents=True, exist_ok=True)
-
-        stdout = Path(stdout)
-        if not stdout.is_absolute():
-            stdout = eval_dir / stdout
-        stdout = stdout.resolve()
-
-        stderr = Path(stderr)
-        if not stderr.is_absolute():
-            stderr = eval_dir / stderr
-        stderr = stderr.resolve()
-
-        input_file = Path(input_file)
-        if not input_file.is_absolute():
-            input_file = eval_dir / input_file
-        input_file = input_file.resolve()
-
-        # input_data = self.read_raw(input_file, index, text=True)
+        stdout = self.to_workpath(stdout, eval_dir)
+        stderr = self.to_workpath(stderr, eval_dir)
+        input_file = self.to_workpath(input_file, eval_dir)
 
         log.info(
             "Running new_fdm.exe for input.",
@@ -594,11 +617,11 @@ class FDMEvalSession(Session):
 
         # Rename things for convenience
         eval_dir = self.eval_dir(index)
-        input_nml = 'flightDynFast.inp'
-        output_swri = 'flightDynFastOut.out'
+        input_nml = self.to_workpath('flightDynFast.inp',eval_dir)
+        output_swri = self.to_workpath('flightDynFastOut.out',eval_dir)
 
         # Write out input data
-        self.write_namelist(input_nml,data,index)
+        self.write_namelist(input_nml,data)
 
         # Actually run the fdm exe
         self.run_fdm(
@@ -608,8 +631,8 @@ class FDMEvalSession(Session):
         )
 
         # Some post processing of output.
-        self.all_nml_to_json(index)
-        self.all_path_to_csv(index)
+        self.all_nml_to_json(eval_dir)
+        self.all_path_to_csv(eval_dir)
 
     @session_op
     def eval_fdms(self, data_map):

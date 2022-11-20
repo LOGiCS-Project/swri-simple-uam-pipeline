@@ -5,6 +5,7 @@ from simple_uam.util.logging import get_logger
 from simple_uam.util.system import Rsync
 import simple_uam.util.system.backup as backup
 from simple_uam.util.system.git import Git
+from simple_uam.util.exception import contextualize_exception
 from simple_uam.worker import actor, message_metadata
 from attrs import define,field
 from filelock import Timeout, FileLock
@@ -178,7 +179,12 @@ class Session():
     The time when the session object was created/started.
     """
 
-    def log_exception(self, *excs, exc_type=None, exc_val=None, exc_tb=None):
+    def log_exception(self,
+                      *excs,
+                      exc_type=None,
+                      exc_val=None,
+                      exc_tb=None,
+                      show_locals=True):
         """
         Adds the provided exception to the metadata of this session.
         Useful for detecting errors during the run.
@@ -189,6 +195,8 @@ class Session():
           exc_type: The type of the exception.
           exc_val: The value of the exception.
           exc_tb: The traceback of the exception.
+          show_locals: should we try to print out information about local
+            variables as we parse the exception? (Default: True)
         """
 
         log.info(
@@ -202,82 +210,46 @@ class Session():
             exc_tb=exc_tb,
         )
 
-        split_exc = exc_type or exc_val or exc_tb
-
-        if split_exc and len(excs) > 0:
-            raise RuntimeError(
-                "Can only provide positional arg or kw args, not both."
-            )
-        elif not split_exc and len(excs) != 1:
-            raise RuntimeError(
-                "Can only log a single exception at a time."
-            )
-
-        ### Organize Exceptions ###
-        exceptions = list()
-
-        current = None
-
-        if len(excs) > 0:
-            exc = excs[0]
-            current = dict(
-                type=type(exc),
-                val=exc,
-                tb=exc.__traceback__,
-            )
-        elif exc_type or exc_val or exc_tb:
-            current = dict(
-                type=exc_type or type(exc_val),
-                val=exc_val,
-                tb=exc_tb or exc_val.__traceback__,
-            )
-        else:
-            return # Nothing to do
-
-        while current:
-            exceptions.append(current)
-            next = current['val'].__cause__ or current['val'].__context__
-            if next:
-                current = dict(
-                    type=type(next),
-                    val=next,
-                    tb=next,
-                )
-            else:
-                current = None
-
-        ### Serialize Exceptions ###
+        exc_data = contextualize_exception(
+            *excs,
+            exc_type=exc_type,
+            exc_val=exc_val,
+            exc_tb=exc_tb,
+            show_locals=show_locals,
+        )
 
         exception_data = dict(
             time = datetime.now().isoformat(),
-            chain = list()
+            stack = exc_data,
         )
-
-        for exception in exceptions:
-            formatted = dict(
-                type = exception['type'].__name__,
-                value = traceback.format_exception_only(
-                    exception['type'],
-                    exception['val'],
-                ),
-                traceback=traceback.format_tb(exception['tb']),
-            )
-
-            log.warning(
-                "Exception during session:",
-                workspace=self.number,
-                ref=str(self.reference_dir),
-                src=str(self.work_dir),
-            )
-
-            exception_data['chain'].append(formatted)
-
-        ### Add to Metadata ###
 
         if 'exceptions' not in self.metadata:
             self.metadata['exceptions'] = list()
 
         self.metadata['exceptions'].append(exception_data)
+
+    def to_workpath(self,
+                      path : Union[str,Path],
+                      cwd : Union[None,str,Path] = None):
+        """
+        Makes sure the input path is an absolute path object with the cwd
+        as root.
+
+        Arguments:
+          path: The path to normalize
+          cwd: The working dir to normalize relative to. (Default: self.workdir)
+        """
+        if cwd == None:
+            cwd = self.work_dir.resolve()
+
+        cwd = Path(cwd)
+        if not cwd.is_absolute():
+            cwd = self.work_dir / cwd
+
+        path = Path(path)
+        if not path.is_absolute():
+            path = cwd / path
+        return path.resolve()
 
     @session_op
     def run(self,
@@ -288,12 +260,8 @@ class Session():
         Identical to subprocess.run except the working directory is set
         automatically to the workspace directory.
         """
-        if cwd == None:
-            cwd = self.work_dir
 
-        cwd = Path(cwd)
-        if not cwd.is_absolute():
-            cwd = self.work_dir / cwd
+        cwd = self.to_workpath(cwd)
 
         log.info(
             "Running console command in session.",
