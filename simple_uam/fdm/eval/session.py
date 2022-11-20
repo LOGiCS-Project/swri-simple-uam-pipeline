@@ -369,11 +369,18 @@ class FDMEnvSession(Session):
 
             self.log_exception(exc)
 
-            printed_err = ''.join(traceback.format_exception(err))
+            err_lines = [
+                f"Caught error when performing operation.\n",
+                f"  context: {context}\n",
+                f"\n",
+                f"More detailed error data can be found in metadata.json.\n",
+                f"\n",
+            ]
+            err_lines += traceback.format_exception(err)
 
             self.write_raw(
                 file_path,
-                printed_err
+                ''.join(err_lines),
             )
 
             if not supress:
