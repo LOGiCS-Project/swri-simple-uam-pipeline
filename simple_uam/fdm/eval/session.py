@@ -357,8 +357,6 @@ class FDMEnvSession(Session):
             yield
         except Exception as exc:
 
-            exc_data = contextualize_exception(exc, show_locals=True)
-
             log.error(
                 "Catching exception and adding to log.",
                 workspace=self.number,
