@@ -21,12 +21,16 @@ Heavily inspired by / cribbed from: https://rich.readthedocs.io/en/latest/_modul
 # import json
 
 from typing import List, Tuple, Dict, Optional, Union, Any, Type, Callable
-from type import TracebackType
+from types import TracebackType
 from pathlib import Path
-from attrs import define, field, asdict
+from attrs import define, field
+import attrs
+import dataclasses
 from copy import deepcopy
+import ast
 import json
 import traceback
+import sys
 from inspect import ismodule
 from simple_uam.util.logging import get_logger
 
@@ -61,7 +65,7 @@ class ExcBox():
             traceback = traceback.format_tb(self.tb),
         )
 
-    def __init__(cls,
+    def __init__(self,
                  *excs,
                  typ=None,
                  val=None,
@@ -103,6 +107,131 @@ class ExcBox():
         else:
             raise RuntimeError("Unreachable")
 
+def default_converter(val):
+    """
+    Converts an input value into a json rep in a maximally permissive way.
+    The goal is to produce a useful debugging output, not consistency or
+    correctness.
+
+    Tries the following things to produce useful output:
+      - Checks if val is too large, returns placeholder if so.
+      - Tries round-tripping the input through a json parser, returns result.
+      - Tries parsing the string as if it's json, returns result.
+      - Tries parsing string as if it's a python literal, continues.
+      - If val is a string, return that directly.
+      - Unpacks an attrs dataclass with asdict, continues.
+      - Unpacks a normal dataclass with asdict, continues.
+      - Recurses into dictionaries converting each item.
+      - Recurses into lists and iterables converting each item.
+      - Returns the `str(_)` representation of the input.
+      - Returns the `repr(_)` of the input.
+
+    TODO :: This is all a bit redundant since traceback saves the locals as
+            strings. Most of the options are not reachable. The correct way to
+            solve this is to use the `ast` module to parse the input and render
+            a version of that into a structure.
+
+    Arguments:
+      val: Input to convert into a JSON object.
+    """
+
+    serializable = False
+
+    # short circuit basic primitive types
+    small_prim_types = [int, float]
+    if any([isinstance(val,t) for t in small_prim_types]):
+        return val
+
+    # unpack json serializable objects
+    skip_roundtrip_types = [str, dict, list, bytes, bytearray, range]
+    if not any([isinstance(val,t) for t in skip_roundtrip_types]):
+        try:
+            val = json.loads(json.dumps(val, sort_keys=True))
+            serializable = True
+        except Exception:
+            pass
+
+    # loading json strings
+    if isinstance(val, str):
+        try:
+            val = json.loads(val)
+            serializable = True
+        except Exception:
+            pass
+
+    # checking if str input is a parsable python literal
+    if isinstance(val, str):
+        try:
+            val = ast.literal_eval(val)
+        except Exception:
+            pass
+
+    # Unpack attrs classes if given
+    try:
+        val = attrs.asdict(val)
+    except Exception:
+        pass
+
+    # Unpack dataclasses if given
+    try:
+        val = dataclasses.asdict(val)
+    except Exception:
+        pass
+
+    # skip objects that are too large
+    size = sys.getsizeof(val)
+    max_size = 5 * 1024 # 5 kb
+    if not isinstance(val,str) and size > max_size:
+        val = {
+            'err_placeholder': f"Input variable too large, eliding from output.",
+            'var_size': size,
+        }
+        serializable = True
+
+    # Recursively unpack dicts
+    if isinstance(val, dict):
+        val = {str(k):default_converter(v) for k,v in val.items()}
+        serializable = True
+
+    # recursively unpack lists and other iterables
+    skip_list_types = [str, bytes, bytearray,range]
+    if not any([isinstance(val,t) for t in skip_list_types]):
+        try:
+            val = [default_converter(v) for v in val]
+            serializable = True
+        except Exception:
+            pass
+
+    # Fallback to string rep or repr
+    if not serializable:
+        try:
+            val = str(val)
+        except Exception:
+            val = repr(val)
+
+    # Splits a string into lines for easier readability. Leaves it as a string
+    # if there's no line breaks (as opposed to turning it into a list).
+    def split_if(s):
+        out = s.splitlines(keepends=True)
+        if len(out) > 1:
+            return out
+        else:
+            return s
+
+    # Trim long output string
+    max_size = 5 * 1024 # 5 kb
+    if isinstance(val, str) and len(val) > max_size:
+        val = {
+            'err_placeholder': "Output string too long, trimming to length.",
+            'string_prefix': split_if(val[:max_size]),
+            'str_length': len(val),
+        }
+        serializable = True
+    elif isinstance(val, str):
+        return split_if(val)
+    else:
+        return val
+
 @define
 class ExcFrame():
     """
@@ -126,19 +255,6 @@ class ExcFrame():
             json.dumps/json.loads, then str, then repr)
         """
 
-        def default_converter(val):
-            try:
-                return json.loads(json.dumps(val))
-            except Exception:
-                pass
-
-            try:
-                return str(val)
-            except Exception:
-                pass
-
-            return repr(val)
-
         converter = local_converter if local_converter else default_converter
 
         output = dict(
@@ -151,7 +267,12 @@ class ExcFrame():
             output['line'] = self.line,
 
         if self.locals:
-            output['locals'] = {k: converter(v) for k,v in self.locals.items()}
+            output['locals'] = dict()
+
+            for k,v in self.locals.items():
+
+                # print(f"Converting local '{k}' of type {type(v)}.")
+                output['locals'][k] = converter(v)
 
         return output
 
@@ -184,7 +305,7 @@ class ExcFrame():
         filter_locals = filter_locals if filter_locals else default_filter
 
         locs = {
-            k:v for k,v in frame_summary.locals.items() if filter_locals(k,v)
+            k:deepcopy(v) for k,v in frame_summary.locals.items() if filter_locals(k,v)
         }
 
         return cls(
@@ -270,7 +391,7 @@ class ExcStack():
             json.dumps/json.loads, then str, then repr)
         """
 
-        output = deepcopy(exc.to_rep())
+        output = deepcopy(self.exc.to_rep())
 
         if self.syntax_error:
             output['syntax_error'] = self.syntax_error.to_rep()
@@ -332,13 +453,13 @@ class ExcTrace():
             frame_summaries = traceback.StackSummary.extract(
                 frames,
                 lookup_lines=True,
-                capture_locals = True
+                capture_locals = show_locals,
             )
 
             for frame_summary in frame_summaries:
 
                 stack.frames.append(
-                    ExcFrame.from_frame_summry(frame_summary)
+                    ExcFrame.from_frame_summary(frame_summary)
                 )
 
             cause = getattr(exc.val, "__cause__", None)
@@ -358,3 +479,29 @@ class ExcTrace():
             trace.stacks.append(stack)
 
         return trace
+
+def contextualize_exception(*excs,
+                            exc_type=None,
+                            exc_val=None,
+                            exc_tb=None,
+                            show_locals=True,
+                            local_converter : Optional[Callable] = None):
+    """
+    Produces a json serializable object that gathers its context, including
+    stack frames, local variables, and other data.
+
+    Arguments:
+      *excs: A single exception to contextualize.
+      exc_type: The type of the exception.
+      exc_val: The value of the exception.
+      exc_tb: The traceback of the exception.
+      show_locals: Should we gather local variable information for the stack
+        stack frames?
+      local_converter: Function to convert local variable values into
+        JSON representable objects. (Default: Attempts to convert via
+        json.dumps/json.loads, then str, then repr)
+    """
+
+    e_box = ExcBox(*excs,typ=exc_type,val=exc_val,tb=exc_tb)
+    e_trace = ExcTrace.from_exc(e_box,show_locals=show_locals)
+    return e_trace.to_rep(local_converter=local_converter)
