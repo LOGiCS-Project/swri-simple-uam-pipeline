@@ -3,6 +3,7 @@ from datetime import datetime
 from pathlib import Path, WindowsPath
 from typing import Union, List, Optional, Dict
 from zipfile import ZipFile
+import zipfile
 import subprocess
 import tempfile
 import shutil
@@ -139,6 +140,8 @@ def archive_file_mapping(files : Dict[Union[str,Path],Union[str,Path]],
                          cwd : Union[None,str,Path] = None,
                          missing_ok : bool = False,
                          delete_existing : bool = False,
+                         compression : Optional = None,
+                         compression_level : int = 2,
 ):
     """
     Uses the mapping `files`, from input file locations to archive locations,
@@ -153,7 +156,23 @@ def archive_file_mapping(files : Dict[Union[str,Path],Union[str,Path]],
        missing_ok: Do we ignore files that don't exist?
        delete_existing: Delete a preexisting archive at out if True, otherwise
          make backup. (Default: False)
+       compression: One of `zipfile.(ZIP_STORED|ZIP_DEFLATED|ZIP_BZIP|ZIP_LZMA)`
+         (Defaults: ZIP_DEFLATED if available ZIP_STORED otherwise)
+       compression_level: A number from 1 through 9 that describes how hard to
+         work when compressing the zip file. (Default: 2)
     """
+
+    # find compression
+    try:
+        if compression == None:
+            import zlib
+            compression = zipfile.ZIP_DEFLATED
+    finally:
+        if compression == None:
+            log.warning(
+                "Could not find zlib, defaulting to uncompressed zip archives.",
+            )
+            compression = zipfile.ZIP_STORED
 
     if not cwd:
         cwd = Path.cwd()
@@ -208,7 +227,12 @@ def archive_file_mapping(files : Dict[Union[str,Path],Union[str,Path]],
 
     # Iterate through the files to archive, adding them to the zip file as
     # needed.
-    with ZipFile(out, 'x') as zf:
+    with ZipFile(
+            out,
+            'x',
+            compression=compression,
+            compresslevel=compression_level,
+    ) as zf:
         for sys_file, arc_file in normed_files.items():
             if not sys_file.exists() and missing_ok:
                 pass

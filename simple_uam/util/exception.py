@@ -21,12 +21,16 @@ Heavily inspired by / cribbed from: https://rich.readthedocs.io/en/latest/_modul
 # import json
 
 from typing import List, Tuple, Dict, Optional, Union, Any, Type, Callable
-from type import TracebackType
+from types import TracebackType
 from pathlib import Path
-from attrs import define, field, asdict
+from attrs import define, field
+import attrs
+import dataclasses
 from copy import deepcopy
+import ast
 import json
 import traceback
+import sys
 from inspect import ismodule
 from simple_uam.util.logging import get_logger
 
@@ -61,7 +65,7 @@ class ExcBox():
             traceback = traceback.format_tb(self.tb),
         )
 
-    def __init__(cls,
+    def __init__(self,
                  *excs,
                  typ=None,
                  val=None,
@@ -103,6 +107,105 @@ class ExcBox():
         else:
             raise RuntimeError("Unreachable")
 
+def default_converter(val):
+    """
+    Converts an input value into a json rep in a maximally permissive way.
+    The goal is to produce a useful debugging output, not consistency or
+    correctness.
+
+    Tries the following things to produce useful output:
+      - Tries round-tripping the input through a json parser, returns result.
+      - Tries parsing the string as if it's json, returns result.
+      - Tries parsing string as if it's a python literal, continues.
+      - If val is a string, return that directly.
+      - Unpacks an attrs dataclass with asdict, continues.
+      - Unpacks a normal dataclass with asdict, continues.
+      - Recurses into dictionaries converting each item.
+      - Recurses into lists and iterables converting each item.
+      - Returns the `str(_)` representation of the input.
+      - Returns the `repr(_)` of the input.
+
+    TODO :: This is all a bit redundant since traceback saves the locals as
+            strings. Most of the options are not reachable. The correct way to
+            solve this is to use the `ast` module to parse the input and render
+            a version of that into a structure.
+
+    Arguments:
+      val: Input to convert into a JSON object.
+    """
+
+    # skip objects that are too large
+    size = sys.getsizeof(val)
+    max_size = 5 * 1024 # 5 kb
+    if size > max_size:
+        return {
+            'err': f"Variable too large, eliding from output.",
+            'var_size': size,
+        }
+
+    # unpack json serializable objects
+    try:
+        return json.loads(json.dumps(val, sort_keys=True))
+    except Exception:
+        pass
+
+    # loading json strings
+    if isinstance(val, str):
+        try:
+            return json.loads(val)
+        except Exception:
+            pass
+
+    # checking if str input is a parsable python literal
+    if isinstance(val, str):
+        try:
+            val = ast.literal_eval(val)
+        except Exception:
+            pass
+
+    # Unpack attrs classes if given
+    try:
+        val = attrs.asdict(val)
+    except Exception:
+        pass
+
+    # Unpack dataclasses if given
+    try:
+        val = dataclasses.asdict(val)
+    except Exception:
+        pass
+
+    # Recursively unpack dicts
+    if isinstance(val, dict):
+        return {str(k):default_converter(v) for k,v in val.items()}
+
+    # recursively unpack lists and other iterables
+    skip_list_types = [str, bytes, bytearray,range]
+    if not any([isinstance(val,t) for t in skip_list_types]):
+        try:
+            return [default_converter(v) for v in val]
+        except Exception:
+            pass
+
+    # fallback to string rep
+    try:
+        val = str(val)
+    except Exception:
+        pass
+
+    # final fallback to repr
+    val =  repr(val)
+
+    # prune long strings
+    snip_length = 5000
+    if isinstance(val, str) and len(val) > snip_length:
+        val = {
+            'err': "String too long, trimming to length...",
+            'trimmed_string': val[:snip_length],
+        }
+
+    return val
+
 @define
 class ExcFrame():
     """
@@ -126,19 +229,6 @@ class ExcFrame():
             json.dumps/json.loads, then str, then repr)
         """
 
-        def default_converter(val):
-            try:
-                return json.loads(json.dumps(val))
-            except Exception:
-                pass
-
-            try:
-                return str(val)
-            except Exception:
-                pass
-
-            return repr(val)
-
         converter = local_converter if local_converter else default_converter
 
         output = dict(
@@ -151,7 +241,12 @@ class ExcFrame():
             output['line'] = self.line,
 
         if self.locals:
-            output['locals'] = {k: converter(v) for k,v in self.locals.items()}
+            output['locals'] = dict()
+
+            for k,v in self.locals.items():
+
+                # print(f"Converting local '{k}' of type {type(v)}.")
+                output['locals'][k] = converter(v)
 
         return output
 
@@ -270,7 +365,7 @@ class ExcStack():
             json.dumps/json.loads, then str, then repr)
         """
 
-        output = deepcopy(exc.to_rep())
+        output = deepcopy(self.exc.to_rep())
 
         if self.syntax_error:
             output['syntax_error'] = self.syntax_error.to_rep()
@@ -338,7 +433,7 @@ class ExcTrace():
             for frame_summary in frame_summaries:
 
                 stack.frames.append(
-                    ExcFrame.from_frame_summry(frame_summary)
+                    ExcFrame.from_frame_summary(frame_summary)
                 )
 
             cause = getattr(exc.val, "__cause__", None)
@@ -382,5 +477,5 @@ def contextualize_exception(*excs,
     """
 
     e_box = ExcBox(*excs,typ=exc_type,val=exc_val,tb=exc_tb)
-    e_trace = ExcTrace(e_box,show_locals=show_locals)
+    e_trace = ExcTrace.from_exc(e_box,show_locals=show_locals)
     return e_trace.to_rep(local_converter=local_converter)

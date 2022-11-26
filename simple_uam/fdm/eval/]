@@ -366,32 +366,21 @@ class FDMEnvSession(Session):
                 context=context,
             )
 
-            err_msg = ''.join(traceback.format_exception(exc))
+            self.log_exception(exc)
 
-            output = textwrap.dedent(
-                """
-                Caught error when performing operation:
-
-                {}
-
-                Error message:
-
-                {}
-
-                The full error, including extant local variables and
-                additional data can be found in `metadata.json`.
-                """
-            ).format(
-                textwrap.indent(context, '    '),
-                textwrap.indent(err_msg, '    '),
-            )
+            err_lines = [
+                f"Caught error when performing operation.\n",
+                f"  context: {context}\n",
+                f"\n",
+                f"More detailed error data can be found in metadata.json.\n",
+                f"\n",
+            ]
+            err_lines += traceback.format_exception(err)
 
             self.write_raw(
                 file_path,
-                output,
+                ''.join(err_lines),
             )
-
-            self.log_exception(exc)
 
             if not supress:
                 raise exc
@@ -428,11 +417,10 @@ class FDMEnvSession(Session):
         ):
             data = self.read_namelist(input_loc)
             self.write_json(output_loc,data)
-            raise RuntimeError("Test")
 
     @session_op
     def path_to_csv(self,
-                    input_path,
+                    input_pth,
                     output_path = None,
                     error_path = None):
         """
@@ -507,7 +495,7 @@ class FDMEnvSession(Session):
                 "Converting pathfile to csv",
                 workspace=self.number,
                 work_dir=str(self.work_dir),
-                path_file = str(path_file),
+                path_file = str(nml_file),
                 eval_dir = str(eval_dir),
             )
             self.path_to_csv(path_file)

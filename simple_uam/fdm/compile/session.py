@@ -7,6 +7,7 @@ from simple_uam.util.system.glob import apply_glob_mapping
 import simple_uam.util.system.backup as backup
 import simple_uam.fdm.compile.build_ops as ops
 from zipfile import ZipFile
+import zipfile
 import tempfile
 from attrs import define,field
 from simple_uam.worker import actor
@@ -337,8 +338,26 @@ class FDMCompileSession(Session):
             result_archive= str(self.result_archive),
         )
 
+        # find compression type
+        compression = None
+        try:
+            import zlib
+            compression = zipfile.ZIP_DEFLATED
+        finally:
+            if compression == None:
+                log.warning(
+                    "Could not find zlib, defaulting to uncompressed zip archives.",
+                )
+                compression = zipfile.ZIP_STORED
+
+
         with ZipFile(self.cached_zip, 'r') as c_zip, \
-             ZipFile(self.result_archive, 'w') as r_zip:
+             ZipFile(
+                 self.result_archive,
+                 'w',
+                 compression=compression,
+                 compresslevel=2,
+             ) as r_zip:
 
             for c_file in c_zip.namelist():
 

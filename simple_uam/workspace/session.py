@@ -410,7 +410,7 @@ class Session():
         log.info(
             "Writing session metadata to file.",
             metadata_file=str(meta_path),
-            metadata=self.metadata,
+            # metadata=self.metadata,
         )
 
         with meta_path.open('w') as out_file:
