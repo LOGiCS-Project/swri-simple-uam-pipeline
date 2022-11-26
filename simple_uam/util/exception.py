@@ -114,6 +114,7 @@ def default_converter(val):
     correctness.
 
     Tries the following things to produce useful output:
+      - Checks if val is too large, returns placeholder if so.
       - Tries round-tripping the input through a json parser, returns result.
       - Tries parsing the string as if it's json, returns result.
       - Tries parsing string as if it's a python literal, continues.
@@ -134,12 +135,12 @@ def default_converter(val):
       val: Input to convert into a JSON object.
     """
 
-    # skip objects that are too large
+    # skip objects that are too large, keep prefixes for strings
     size = sys.getsizeof(val)
     max_size = 5 * 1024 # 5 kb
-    if size > max_size:
+    if not isinstance(val,str) and size > max_size:
         return {
-            'err': f"Variable too large, eliding from output.",
+            'err_placeholder': f"Input variable too large, eliding from output.",
             'var_size': size,
         }
 
@@ -187,21 +188,19 @@ def default_converter(val):
         except Exception:
             pass
 
-    # fallback to string rep
+    # fallback to string rep or repr
     try:
         val = str(val)
     except Exception:
-        pass
+        val = repr(val)
 
-    # final fallback to repr
-    val =  repr(val)
-
-    # prune long strings
-    snip_length = 5000
-    if isinstance(val, str) and len(val) > snip_length:
-        val = {
-            'err': "String too long, trimming to length...",
-            'trimmed_string': val[:snip_length],
+    # Trim long output string
+    max_size = 5 * 1024 # 5 kb
+    if isinstance(val, str) and len(val) > max_size:
+        return {
+            'err_placeholder': "Output string too long, trimming to length.",
+            'string_prefix': val[:max_size] + "...",
+            'str_length': len(val),
         }
 
     return val
