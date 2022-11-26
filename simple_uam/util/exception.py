@@ -135,25 +135,27 @@ def default_converter(val):
       val: Input to convert into a JSON object.
     """
 
-    # skip objects that are too large, keep prefixes for strings
-    size = sys.getsizeof(val)
-    max_size = 5 * 1024 # 5 kb
-    if not isinstance(val,str) and size > max_size:
-        return {
-            'err_placeholder': f"Input variable too large, eliding from output.",
-            'var_size': size,
-        }
+    serializable = False
+
+    # short circuit basic primitive types
+    small_prim_types = [int, float]
+    if any([isinstance(val,t) for t in small_prim_types]):
+        return val
 
     # unpack json serializable objects
-    try:
-        return json.loads(json.dumps(val, sort_keys=True))
-    except Exception:
-        pass
+    skip_roundtrip_types = [str, dict, list, bytes, bytearray, range]
+    if not any([isinstance(val,t) for t in skip_roundtrip_types]):
+        try:
+            val = json.loads(json.dumps(val, sort_keys=True))
+            serializable = True
+        except Exception:
+            pass
 
     # loading json strings
     if isinstance(val, str):
         try:
-            return json.loads(val)
+            val = json.loads(val)
+            serializable = True
         except Exception:
             pass
 
@@ -176,34 +178,59 @@ def default_converter(val):
     except Exception:
         pass
 
+    # skip objects that are too large
+    size = sys.getsizeof(val)
+    max_size = 5 * 1024 # 5 kb
+    if not isinstance(val,str) and size > max_size:
+        val = {
+            'err_placeholder': f"Input variable too large, eliding from output.",
+            'var_size': size,
+        }
+        serializable = True
+
     # Recursively unpack dicts
     if isinstance(val, dict):
-        return {str(k):default_converter(v) for k,v in val.items()}
+        val = {str(k):default_converter(v) for k,v in val.items()}
+        serializable = True
 
     # recursively unpack lists and other iterables
     skip_list_types = [str, bytes, bytearray,range]
     if not any([isinstance(val,t) for t in skip_list_types]):
         try:
-            return [default_converter(v) for v in val]
+            val = [default_converter(v) for v in val]
+            serializable = True
         except Exception:
             pass
 
-    # fallback to string rep or repr
-    try:
-        val = str(val)
-    except Exception:
-        val = repr(val)
+    # Fallback to string rep or repr
+    if not serializable:
+        try:
+            val = str(val)
+        except Exception:
+            val = repr(val)
+
+    # Splits a string into lines for easier readability. Leaves it as a string
+    # if there's no line breaks (as opposed to turning it into a list).
+    def split_if(s):
+        out = s.splitlines(keepends=True)
+        if len(out) > 1:
+            return out
+        else:
+            return s
 
     # Trim long output string
     max_size = 5 * 1024 # 5 kb
     if isinstance(val, str) and len(val) > max_size:
-        return {
+        val = {
             'err_placeholder': "Output string too long, trimming to length.",
-            'string_prefix': val[:max_size] + "...",
+            'string_prefix': split_if(val[:max_size]),
             'str_length': len(val),
         }
-
-    return val
+        serializable = True
+    elif isinstance(val, str):
+        return split_if(val)
+    else:
+        return val
 
 @define
 class ExcFrame():

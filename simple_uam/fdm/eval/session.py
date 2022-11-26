@@ -428,7 +428,6 @@ class FDMEnvSession(Session):
         ):
             data = self.read_namelist(input_loc)
             self.write_json(output_loc,data)
-            raise RuntimeError("Test")
 
     @session_op
     def path_to_csv(self,
