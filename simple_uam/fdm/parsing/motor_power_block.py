@@ -1,6 +1,7 @@
 
 from parsy import *
 from .line_parser import *
+from .block_parser import *
 from .util import *
 from simple_uam.util.logging import get_logger
 from attrs import define, field
@@ -49,7 +50,7 @@ def header_line():
         'Power',
         'Current',
         'Efficiency',
-        'Max Powe r',
+        'Max Power',
         'Max Cur',
         'Peak Cur',
         'Cont Cur',
@@ -115,9 +116,9 @@ def data_line():
     return parse_line(wrap_whitespace(data_str))
 
 @generate
-def motor_power_block():
+def motor_power_lines():
     """
-    This is the parser for blocks like:
+    This is the line parser for blocks like:
 
     ```
                                                                                                  +----- Motor ----+  +---- Battery ---+
@@ -135,7 +136,7 @@ def motor_power_block():
 
     output = list()
 
-    for row in data():
+    for row in data:
 
         formatted = dict(
             max=row['max'],
@@ -155,3 +156,5 @@ def motor_power_block():
         output.append(formatted)
 
     return output
+
+motor_power_block = parse_block('motor_power_block', motor_power_lines)
