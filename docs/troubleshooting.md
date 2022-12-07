@@ -74,3 +74,30 @@
       ```bash
       $ pdm install
       ```
+
+- Running the stub server:
+
+  The stub server has a tendency to hang when generating a static corpus,
+  usually with a message like the following in STDERR:
+
+  ```
+  22:38:22.078 [gremlin-server-worker-1] DEBUG log-aggregator-encoder - [id: 0x5ac87232, L:/127.0.0.1:8182 - R:/127.0.0.1:50060] FLUSH
+  22:38:22.078 [gremlin-server-worker-1] DEBUG log-aggregator-encoder - [id: 0x5ac87232, L:/127.0.0.1:8182 - R:/127.0.0.1:50060] FLUSH
+  22:38:22.078 [gremlin-server-worker-1] DEBUG log-decoder-aggregator - [id: 0x5ac87232, L:/127.0.0.1:8182 - R:/127.0.0.1:50060] FLUSH
+  22:38:22.078 [gremlin-server-worker-1] DEBUG log-encoder-aggregator - [id: 0x5ac87232, L:/127.0.0.1:8182 - R:/127.0.0.1:50060] FLUSH
+  ```
+
+  I have absolutely no clue why this happens, generally when I run the stub server
+  in a tess powershell admin session.
+
+  The workaround I've found is to open a new powershell session, usually just
+  a new tab in tess, which will cause the server to start responding to requests
+  again.
+
+  You don't have to actually *do* anything in the new shell.
+  You can close it again immediately.
+  But somehow this makes the gremlin server start responding to requests again.
+
+  If you have any idea why this works or how to fix it more robustly, please
+  reach out.
+  This is driving me nuts.
