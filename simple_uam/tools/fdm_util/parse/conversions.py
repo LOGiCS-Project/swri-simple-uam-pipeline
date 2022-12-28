@@ -68,7 +68,7 @@ def path_to_json(ctx, input=None, output=None):
         json.dump(data, out_fp, indent=2, sort_keys=True)
 
 @task
-def fdm_to_json(ctx, input=None, output=None):
+def fdm_to_json(ctx, input=None, output=None, permissive=False, strict=False):
     """
     Convert an FDM dump file (like `metrics.out`, `score.out`, and
     `fightDynFastOut.out`) into a json file.
@@ -76,8 +76,13 @@ def fdm_to_json(ctx, input=None, output=None):
     Arguments:
       input: The fdm dump file to read from, if not provided reads from STDIN.
       output: The json file to write to, if not provided writes to STDOUT.
+      permissive: Will parse components of the file in smaller chunks, getting
+        more out of a malformed file. Much slower than a non-permissive run.
+      strict: Will not emit unparsed lines in 'blank_lines' blocks, instead
+        will panic on unparsable inputs. Useful for debugging because it forces
+        parse errors immediately instead of waiting for parse completion.
     """
 
     with format_conversion(input, output) as (in_fp, out_fp):
-        data = parse_fdm_dump(in_fp.read())
+        data = parse_fdm_dump(in_fp.read(), permissive=permissive, strict=strict)
         json.dump(data, out_fp, indent=2, sort_keys=True)

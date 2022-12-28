@@ -6,6 +6,8 @@ log = get_logger(__name__)
 
 digits = decimal_digit.at_least(1).concat()
 
+int_p = digits.map(int)
+
 @generate("scientific")
 def scientific():
     """
@@ -28,12 +30,18 @@ def not_char(char_list):
     """
     return test_char(lambda c: c not in char_list, f"char not in {repr(char_list)}")
 
-
+def not_chars(char_list):
+    """
+    Parser for strings of characters not in the provided string
+    """
+    return not_char(char_list).at_least(1).concat()
 
 # some chars in parens
 in_parens = string('(') >> not_char("()").at_least(1).concat() << string(')')
 
 not_space = test_char(lambda c: not c.isspace(), "not space")
+
+not_spaces = not_space.at_least(1).concat()
 
 def not_space_or(char_list):
     """
@@ -43,6 +51,239 @@ def not_space_or(char_list):
         lambda c: (c not in char_list) and not c.isspace(),
         f"char not space or in {repr(char_list)}"
     )
+
+def not_spaces_or(char_list):
+    """
+    Parser for strings of characters that aren't spaces or in the list.
+    """
+    return not_space_or(char_list).at_least(1).concat()
+
+def dtag(parser, key=None, **kwargs):
+    """
+    Tags a parser by placing it in a single element dict with the
+    given key.
+
+    Arguments:
+      key: If provided will place the result of the parser in a single entry
+        dict under the given key.
+      **kwargs: If provided, will add the given kv pairs to the dictionary
+        returned by the parser, mutually exclusive with providing a key.
+        Note that these override matching keys in the result.
+    """
+
+    func = None
+    if key and kwargs:
+        raise RuntimeError("Cannot use dtag with both single key and kv pairs")
+    elif key:
+        func = lambda r: {key : r}
+    else:
+        func = lambda r: {**r, **kwargs}
+
+    return parser.map(func)
+
+Parser.dtag = dtag
+
+def tag_alt(tag_key=None, data_key=None, data_convert=None, **alternatives):
+    """
+    Will apply a list of alternative parsers using their key
+    as a tag.
+
+    There are three general cases for use of this function:
+
+    Case 1: tag_key=None, data_key=??
+
+      Given a call like:
+      ```
+      tag_alt(foo=parser1, bar=parser2)
+      ```
+
+      The output will use the name for each parser as the key of the
+      resulting single item dict.
+
+      So the following are valid outputs:
+      ```
+      {'foo': <parser1-result>} or {'bar': <parser2-result>}
+      ```
+
+      Note: Using this with only one parameter is a good way to tag the return
+      value of a parser.
+
+    Case 2: tag_key=... , data_key=None
+
+      Given a call like:
+      ```
+      tag_alt('tag', foo=parser1, bar=parser1)
+      ```
+
+      The tag will be placed *within* the return values of the parsers as so:
+      ```
+      {'tag': 'foo', **<parser1-result>} or {'tag': 'bar', **<parser2-result>}
+      ```
+
+      Note: This requires the output of the provided parsers are all dictionaries.
+
+    Case 3: tag_key=..., data_key=...
+
+      Given a call like:
+      ```
+      tag_alt('tag', 'data', foo=parser1, bar=parser1)
+      ```
+
+      The output will be a two item dict with the parse result in its own
+      field, as so:
+      ```
+      {'tag': 'foo', 'data': <parser1-result>} or {'tag': 'bar', 'data': <parser2-result>}
+      ```
+
+
+    Arguments:
+      tag_key: as above
+      data_key: as above
+      data_convert: If true, will convert various special input keys into
+        non-string python values.
+
+        Special keys:
+          'true'/'false': Boolean value
+          'none': None
+
+        (default: True if tag_key else False)
+      **alternatives: as above
+    """
+
+    if data_convert == None:
+        data_convert = tag_key == None
+
+    def convert_func(key):
+        if not data_convert:
+            pass
+        elif key == 'true':
+            return True
+        elif key == 'false':
+            return False
+        elif key == 'none':
+            return None
+
+        return key
+
+    tag_parser = alt(
+        *[parser.tag(convert_func(key)) for key, parser in alternatives.items]
+    )
+
+    @generate
+    def tag_alt_internal_parser():
+        (tag, result) = yield tag_parser
+
+        if tag_key == None:
+            return {tag: result}
+        elif tag_key != None and data_key == None:
+            return {tag_key : tag, **result}
+        else:
+            return {tag_key: tag, data_key: result}
+
+    return tag_alt_interal_parser
+
+def with_units(value, units = None):
+    """
+    Wraps a value with units information if available.
+    """
+
+    if units != None:
+        return {'value': value, 'units': units}
+    else:
+        return value
+
+def parser_with_units(parser, units=None):
+    """
+    Adds units to the result of a parser.
+    """
+    return parser.map(lambda v: with_units(v,units))
+
+Parser.with_units = parser_with_units
+
+unions = lambda l : {k : v for i in l for k , v in i.items() }
+
+def union_many(parser, min=None, max=None, times=None):
+    """
+    Runs a parser many times, between min and max, and unions the results.
+    """
+
+
+    if min == None and max == None and times == None:
+        parser = parser.many()
+    elif min == None and max == None and times != None:
+        parser = parser.times(times)
+    elif min == None and max != None and times == None:
+        parser = parser.at_most(max)
+    elif min != None and max == None and times == None:
+        parser = parser.at_least(min)
+    elif min != None and max != None and times == None:
+        parser = parser.times(min, max)
+    else:
+        raise RuntimeError(
+            "cannot use both (min,max) and times params to union_many")
+
+    return parser.map(merge_dicts)
+
+Parser.union_many = union_many
+
+def union_seq(*parsers):
+    """
+    Runs a set of parsers in sequence unioning all their results together.
+    """
+
+    return seq(*parsers).map(merge_dicts)
+
+def parser_exists(parser, key=None):
+    """
+    Makes a parser optional and return whether or not a match occured.
+
+    Arguments:
+      key: if provided will return a dict with that key set to if there was
+        a match, and other values taken from a positive result.
+    """
+    if key == None:
+        return parser.result(True).optional(False)
+    else:
+        return tag_alt(key,true=parser, false=success({}))
+
+Parser.exists = parser_exists
+
+def parser_not_exists(parser, key=None):
+    """
+    Makes a parser optional and return whether or not a match failed.
+
+    Arguments:
+      key: if provided will return a dict with that key set to if there was
+        a match, and other values taken from a positive result.
+    """
+    if key == None:
+        return parser.result(False).optional(True)
+    else:
+        return tag_alt(key,false=parser, true=success({}))
+
+Parser.not_exists = parser_not_exists
+
+def collect_warnings(inp, tag='__warning__', field='warnings'):
+    """
+    Gets any field of the input dictionary with `__warning__` in the name
+    and moves it to a new subfield named 'warnings'.
+    """
+
+    output = dict()
+    warnings = dict()
+
+    for k, v in inp.items():
+        if field == k:
+            warnings |= v
+        elif tag in k:
+            warnings[k.replace(tag,'')] = v
+        else:
+            output[k] = v
+
+    if len(warnings) > 0:
+        output[field] = warnings
+
+    return warnings
 
 def wrap_whitespace(parser):
     """
@@ -63,6 +304,52 @@ def to_undercase(string):
     lowercases a string and replaces spaces with underscores.
     """
     return '_'.join(string.lower().split())
+
+def collect_dicts(*vargs):
+    """
+    Will collect the items in a set of dicts into lists by key.
+
+    Result:
+      A dict where each value is the list of items from the input dicts for
+      that key.
+    """
+
+    output = dict()
+
+    for d in vargs:
+        for k,v in d.items():
+            if k not in output:
+                output[k] = list()
+            output[k].append(v)
+
+    return output
+
+
+def merge_dicts(head, *vargs, splat_list=True):
+    """
+    Merges a set of dictionaries recursively erroring out if colliding
+    non-dict values aren't equal.
+    """
+
+    # If we're given a single list as input then we splat it open
+    # This lets us compose the function with alt() and many() and similar
+    # parser combinators
+    if splat_list\
+       and len(vargs) == 0\
+       and isinstance(head,list)\
+       and (len(head) == 0 or isinstance(head[0],dict)):
+
+        return merge_dicts(*head)
+
+    if isinstance(head, dict):
+        return {
+            k: merge_dicts(*vs, splat_list=False)\
+            for k, vs in collect_dicts(head, *vargs).items()
+        }
+    elif all([v == head for v in vargs]):
+        return head
+    else:
+        raise RuntimeError("Invalid input collision in merge_dicts.")
 
 @generate
 def format_tokenizer():
@@ -108,6 +395,22 @@ def format_parser(fstring, strict_whitespace=False, **named_parsers):
     """
 
     ftokens = format_tokenizer.parse(fstring)
+
+    used_tokens = [val for (tag, val) in ftokens if tag == 'parser_kwarg']
+    missing_parsers = [val for val in used_tokens if val not in named_parsers]
+    extra_parsers = [val for val in named_parsers if val not in used_tokens]
+
+    if len(missing_parsers) > 0:
+        raise RuntimeError(
+            f"Following parsers are missing in format_parser call: "\
+            f"{missing_parsers}"
+        )
+
+    if len(extra_parsers) > 0:
+        raise RuntimeError(
+            f"Following parsers are unused in format_parser call: "\
+            f"{extra_parsers}"
+        )
 
     @generate
     def input_parser():

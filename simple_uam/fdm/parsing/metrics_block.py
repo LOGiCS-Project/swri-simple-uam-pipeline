@@ -7,17 +7,39 @@ from simple_uam.util.logging import get_logger
 from attrs import define, field
 log = get_logger(__name__)
 
-def header_line():
-    """
-    This parses lines like:
-    ```
-    #Metrics
-    ```
-    """
 
-    return parse_line(wrap_whitespace(string('#Metrics')))
+header_line_parser = parse_strip_line(string('#Metrics'))
+"""
+This parses lines line:
+```
+#Metrics
+```
+"""
 
-def kv_pair_line():
+metrics_known_units = {
+    'Flight_distance': 'm',
+    'Time_to_traverse_path': 's',
+    'Average_speed_to_traverse_path': 'm/s',
+    'Maximimum_error_distance_during_flight': 'm',
+    'Velocity_at_time_of_maximum_distance_error': 'm/s',
+    'Spatial_average_distance_error': 'm',
+    'Maximum_ground_impact_speed': 'm/s',
+}
+
+@generate
+def key_str_parser():
+
+    key = yield not_spaces_or("()")
+    unit = yield in_parens.optional(None)
+    key = key.strip('_')
+
+    if key in metrics_known_units and unit == None:
+        unit = metrics_known_units
+
+    return (to_undercase(key), unit)
+
+@generate
+def kv_pair_str_parser():
     """
     This parses lines line:
     ```
@@ -29,28 +51,33 @@ def kv_pair_line():
     ```
     """
 
-    @generate
-    def str_parse_line():
-        key = yield test_char(lambda c: not c.isspace(),"not space").at_least(1).concat()
-        yield whitespace
-        value = yield scientific
-        return (key, value)
+    (key, unit) = yield key_str_parser
+    yield whitespace
+    values = yield alt(scientific, not_spaces).at_least(1)
 
-    return parse_line(wrap_whitespace(str_parse_line))
+    if len(values) == 1:
+        return { key : with_units(value[0], unit) }
+    else:
+        return { key : [with_units(v, unit) for v in values] }
 
-@generate
-def metrics_lines():
-    """
-    This parses blocks like:
-    ```
-    #Metrics
-    Flight_path            3
-    Path_traverse_score_based_on_requirements    0.00000000
-    ```
-    """
+requested_trim_str_parser = format_parser(
+    'Requested trim condition not found'
+).result({'trim_condition_not_found': True})
 
-    yield header_line()
-    pairs = yield kv_pair_line().at_least(1)
-    return {k : v for (k,v) in pairs}
+kv_pair_line_parser = parse_strip_line(
+    alt(kv_pair_str_parser, requested_trim_str_parser)
+)
+
+metrics_lines_parser = (
+    header_line_parser >> union_many(kv_pair_line_parser, min=1)
+)
+"""
+This parses blocks like:
+```
+#Metrics
+Flight_path            3
+Path_traverse_score_based_on_requirements    0.00000000
+```
+"""
 
 metrics_block = parse_block('metrics_block', metrics_lines)

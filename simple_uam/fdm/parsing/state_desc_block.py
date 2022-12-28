@@ -6,26 +6,93 @@ from simple_uam.util.logging import get_logger
 from attrs import define, field
 log = get_logger(__name__)
 
+state_dimension_line_parser = parse_strip_line(
+    format_parser(
+        'Number of state variables x: xdim = ${xdim}',
+        xdim = int_p,
+    )
+)
+"""
+This parses lines like:
+```
+Number of state variables x: xdim =  18
+```
+"""
 
-def state_dimension_line():
+@generate
+def dimension_range_str_parser():
+
+    printed = yield format_parser(
+        '($s?${lower}$s?-$s?${upper}$s?)',
+        lower=int_p,
+        upper=int_p,
+    )
+
+    return (printed['lower'], printed['upper'] + 1)
+
+label_str_parser = not_chars(":,()")
+
+@generate
+def label_w_note_str_parser():
+    """Parses: `P about x (roll rate)`"""
+
+    text = yield label_str_parser
+    yield whitespace.optional()
+    note = yield in_parens
+
+    return f"{text.strip()} ({note.strip()})"
+
+def sub_labels_str_parser(count):
+
+    sep = wrap_whitespace(string(','))
+
+    times_count = lambda p: p.sep_by(sep, min=count, max=count)
+
+    return alt(
+        times_count(label_w_note_str_parser),
+        times_count(label_str_parser),
+    )
+
+def group_notes_str_parser(lower, upper):
     """
-    This parses lines like:
-    ```
-    Number of state variables x: xdim =  18
-    ```
+    Parses string like: `velocity in body frame: U forward, V right, W down (m/s)`
     """
+
+    count = upper - lower
 
     @generate
-    def str_parser():
-        yield string("Number of state variables x: xdim =")
-        yield whitespace.optional()
-        xdim = yield digits
-        return int(xdim)
+    def grp_notes_internal_parser():
+        group_label = yield alt(
+            label_w_note_str_parser,
+            label_str_parser,
+        ) << whitespace.optional()
 
-    return parse_line(wrap_whitespace(str_parser))
+        var_labels = yield (
+            string(':') >> whitespace >> sub_labels_str_parser(count)
+        ).optional(None) << whitespace.optional()
 
+        units = yield in_parens.optional(None)
 
-def var_desc_line():
+        vars_info = dict()
+
+        for (i, xvar) in enumerate(range(lower, upper)):
+
+            var_info = {'group_label': group_label}
+
+            if sub_label != None:
+                var_info['var_label'] = var_labels[i]
+
+            if units != None:
+                var_into['units'] = units
+
+            vars_info[xvar] = var_info
+
+        return vars_info
+
+    return grp_notes_internal_parser
+
+@generate
+def var_desc_str_parser():
     """
     This parses lines like:
     ```
@@ -35,166 +102,158 @@ def var_desc_line():
     ```
     """
 
-    @generate
-    def var_nums():
-        """Parses: `x( 7 - 10)`"""
+    yield string('x')
 
-        yield seq(string('x('), whitespace.optional())
-        lower = yield digits
-        yield wrap_whitespace(string('-'))
-        upper = yield digits
-        yield seq(whitespace.optional(), string(')'))
-        return (int(lower), int(upper) + 1)
+    (lower, upper) = yield dimension_range_str_parser
 
-    # text w/o some separators
-    label = test_char(lambda c: c not in ":,()", "label").at_least(1).concat()
+    yield wrap_whitespace(string('is'))
 
-    @generate
-    def label_w_note():
-        """Parses: `P about x (roll rate)`"""
+    grp_notes = yield grp_notes_str_parser(lower, upper)
 
-        text = yield label
-        yield whitespace.optional()
-        note = yield in_parens
+    return grp_notes
 
-        log.debug(
-            "label w/ note",
-            text=text,
-            note=note,
-        )
-        return f"{text.strip()} ({note.strip()})"
-
-    def sub_labels(count):
-
-        sep = wrap_whitespace(string(','))
-        no_note = label.sep_by(sep,min=count, max=count)
-        w_note  = label_w_note.sep_by(sep, min=count, max=count)
-
-        return (wrap_whitespace(string(':')) >> alt(w_note, no_note))
-
-    @generate
-    def desc_line():
-
-        (lower, upper) = yield var_nums
-        count = upper - lower
-        yield wrap_whitespace(string('is'))
-        grp_label = yield alt(label_w_note, label)
-        yield whitespace.optional()
-        var_labels = yield sub_labels(count).optional()
-        yield whitespace.optional()
-        units = yield in_parens.optional()
-
-        # log.debug(
-        #     "further desc line",
-        #     grb=grp_label,
-        #     var_labels=var_labels,
-        #     units=units,
-        # )
-        var_descs = dict()
-        for i in range(count):
-            var_ind = lower + i
-            dat = {'group_label': grp_label}
-            if var_labels != None:
-                dat['var_label'] = var_labels[i]
-            if units != None:
-                dat['units'] = units
-            var_descs[var_ind] = dat
-
-        # log.debug("parsing desc line", var_descs=var_descs)
-        return var_descs
-
-    return parse_line(wrap_whitespace(desc_line))
+var_desc_line_parser = parse_strip_line(var_desc_str_parser)
 
 @generate
-def state_desc_lines():
-
-    count = yield state_dimension_line()
-    var_groups = yield var_desc_line().at_least(3)
-    vars = {k: v for g in var_groups for k, v in g.items()}
-
-    return {
-        'state_var': 'x',
-        'xdim': count,
-        'vars': vars,
-    }
-
-state_desc_block = parse_block("state_desc_block", state_desc_lines)
-
-
-def control_dimension_line():
+def state_desc_lines_parser():
     """
-    This parses lines like:
+    Parses lines like:
     ```
+    Number of state variables x: xdim =  18
+     x( 1 -  3) is velocity in body frame: U forward, V right, W down (m/s)
+     x( 4 -  6) is angular velocity in body frame: P about x (roll rate), Q about y (pitch rate), R about z (yaw rate) (radians/s)
+     x( 7 - 10) is quaternion connecting world frame to body frame: q0, q1, q2, q3
+     x(11 - 13) is world frame displacement:  X north, Y east, Z down (m)
+     x(14 - 17) is motor angular speed (one for each motor) (radians/s)
+     x(18 - 18) is battery charge (one for each battery) (amp seconds)
+    ```
+    """
+
+    output = dict()
+
+    output |= yield state_dimension_line_parser
+    output |= yield var_desc_line_parser.union_many(min=3)
+
+    return output
+
+state_desc_block = parse_block("state_desc_block", state_desc_lines_parser)
+
+control_dimension_line_parser = parse_strip_line(
+    format_parser(
+        'Number of controls uc (0 <= uc <= 1): udim =   ${udim}',
+        udim = int_p,
+    )
+)
+"""
+This parses lines like:
+```
+Number of controls uc (0 <= uc <= 1): udim =   4
+```
+"""
+
+control_desc_line_parser = parse_strip_line(
+    format_parser(
+        'uc${dims} are control channels',
+        dims=dimension_range_str_parser,
+    )
+)
+"""
+This parses lines like:
+```
+ uc( 1 -  4) are control channels
+```
+"""
+
+control_prop_line_parser = parse_strip_line(
+    format_parser(
+        'Propeller motor  ${motor} '\
+        'controlled by uc channel  ${uc_channel} '\
+        'and powered by battery  ${battery}',
+        motor=int_p,
+        uc_channel=int_p,
+        battery=int_p,
+    )
+)
+"""
+This parses lines like:
+```
+Propeller motor  4 controlled by uc channel  4 and powered by battery  1
+```
+"""
+
+control_wing_line_parser = parse_strip_line(
+    format_parser(
+        'Wing ${wing} servo ${servo} '\
+        'controlled by uc channel ${uc_channel} '\
+        ' with bias ${bias}',
+        wing=int_p,
+        servo=int_p,
+        uc_channel=int_p,
+        bias=scientific,
+    )
+)
+"""
+This parses lines like:
+```
+Wing 4 servo  4 controlled by uc channel  4 with bias 2.003
+```
+"""
+
+@generate
+def control_channel_line_parser():
+
+    params = yield tag_alt(
+        'channel_type',
+        propeller=control_prop_line_parser,
+        wing=control_wing_line_parser,
+    )
+
+    uc_channel = params.pop('uc_channel')
+
+    return {uc_channel: params}
+
+@generate
+def control_desc_lines_parser():
+
+    output = dict()
+
+    output |= yield control_dimension_line_parser
+    yield control_desc_line_parser
+    output |= yield control_channel_line_parser.union_many(min=1)
+
+    return output
+
+control_desc_block = parse_block(
+    "control_desc_block",
+    control_desc_lines_parser
+)
+
+@generate
+def parameters_lines_parser():
+    """
+    Parses blocks like:
+    ```
+    Number of state variables x: xdim =  18
+        x( 1 -  3) is velocity in body frame: U forward, V right, W down (m/s)
+        x( 4 -  6) is angular velocity in body frame: P about x (roll rate), Q about y (pitch rate), R about z (yaw rate) (radians/s)
+        x( 7 - 10) is quaternion connecting world frame to body frame: q0, q1, q2, q3
+        x(11 - 13) is world frame displacement:  X north, Y east, Z down (m)
+        x(14 - 17) is motor angular speed (one for each motor) (radians/s)
+        x(18 - 18) is battery charge (one for each battery) (amp seconds)
     Number of controls uc (0 <= uc <= 1): udim =   4
+        uc( 1 -  4) are control channels
+                    Propeller motor  1 controlled by uc channel  1 and powered by battery  1
+                    Propeller motor  2 controlled by uc channel  2 and powered by battery  1
+                    Propeller motor  3 controlled by uc channel  3 and powered by battery  1
+                    Propeller motor  4 controlled by uc channel  4 and powered by battery  1
     ```
     """
 
-    @generate
-    def str_parser():
-        yield string("Number of controls uc (0 <= uc <= 1): udim =")
-        yield whitespace
-        udim = yield digits
-        return int(udim)
+    output = dict()
 
-    return parse_line(wrap_whitespace(str_parser))
+    output |= yield state_desc_lines_parser.dtag('state_variables')
+    output |= yield control_desc_lines_parser.dtag('control_channels')
 
-def control_channel_line():
-    """
-    This parses lines like:
-    ```
-     uc( 1 -  4) are control channels
-    ```
-    """
+    return output
 
-    @generate
-    def channel_nums():
-        """Parses: `uc( 7 - 10) are control channels`"""
-
-        yield seq(string('uc('), whitespace.optional())
-        lower = yield digits
-        yield wrap_whitespace(string('-'))
-        upper = yield digits
-        yield seq(whitespace.optional(), string(')'))
-        yield whitespace.optional()
-        yield string("are control channels")
-        return (int(lower), int(upper) + 1)
-
-    return parse_line(wrap_whitespace(channel_nums))
-
-def control_mapping_line():
-    """
-    This parses lines like:
-    ```
-    Propeller motor  4 controlled by uc channel  4 and powered by battery  1
-    ```
-    """
-
-    @generate
-    def channel_triple():
-        yield wrap_whitespace(string("Propeller motor"))
-        motor = yield digits
-        yield wrap_whitespace(string("controlled by uc channel"))
-        channel = yield digits
-        yield wrap_whitespace(string("and powered by battery"))
-        battery = yield digits
-        return {
-            'propeller_motor': int(motor),
-            'uc_channel': int(channel),
-            'battery': int(battery),
-        }
-
-    return parse_line(wrap_whitespace(channel_triple))
-
-@generate
-def control_desc_lines():
-    udim = yield control_dimension_line()
-    (lower, upper) = yield control_channel_line()
-    mapping_list = yield control_mapping_line().many()
-    channel_map = { mapping['uc_channel'] : mapping for mapping in mapping_list }
-
-    return {
-        'udim': udim,
-        'channels': channel_map,
-    }
-
-control_desc_block = parse_block("control_desc_block", control_desc_lines)
+parameters_block = parse_block('parameters_block', parameters_lines_parser)

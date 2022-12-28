@@ -3,8 +3,15 @@ from parsy import *
 from .util import *
 import textwrap
 from copy import deepcopy, copy
+from attrs import define, field
+import attrs
 from simple_uam.util.logging import get_logger
 log = get_logger(__name__)
+
+@define(hash=True)
+class Expected():
+    expected = field()
+    at_char : int = field()
 
 def parse_line(str_parser):
     """
@@ -30,7 +37,11 @@ def parse_line(str_parser):
         if result.status:
             return Result.success(lineno + 1, result.value)
         else:
-            return Result.failure(lineno, result.expected)
+            expected = Expected(
+                expected = result.expected,
+                at_char = result.furthest,
+            )
+            return Result.failure(lineno, expected)
 
     return run_line
 
@@ -43,6 +54,8 @@ def parse_strip_line(str_parser):
 raw_line = parse_line(any_char.many().concat())
 
 blank_line = parse_line(whitespace | string(""))
+
+blank_lines = blank_line.at_least(1)
 
 def run_lineparser(parser, string):
     """
@@ -67,18 +80,21 @@ def wrap_blanklines(lineparser):
 
     return wrapped
 
-def static_lines(string):
+def static_lines(input):
     """
     Parses a multiline string as a line parser.
 
     Ignores whitespace surrounding each line.
     """
 
-    lines = [s.strip() for s in string.splitlines()]
+    lines = [i.strip() for i in input.strip().splitlines()]
 
     @generate
     def lines_parser():
         for l in lines:
-            yield parse_strip_line(string(l))
+            if l.strip() == "" or l.isspace():
+                yield blank_line
+            else:
+                yield parse_strip_line(string(l))
 
     return lines_parser

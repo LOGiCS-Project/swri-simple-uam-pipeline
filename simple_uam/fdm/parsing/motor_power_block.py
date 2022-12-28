@@ -7,34 +7,44 @@ from simple_uam.util.logging import get_logger
 from attrs import define, field
 log = get_logger(__name__)
 
-def subhead_line():
-    """
-    This parses lines like:
-    ```
-    +----- Motor ----+  +---- Battery ---+
-    ```
-    """
+dashes = string('-').at_least(2)
 
-    def single_subhead(name):
+subhead_line_parser = parse_strip_line(
+    format_parser(
+        '+${d1} Motor ${d2}+  +${d3} Battery ${d4}+',
+        d1 = dashes,
+        d2 = dashes,
+        d3 = dashes,
+        d4 = dashes,
+    ).result(None)
+)
+"""
+This parses lines like:
+```
++----- Motor ----+  +---- Battery ---+
+```
+"""
 
-        subhead_prefix = string('+') + string('-').at_least(3).concat()
-        subhead_suffix = string('-').at_least(3).concat() + string('+')
+header_col_choices = {
+    'omega': 'omega',
+    'Voltage': 'voltage',
+    'Thrust': 'thrust',
+    'Torque': 'torque',
+    'Power': 'power',
+    'Current': 'current',
+    'Efficiency': 'efficiency',
+    'Max Power': 'max_power',
+    'Max Cur': 'max_current',
+    'Peak Cur': 'peak_current',
+    'Cont Cur': 'continuous_current',
+}
 
-        return seq(
-            subhead_prefix,
-            whitespace,
-            string(name),
-            whitespace,
-            subhead_suffix,
-        ).result(name)
+header_col_str_parser = alt(
+    *[string(col).result(var) for col,var in header_col_choices.items()]
+)
 
-    return parse_line(wrap_whitespace(seq(
-        single_subhead('Motor'),
-        whitespace,
-        single_subhead('Battery'),
-    ))).result(True)
-
-def header_line():
+@generate
+def header_str_parser():
     """
     This parses lines like:
     ```
@@ -42,49 +52,31 @@ def header_line():
     ```
     """
 
-    header_choices = [
-        'omega',
-        'Voltage',
-        'Thrust',
-        'Torque',
-        'Power',
-        'Current',
-        'Efficiency',
-        'Max Power',
-        'Max Cur',
-        'Peak Cur',
-        'Cont Cur',
-    ]
+    return string('Motor #') >> header_col_str_parser.sep_by(whitespace)
 
-    return parse_line(wrap_whitespace(
-        string('Motor #') >> whitespace >> string_from(*header_choices).sep_by(whitespace)
-    ))
+header_line_parser = parse_strip_line(header_str_parser)
 
-def units_line():
-    """
-    This parses lines like:
-    ```
-    (rad/s)    (RPM)    (volts)      (N)       (Nm)   (watts)    (amps)      (%)    (watts)    (amps)    (amps)    (amps)
-    ```
-    """
+units_str_parser = in_parens.sep_by(whitespace)
+"""
+This parses lines like:
+```
+(rad/s)    (RPM)    (volts)      (N)       (Nm)   (watts)    (amps)      (%)    (watts)    (amps)    (amps)    (amps)
+```
+"""
 
-    units_choices = [
-        '(rad/s)',
-        '(RPM)',
-        '(volts)',
-        '(N)',
-        '(Nm)',
-        '(watts)',
-        '(amps)',
-        '(%)',
-    ]
+units_line_parser = parse_strip_line(units_str_parser)
 
-    return parse_line(wrap_whitespace(
-        string_from(*units_choices).sep_by(whitespace)
-    ))
+motor_states = {
+    'Volt': 'voltage',
+    'Power': 'power',
+    'Amps': 'current',
+}
 
+motor_state_str_parser = string('Max') >> whitespace >> alt(
+    *[string(k).result(f'maximum_{v}') for k, v in motor_states.items()]
+)
 
-def data_line():
+def data_line_parser(col_headers, col_units):
     """
     This parses lines like:
     ```
@@ -92,28 +84,22 @@ def data_line():
     ```
     """
 
-    max_types = [
-        'Volt',
-        'Power',
-        'Amps',
-    ]
-
     @generate
-    def data_str():
-        yield string('Max')
-        yield whitespace
-        max_type = yield string_from(*max_types)
-        yield whitespace
-        motor_num = yield decimal_digit
-        yield whitespace
-        data_vals = yield scientific.sep_by(whitespace)
-        return dict(
-            max=max_type,
-            motor=motor_num,
-            data=data_vals,
-        )
+    def data_str_parser():
 
-    return parse_line(wrap_whitespace(data_str))
+        row = dict()
+
+        row['motor_state'] = yield motor_state_str_parser << whitespace
+        row['motor_number'] = yield int_p << whitespace
+
+        data_points = yield scientific.sep_by(whitespace)
+
+        for (i, val) in enumerate(data_points):
+            row[col_headers[i]] = with_units(val, col_units[i])
+
+        return row
+
+    return parse_strip_line(data_str_parser)
 
 @generate
 def motor_power_lines():
@@ -129,32 +115,12 @@ def motor_power_lines():
     ...
     ```
     """
-    yield subhead_line()
-    headers = yield header_line()
-    units = yield units_line()
-    data = yield data_line().many()
+    yield subhead_line_parser
 
-    output = list()
+    col_headers = yield header_line_parser
+    col_units = yield units_line_parser
+    rows = yield data_line_parser(col_headers, col_units).many()
 
-    for row in data:
-
-        formatted = dict(
-            max=row['max'],
-            motor=row['motor'],
-        )
-
-        for ind, val in enumerate(row['data']):
-            entry_name = headers[ind]
-            entry_units = units[ind].strip('()')
-            entry_value = val
-
-            formatted[entry_name] = dict(
-                units=entry_units,
-                value=entry_value,
-            )
-
-        output.append(formatted)
-
-    return output
+    return rows
 
 motor_power_block = parse_block('motor_power_block', motor_power_lines)

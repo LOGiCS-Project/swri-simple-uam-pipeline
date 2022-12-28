@@ -3,6 +3,15 @@ from .line_parser import *
 from copy import deepcopy, copy
 from simple_uam.util.logging import get_logger
 log = get_logger(__name__)
+from attrs import define, field
+import attrs
+
+@define(hash=True)
+class ExpectedBlock():
+    block_type : str = field()
+    start_line : int = field()
+    expected = field()
+
 
 def parse_block(block_type, line_parser):
     """
@@ -40,7 +49,12 @@ def parse_block(block_type, line_parser):
 
         else:
 
-            return Result.failure(result.furthest, result.expected)
+            exp = ExpectedBlock(
+                start_line = start_line,
+                block_type= block_type,
+                expected = result.expected,
+            )
+            return Result.failure(result.furthest, exp)
 
 
         # remaining_len = len(remainder)
@@ -133,7 +147,7 @@ def group_blocks(block_list):
 
     return groups
 
-def collapse_groups(groups, **collapse_funcs):
+def collapse_groups(groups, default = None, **collapse_funcs):
     """
     Will run through a list of groups and collapse them using a function in
     the collapse_funcs dict.
@@ -141,14 +155,22 @@ def collapse_groups(groups, **collapse_funcs):
 
     output = list()
 
+    if default == None:
+        default = lambda x: x['members']
+
     for group in groups:
         group_type = group['type']
+        collapsed = None
         if group_type in collapse_funcs:
             collapsed = collapse_funcs[group_type](group)
-            if collapsed != None:
-                output.append(collapsed)
         else:
-            output += group['members']
+            collapse = default(group)
+
+        if collapsed and not isinstance(collapsed, list):
+            collapsed = [collapsed]
+
+        if collapsed:
+            output += collapsed
 
     return output
 
