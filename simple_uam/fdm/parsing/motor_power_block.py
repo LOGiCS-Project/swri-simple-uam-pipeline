@@ -43,16 +43,13 @@ header_col_str_parser = alt(
     *[string(col).result(var) for col,var in header_col_choices.items()]
 )
 
-@generate
-def header_str_parser():
-    """
-    This parses lines like:
-    ```
-    Motor #    omega     omega    Voltage    Thrust    Torque    Power    Current Efficiency Max Powe r  Max Cur  Peak Cur  Cont Cur
-    ```
-    """
-
-    return string('Motor #') >> header_col_str_parser.sep_by(whitespace)
+header_str_parser = string('Motor #') >> whitespace >> header_col_str_parser.sep_by(whitespace)
+"""
+This parses lines like:
+```
+Motor #    omega     omega    Voltage    Thrust    Torque    Power    Current Efficiency Max Powe r  Max Cur  Peak Cur  Cont Cur
+```
+"""
 
 header_line_parser = parse_strip_line(header_str_parser)
 

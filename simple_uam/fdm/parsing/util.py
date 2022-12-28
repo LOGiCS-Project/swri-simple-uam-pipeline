@@ -1,6 +1,7 @@
 
 from parsy import *
 import functools
+from attrs import define, field
 from simple_uam.util.logging import get_logger
 log = get_logger(__name__)
 
@@ -166,7 +167,7 @@ def tag_alt(tag_key=None, data_key=None, data_convert=None, **alternatives):
         return key
 
     tag_parser = alt(
-        *[parser.tag(convert_func(key)) for key, parser in alternatives.items]
+        *[parser.tag(convert_func(key)) for key, parser in alternatives.items()]
     )
 
     @generate
@@ -180,7 +181,7 @@ def tag_alt(tag_key=None, data_key=None, data_convert=None, **alternatives):
         else:
             return {tag_key: tag, data_key: result}
 
-    return tag_alt_interal_parser
+    return tag_alt_internal_parser
 
 def with_units(value, units = None):
     """
@@ -283,7 +284,7 @@ def collect_warnings(inp, tag='__warning__', field='warnings'):
     if len(warnings) > 0:
         output[field] = warnings
 
-    return warnings
+    return output
 
 def wrap_whitespace(parser):
     """
@@ -349,6 +350,13 @@ def merge_dicts(head, *vargs, splat_list=True):
     elif all([v == head for v in vargs]):
         return head
     else:
+
+        log.debug(
+            "Invalid input collision in merge_dicts.",
+            head=head,
+            vargs=vargs,
+            splat_list=splat_list,
+        )
         raise RuntimeError("Invalid input collision in merge_dicts.")
 
 @generate
@@ -361,7 +369,7 @@ def format_tokenizer():
     opt_white = string("$s?").tag('optional_whitespace')
     mand_white = string("$s").tag('mandatory_whitespace')
     parse_kwarg = string("${") >> not_char('}').at_least(1).concat().tag('parser_kwarg') << string("}")
-    gen_lit = not_space.at_least(1).concat().tag('literal_string')
+    gen_lit = not_spaces_or('$').tag('literal_string')
     gen_white = whitespace.tag('literal_whitespace')
 
     out = yield alt(
@@ -374,6 +382,152 @@ def format_tokenizer():
     ).many()
 
     return out
+
+def unformat_tokens(tokens):
+    """
+    Converts a list of tokens back into a string.
+    """
+
+    return ''.join([
+        val if tag != 'parser_kwarg' else '${' + val + '}'
+        for (tag, val) in tokens
+    ])
+
+def format_parse_single(token, strict_whitespace=False, **named_parsers):
+    """
+    Gets the parser for a single token.
+    """
+
+    (tag, val) = token
+
+    # if kwarg then we want to return a dict w/ the result under that value
+    if tag == 'parser_kwarg':
+        return named_parsers[val].dtag(val)
+
+    # Cases where the parser should return an empty dict
+    parser = None
+    if tag == 'literal_dollar':
+        parser = string('$')
+    elif tag == 'optional_whitespace':
+        parser = whitespace.optional()
+    elif tag == 'mandatory_whitespace':
+        parser = whitespace
+    elif tag == 'literal_string':
+        parser =  string(val)
+    elif tag == 'literal_whitespace' and not strict_whitespace:
+        parser =  whitespace
+    elif tag == 'literal_whitespace' and strict_whitespace:
+        parser =  string(val)
+
+    if parser != None:
+        return parser.result({})
+
+    # Error case
+    raise RuntimeError("Invalid tokenization of format string.")
+
+@define(hash=True)
+class FormatParseExpected():
+    format_str: str = field()
+    remaining = field(default = None)
+    expected = field(default = None)
+
+def format_parse_tokens(ftokens,
+                        strict_whitespace=False,
+                        **named_parsers):
+    """
+    Creates a parser for a list of tokens format_parser tokens.
+    Produces nicer expected messages.
+
+    Arguments:
+      ftokens: The list of tokens
+      other_args: as with format_parser
+    """
+
+
+    # No tokens left == success
+    if len(ftokens) == 0:
+        return success({})
+
+    first_token = ftokens[0]
+
+    first_parser = format_parse_single(
+        first_token,
+        strict_whitespace=strict_whitespace,
+        **named_parsers,
+    )
+
+    printed_tokens = lambda: unformat_tokens(ftokens)
+
+    @Parser
+    def parse_token(stream, index):
+
+        first_result = first_parser(stream, index)
+
+        if first_result.status:
+
+            remaining_tokens = ftokens[1:]
+
+            remaining_parser = format_parse_tokens(
+                remaining_tokens,
+                strict_whitespace=strict_whitespace,
+                **named_parsers,
+            )
+
+            remaining_result = remaining_parser(stream, first_result.index)
+
+            if remaining_result.status:
+
+                # If both first and remaining parsers succeed union their values
+                # together in the correct order
+                return Result.success(
+                    remaining_result.index,
+                    first_result.value | remaining_result.value,
+                )
+
+            else:
+
+                new_expected = None
+                remaining_expected = remaining_result.expected
+                remaining_remaining = None
+
+                # Massage inputs to reduce nesting
+                if isinstance(remaining_expected, frozenset) and \
+                   len(remaining_expected) == 1:
+                    remaining_expected = list(remaining_expected)[0]
+
+                if isinstance(remaining_expected, FormatParseExpected):
+                    remaining_remaining = remaining_expected.remaining
+                    remaining_expected = remaining_expected.expected
+
+                # Return further failure, ensure correct context
+                return Result.failure(
+                    remaining_result.furthest,
+                    FormatParseExpected(
+                        printed_tokens(),
+                        expected=remaining_expected,
+                        remaining=remaining_remaining,
+                    )
+                )
+
+        else:
+
+            first_expected = first_result.expected
+
+            # Massage inputs to reduce nesting
+            if isinstance(first_expected, frozenset) and \
+               len(first_expected) == 1:
+                first_expected = list(first_expected)[0]
+
+            # Fail immediately
+            return Result.failure(
+                index,
+                FormatParseExpected(
+                    printed_tokens(),
+                    expected=first_result.expected,
+                ),
+            )
+
+    return parse_token
 
 def format_parser(fstring, strict_whitespace=False, **named_parsers):
     """
@@ -401,40 +555,42 @@ def format_parser(fstring, strict_whitespace=False, **named_parsers):
     extra_parsers = [val for val in named_parsers if val not in used_tokens]
 
     if len(missing_parsers) > 0:
+        log.info(
+            "Missing parsers info",
+            named_parsers=named_parsers,
+            f_tokens=ftokens,
+        )
         raise RuntimeError(
             f"Following parsers are missing in format_parser call: "\
             f"{missing_parsers}"
         )
 
     if len(extra_parsers) > 0:
+        log.info(
+            "Extra parsers info",
+            named_parsers=named_parsers,
+            f_tokens=ftokens,
+        )
         raise RuntimeError(
             f"Following parsers are unused in format_parser call: "\
             f"{extra_parsers}"
         )
 
-    @generate
-    def input_parser():
+    return format_parse_tokens(
+        ftokens,
+        strict_whitespace=strict_whitespace,
+        **named_parsers,
+    )
 
-        kwargs_out = dict()
+def force_string_keys(val):
+    """
+    Walks through a JSON serializable object and casts all dictionary keys to
+    strings.
+    """
 
-        for (tag, val) in ftokens:
-            if tag == 'literal_dollar':
-                yield string('$')
-            elif tag == 'optional_whitespace':
-                yield whitespace.optional()
-            elif tag == 'mandatory_whitespace':
-                yield whitespace
-            elif tag == 'parser_kwarg':
-                kwargs_out[val] = yield named_parsers[val]
-            elif tag == 'literal_string':
-                yield string(val)
-            elif tag == 'literal_whitespace' and not strict_whitespace:
-                yield whitespace
-            elif tag == 'literal_whitespace' and strict_whitespace:
-                yield string(val)
-            else:
-                raise RuntimeError("Invalid tokenization of format string.")
-
-        return kwargs_out
-
-    return input_parser
+    if isinstance(val, list):
+        return [force_string_keys(v) for v in val]
+    elif isinstance(val, dict):
+        return {str(k): force_string_keys(v) for k,v in val.items()}
+    else:
+        return val

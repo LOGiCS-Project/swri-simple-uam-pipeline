@@ -34,7 +34,7 @@ def key_str_parser():
     key = key.strip('_')
 
     if key in metrics_known_units and unit == None:
-        unit = metrics_known_units
+        unit = metrics_known_units[key]
 
     return (to_undercase(key), unit)
 
@@ -53,10 +53,17 @@ def kv_pair_str_parser():
 
     (key, unit) = yield key_str_parser
     yield whitespace
-    values = yield alt(scientific, not_spaces).at_least(1)
+    values = yield alt(scientific, not_spaces).sep_by(whitespace,min=1)
+
+    # log.debug(
+    #     "parsing metrics line",
+    #     key=key,
+    #     unit=unit,
+    #     values=values,
+    # )
 
     if len(values) == 1:
-        return { key : with_units(value[0], unit) }
+        return { key : with_units(values[0], unit) }
     else:
         return { key : [with_units(v, unit) for v in values] }
 
@@ -80,4 +87,4 @@ Path_traverse_score_based_on_requirements    0.00000000
 ```
 """
 
-metrics_block = parse_block('metrics_block', metrics_lines)
+metrics_block = parse_block('metrics_block', metrics_lines_parser)

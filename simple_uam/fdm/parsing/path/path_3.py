@@ -35,7 +35,7 @@ def path_3_success_line_parser():
     return output
 
 path_distance_line_parser = parse_strip_line(
-    format_parser("Score is 0 since full circle not flown")
+    format_parser("Score is zero since full circle not flown")
 )
 
 @generate

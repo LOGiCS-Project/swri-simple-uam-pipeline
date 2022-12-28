@@ -233,7 +233,7 @@ def electrical_performance_lines_parser():
     output = dict()
 
     yield performance_header_line_parser
-    output |= yield electrical_disables_line_parser.exists('ignoring_electrical_issues')
+    output |= yield electrical_disabled_line_parser.exists('ignoring_electrical_issues')
     output |= yield battery_info_line_parser.union_many().dtag('battery_performance')
     output |= yield motor_info_line_parser.union_many().dtag('motor_performance')
 
@@ -292,7 +292,7 @@ path_traverse_line_parser = tag_alt(
 )
 
 hackathon_misc_line_parsers = [
-    calc_complete_str_parser,
+    calc_complete_line_parser,
     no_flight_path_defined_line_parser,
     max_distance_error_line_parser,
     units_info_line_parser,

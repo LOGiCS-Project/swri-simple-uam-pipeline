@@ -25,16 +25,18 @@ def parse_line(str_parser):
         if lineno >= len(lines):
             return Result.failure(lineno, f'No more lines in input.')
 
-        # log.info(
-        #     "Running single line parse of.",
-        #     parser_module=str_parser.__module__,
-        #     lineno=lineno,
-        #     line=lines[lineno],
-        # )
 
         line = lines[lineno]
         result = copy((str_parser << eof)(line, 0))
         if result.status:
+
+            # log.debug(
+            #     "Successsful single line parse of.",
+            #     parser_module=str_parser.__module__,
+            #     lineno=lineno,
+            #     line=lines[lineno],
+            # )
+
             return Result.success(lineno + 1, result.value)
         else:
             expected = Expected(

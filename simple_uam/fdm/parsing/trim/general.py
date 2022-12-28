@@ -62,7 +62,7 @@ def trim_state_lines_parser():
 
     output |= yield trim_state_prefix_lines_parser
     output |= yield trim_state_vars_lines_parser
-    output |= yield trim_state_battery_info_lines_parser
+    output |= yield battery_info_lines_parser
     output |= yield trim_state_controls_lines_parser.exists('successful')
 
     return output

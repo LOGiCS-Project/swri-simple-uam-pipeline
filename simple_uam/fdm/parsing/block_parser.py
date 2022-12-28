@@ -2,6 +2,7 @@ from parsy import *
 from .line_parser import *
 from copy import deepcopy, copy
 from simple_uam.util.logging import get_logger
+from typing import Optional, List
 log = get_logger(__name__)
 from attrs import define, field
 import attrs
@@ -12,6 +13,49 @@ class ExpectedBlock():
     start_line : int = field()
     expected = field()
 
+@define
+class BlockVal():
+    """
+    The output data for a single parsed block.
+    """
+
+    type : str = field()
+    start_line : int = field()
+    end_line : int = field()
+    data = field()
+
+@define
+class BlockGroup():
+    """
+    A group of blocks of identical type.
+    """
+
+    type : Optional[str] = field(default = None)
+    members : List[BlockVal] = field(factory= list)
+
+    def add(self, block):
+        """
+        Adds a block value to this group.
+        """
+
+        if self.type == None:
+            self.type = block.type
+
+        if block.type != self.type:
+            raise RuntimeError(
+                f"Cannot add block of type '{block.type}' "\
+                f"to group of type '{self.type}'."
+            )
+
+        self.members.append(block)
+
+    @property
+    def start_line(self):
+        return min([b.start_line for b in self.members])
+
+    @property
+    def end_line(self):
+        return max([b.end_line for b in self.members])
 
 def parse_block(block_type, line_parser):
     """
@@ -25,25 +69,31 @@ def parse_block(block_type, line_parser):
         if start_line >= len(lines):
             return Result.failure(start_line, f'No more lines in input.')
 
-
-        #print(start_line)
-        log.debug(
-            "Parsing block at",
-            block_type = block_type,
-            start_line = start_line,
-            line = lines[start_line],
-        )
+        # log.debug(
+        #     "Parsing block at",
+        #     block_type = block_type,
+        #     start_line = start_line,
+        #     line = lines[start_line],
+        # )
 
         result = line_parser(lines, start_line)
         if result.status:
 
-            block_value = {
-                'type': block_type,
-                'start_line': start_line,
-                'end_line': result.index,
-                'data': deepcopy(result.value),
-                # 'raw_lines': deepcopy(lines[start_line:next_line]),
-            }
+            # log.debug(
+            #     "Successfully parsed block at",
+            #     block_type = block_type,
+            #     start_line = start_line,
+            #     line = lines[start_line],
+            #     val=result.value,
+            # )
+
+            block_value = BlockVal(
+                type = block_type,
+                start_line = start_line,
+                end_line = result.index,
+                data = deepcopy(result.value),
+                # raw_lines = deepcopy(lines[start_line:next_line]),
+            )
 
             return Result.success(result.index, block_value)
 
@@ -54,30 +104,11 @@ def parse_block(block_type, line_parser):
                 block_type= block_type,
                 expected = result.expected,
             )
+
             return Result.failure(result.furthest, exp)
-
-
-        # remaining_len = len(remainder)
-        # parsed_len = unparsed_len - remaining_len
-        # next_line = start_line + parsed_len
-        # end_line = next_line - 1
-
-        # eturn Result.success(next_line, output)
-        # pt ParseError as err:
-        # return Result.failure(start_line, str({
-        #     'type': block_type,
-        #     'start_line': start_line,
-        #     'error': err,
-        # }))
 
     return run_block
 
-def block_is(block_type, desc=""):
-    """
-    A simple primitive used for parsing only blocks with a given block_type.
-    """
-
-    return test_item(lambda b: 'type' in b and b['type'] == block_type, desc)
 
 # Parses a single blank line.
 blank_block = parse_block('blank_block', blank_line)
@@ -99,93 +130,6 @@ def wrap_blankblocks(block_parser):
 
     return wrapped
 
-def group_blocks(block_list):
-    """
-    Goes through a list of blocks and groups them by block type, keeping
-    track of each groups start and end location.
-    """
-
-    groups = list()
-
-    current_type = None
-    current_start = None
-    current_end = None
-    current_members = None
-
-    for block in block_list:
-
-        # Start new group because current block has new type.
-        if block['type'] != current_type:
-
-            # Finalize and push old group
-            if current_members != None:
-                groups.append({
-                    'type': current_type,
-                    'start_line': current_start,
-                    'end_line': current_end,
-                    'members': current_members,
-                })
-
-            # Reset current group
-            current_type = block['type']
-            current_start = block['start_line']
-            current_end = block['end_line']
-            current_members = list()
-
-        # Add the current block to the group
-        current_end = block['end_line']
-        current_members.append(block)
-
-    # Finalize and push the last group
-    if current_members != None:
-        groups.append({
-            'type': current_type,
-            'start_line': current_start,
-            'end_line': current_end,
-            'members': current_members,
-        })
-
-    return groups
-
-def collapse_groups(groups, default = None, **collapse_funcs):
-    """
-    Will run through a list of groups and collapse them using a function in
-    the collapse_funcs dict.
-    """
-
-    output = list()
-
-    if default == None:
-        default = lambda x: x['members']
-
-    for group in groups:
-        group_type = group['type']
-        collapsed = None
-        if group_type in collapse_funcs:
-            collapsed = collapse_funcs[group_type](group)
-        else:
-            collapse = default(group)
-
-        if collapsed and not isinstance(collapsed, list):
-            collapsed = [collapsed]
-
-        if collapsed:
-            output += collapsed
-
-    return output
-
-def collapse_raw_line_group(group):
-    """
-    collapses a bunch of raw line blocks into a raw_lines block.
-    """
-    return {
-        'type': 'raw_lines',
-        'start_line': group['start_line'],
-        'end_line': group['end_line'],
-        'data': [b['data'] for b in group['members']],
-    }
-
-
 def run_blockparser(parser, string):
     """
     Splits an input string into lines and then runs a block parser over them.
@@ -197,3 +141,72 @@ def run_blockparser(parser, string):
         lines = string
 
     return parser.parse(lines)
+
+# Stuff for working with groups of blocks.
+
+def group_blocks(block_list):
+    """
+    Goes through a list of blocks and groups them by block type, keeping
+    track of each groups start and end location.
+    """
+
+    any_block = test_item(lambda _: True, "Any single block")
+    block_of = lambda b_type: test_item(lambda b: b.type == b_type, f"block of type {b_type}")
+
+    @generate
+    def run_of_blocks():
+        """
+        Parses a run of identically typed blocks from a list.
+        """
+
+        init = yield any_block
+        rest = yield block_of(init.type).many()
+
+        return BlockGroup(init.type, [init] + rest)
+
+    return run_of_blocks.many().parse(block_list)
+
+def collapse_groups(group_list, rules, default=None):
+    """
+    Will collapse a list of blockgroups into a list of blocks using the rules
+    given by the user.
+
+    Arguments:
+      group_list: The list of groups we're going to collapse
+      rules: a dict whose keys are block types and whose functions turn a
+        BlockGroup into a list of BlockVals. If None instead of a function then
+        all groups of that type will be ignored.
+      default: the rule to apply for all block types not found in the rules
+        dictionary. (Default: Use the members from the group)
+    """
+
+    def run_rule(group):
+
+        rule = lambda g: g.members
+
+        if group.type in rules and rules[group.type] == None:
+            rule = lambda g: []
+        elif group.type in rules:
+            rule = rules[group.type]
+        elif default != None:
+            rule = default
+
+        return rule(group)
+
+    return [blk for grp in group_list for blk in run_rule(grp)]
+
+def concat_raw(raw_group):
+    """
+    A rule for use with collapse_groups, will concatenate raw lines into a
+    larger raw_lines block.
+    """
+
+    if raw_group.type != 'raw_line':
+        raise RuntimeError("can only use concat_raw with 'raw_line' groups.")
+
+    return [BlockVal(
+        type='raw_lines',
+        start_line=raw_group.start_line,
+        end_line=raw_group.end_line,
+        data=[blk.data for blk in raw_group.members],
+    )]

@@ -18,9 +18,12 @@ def lateral_motion_str_parser():
     result = yield format_parser(
         'Objective steady state speed is UVW world = '\
         '${uvw_meters} m/s = ${uvw_miles} miles per hour',
-        uvw_meters= scientific.sep_by(whitespace,3,3),
-        uvw_miles = scientific.sep_by(whitespace,3,3),
+        uvw_meters= scientific.sep_by(whitespace,min=3,max=3),
+        uvw_miles = scientific.sep_by(whitespace,min=3,max=3),
     )
+
+    uvw_meters = result['uvw_meters']
+    uvw_miles = result['uvw_miles']
 
     return {
         'u_north': {'value': uvw_meters[0], 'units':'m/s', 'mph': uvw_miles[0]},
@@ -44,8 +47,8 @@ def turning_frame_str_parser():
     result = yield format_parser(
         'Objective steady state speed is UVW world = '\
         '${uvw} m/s; PQR world = ${pqr} rad/s',
-        uvw = scientific.sep_by(whitespace,3,3),
-        pqr = scientific.sep_by(whitespace,3,3),
+        uvw = scientific.sep_by(whitespace,min=3,max=3),
+        pqr = scientific.sep_by(whitespace,min=3,max=3),
     )
 
     uvw = result['uvw']
@@ -85,7 +88,7 @@ def turning_radius_str_parser():
 
     return {
         'turning_radius': with_units(result['turn'],'m'),
-        'r_world': with_units(result['r'],'rad/s'),
+        'r_world': with_units(result['r'],'r/s'),
     }
 
 turning_radius_line_parser = parse_strip_line(
@@ -130,11 +133,15 @@ def unit_vars_line_parser(prefix, keys=None):
     def unit_vars_str_parser():
         parsed = yield base_parser
         output = dict()
+        # log.debug(
+        #     "parsed_vals",
+        #     parsed=parsed,
+        # )
         if keys == None:
             output = with_units(parsed['vals'][0], parsed['units'])
         else:
-            for (i, v) in parsed['vals']:
-                output[keys['i']] = with_units(v, parsed['units'])
+            for (i, v) in enumerate(parsed['vals']):
+                output[keys[i]] = with_units(v, parsed['units'])
         return output
 
     return parse_strip_line(unit_vars_str_parser)
@@ -156,25 +163,25 @@ uvw_dot_warning_line_parser = parse_strip_line(
     ).result(True)
 ).dtag('__warning__acceleration_too_high_for_trim_state')
 
-roll_angle_vars_line_parser = parse_unit_vars_line(
+roll_angle_vars_line_parser = unit_vars_line_parser(
     "Roll  angle phi",
 ).dtag('roll_angle')
 
-pitch_angle_vars_line_parser = parse_unit_vars_line(
+pitch_angle_vars_line_parser = unit_vars_line_parser(
     "Pitch angle theta",
 ).dtag('pitch_angle')
 
-thrust_vars_line_parser = parse_unit_vars_line(
+thrust_vars_line_parser = unit_vars_line_parser(
     "Thrust world, body",
     ['u_world','v_world','w_world','u_body','v_body','w_body'],
 ).dtag('thrust')
 
-lift_vars_line_parser = parse_unit_vars_line(
+lift_vars_line_parser = unit_vars_line_parser(
     "Lift world, body",
     ['u_world','v_world','w_world','u_body','v_body','w_body'],
 ).dtag('lift')
 
-drag_vars_line_parser = parse_unit_vars_line(
+drag_vars_line_parser = unit_vars_line_parser(
     "Drag world, body",
     ['u_world','v_world','w_world','u_body','v_body','w_body'],
 ).dtag('drag')
@@ -222,13 +229,13 @@ def range_vars_line_parser(prefix, units=None):
         lower = r['lower']
         upper = r['upper'] + 1
         count = upper - lower
-        units = units if units else r['units']
+        units_local = units if units else r['units']
 
         vals = yield scientific.sep_by(whitespace, min=count, max=count)
 
         output = dict()
         for (i, v) in enumerate(vals):
-            output[lower + i] = with_units(v, units)
+            output[lower + i] = with_units(v, units_local)
 
         return output
 
@@ -276,7 +283,7 @@ motor_current_warning_line_parser = parse_strip_line(
         'Warning: at least one motor '\
         'maximum current exceeded.  Motors:$s?'\
         '${__warning__motors_overdrawing_current}',
-        __warning_motors_overdrawing_current=int_p.sep_by(whitespace,min=1),
+        __warning__motors_overdrawing_current=int_p.sep_by(whitespace,min=1),
     )
 )
 
@@ -323,12 +330,12 @@ def battery_info_str_parser():
     r = yield format_parser(
         'Battery #$s?${battery_num} Current = ${current} amps, '\
         'Time to 20% charge remaining = ${time_to_low_charge} s, '\
-        'Flight distance = ${flight_distance} m$s?${warning}',
+        'Flight distance = ${flight_distance} m${warning}',
         battery_num=int_p,
         current=scientific.with_units('amps'),
         time_to_low_charge=scientific.with_units('s'),
-        flight_distange=scientific.with_units('m'),
-        warning=string('with warning').exists(),
+        flight_distance=scientific.with_units('m'),
+        warning=(whitespace.optional() >> string('with warning')).exists(),
     )
 
     num = r.pop('battery_num')
@@ -389,8 +396,8 @@ RICPACK ARE solver returns Ind(1), Ind(2), CPERM(1):            0           0   
 """
 
 are_solve_failed_line_parser = parse_strip_line(
-    string("ARE solve failed").not_exists()
-).dtag('are_success')
+    string("ARE solve failed")
+).not_exists('are_success')
 
 @generate
 def ricpack_are_lines_parser():
@@ -400,7 +407,7 @@ def ricpack_are_lines_parser():
     are_output |= yield ricpack_are_returns_line_parser
     are_output |= yield are_solve_failed_line_parser
 
-    output = {'are_control': output}
+    output = {'are_control': are_output}
 
     if not are_output['are_success']:
         output['__warning__are_solve_failed'] = True
@@ -435,7 +442,7 @@ def controls_k_lines_parser():
 
     nums = yield controls_k_num_line_parser.at_least(1)
 
-    return {'controls_k_uc': {i+1: v for (i,v) in enumerate(nums)}}
+    return {'controls_k': {i+1: v for (i,v) in enumerate(nums)}}
 
 @generate
 def xtrim_qskip_str_parser():

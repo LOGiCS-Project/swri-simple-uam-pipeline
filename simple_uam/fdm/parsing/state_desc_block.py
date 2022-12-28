@@ -79,11 +79,11 @@ def group_notes_str_parser(lower, upper):
 
             var_info = {'group_label': group_label}
 
-            if sub_label != None:
+            if var_labels != None:
                 var_info['var_label'] = var_labels[i]
 
             if units != None:
-                var_into['units'] = units
+                var_info['units'] = units
 
             vars_info[xvar] = var_info
 
@@ -108,7 +108,7 @@ def var_desc_str_parser():
 
     yield wrap_whitespace(string('is'))
 
-    grp_notes = yield grp_notes_str_parser(lower, upper)
+    grp_notes = yield group_notes_str_parser(lower, upper)
 
     return grp_notes
 

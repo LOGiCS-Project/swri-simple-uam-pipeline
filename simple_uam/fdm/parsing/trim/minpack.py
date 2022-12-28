@@ -85,8 +85,8 @@ minpack_trim_prefix_block = parse_block(
 
 motion_lines_parser = tag_alt(
     'state_type',
-    lateral=lateral_steady_state_lines_parser,
-    turning=turning_steady_state_lines_parser,
+    lateral=lateral_motion_line_parser,
+    turning=turning_motion_lines_parser,
 )
 
 padding_line_parser = parse_strip_line(
@@ -161,7 +161,7 @@ opt_pass_line_parser = tag_alt(
 )
 
 opt_passes_lines_parser = opt_pass_line_parser\
-    .union_many(min=1)\
+    .at_least(1)\
     .dtag('optimization_passes')
 
 finished_minpack_lmdiff_line_parser = parse_strip_line(
@@ -206,11 +206,11 @@ def fdm_trim_state_passes_lines_parser():
     return output
 
 user_trim_state_prefix_line_parser = parse_strip_line(
-    format_prefix('User specified trim state')
+    format_parser('User specified trim state')
 )
 
 user_trim_state_warning_line_parser = parse_strip_line(
-    format_prefix(
+    format_parser(
         'Warning: Unorth .ne. trim speed '\
         '${u_north} ${trim_speed}',
         u_north=scientific,
@@ -239,7 +239,7 @@ def trim_state_prefix_lines_parser():
     output |= yield tag_alt(
         'state_source',
         user=user_trim_state_passes_lines_parser,
-        fdm=fdm_trim_state_passes_parser,
+        fdm=fdm_trim_state_passes_lines_parser,
     )
 
     return output
@@ -256,7 +256,7 @@ def trim_state_lines_parser():
 
     output |= yield trim_state_prefix_lines_parser
     output |= yield trim_state_vars_lines_parser
-    output |= yield trim_state_battery_info_lines_parser
+    output |= yield battery_info_lines_parser
     output |= yield trim_state_controls_lines_parser.exists('successful')
 
     return output

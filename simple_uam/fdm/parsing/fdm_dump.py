@@ -116,9 +116,14 @@ def clean_expected(inp):
 
         inp = [clean_expected(i) for i in inp]
 
+        if len(inp) == 1:
+            inp = inp[0]
+
     elif isinstance(inp, dict):
 
         inp = {k: clean_expected(v) for k, v in inp.items()}
+
+        inp = {k:v for k,v in inp.items() if v != None}
 
     return inp
 
@@ -160,20 +165,21 @@ def parse_fdm_dump(string, permissive=False, strict=False):
         blocks = run_blockparser(fdm_blocks_parser, input)
         groups = group_blocks(blocks)
 
-        ## Default Collapse ##
-        # return collapse_groups(
-        #     groups,
-        #     raw_line=collapse_raw_line_group,
-        #     blank_block=lambda x: None,
-        # )
-
-        ## Collapse For finding unparsed blocks ##
-        return collapse_groups(
+        collapsed = collapse_groups(
             groups,
-            raw_line=collapse_raw_line_group,
-            blank_block=lambda x: None,
-            default=lambda x: dict(type=x['type'], start_line=x['start_line']),
+            rules = {
+                'raw_line': concat_raw,
+                'blank_block': None,
+                'static_text': None,
+            },
+            default = lambda g: g.members,
         )
+
+        json_obj = force_string_keys(
+            [attrs.asdict(blk) for blk in collapsed]
+        )
+
+        return json_obj
 
     except ParseError as err:
         log.error(
