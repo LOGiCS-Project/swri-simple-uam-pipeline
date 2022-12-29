@@ -705,8 +705,8 @@ class FDMEvalSession(FDMEnvSession):
     def eval_fdm(self,
                  data,
                  index,
-                 convert_fdm_outputs=True,
-                 fdm_to_json_opts={}):
+                 skip_fdm_parsing=False,
+                 fdm_to_json_opts=None):
         """
         Evaluates the specific input data in the eval dir specified by the
         provided index, does additional processing of outputs.
@@ -714,10 +714,13 @@ class FDMEvalSession(FDMEnvSession):
         Arguments:
           data: the json object to be used as an input to the document.
           index: the specific eval directory to use.
-          convert_fdm_outputs: Should we try to convert fdm outputs into
+          skip_fdm_parsing: Should we skip parsing fdm output files into
             nicer formats?
           fdm_to_json_opts: dict with options for fdm to json conversion.
         """
+
+        if not fdm_to_json_opts:
+            fdm_to_json_opts = dict()
 
         index = str(index)
 
@@ -744,7 +747,7 @@ class FDMEvalSession(FDMEnvSession):
         )
 
         # Some post processing of output.
-        if convert_fdm_outputs:
+        if not skip_fdm_parsing:
             self.all_nml_to_json(eval_dir)
             self.all_path_to_csv(eval_dir)
             self.all_fdm_to_json(eval_dir,**fdm_to_json_opts)
@@ -752,14 +755,14 @@ class FDMEvalSession(FDMEnvSession):
     @session_op
     def eval_fdms(self,
                   data_map,
-                  convert_fdm_outputs=True,
-                  fdm_to_json_opts={}):
+                  skip_fdm_parsing=False,
+                  fdm_to_json_opts=None):
         """
         Evaluates all the data inputs in the data_map.
 
         Arguments:
           data_map: Map from input data index to input data.
-          convert_fdm_outputs: Should we try to convert fdm outputs into
+          skip_fdm_parsing: Should we skip parsing fdm output files into
             nicer formats?
           fdm_to_json_opts: dict with options for fdm to json conversion.
         """
@@ -768,7 +771,7 @@ class FDMEvalSession(FDMEnvSession):
             self.eval_fdm(
                 data,
                 index,
-                convert_fdm_outputs=convert_fdm_outputs,
+                skip_fdm_parsing=skip_fdm_parsing,
                 fdm_to_json_opts=fdm_to_json_opts,
             )
 

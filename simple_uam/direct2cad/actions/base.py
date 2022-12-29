@@ -62,6 +62,8 @@ def process_design(design : object,
                    study_params : Optional[List[Dict]] = None,
                    metadata : Optional[object] = None,
                    compile_args : Optional[Dict] = None,
+                   skip_fdm_parsing : bool = False,
+                   fdm_to_json_opts : Optional[Dict] = None,
                    **kwargs):
     """
     Processes a design on a worker node and saves the result into a result
@@ -76,6 +78,9 @@ def process_design(design : object,
       metadata: A JSON serializable metadata object that will be placed
         in 'metadata.json' under the field 'user_metadata'.
       compile_args : Options to be passed to the fdm compile workspace.
+      skip_fdm_parsing: Should we skip parsing fdm output files into
+        nicer formats?
+      fdm_to_json_opts: dict with options for fdm to json conversion.
       **kwargs: Additional args to be passed to the FDM eval workspace.
     """
 
@@ -92,6 +97,11 @@ def process_design(design : object,
         if cache_result != None:
             session.extract_fdm_exe(cache_result[0])
 
-        session.process_design(design, study_params=study_params)
+        session.process_design(
+            design,
+            study_params=study_params,
+            skip_fdm_parsing=skip_fdm_parsing,
+            fdm_to_json_opts=fdm_to_json_opts,
+        )
 
     return session.metadata

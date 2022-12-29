@@ -31,6 +31,9 @@ def eval_fdm(
         autoreconf = False,
         configure = False,
         make = False,
+        skip_parsing = False,
+        permissive_parsing = False,
+        strict_parsing = False,
 ):
     """
     Evaluates the FDM tool remotely on one or more inputs.
@@ -72,6 +75,9 @@ def eval_fdm(
         force_autoreconf=autoreconf,
         force_configure=configure,
         force_make=make,
+        skip_fdm_parsing=skip_parsing,
+        permissive_fdm_parsing=permissive_parsing,
+        strict_fdm_parsing=strict_parsing,
     )
 
     print(json.dumps(

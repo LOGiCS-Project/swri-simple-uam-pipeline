@@ -116,6 +116,9 @@ def cli_format_args(
         source_root : Union[None, str, Path] = None,
         source_files : Optional[List[Union[str,Path]]] = None,
         compile_args : Optional[Dict] = None,
+        skip_fdm_parsing : bool = False,
+        permissive_fdm_parsing : bool = False,
+        strict_fdm_parsing : bool = False,
         **kwargs,
 ):
     """
@@ -142,6 +145,12 @@ def cli_format_args(
         overwritten as part of the compile operation. The source files' locations
         must match their locations in the SWRi flight-dynamics-model repo.
         These can be glob patterns.
+      skip_fdm_parsing: Should we skip parsing fdm output files into
+        nicer formats?
+      permissive_fdm_parsing: Should be use a more permissive parsing mode for
+        fdm dumps?
+      strict_fdm_parsing: Should we error out when fdm dumps contain
+        unrecognized output?
       **kwargs: Additional keyword arguments that will be passed to compile_op.
     """
 
@@ -167,10 +176,17 @@ def cli_format_args(
         **compile_args,
     )
 
+    fdm_to_json_opts = dict(
+        permissive=permissive_fdm_parsing,
+        strict=strict_fdm_parsing,
+    )
+
     return dict(
         inputs=inputs,
         metadata=metadata_obj,
         compile_args=compile_args,
+        skip_fdm_parsing=skip_fdm_parsing,
+        fdm_to_json_opts=fdm_to_json_opts,
         **kwargs,
     )
 
@@ -187,6 +203,9 @@ def cli_eval_wrapper(
         source_root : Union[None, str, Path] = None,
         source_files : Optional[List[Union[str,Path]]] = None,
         compile_args : Optional[Dict] = None,
+        skip_fdm_parsing : bool = False,
+        permissive_fdm_parsing : bool = False,
+        strict_fdm_parsing : bool = False,
         **kwargs,
 ):
     """
@@ -214,6 +233,12 @@ def cli_eval_wrapper(
         overwritten as part of the compile operation. The source files' locations
         must match their locations in the SWRi flight-dynamics-model repo.
         These can be glob patterns.
+      skip_fdm_parsing: Should we skip parsing fdm output files into
+        nicer formats?
+      permissive_fdm_parsing: Should be use a more permissive parsing mode for
+        fdm dumps?
+      strict_fdm_parsing: Should we error out when fdm dumps contain
+        unrecognized output?
       **kwargs: Additional keyword arguments that will be passed to compile_op.
     """
 
@@ -229,6 +254,9 @@ def cli_eval_wrapper(
         autopilot_c=autopilot_c,
         source_root=source_root,
         source_files=source_files,
+        skip_fdm_parsing=skip_fdm_parsing,
+        permissive_fdm_parsing=permissive_fdm_parsing,
+        strict_fdm_parsing=strict_fdm_parsing,
         **{k: str(v) for k,v in kwargs.items()},
     )
 
@@ -243,6 +271,9 @@ def cli_eval_wrapper(
         autopilot_c=autopilot_c,
         source_root=source_root,
         source_files=source_files,
+        skip_fdm_parsing=skip_fdm_parsing,
+        permissive_fdm_parsing=permissive_fdm_parsing,
+        strict_fdm_parsing=strict_fdm_parsing,
         **kwargs,
     )
 

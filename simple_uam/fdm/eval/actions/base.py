@@ -24,6 +24,8 @@ log = get_logger(__name__)
 def eval_fdms(inputs : Dict[Union[str,int],object],
               metadata : Optional[object] = None,
               compile_args : Optional[Dict] = None,
+              skip_fdm_parsing : bool = False,
+              fdm_to_json_opts : Optional[Dict] = None,
               **kwargs):
     """
     Run multiple fdm inputs with the given fdm compilation options.
@@ -33,6 +35,9 @@ def eval_fdms(inputs : Dict[Union[str,int],object],
       metadata: An arbitrary JSON serializable object that will be included
         in 'metadata.json' under the 'user_metadata' field.
       compile_args : Options to be passed to the fdm compile workspace.
+      skip_fdm_parsing: Should we skip parsing fdm output files into
+        nicer formats?
+      fdm_to_json_opts: dict with options for fdm to json conversion.
       **kwargs: Additional args to be passed to the FDM eval workspace.
     """
 
@@ -51,6 +56,10 @@ def eval_fdms(inputs : Dict[Union[str,int],object],
         if cache_result != None:
             session.extract_fdm_exe(cache_result[0])
 
-        session.eval_fdms(inputs)
+        session.eval_fdms(
+            inputs,
+            skip_fdm_parsing=skip_fdm_parsing,
+            fdm_to_json_opts=fdm_to_json_opts,
+        )
 
     return session.metadata

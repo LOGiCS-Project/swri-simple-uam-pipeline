@@ -40,6 +40,9 @@ actor_args = dict(
 def eval_fdms(inputs : Dict[Union[str,int],object],
               metadata : Optional[object] = None,
               compile_args : Optional[Dict] = None,
+              skip_fdm_parsing : bool = False,
+              permissive_fdm_parsing : bool = False,
+              strict_fdm_parsing : bool = False,
 ):
     """
     An actor, to be used with `send` that will perform the fdm eval action on
@@ -50,10 +53,23 @@ def eval_fdms(inputs : Dict[Union[str,int],object],
       metadata: An arbitrary JSON serializable object that will be included
         in 'metadata.json' under the 'user_metadata' field.
       compile_args : Options to be passed to the fdm compile workspace.
+      skip_fdm_parsing: Should we skip parsing fdm output files into
+        nicer formats?
+      permissive_fdm_parsing: Should be use a more permissive parsing mode for
+        fdm dumps?
+      strict_fdm_parsing: Should we error out when fdm dumps contain
+        unrecognized output?
     """
+
+    fdm_to_json_opts = dict(
+        permissive=permissive_fdm_parsing,
+        strict=strict_fdm_parsing,
+    )
 
     return base.eval_fdms(
         inputs=inputs,
         metadata=metadata,
         compile_args=compile_args,
+        skip_fdm_parsing=skip_fdm_parsing,
+        fdm_to_json_opts=fdm_to_json_opts,
     )

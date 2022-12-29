@@ -171,6 +171,9 @@ def cli_process_design_args(
         source_root : Union[None, str, Path] = None,
         source_files : Optional[List[Union[str,Path]]] = None,
         compile_args : Optional[Dict] = None,
+        skip_fdm_parsing : bool = False,
+        permissive_fdm_parsing : bool = False,
+        strict_fdm_parsing : bool = False,
         **kwargs,
 ):
     """
@@ -198,6 +201,12 @@ def cli_process_design_args(
         overwritten as part of the compile operation. The source files' locations
         must match their locations in the SWRi flight-dynamics-model repo.
         These can be glob patterns.
+      skip_fdm_parsing: Should we skip parsing fdm output files into
+        nicer formats?
+      permissive_fdm_parsing: Should be use a more permissive parsing mode for
+        fdm dumps?
+      strict_fdm_parsing: Should we error out when fdm dumps contain
+        unrecognized output?
       **kwargs: Additional keyword arguments that will be passed to compile_op.
     """
 
@@ -222,11 +231,18 @@ def cli_process_design_args(
         **compile_args,
     )
 
+    fdm_to_json_opts = dict(
+        permissive=permissive_fdm_parsing,
+        strict=strict_fdm_parsing,
+    )
+
     op_args = dict(
         design=design_obj,
         study_params=param_data,
         metadata=metadata_obj,
         compile_args=compile_args,
+        skip_fdm_parsing=skip_fdm_parsing,
+        fdm_to_json_opts=fdm_to_json_opts,
         **kwargs,
     )
 
@@ -244,6 +260,9 @@ def cli_process_design_wrapper(
         autopilot_c : Union[None, str, Path] = None,
         source_root : Union[None, str, Path] = None,
         source_files : Optional[List[Union[str,Path]]] = None,
+        skip_fdm_parsing : bool = False,
+        permissive_fdm_parsing : bool = False,
+        strict_fdm_parsing : bool = False,
         **kwargs,
 ):
     """
@@ -275,6 +294,12 @@ def cli_process_design_wrapper(
         overwritten as part of the compile operation. The source files' locations
         must match their locations in the SWRi flight-dynamics-model repo.
         These can be glob patterns.
+      skip_fdm_parsing: Should we skip parsing fdm output files into
+        nicer formats?
+      permissive_fdm_parsing: Should be use a more permissive parsing mode for
+        fdm dumps?
+      strict_fdm_parsing: Should we error out when fdm dumps contain
+        unrecognized output?
       **kwargs: Additional keyword arguments that will be passed to compile_op.
     """
 
@@ -303,6 +328,9 @@ def cli_process_design_wrapper(
         autopilot_c=autopilot_c,
         source_root=source_root,
         source_files=source_files,
+        skip_fdm_parsing=skip_fdm_parsing,
+        permissive_fdm_parsing=permissive_fdm_parsing,
+        strict_fdm_parsing=strict_fdm_parsing,
         **kwargs,
     )
 

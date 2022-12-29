@@ -247,7 +247,7 @@ class D2CSession(FDMEnvSession):
     @session_op
     def convert_fdm_outputs(self,
                             results_dirs = None,
-                            fdm_to_json_opts={}):
+                            fdm_to_json_opts=None):
         """
         Will walk through the various fdm results directories and convert the
         assorted output files into more usable alternative formats.
@@ -262,6 +262,9 @@ class D2CSession(FDMEnvSession):
             results_dirs = self.results_dirs
         results_dirs = [self.to_workpath(d) for d in results_dirs]
 
+        if not fdm_to_json_opts:
+            fdm_to_json_opts = dict()
+
         for res_dir in results_dirs:
             self.all_nml_to_json(eval_dir)
             self.all_path_to_csv(eval_dir)
@@ -272,8 +275,8 @@ class D2CSession(FDMEnvSession):
     def process_design(self,
                        design,
                        study_params=None,
-                       convert_fdm_outputs=True,
-                       fdm_to_json_opts={}):
+                       skip_fdm_parsing=False,
+                       fdm_to_json_opts=None):
         """
         Runs the chain of operations needed to process a single uam design
         and produce FDM, cad, and other output.
@@ -281,7 +284,7 @@ class D2CSession(FDMEnvSession):
         Arguments:
           design: The object loaded from design_swri.json file.
           study_params: The object loaded from a study_params.csv file.
-          convert_fdm_outputs: Should we try to convert fdm outputs into
+          skip_fdm_parsing: Should we skip parsing fdm output files into
             nicer formats?
           fdm_to_json_opts: dict with options for fdm to json conversion.
         """
@@ -293,5 +296,5 @@ class D2CSession(FDMEnvSession):
         self.write_study_params(study_params)
         self.gen_info_files(design)
         self.build_cad()
-        if convert_fdm_outputs:
+        if not skip_fdm_parsing:
             self.convert_fdm_outputs(fdm_to_json_opts=fdm_to_json_opts)

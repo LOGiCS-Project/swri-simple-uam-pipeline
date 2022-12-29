@@ -87,6 +87,9 @@ def process_design(design : object,
                    study_params : Optional[List[Dict]] = None,
                    metadata : Optional[object] =None,
                    compile_args : Optional[Dict] = None,
+                   skip_fdm_parsing : bool = False,
+                   permissive_fdm_parsing : bool = False,
+                   strict_fdm_parsing : bool = False,
 ):
     """
     gen_info_files as an actor that will perform the task on a worker node
@@ -99,6 +102,12 @@ def process_design(design : object,
       metadata: An arbitrary JSON serializable object that will be included
         in 'metadata.json' under the 'user_metadata' field.
       compile_args : Options to be passed to the fdm compile workspace.
+      skip_fdm_parsing: Should we skip parsing fdm output files into
+        nicer formats?
+      permissive_fdm_parsing: Should be use a more permissive parsing mode for
+        fdm dumps?
+      strict_fdm_parsing: Should we error out when fdm dumps contain
+        unrecognized output?
     """
 
     if not compile_args:
@@ -107,9 +116,16 @@ def process_design(design : object,
     if 'srcs' not in compile_args:
         compile_args['srcs'] = None
 
+    fdm_to_json_opts = dict(
+        permissive=permissive_fdm_parsing,
+        strict=strict_fdm_parsing,
+    )
+
     return base.process_design(
         design=design,
         study_params=study_params,
         metadata=metadata,
         compile_args=compile_args,
+        skip_fdm_parsing=skip_fdm_parsing,
+        fdm_to_json_opts=fdm_to_json_opts,
     )

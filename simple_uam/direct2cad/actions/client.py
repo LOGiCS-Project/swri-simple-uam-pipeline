@@ -66,6 +66,9 @@ def process_design(
         autoreconf = False,
         configure = False,
         make = False,
+        skip_parsing = False,
+        permissive_parsing = False,
+        strict_parsing = False,
 ):
     """
     This will run the process operation remotely, using the provided source
@@ -97,6 +100,12 @@ def process_design(
         (implies configure)
       configure: force configure step in build process
       make: force rebuild of the object even if it's in cache.
+      skip_parsing: Should we skip parsing fdm output files into
+        nicer formats?
+      permissive_parsing: Should be use a more permissive parsing mode for
+        fdm dumps?
+      strict_parsing: Should we error out when fdm dumps contain
+        unrecognized output?
     """
 
     result_metadata = cli_process_design_wrapper(
@@ -111,6 +120,9 @@ def process_design(
         force_autoreconf=autoreconf,
         force_configure=configure,
         force_make=make,
+        skip_fdm_parsing=skip_parsing,
+        permissive_fdm_parsing=permissive_parsing,
+        strict_fdm_parsing=strict_parsing,
     )
 
     print(json.dumps(
