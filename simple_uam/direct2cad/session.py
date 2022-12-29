@@ -5,6 +5,7 @@ from simple_uam.util.config import Config, D2CWorkspaceConfig, CraidlConfig
 from simple_uam.util.system import backup_file, configure_file
 from simple_uam.craidl.corpus import GremlinCorpus, StaticCorpus, get_corpus
 from simple_uam.craidl.info_files import DesignInfoFiles
+from simple_uam.fdm.eval.session import FDMEnvSession
 from attrs import define,field
 from simple_uam.worker import actor
 from time import sleep
@@ -17,7 +18,7 @@ from pathlib import Path
 log = get_logger(__name__)
 
 @define
-class D2CSession(Session):
+class D2CSession(FDMEnvSession):
     """
     A workspace session specialized to the direct2cad workflow.
     """
@@ -31,89 +32,24 @@ class D2CSession(Session):
         return Config[CorpusConfig].direct2cad.exe_subdir
 
     @property
-    def exe_dir(self):
+    def results_subdirs(self):
         """
-        The full path to the exe directory,
+        The subdirectories where buildcad might put fdm output files.
         """
-        return Path(self.work_dir / self.exe_subdir).resolve()
+        return Config[CorpusConfig].direct2cad.fdm_results_subdirs
 
     @property
-    def exe_path(self):
+    def results_dirs(self):
         """
-        The path to the new_fdm.exe
-        """
-        return Path(self.exe_dir / 'new_fdm.exe').resolve()
-
-    @session_op
-    def extract_fdm_exe(self,
-                        bin_zip):
-        """
-        Will extract a zipfile containing the FDM executable into the
-        appropriate location.
-
-        Arguments:
-          bin_zip: must be an absolute path.
+        The paths to various results subdirectories that currently exist in
+        the workspace.
         """
 
-        if bin_zip == None:
-            log.info(
-                "No binary zip provided when extracting fdm exe, skipping.",
-                workspace=self.number,
-                work_dir=str(self.work_dir),
-            )
-            return
-
-        bin_zip = Path(bin_zip)
-
-        if not bin_zip.is_absolute():
-            raise RuntimeError(
-                "Provided path to new_fdm zip must be an absolute path."
-            )
-
-        if not bin_zip.exists():
-            raise RuntimeError(
-                f"No executable binaries zip file found at `{str(bin_zip)}`."
-            )
-
-        self.exe_dir.mkdir(parents=True, exist_ok=True)
-
-        with ZipFile(bin_zip, mode='r') as b_z:
-
-            exe_path = zipfile.Path(b_z, "new_fdm.exe")
-
-            if not exe_path.exists():
-                raise RuntimeError(
-                    f"Could not find executable `{str(exe_path)}` within "
-                    f"archive `{str(bin_zip)}`, are you sure this zip "
-                    "contains the fdm executable?"
-                )
-
-            # clear up dir if needed
-            for out_file in b_z.namelist():
-                out_file = Path(self.exe_dir / out_file)
-
-                if out_file.exists():
-                    log.info(
-                        "File already exists when extracting binaries.",
-                        workspace=self.number,
-                        work_dir=str(self.work_dir),
-                        file=str(out_file),
-                        bin_zip=str(bin_zip),
-                    )
-
-                    out_file.unlink()
-
-            log.info(
-                "Extracting executable binaries to appropriate dir",
-                workspace=self.number,
-                work_dir=str(self.work_dir),
-                bin_zip=str(bin_zip),
-                exe_dir=str(self.exe_dir),
-            )
-
-        with ZipFile(bin_zip, mode='r') as b_z:
-            self.exe_dir.mkdir(parents=True, exist_ok=True)
-            b_z.extractall(self.exe_dir)
+        return [
+            self.to_workpath(result_dir) \
+            for glob_pat in self.results_subdirs() \
+            for result_dir in Path(self.work_dir).glob(glob_pat)
+        ]
 
     @session_op
     def start_creo(self):
@@ -246,11 +182,6 @@ class D2CSession(Session):
             writer.writeheader()
             writer.writerows(params)
 
-
-
-
-
-
     @session_op
     def gen_info_files(self, design):
         """
@@ -314,10 +245,45 @@ class D2CSession(Session):
             )
 
     @session_op
-    def process_design(self, design, study_params=None):
+    def convert_fdm_outputs(self,
+                            results_dirs = None,
+                            fdm_to_json_opts={}):
+        """
+        Will walk through the various fdm results directories and convert the
+        assorted output files into more usable alternative formats.
+
+        Arguments:
+          results_dirs: The list of dirs to look for convertible files in.
+            (Default: Uses fdm_results_subdirs option in corpus.conf to get dirs)
+          fdm_to_json_opts: Options to pass to the fdm_to_json_converter.
+        """
+
+        if not results_dirs:
+            results_dirs = self.results_dirs
+        results_dirs = [self.to_workpath(d) for d in results_dirs]
+
+        for res_dir in results_dirs:
+            self.all_nml_to_json(eval_dir)
+            self.all_path_to_csv(eval_dir)
+            self.all_fdm_to_json(eval_dir,**fdm_to_json_opts)
+
+
+    @session_op
+    def process_design(self,
+                       design,
+                       study_params=None,
+                       convert_fdm_outputs=True,
+                       fdm_to_json_opts={}):
         """
         Runs the chain of operations needed to process a single uam design
         and produce FDM, cad, and other output.
+
+        Arguments:
+          design: The object loaded from design_swri.json file.
+          study_params: The object loaded from a study_params.csv file.
+          convert_fdm_outputs: Should we try to convert fdm outputs into
+            nicer formats?
+          fdm_to_json_opts: dict with options for fdm to json conversion.
         """
 
         if not study_params:
@@ -327,3 +293,5 @@ class D2CSession(Session):
         self.write_study_params(study_params)
         self.gen_info_files(design)
         self.build_cad()
+        if convert_fdm_outputs:
+            self.convert_fdm_outputs(fdm_to_json_opts=fdm_to_json_opts)

@@ -5,7 +5,7 @@ from simple_uam.util.config import Config, FDMEvalConfig, CorpusConfig
 from simple_uam.util.system import backup_file, configure_file
 from simple_uam.util.system.glob import apply_glob_mapping
 import simple_uam.util.system.backup as backup
-from simple_uam.fdm.parsing import parse_path_data
+from simple_uam.fdm.parsing import parse_path_data, parse_fdm_dump
 from simple_uam.util.exception import contextualize_exception
 from zipfile import ZipFile
 import zipfile
@@ -278,9 +278,7 @@ class FDMEnvSession(Session):
         Reads a path_data file from file_path and returns the contents.
 
         Arguments:
-          filename: The file, within eval_dir, to read from.
-          index: The index of the eval dir to write to.
-          text: if true read str else bytes
+          file_path: The file, within eval_dir, to read from.
 
         Returns:
           data: A list of dicts for each data entry
@@ -290,6 +288,31 @@ class FDMEnvSession(Session):
         path_data = self.read_raw(file_path, text=True)
 
         return parse_path_data(path_data)
+
+    @session_op
+    def read_fdm_dump(self,
+                      file_path,
+                      permissive=False,
+                      strict=False):
+        """
+        Reads an fdm_dump file from file_path and returns the contents.
+
+        Arguments:
+          file_path: The file, within eval_dir, to read from.
+          permissive: as with simple_uam.fdm.parsing.parse_fdm_dump
+          strict: as with simple_uam.fdm.parsing.parse_fdm_dump
+
+        Returns:
+          data: A list of parsed blocks from the FDM dump
+        """
+
+        fdm_dump = self.read_raw(file_path, text=True)
+
+        return parse_fdm_dump(
+            fdm_dump,
+            permissive=permissive,
+            strict=strict,
+        )
 
     @session_op
     def read_json(self,
@@ -435,7 +458,7 @@ class FDMEnvSession(Session):
                     output_path = None,
                     error_path = None):
         """
-        Converts a path file to a json file.
+        Converts a path file to a csv file.
         """
 
         if not output_path:
@@ -458,6 +481,42 @@ class FDMEnvSession(Session):
         ):
             (data, fieldnames) = self.read_path_data(input_loc)
             self.write_csv(output_loc,data,fieldnames)
+
+    @session_op
+    def fdm_to_json(self,
+                    input_path,
+                    output_path = None,
+                    error_path = None,
+                    permissive = False,
+                    strict=False):
+        """
+        Converts an fdm dump file to a json file.
+        """
+
+        if not output_path:
+            output_path = str(input_path) + ".json"
+
+        if not error_path:
+            error_path = str(output_path) + ".error"
+
+        input_loc  = self.to_workpath(input_path)
+        output_loc = self.to_workpath(output_path)
+        error_loc  = self.to_workpath(error_path)
+
+        output_loc.parent.mkdir(parents=True, exist_ok=True)
+        error_loc.parent.mkdir(parents=True, exist_ok=True)
+
+        with self.write_exception(
+                error_loc,
+                context="Failed to convert fdm dump to json file.",
+                supress=True,
+        ):
+            data = self.read_fdm_dump(
+                input_loc,
+                permissive=permissive,
+                strict=strict,
+            )
+            self.write_json(output_loc,data)
 
     @session_op
     def all_nml_to_json(self,
@@ -510,6 +569,38 @@ class FDMEnvSession(Session):
                 eval_dir = str(eval_dir),
             )
             self.path_to_csv(path_file)
+
+    @session_op
+    def all_fdm_to_json(self,
+                        eval_dir: Union[str,Path],
+                        permissive = False,
+                        strict=False):
+        """
+        Converts all configured fdm_dump files to their json equivalent.
+
+        Arguments:
+          eval_dir: The directory in which to look for nml files.
+        """
+
+        eval_dir = self.to_workpath(eval_dir)
+        eval_dir.mkdir(parents=True, exist_ok=True)
+
+        globs = Config[FDMEvalConfig].fdm_dump_to_json
+        files = [f for g in globs for f in eval_dir.glob(g)]
+
+        for fdm_file in files:
+            log.info(
+                "Converting fdm dump to json",
+                workspace=self.number,
+                work_dir=str(self.work_dir),
+                fdm_file = str(fdm_file),
+                eval_dir = str(eval_dir),
+            )
+            self.fdm_to_json(
+                fdm_file,
+                permissive=permissive,
+                strict=strict,
+            )
 
 @define
 class FDMEvalSession(FDMEnvSession):
@@ -613,7 +704,9 @@ class FDMEvalSession(FDMEnvSession):
     @session_op
     def eval_fdm(self,
                  data,
-                 index):
+                 index,
+                 convert_fdm_outputs=True,
+                 fdm_to_json_opts={}):
         """
         Evaluates the specific input data in the eval dir specified by the
         provided index, does additional processing of outputs.
@@ -621,6 +714,9 @@ class FDMEvalSession(FDMEnvSession):
         Arguments:
           data: the json object to be used as an input to the document.
           index: the specific eval directory to use.
+          convert_fdm_outputs: Should we try to convert fdm outputs into
+            nicer formats?
+          fdm_to_json_opts: dict with options for fdm to json conversion.
         """
 
         index = str(index)
@@ -648,20 +744,33 @@ class FDMEvalSession(FDMEnvSession):
         )
 
         # Some post processing of output.
-        self.all_nml_to_json(eval_dir)
-        self.all_path_to_csv(eval_dir)
+        if convert_fdm_outputs:
+            self.all_nml_to_json(eval_dir)
+            self.all_path_to_csv(eval_dir)
+            self.all_fdm_to_json(eval_dir,**fdm_to_json_opts)
 
     @session_op
-    def eval_fdms(self, data_map):
+    def eval_fdms(self,
+                  data_map,
+                  convert_fdm_outputs=True,
+                  fdm_to_json_opts={}):
         """
         Evaluates all the data inputs in the data_map.
 
         Arguments:
           data_map: Map from input data index to input data.
+          convert_fdm_outputs: Should we try to convert fdm outputs into
+            nicer formats?
+          fdm_to_json_opts: dict with options for fdm to json conversion.
         """
 
         for index, data in data_map.items():
-            self.eval_fdm(data, index)
+            self.eval_fdm(
+                data,
+                index,
+                convert_fdm_outputs=convert_fdm_outputs,
+                fdm_to_json_opts=fdm_to_json_opts,
+            )
 
     @session_op
     def generate_result_archive_files(self):

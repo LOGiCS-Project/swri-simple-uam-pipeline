@@ -1,8 +1,14 @@
 
 from parsy import *
 import functools
-from attrs import define, field
+import textwrap
+from attrs import define, field, asdict
+import attr
+from attr.exceptions import NotAnAttrsClassError
+from pprint import pformat
+from collections.abc import Mapping
 from simple_uam.util.logging import get_logger
+
 log = get_logger(__name__)
 
 digits = decimal_digit.at_least(1).concat()
@@ -594,3 +600,42 @@ def force_string_keys(val):
         return {str(k): force_string_keys(v) for k,v in val.items()}
     else:
         return val
+
+def clean_expected(inp):
+    """
+    Cleans up the expected values into something more pformat-able.
+    """
+
+    is_attrs = None
+    try:
+        is_attrs = attr.asdict(inp)
+    except NotAnAttrsClassError as err:
+        pass
+
+    inp = is_attrs if is_attrs else inp
+
+    mapping_types = [dict]
+    iterable_types = [frozenset, set, list]
+    out=None
+
+    if any([isinstance(inp,t) for t in mapping_types]):
+        out = dict()
+        for k,v in inp.items():
+            if v != None:
+                out[k] = clean_expected(v)
+
+    elif any([isinstance(inp,t) for t in iterable_types]):
+        out = [clean_expected(i) for i in inp]
+        if len(out) == 1:
+            out = out[0]
+
+    else:
+        out = inp
+
+    return out
+
+def format_expected(inp):
+    """
+    Formats the expected values into a more human readable string.
+    """
+    return pformat(clean_expected(inp), compact=True)

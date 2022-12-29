@@ -99,33 +99,6 @@ fdm_catchall_blocks = [
     raw_line_block,
 ]
 
-def clean_expected(inp):
-    """
-    Cleans up the expected values into something more pformat-able.
-    """
-
-    is_attrs = None
-    try:
-        is_attrs = attr.asdict(inp)
-    except NotAnAttrsClassError as err:
-        pass
-
-    inp = is_attrs if is_attrs else inp
-
-    if isinstance(inp, frozenset):
-
-        inp = [clean_expected(i) for i in inp]
-
-        if len(inp) == 1:
-            inp = inp[0]
-
-    elif isinstance(inp, dict):
-
-        inp = {k: clean_expected(v) for k, v in inp.items()}
-
-        inp = {k:v for k,v in inp.items() if v != None}
-
-    return inp
 
 def parse_fdm_dump(string, permissive=False, strict=False):
     """
@@ -182,17 +155,22 @@ def parse_fdm_dump(string, permissive=False, strict=False):
         return json_obj
 
     except ParseError as err:
-        log.error(
-            textwrap.dedent(
-                """
-                Parse error while parsing fdm file.
+        error_str = textwrap.dedent(
+            """
+            Parse error while parsing FDM file at line {}.
 
-                Expected Next Tokens:
-                {}
-                """
-            ).format(pformat(clean_expected(err.expected), compact=True)),
-            line_no= err.index,
-            line = input[err.index],
+            Expected Next Tokens:
+            {}
+
+            Current Line:
+            {}
+            """
+            # We use format here to work around dedent misidentifying
+            # indentation level with an f-string
+        ).format(
+            err.line_info(),
+            textwrap.indent(format_expected(err.expected),"  "),
+            textwrap.indent(input[err.index],"  "),
         )
-        # log.exception("error while parsing fdm file")
-        raise err
+
+        raise RuntimeError(error_str) from err

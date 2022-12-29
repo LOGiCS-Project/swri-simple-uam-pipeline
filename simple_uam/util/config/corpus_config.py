@@ -78,6 +78,15 @@ class Direct2CadRepoConfig():
     dlls should go.
     """
 
+    fdm_results_subdirs : List[str] = [
+        "Results/*/fdmTB/"
+    ]
+    """
+    List of directory globs where buildcad might put fdm outputs.
+    This is where the server will look for misc FDM output files to convert
+    to reasonable formats.
+    """
+
 @define
 class UAVWorkflowsRepoConfig():
     """
